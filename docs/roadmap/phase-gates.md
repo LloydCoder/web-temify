@@ -36,23 +36,34 @@ Exit criteria:
 - [x] No client-controlled role or privilege escalation path.
 - [x] Migration and RLS tests passed in CI run 38364828400 (commit evidence: phase 2 baseline).
 
-## Phase 3 — Marketplace catalogue and release-quality gates (in progress)
+## Phase 3 — Marketplace catalogue and release-quality gates (complete)
 Scope: public catalogue/search/detail routes, compatibility metadata, rights attestations and review state, product version/release evidence, safe publication rules, and domain-contract alignment.
 
 Exit criteria:
-- [ ] Phase 3 migration applies from an empty local Supabase database and can be replayed deterministically.
-- [ ] RLS and least-privilege grants cover every new table; rights evidence is not public.
-- [ ] Product table reads use column-level grants; creator identifiers and review internals are not exposed through PostgREST.
-- [ ] Creators can submit a rights declaration for their own draft but cannot verify it or promote a release.
-- [ ] Public catalogue exposes only published products with independently verified rights and a content-addressed artifact.
-- [ ] Public product versions require a released state, artifact digest, and release timestamp.
-- [ ] Shared TypeScript/Zod lifecycle states match the canonical database states; domain-contract tests pass.
-- [ ] Catalogue and product-detail pages fail closed when configuration or verified releases are absent.
-- [ ] Playwright covers catalogue empty state, unknown/unreleased product denial, semantic landmarks, and responsive widths.
-- [ ] CI passes migration reset, database/RLS tests, foundation tests, domain tests, typecheck, lint, E2E and production build on the same head SHA.
-- [ ] A phase-specific forensic audit records files reviewed, policy invariants, test evidence, remaining risk and explicit pass/fail.
+- [x] Phase 3 migration applies from an empty local Supabase database and can be replayed deterministically.
+- [x] RLS and least-privilege grants cover every new table; rights evidence is not public.
+- [x] Product table reads use column-level grants; creator identifiers and review internals are not exposed through PostgREST.
+- [x] Creators can submit a rights declaration for their own draft but cannot verify it or promote a release.
+- [x] Public catalogue exposes only published products with independently verified rights and a content-addressed artifact.
+- [x] Public product versions require a released state, artifact digest, and release timestamp.
+- [x] Shared TypeScript/Zod lifecycle states match the canonical database states; domain-contract tests pass.
+- [x] Catalogue and product-detail pages fail closed when configuration or verified releases are absent.
+- [x] Playwright covers catalogue empty state, unknown/unreleased product denial, semantic landmarks, and responsive widths.
+- [x] CI passes migration reset, database/RLS tests, foundation tests, domain tests, typecheck, lint, E2E and production build on the same head SHA.
+- [x] A phase-specific forensic audit records files reviewed, policy invariants, test evidence, remaining risk and explicit pass/fail.
 
-Fixture invariant: `products.rights_verified_at` must exactly equal the independently reviewed attestation's `reviewed_at`; tests use a fixed timestamp to avoid nondeterministic `now()` differences. Never weaken the evidence-gated publication policy to make fixtures pass.
+### Phase 3 forensic audit record
+
+- **Disposition:** PASS — implementation, deterministic database fixtures, security review, documentation, and CI gates agree.
+- **PR:** [#6 — fix: repair Phase 3 catalogue evidence gates and CI fixtures](https://github.com/LloydCoder/web-temify/pull/6), merged.
+- **Validated head:** `aafcc5301c72e47b8f75adc856bef0c1ea85c73f`.
+- **CI evidence:** Foundation CI run [38419320576](https://github.com/LloydCoder/web-temify/actions/runs/38419320576), run 51; all steps succeeded, including frozen install, foundation/domain tests, typecheck, lint, empty-database Supabase reset, database/RLS tests, Playwright, production build, and service cleanup.
+- **Merge commit:** `762a2e07e71ef7961bbc01916886a5770a2b17d6`. The reviewed migration, tests, application routes, and documentation blobs match the validated head.
+- **Files reviewed:** `supabase/migrations/20261013010000_phase3_catalogue_quality.sql`; `supabase/tests/phase2_identity_catalogue.test.sql`; `supabase/tests/phase3_catalogue_quality.test.sql`; `src/app/catalog/page.tsx`; `src/app/catalog/[slug]/page.tsx`; `packages/domain-contracts/src/index.ts` and its tests; `.github/workflows/ci.yml`; `docs/security/security-baseline.md`; `docs/security/threat-model.md`; `docs/architecture/domain-boundaries.md`.
+- **Security invariants verified:** creator declarations cannot self-approve; creator sessions cannot modify review state or promote releases; public rows require publication, independent rights-review evidence with matching reviewer/timestamp, and a released artifact digest; direct PostgREST access is restricted to approved product columns; catalogue routes use RLS as the authority and fail closed without verified products.
+- **Defects found and corrected during audit:** nondeterministic rights-review timestamps in database fixtures; table-wide product SELECT exposing creator/review metadata; redundant UI filters that depended on columns no longer client-readable. Regression tests now enforce deterministic evidence and column-level privacy.
+- **Residual risks / explicit non-claims:** no real product release is yet published; the trusted moderation/release service, checkout, payments, entitlements, and downloads are not live; production Supabase/Vercel configuration, formal security review, and full WCAG 2.2 AA assessment remain later gates. Phase 3 completion does not mean production launch readiness.
+- **Fixture invariant:** `products.rights_verified_at` must exactly equal the independently reviewed attestation's `reviewed_at`; tests use a fixed timestamp to avoid nondeterministic `now()` differences. Never weaken evidence-gated publication policy to make fixtures pass.
 
 ## Phase 4 — Commerce and secure delivery
 Provider adapters; signature verification against raw webhook bodies, idempotency, concurrency, amount/currency/order matching, double-entry or equivalent auditable ledger, refunds/chargebacks, licenses/entitlements, private storage, authorized download issuance, failure/retry/reconciliation tests. No live provider is selected until payout eligibility, sandbox behavior, jurisdiction coverage and fees are verified.
