@@ -131,6 +131,31 @@ Phase 4B — server-side commerce workflows (implementation in progress):
 - **Explicit limits:** the console is read-only. Moderation mutations, support case workflows, provider/settlement reconciliation, disputes and chargebacks, alert delivery, backup restoration drills, incident-response automation, and break-glass governance remain incomplete. Counts are not proof of settlement or financial correctness. Production Supabase/Vercel configuration, legal/tax review, penetration testing, and full WCAG 2.2 AA verification remain separate gates.
 - **Gate decision:** Phase 5A passes only for the read-only visibility and audit scope. Phase 5 overall remains in progress.
 
+
+### Phase 5B — Independent product-rights review (complete for this scope)
+
+- [x] Restricted server-rendered queue lists a bounded set of pending declarations and fails closed on authentication, role, configuration, audit, and database errors.
+- [x] Review mutation verifies admin identity before creating the privileged client; enforces same-origin requests, JSON content type, UUIDs, strict Zod fields, bounded notes, and an 8 KiB streaming request-body limit.
+- [x] The narrow Postgres RPC is invoker-security, callable only by `service_role`, rechecks the admin role, locks product and attestation rows, rejects self-review and resolved attestations, and updates the attestation, product rights state, and append-only audit event atomically.
+- [x] Independent reviewer identity, final-review timestamp, review notes, explicit `under_review` / `verified` / `rejected` transitions, and resolved-state rejection are enforced and tested.
+- [x] The 29-assertion pgTAP suite covers grants, successful transitions, reviewer independence, non-admin rejection, resolved-state rejection, audit evidence, and rollback of both rights-state updates when audit persistence is unavailable.
+- [x] Playwright verifies that unauthenticated users cannot access the mutation endpoint.
+- [x] Foundation CI passed frozen install, foundation/domain tests, typecheck, lint, empty-database migration reset, Supabase schema lint, pgTAP/RLS tests, Playwright E2E, production build, and cleanup on the exact reviewed implementation head.
+- [x] Phase-specific forensic audit and known limits are recorded.
+
+#### Phase 5B forensic audit record
+
+- **Disposition:** PASS for the independent rights-review workflow only. This is not product publication approval, artifact security approval, legal certainty, live commerce readiness, or production-launch approval.
+- **PR:** [#13 — feat: add audited product rights review workflow](https://github.com/LloydCoder/web-temify/pull/13), merged.
+- **Validated implementation head:** `1c849a8732f99c4e265e0c3fc5930c464cc8bba7`.
+- **CI evidence:** [Foundation CI run 38449461902](https://github.com/LloydCoder/web-temify/actions/runs/38449461902) succeeded on that exact head. Every substantive check and the final Supabase cleanup succeeded.
+- **Merge commit:** `ffbe1b28cf09aef995641d63d9de8f7a85da4ab4`.
+- **Files reviewed:** `src/app/admin/reviews/page.tsx`; `src/app/admin/reviews/ReviewActionForm.tsx`; `src/app/api/admin/products/[productId]/rights-review/route.ts`; `src/server/admin/authorization.ts`; `supabase/migrations/20261013050000_phase5b_admin_rights_review.sql`; `supabase/tests/phase5b_admin_rights_review.test.sql`; `tests/e2e/admin-access.spec.ts`; `docs/operations/admin-console.md`; and `.github/workflows/ci.yml`.
+- **Security invariants:** untrusted clients cannot call the RPC; authenticated identity and database role are checked before privileged access; creator and reviewer must be distinct; status transitions and rights evidence update in one transaction; resolved evidence cannot be silently reviewed again; audit failure prevents the rights transition; client errors do not disclose raw database details; review success never publishes a product or moves funds.
+- **Forensic defects corrected:** the initial endpoint parsed an unbounded JSON request before enforcing field limits. It now uses the shared streaming bounded-body reader, requires JSON, caps the request at 8 KiB, and disables response caching. The database suite was expanded to simulate audit-write denial and prove both attestation and product rights changes roll back. SQL dollar quoting in that regression assertion was corrected before the final green run.
+- **Residual risks / explicit non-claims:** product publication remains a separate gate requiring a verified rights attestation and independently released content-addressed artifact. The admin console still lacks full support-case operations, financial settlement reconciliation, dispute/chargeback handling, alert delivery, backup restoration drills, incident response, and break-glass governance. Formal penetration testing, full WCAG 2.2 AA assessment, production provider onboarding, legal/tax review, and deployment verification remain open.
+- **Gate decision:** Phase 5B is complete for its stated scope. Phase 5 overall remains in progress; do not treat this subphase as production readiness.
+
 Least-privilege admin controls, moderation queues, support, audit review, financial reconciliation, observability, backup/restore rehearsal, incident response and safe break-glass access.
 
 ## Phase 6 — Seller system and product factory
