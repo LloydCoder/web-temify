@@ -30,9 +30,13 @@ Production provider adapters must implement that provider's official signature s
 
 Requires the authenticated owner of a paid or partially refunded order. Creates an idempotent refund request only. A 202 response with moneyMoved=false does not mean a refund was approved or settled. Provider execution, privileged approval, chargeback handling, and financial reconciliation remain disabled until later phases.
 
+### POST /api/downloads/grants
+
+Requires an authenticated customer and an entitlement ID. The authenticated RLS read establishes ownership; the service-only `issue_download_grant` RPC rechecks the paid or partially refunded order, active entitlement, verified product rights, released artifact digest, and storage path under row locks. It reuses a still-valid grant or issues a grant expiring within 14 minutes with a maximum of three consumptions. No storage path or signed URL is returned.
+
 ### POST /api/downloads
 
-Requires an authenticated customer and a grant ID. It checks grant ownership, the current released artifact digest, and the storage path; creates a 60-second signed URL in the configured private bucket; then atomically consumes the grant through the authenticated RPC, which rechecks the current entitlement and paid-order state. The URL is returned only after successful consumption with no-store and no-referrer headers. URLs are bearer credentials and remain valid until expiry; keep TTL short and do not log or cache them.
+Requires an authenticated customer and a grant ID. It checks grant ownership and the current released artifact digest; creates a 60-second signed URL in the configured private bucket; then atomically consumes the grant through the authenticated RPC, which locks the order before the entitlement/grant and rechecks the current state. The URL is returned only after successful consumption with no-store and no-referrer headers. URLs are bearer credentials and remain valid until expiry; keep TTL short and do not log or cache them. Partial refunds preserve access to active entitlements because refunds are not yet mapped to individual order items. A full refund revokes the order's entitlements and outstanding grants.
 
 ## Database invariants
 
@@ -47,7 +51,7 @@ Migration 20261013030000_phase4b_checkout_webhooks.sql provides:
 - No live provider adapter is enabled or selected.
 - No tax/VAT calculation is implemented; order tax is currently zero and must not be represented as a tax quote.
 - Free/zero-value checkout is unsupported.
-- No seller payout, commission, provider settlement, refund execution, chargeback, or manual financial adjustment flow is enabled.
+- No seller payout, commission, provider settlement, refund execution, chargeback, or manual financial adjustment flow is enabled. Partial refunds are order-level goodwill refunds, not item-specific refunds; full refunds revoke all order entitlements.
 - The private bucket must be provisioned as private in the actual Supabase project; local schema CI does not prove production bucket configuration.
 - Supabase signed URLs cannot be revoked immediately once issued; the implemented TTL is 60 seconds, but it remains a bearer URL until expiry.
 - Production secrets, live provider eligibility, end-to-end provider sandbox account verification, formal security review, penetration testing, and legal/tax review remain release gates.
