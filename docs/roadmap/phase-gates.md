@@ -51,6 +51,8 @@ Exit criteria:
 - [ ] CI passes migration reset, database/RLS tests, foundation tests, domain tests, typecheck, lint, E2E and production build on the same head SHA.
 - [ ] A phase-specific forensic audit records files reviewed, policy invariants, test evidence, remaining risk and explicit pass/fail.
 
+Fixture invariant: `products.rights_verified_at` must exactly equal the independently reviewed attestation's `reviewed_at`; tests use a fixed timestamp to avoid nondeterministic `now()` differences. Never weaken the evidence-gated publication policy to make fixtures pass.
+
 ## Phase 4 — Commerce and secure delivery
 Provider adapters; signature verification against raw webhook bodies, idempotency, concurrency, amount/currency/order matching, double-entry or equivalent auditable ledger, refunds/chargebacks, licenses/entitlements, private storage, authorized download issuance, failure/retry/reconciliation tests. No live provider is selected until payout eligibility, sandbox behavior, jurisdiction coverage and fees are verified.
 
