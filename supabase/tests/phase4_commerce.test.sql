@@ -110,10 +110,6 @@ select throws_ok(
   '23514', null, 'order cannot be marked paid without verified event and ledger evidence'
 );
 select throws_ok(
-  $sql$update public.orders set status = 'cancelled' where id = '88000000-0000-4000-8000-000000000088'$sql$,
-  '23514', null, 'order cannot be cancelled after a payment is settled'
-);
-select throws_ok(
   $sql$insert into public.entitlements (order_item_id, customer_id, product_id, product_version_id)
   values ('89000000-0000-4000-8000-000000000089', '82000000-0000-4000-8000-000000000082', '86000000-0000-4000-8000-000000000086', '87000000-0000-4000-8000-000000000087')$sql$,
   '23514', null, 'entitlement cannot be granted before order payment'
@@ -185,6 +181,10 @@ select throws_ok(
 );
 update public.orders set status = 'paid' where id = '88000000-0000-4000-8000-000000000088';
 select is((select status from public.orders where id = '88000000-0000-4000-8000-000000000088'), 'paid', 'verified payment and ledger evidence permit the order to become paid');
+select throws_ok(
+  $sql$update public.orders set status = 'cancelled' where id = '88000000-0000-4000-8000-000000000088'$sql$,
+  '23514', null, 'order cannot be cancelled after a payment is settled'
+);
 select is((select count(*) from public.ledger_transactions where order_id = '88000000-0000-4000-8000-000000000088'), 1::bigint, 'successful payment is journaled exactly once');
 
 select throws_ok(
