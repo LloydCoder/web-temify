@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const filterToken = z.string().trim().min(1).max(120).regex(/^[A-Za-z0-9._:-]+$/);
-const cursorToken = z.string().regex(/^[1-9][0-9]{0,18}$/);
+const cursorToken = z.string().regex(/^[1-9][0-9]{0,18}$/).refine((value) => value.length < 19 || value <= "9223372036854775807");
 
 export type AuditSearchParams = Record<string, string | string[] | undefined>;
 
