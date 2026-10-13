@@ -15,7 +15,7 @@ alter table public.payment_webhook_events
   add constraint payment_webhook_financial_event_fields
     check (
       event_type not in ('payment.succeeded', 'payment.failed', 'refund.succeeded')
-      or (amount_minor is not null and currency is not null)
+      or (amount_minor is not null and currency is not null and provider_reference is not null)
     );
 
 create or replace function public.enforce_webhook_event_transition()
