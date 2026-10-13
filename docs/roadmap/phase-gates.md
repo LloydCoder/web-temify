@@ -40,16 +40,24 @@ Exit criteria:
 Scope: public catalogue/search/detail routes, compatibility metadata, rights attestations and review state, product version/release evidence, safe publication rules, and domain-contract alignment.
 
 Exit criteria:
-- [ ] Phase 3 migration applies from an empty local Supabase database and can be replayed deterministically.
-- [ ] RLS and least-privilege grants cover every new table; rights evidence is not public.
-- [ ] Creators can submit a rights declaration for their own draft but cannot verify it or promote a release.
-- [ ] Public catalogue exposes only published products with independently verified rights and a content-addressed artifact.
-- [ ] Public product versions require a released state, artifact digest, and release timestamp.
-- [ ] Shared TypeScript/Zod lifecycle states match the canonical database states; domain-contract tests pass.
-- [ ] Catalogue and product-detail pages fail closed when configuration or verified releases are absent.
-- [ ] Playwright covers catalogue empty state, unknown/unreleased product denial, semantic landmarks, and responsive widths.
-- [ ] CI passes migration reset, database/RLS tests, foundation tests, domain tests, typecheck, lint, E2E and production build on the same head SHA.
-- [ ] A phase-specific forensic audit records files reviewed, policy invariants, test evidence, remaining risk and explicit pass/fail.
+- [x] Phase 3 migration applies from an empty local Supabase database and can be replayed deterministically.
+- [x] RLS and least-privilege grants cover every new table; rights evidence is not public.
+- [x] Creators can submit a rights declaration for their own draft but cannot verify it or promote a release.
+- [x] Public catalogue exposes only published products with independently verified rights and a content-addressed artifact.
+- [x] Public product versions require a released state, artifact digest, and release timestamp.
+- [x] Shared TypeScript/Zod lifecycle states match the canonical database states; domain-contract tests pass.
+- [x] Catalogue and product-detail pages fail closed when configuration or verified releases are absent.
+- [x] Playwright covers catalogue empty state, unknown/unreleased product denial, semantic landmarks, and responsive widths.
+- [x] CI passes migration reset, database/RLS tests, foundation tests, domain tests, typecheck, lint, E2E and production build on the same head SHA.
+- [x] A phase-specific forensic audit records files reviewed, policy invariants, test evidence, remaining risk and explicit pass/fail.
+
+### Phase 3 forensic audit record
+
+- Implementation PR #3 merged as `0eeea5c3b21cdc3b25693efab3a4361561d411e8`.
+- Additional authorization-test PR #4 head audited: `8f7db673d2d5db02c15cffa3a753506cbd4144cf`.
+- CI run `38411254316` completed successfully for that code/test head: foundation tests, typecheck, lint, empty-database migration reset, PostgreSQL/RLS tests, Playwright E2E, production build, and service teardown all passed.
+- Audit invariants verified: creator content edits are column-scoped; rights status and artifact digest cannot be changed by creator sessions; a creator can submit a declaration for their own draft but cannot self-verify it or insert a released version; public product rows require independent rights-review evidence and a matching released artifact digest; rights attestations and storage paths are not publicly selectable.
+- Scope limitation: this closes the catalogue/release-evidence phase only. It does not establish live checkout, payment processing, vendor payouts, signed-download delivery, legal/tax readiness, production deployment, or an independent penetration test.
 
 ## Phase 4 — Commerce and secure delivery
 Provider adapters; signature verification against raw webhook bodies, idempotency, concurrency, amount/currency/order matching, double-entry or equivalent auditable ledger, refunds/chargebacks, licenses/entitlements, private storage, authorized download issuance, failure/retry/reconciliation tests. No live provider is selected until payout eligibility, sandbox behavior, jurisdiction coverage and fees are verified.
