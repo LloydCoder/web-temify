@@ -55,6 +55,9 @@ create unique index payment_attempt_provider_reference_uq
   on public.payment_attempts (provider, provider_reference)
   where provider_reference is not null;
 create index payment_attempts_order_idx on public.payment_attempts (order_id, created_at desc);
+create unique index payment_attempts_one_settled_per_order_uq
+  on public.payment_attempts (order_id)
+  where status in ('succeeded', 'partially_refunded', 'refunded');
 
 -- Only verified webhook bodies are represented here. Raw payloads and secrets are never persisted.
 create table public.payment_webhook_events (
@@ -128,6 +131,12 @@ create table public.ledger_transactions (
   )
 );
 create index ledger_transactions_order_idx on public.ledger_transactions (order_id, created_at);
+create unique index ledger_one_payment_per_attempt_uq
+  on public.ledger_transactions (payment_attempt_id)
+  where source_type = 'payment' and payment_attempt_id is not null;
+create unique index ledger_one_refund_per_refund_uq
+  on public.ledger_transactions (refund_id)
+  where source_type = 'refund' and refund_id is not null;
 
 create function public.validate_ledger_transaction()
 returns trigger
@@ -621,6 +630,37 @@ revoke all on function public.enforce_entitlement_insert() from public, anon, au
 create trigger entitlements_insert_guard before insert on public.entitlements
 for each row execute function public.enforce_entitlement_insert();
 
+create function public.enforce_entitlement_update()
+returns trigger
+language plpgsql
+set search_path = ''
+as $function$
+begin
+  if new.order_item_id is distinct from old.order_item_id
+    or new.customer_id is distinct from old.customer_id
+    or new.product_id is distinct from old.product_id
+    or new.product_version_id is distinct from old.product_version_id
+    or new.license_key_sha256 is distinct from old.license_key_sha256
+    or new.expires_at is distinct from old.expires_at
+    or new.created_at is distinct from old.created_at then
+    raise exception using errcode = '23514', message = 'entitlement purchase and license identity are immutable';
+  end if;
+  if new.status = old.status and new.revoked_at is not distinct from old.revoked_at then
+    return new;
+  end if;
+  if old.status = 'active' and new.status = 'revoked' and old.revoked_at is null and new.revoked_at is not null then
+    return new;
+  end if;
+  if old.status = 'active' and new.status = 'expired' and old.revoked_at is null and new.revoked_at is null then
+    return new;
+  end if;
+  raise exception using errcode = '23514', message = 'entitlement status may only transition once from active to revoked or expired';
+end;
+$function$;
+revoke all on function public.enforce_entitlement_update() from public, anon, authenticated, service_role;
+create trigger entitlements_update_guard before update on public.entitlements
+for each row execute function public.enforce_entitlement_update();
+
 create function public.enforce_download_grant_insert()
 returns trigger
 language plpgsql
@@ -758,6 +798,13 @@ grant select (id, order_id, amount_minor, currency, status, reason, created_at, 
   on public.refunds to authenticated;
 grant select (id, order_item_id, product_id, product_version_id, status, expires_at, revoked_at, created_at)
   on public.entitlements to authenticated;
+
+create trigger orders_set_updated_at before update on public.orders
+for each row execute function public.set_updated_at();
+create trigger payment_attempts_set_updated_at before update on public.payment_attempts
+for each row execute function public.set_updated_at();
+create trigger refunds_set_updated_at before update on public.refunds
+for each row execute function public.set_updated_at();
 
 grant select, insert, update on public.orders to service_role;
 grant select, insert on public.order_items to service_role;
