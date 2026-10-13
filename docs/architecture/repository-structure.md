@@ -1,35 +1,20 @@
-# Repository structure — canonical map
+# Repository structure
 
-This is the target structure for the initial modular monolith. A directory in this map does not imply the feature is implemented; add files as the corresponding phase begins.
+- .github/workflows/: CI and release automation.
+- docs/: architecture decisions, governance, product scope, security, quality, roadmap, integrations and operations.
+- apps/: future independently deployable applications.
+- packages/domain-contracts/: shared Zod schemas and domain types.
+- packages/ui/: shared Web-Temify UI components.
+- src/app/: Next.js App Router and route groups.
+- src/components/: app-specific UI components.
+- src/features/: domain modules and application services.
+- src/lib/: safe shared utilities, environment validation and Supabase SSR client helpers.
+- src/server/: server-only adapters, authorization and integration boundaries.
+- src/styles/: design tokens and shared styles.
+- supabase/config.toml: local Supabase CLI configuration.
+- supabase/migrations/: canonical schema history, created with Supabase CLI.
+- supabase/tests/: PostgreSQL/RLS tests.
+- tests/unit, integration, contract, security, e2e: layered quality gates.
+- pnpm-workspace.yaml and turbo.json: workspace and task orchestration.
 
-```text
-web-temify/
-├── .github/ (workflows, CODEOWNERS, issue templates)
-├── docs/ (architecture, governance, product, roadmap, quality, security, operations, integrations)
-├── prisma/ (schema, seed, migrations only if Prisma owns migrations)
-├── supabase/ (config, migrations/tests only under agreed ownership)
-├── public/ (approved icons, images, licensed fonts)
-├── scripts/ (validation and maintenance)
-├── src/
-│   ├── app/
-│   │   ├── (marketing)/ (about, pricing, contact, changelog)
-│   │   ├── (auth)/ (login, registration, recovery, callback)
-│   │   ├── (marketplace)/ (catalogue, categories, product detail, search)
-│   │   ├── (checkout)/ (checkout, return/status pages)
-│   │   ├── (account)/ (purchases, downloads, licenses, settings)
-│   │   ├── (seller)/ (onboarding, submissions, analytics, payouts)
-│   │   ├── (admin)/ (moderation, users, products, orders, audit)
-│   │   ├── (directory)/ and (content)/ (later-phase surfaces)
-│   │   ├── api/ (health and verified provider webhooks)
-│   │   └── layout.tsx, page.tsx, error.tsx, not-found.tsx, loading.tsx
-│   ├── components/ (ui, layout, marketplace, forms)
-│   ├── features/ (identity, catalogue, cart, checkout, orders, payments, entitlements, downloads, licenses, subscriptions, vendors, moderation, notifications, audit, directory, AI, integrations)
-│   ├── lib/ (env, flags, logging, observability, security)
-│   ├── server/ (auth, db, storage, payments, email, integrations/tinlance)
-│   └── styles/
-├── tests/ (unit, integration, contract, security, e2e)
-└── root config, package manifest, lockfile, README
-```
-
-## Rules
-Feature modules own schemas, use cases, and tests; routes call use cases instead of embedding business logic. Avoid circular dependencies. Secret-bearing code must not enter client components. Do not create competing schema authorities. Lock the Prisma/Supabase migration model first. Legacy PHP/Laravel prompts are historical references, not canonical implementation instructions.
+The root Next.js app remains the first deployable while apps/* and packages/* are supported. Moving it to apps/web is a separately validated structural migration, not a silent partial move.

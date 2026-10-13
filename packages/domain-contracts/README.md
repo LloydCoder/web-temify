@@ -1,0 +1,1 @@
+Shared Zod schemas for request/event boundaries and stable domain contracts. Avoid importing server-only code here. Add compatibility tests whenever a public contract changes.

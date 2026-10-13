@@ -1,19 +1,20 @@
 # Phase 1 local and CI runbook
 
+## Prerequisites
+Node.js 22, Corepack/pnpm 10, Docker for local Supabase, and browser dependencies for Playwright.
+
 ## Local validation
-```bash
-node --version
-npm --version
-npm install
-npm run check:foundation
-npm run typecheck
-npm run lint
-npm run build
-npm run dev
-```
+1. corepack enable
+2. pnpm install
+3. pnpm check:foundation
+4. pnpm typecheck
+5. pnpm lint
+6. pnpm build
+7. pnpm exec playwright install --with-deps chromium
+8. pnpm test:e2e
+9. pnpm exec supabase start
+10. pnpm exec supabase db lint --local
 
-Use Node 22 from `.nvmrc`. Start from `.env.example`; do not copy production secrets locally. The shell should work without payment, AI, database, or Tinlance credentials. Real integrations fail closed when configuration is absent.
+Start from .env.example; do not copy production secrets locally. The shell should work without payment, AI, database, or Tinlance credentials.
 
-A workflow file alone does not prove CI passed. Inspect the actual run and record its URL, commit SHA, and result.
-
-**Known follow-up:** a committed package lockfile is required for reproducible installs. Generate it in a controlled environment, commit it, and switch CI to `npm ci`. Pin third-party GitHub Actions to reviewed immutable SHAs before production hardening.
+Lockfile gate: commit pnpm-lock.yaml after running pnpm install with the pinned package manager. CI must use pnpm install --frozen-lockfile once the lockfile exists. Do not declare the foundation reproducible before then.

@@ -1,0 +1,1 @@
+Database tests must run against local Supabase/PostgreSQL and cover anonymous access, authenticated owner, non-owner, privileged server operations, and storage policy behavior. No schema/RLS tests are considered passed until executable SQL tests are present and run.

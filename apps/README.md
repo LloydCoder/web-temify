@@ -1,0 +1,1 @@
+Reserved for future independently deployable applications. The root Next.js app remains the first deployable until a dedicated migration moves it here and verifies CI, environment handling, deployment configuration, and routing.

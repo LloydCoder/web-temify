@@ -1,17 +1,8 @@
-# ADR-0003: Database migration authority
+# ADR-0003: Supabase SQL migrations own schema evolution
 
-- **Status:** Proposed — blocking before schema implementation
+- **Status:** Accepted
 - **Date:** 2026-10-13
 
-## Context
-Existing documents describe Supabase PostgreSQL and Prisma while showing both Prisma and Supabase migration directories. Competing schema authorities can drift and create destructive deployments.
+Supabase SQL migrations are the canonical and sole schema history. New migrations are created using the Supabase CLI, reviewed as SQL, tested against local PostgreSQL/Supabase, and applied through controlled environments. Do not add Prisma Migrate or a second competing migration directory. If Prisma is later adopted as a query/client layer, it must not own migrations.
 
-## Decision
-Do not generate production schema or migrations until the owner chooses and validates one model:
-1. Prisma Migrate owns schema evolution; Supabase CLI manages local services and coordinated RLS/functions; or
-2. Supabase SQL migrations own schema evolution; Prisma is a checked representation/client.
-
-## Required follow-up
-Record the chosen owner and drift-check; define RLS/functions/triggers/extensions review; document local reset, staging, production apply, rollback/forward-fix, and backup/restore; validate with a small non-production migration.
-
-Schema implementation is intentionally blocked until this ADR is accepted.
+Required controls: every exposed table has RLS and least-privilege grants; policies enforce ownership including USING and WITH CHECK; tests cover anonymous, owner, non-owner, and privileged server paths; review views, functions, triggers, storage policies, grants and extensions; document staging/production application, forward-fix and backup/restore. No production schema changes before local tests and review pass.
