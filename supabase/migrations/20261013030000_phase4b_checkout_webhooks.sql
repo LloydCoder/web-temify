@@ -88,6 +88,37 @@ begin
   if new.processing_status = 'processing' and old.processing_status = 'failed' then
     new.retry_count := old.retry_count + 1;
   end if;
+
+  -- Retain the Phase 4A transition guards: a processed event is not proof by itself.
+  if new.processing_status = 'processed' and new.event_type = 'payment.succeeded' and not exists (
+    select 1 from public.payment_attempts pa
+    join public.ledger_transactions lt on lt.payment_attempt_id = pa.id
+      and lt.order_id = new.order_id and lt.source_type = 'payment'
+    where pa.id = new.payment_attempt_id and pa.status = 'succeeded'
+      and pa.order_id = new.order_id and pa.amount_minor = new.amount_minor
+      and pa.currency = new.currency and lt.amount_minor = new.amount_minor
+      and lt.currency = new.currency
+  ) then
+    raise exception using errcode = '23514', message = 'successful payment event requires matching attempt and ledger';
+  end if;
+  if new.processing_status = 'processed' and new.event_type = 'payment.failed' and not exists (
+    select 1 from public.payment_attempts pa
+    where pa.id = new.payment_attempt_id and pa.order_id = new.order_id and pa.status = 'failed'
+      and pa.amount_minor = new.amount_minor and pa.currency = new.currency
+  ) then
+    raise exception using errcode = '23514', message = 'failed payment event requires a failed matching attempt';
+  end if;
+  if new.processing_status = 'processed' and new.event_type = 'refund.succeeded' and not exists (
+    select 1 from public.refunds r
+    join public.ledger_transactions lt on lt.refund_id = r.id
+      and lt.order_id = new.order_id and lt.source_type = 'refund'
+    where r.id = new.refund_id and r.order_id = new.order_id
+      and r.payment_attempt_id = new.payment_attempt_id and r.status = 'succeeded'
+      and r.amount_minor = new.amount_minor and r.currency = new.currency
+      and lt.amount_minor = new.amount_minor and lt.currency = new.currency
+  ) then
+    raise exception using errcode = '23514', message = 'successful refund event requires matching refund and ledger';
+  end if;
   return new;
 end;
 $function$;
@@ -106,7 +137,7 @@ as $function$
 declare
   input_count bigint;
   matching_count bigint;
-  calculated_total bigint;
+  calculated_total numeric;
   currency_min text;
   currency_max text;
   existing_order public.orders%rowtype;
@@ -156,6 +187,8 @@ begin
     or calculated_total <= 0 or calculated_total > 9000000000000000 then
     raise exception using errcode = '23514', message = 'checkout requires available verified releases with a positive total and one currency';
   end if;
+
+  perform pg_advisory_xact_lock(hashtextextended(p_customer_id::text || ':' || p_idempotency_key, 0));
 
   select * into existing_order
   from public.orders o
