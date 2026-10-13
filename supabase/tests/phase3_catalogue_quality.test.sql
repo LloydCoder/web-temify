@@ -1,5 +1,5 @@
 begin;
-select plan(18);
+select plan(26);
 
 select has_column('public', 'products', 'summary', 'products have a bounded summary field');
 select has_column('public', 'products', 'compatibility', 'products carry structured compatibility metadata');
@@ -15,6 +15,14 @@ select ok(not has_table_privilege('authenticated', 'public.product_versions', 'U
 select ok(not has_column_privilege('authenticated', 'public.products', 'rights_status', 'UPDATE'), 'creators cannot edit rights review state directly');
 select ok(not has_column_privilege('authenticated', 'public.products', 'artifact_sha256', 'UPDATE'), 'creators cannot set release artifact evidence directly');
 select ok(has_column_privilege('authenticated', 'public.products', 'name', 'UPDATE'), 'creators retain permission to edit draft product content');
+select ok(not has_table_privilege('anon', 'public.products', 'SELECT'), 'anonymous clients do not have table-wide product column access');
+select ok(not has_table_privilege('authenticated', 'public.products', 'SELECT'), 'authenticated clients do not have table-wide product column access');
+select ok(not has_column_privilege('anon', 'public.products', 'creator_id', 'SELECT'), 'public clients cannot read creator account identifiers');
+select ok(not has_column_privilege('anon', 'public.products', 'rights_statement', 'SELECT'), 'public clients cannot read rights declarations');
+select ok(not has_column_privilege('anon', 'public.products', 'rights_verified_by', 'SELECT'), 'public clients cannot read reviewer identity');
+select ok(not has_column_privilege('anon', 'public.products', 'rights_verified_at', 'SELECT'), 'public clients cannot read internal review timestamps');
+select ok(not has_column_privilege('anon', 'public.products', 'artifact_sha256', 'SELECT'), 'public clients cannot read internal artifact digests');
+select ok(has_column_privilege('anon', 'public.products', 'name', 'SELECT'), 'public clients can read approved listing fields');
 select ok(not has_table_privilege('anon', 'public.product_versions', 'SELECT'), 'anonymous users cannot read private artifact storage paths');
 select ok(has_table_privilege('service_role', 'public.product_versions', 'UPDATE'), 'trusted release path can manage release state');
 select ok(has_table_privilege('service_role', 'public.product_rights_attestations', 'UPDATE'), 'trusted review path can manage rights state');
