@@ -1,0 +1,1 @@
+Protected customer routes: purchases, downloads, licenses, subscriptions, invoices, profile and data export. Every object access requires server authorization.

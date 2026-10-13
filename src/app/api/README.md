@@ -1,0 +1,1 @@
+API route conventions: validate schemas at boundaries, authenticate/authorize, enforce rate limits, redact logs, version public contracts. Provider webhooks require raw-body signature verification and idempotency.
