@@ -2,3 +2,8 @@ packages:
   - "apps/*"
   - "packages/*"
   - "tooling/*"
+
+overrides:
+  postcss: 8.5.30
+  sharp: 0.35.5
+  tinypool: 2.1.2
