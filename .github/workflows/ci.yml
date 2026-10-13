@@ -16,7 +16,7 @@ jobs:
   foundation:
     name: Foundation checks
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -26,15 +26,33 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
+          cache: pnpm
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
       - name: Validate foundation and tests
         run: pnpm check:foundation
       - name: Typecheck
         run: pnpm typecheck
       - name: Lint
         run: pnpm lint
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: 2.107.0
+      - name: Start local Supabase services
+        run: supabase start -x studio,imgproxy,inbucket
+      - name: Apply migrations from an empty database
+        run: supabase db reset
+      - name: Run database and RLS tests
+        run: supabase test db
+      - name: Install Chromium for browser tests
+        run: pnpm exec playwright install --with-deps chromium
+      - name: End-to-end tests
+        run: pnpm test:e2e
       - name: Production build
         run: pnpm build
         env:
           NEXT_PUBLIC_SITE_URL: https://example.invalid
+      - name: Stop local Supabase services
+        if: always()
+        run: supabase stop
