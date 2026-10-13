@@ -1,6 +1,6 @@
 # Phase gates and completion criteria
 
-This roadmap is a sequence of evidence gates, not a percentage-complete estimate. A phase is complete only when implementation, automated tests, documentation, forensic review, and CI evidence agree at the same commit SHA. A green CI run over a scaffold does not prove production readiness. Keep every incomplete exit criterion unchecked; never infer completion from a plan or a passing subset of checks. The canonical forward roadmap and cross-phase architecture are defined in [master-enterprise-roadmap.md](master-enterprise-roadmap.md); this file is the implementation evidence register, including legacy subphase records.
+This roadmap is a sequence of evidence gates, not a percentage-complete estimate. A phase is complete only when implementation, automated tests, documentation, forensic review, and CI evidence agree at the same commit SHA. A green CI run over a scaffold does not prove production readiness. Keep every incomplete exit criterion unchecked; never infer completion from a plan or a passing subset of checks.
 
 ## Phase 0 — Product and engineering foundation
 Scope: confirm product boundaries and launch scope; reconcile existing docs and flag conflicts; define architecture, data ownership, security, integration boundaries, test strategy, delivery gates, and repository map.
@@ -186,57 +186,14 @@ Least-privilege admin controls, moderation queues, support, audit review, financ
 - **Residual limits:** this is an administrative visibility surface, not a complete support, incident-response, finance-reconciliation, moderation, backup/restore, alerting, or break-glass system. Passing CI does not prove production secrets, provider configuration, legal/tax readiness, penetration-test completion, or full WCAG 2.2 AA conformance.
 - **Gate decision:** Phase 5C passes its implementation and CI gate. Proceed to Phase 6 only after the roadmap and dependency gates below are reconciled; Phase 5 overall remains limited by the explicitly listed operational gaps.
 
-## Phase 6 — Seller system and product factory
+### Phase 5 overall exit gates (not satisfied by the read-only console or audit explorer alone)
 
-**Status: NOT COMPLETE.** This phase builds the trusted supply side and a repeatable, evidence-backed product release pipeline. The dedicated source monorepo is [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products); its inventory is planning input, not evidence that products have been built or released. Keep product source code, manifests, build/test contracts and immutable release evidence in that repository; keep commercial listing state and marketplace transactions in this repository.
+- [ ] Moderation, takedown, appeal and support-case workflows have scoped authorization, evidence retention, reason codes and audit events.
+- [ ] Financial reconciliation distinguishes gross orders, refunds, provider settlement, platform fees, seller payable, reserves and tax liabilities.
+- [ ] Disputes, chargebacks, payout holds, negative balances and manual adjustments have reviewed state machines and dual approval for high-risk actions.
+- [ ] Incident alerts, escalation ownership, safe break-glass access, backup/restore exercises and incident response procedures are operationally tested.
+- [ ] Support communications and data access are tenant-scoped, logged, retention-aware and protected against disclosure of secrets or payment data.
 
-Exit gates (all required):
-- [ ] Seller onboarding captures legal/business identity, beneficial ownership where required, payout jurisdiction, tax status, support/contact and policy acceptance without presenting unverified claims as verified.
-- [ ] Verification is evidence-based, independently reviewable, timestamped, revocable and appealable; creator self-review is prohibited; badges/ranking reflect current evidence and never imply a government endorsement.
-- [ ] Seller status, listing publication, product rights, artifact release and payout eligibility are distinct state machines with server/database enforcement.
-- [ ] Product manifests are schema-validated and versioned; builds run in isolated least-privilege environments with resource/time limits, network egress controls, secret isolation and cleanup.
-- [ ] Released artifacts are immutable/content-addressed; digest, source revision, toolchain, build logs, test evidence, license/rights evidence and SBOM/provenance are linked to a release.
-- [ ] Malware/secrets/dependency/license scans fail closed on policy violations; scan exceptions require a documented, time-bounded approval and audit evidence.
-- [ ] Product-specific CI validates lint, typecheck, unit/integration tests, security checks, reproducible manifest shape and build output before a release is eligible for listing.
-- [ ] Seller contracts, prohibited-content rules, IP takedown, refunds, dispute handling, payout holds, reserves and audit obligations have reviewed operational/legal policies before real sellers or money are enabled.
-- [ ] Admin actions are permission-scoped, reason-coded, auditable, idempotent and protected against self-approval.
-- [ ] Automated tests cover seller tenancy isolation, privilege escalation, artifact substitution, malicious build scripts, replay, stale/revoked evidence, payout eligibility and moderation races.
-- [ ] Exact-head CI, migration reset/lint/pgTAP, browser E2E, production build and a phase-specific forensic review pass before merging.
-
-Deferred until explicitly gated: live seller payouts, escrow claims, tax calculation, regulated/high-risk categories and arbitrary third-party executable code. Never label funds as escrow unless the legal and payment architecture genuinely supports that service.
-
-### Phase 6 marketplace vertical requirements
-
-- **Verified Automation Marketplace:** list workflows, AI agents, integrations and reusable digital solutions only with supported compatibility claims, setup documentation, versioned artifacts, test/security evidence and clear permission/data requirements.
-- **Verified Specialist Supplier Marketplace:** represent firms and specialists using evidence-backed capabilities, service regions, certifications, references and measured performance. Use status labels that distinguish identity verification from skill certification, reference checks and outcome history.
-- **Outcome-Based AI Implementation Marketplace:** each offer defines scope, exclusions, customer prerequisites, baseline methodology, measurable outcome metrics, acceptance criteria, milestones, change control, dispute process and responsibility boundaries. Do not promise outcomes or use escrow terminology without enforceable terms and operational capability.
-- Tinlance Limited may be a seller under the same eligibility, verification, ranking and dispute rules as other vendors. No privileged placement, self-verification or hidden policy exceptions.
-
-## Phase 7 — Governed Tinlance Agent System integration
-
-**Status: NOT COMPLETE.** Begin with read-only/sandbox assistance. Web-Temify remains the authority for listings, pricing, checkout, payment state, refunds, entitlements, licenses, downloads, moderation and seller payouts.
-
-- [ ] Define versioned integration contracts, tenant context, capability scopes, authenticated APIs/events, schema compatibility and deprecation rules.
-- [ ] Enforce explicit human approvals for publishing, changing prices, issuing refunds, modifying entitlements, seller verification, payout actions and external communications.
-- [ ] Apply least privilege, per-task budgets, timeouts, idempotency, rate limits, kill switch, trace IDs, audit evidence, secret isolation and isolated execution.
-- [ ] Treat all user/product/vendor content and tool outputs as untrusted; test prompt injection, data exfiltration, cross-tenant access and confused-deputy paths.
-- [ ] Prohibit agents from treating untrusted instructions as policy or from directly mutating commercial truth outside narrow server-enforced workflows.
-- [ ] Test retries, duplicate events, partial failures, cancellation, approvals, policy denials and rollback/compensation behavior.
-- [ ] Demonstrate integration against staging fixtures and a documented threat model before any production scope is enabled.
-
-## Phase 8 — Production readiness and controlled launch
-
-**Status: NOT COMPLETE.** No public production launch until every release gate has named ownership and auditable evidence.
-
-- [ ] Provider eligibility and sandbox verification; live payments, refunds, seller payouts, taxes and settlement reconciliation validated for the target jurisdictions.
-- [ ] Independent security review and penetration test; dependency/supply-chain controls; secret rotation; vulnerability disclosure and incident response.
-- [ ] Full WCAG 2.2 AA assessment, keyboard/screen-reader checks, responsive QA and localization/currency/date handling.
-- [ ] SLOs, error budgets, service dashboards, actionable alerts, structured logs, trace correlation, privacy-safe analytics and abuse monitoring.
-- [ ] Backup/restore rehearsal with measured RPO/RTO; tested disaster recovery, migration rollback and deployment rollback.
-- [ ] Legal review for consumer rights, seller terms, privacy/data protection, IP/takedown, tax/VAT, payment services, sanctions and marketplace obligations in launch jurisdictions.
-- [ ] Support operations, escalation rota, refund/dispute procedures, data-subject request process and status communications are staffed and rehearsed.
-- [ ] Staged rollout with explicit go/no-go owner, rollback trigger, canary monitoring and customer-impact review.
-- [ ] Production environment evidence, smoke tests and deployment provenance are attached to the release; no claim of production readiness from CI alone.
 
 ## Phase 6 — Seller system and product factory
 
@@ -272,13 +229,6 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Each product has a versioned manifest, rights/license evidence, threat model, tests, deployment instructions, support policy, changelog and immutable release record.
 - [ ] Build/publish through CI with signed provenance/SBOM where supported, dependency/license/security scans and reproducible artifact checks.
 - [ ] Planned, unbuilt, unverified products are never represented as available for purchase.
-
-### Finance, support and operations gates (required before completing Phase 5)
-
-- [ ] Reconcile provider transactions, orders, refunds, fees, taxes, reserves, payouts and bank/provider settlement with immutable ledger evidence.
-- [ ] Implement support cases, escalation, SLA tracking, evidence access controls and secure customer communications.
-- [ ] Add dispute/chargeback workflows, payout holds, negative balances, fraud review and controlled manual adjustments with dual control.
-- [ ] Monitor seller concentration, refunds, disputes, abuse, support load and contribution margin without exposing sensitive cross-tenant data.
 
 
 ## Phase 7 — Governed Tinlance Agent System integration
@@ -396,6 +346,8 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Cover artifact scanning/builds, listing revalidation, supplier evidence expiry, lead workflows, project reminders, webhook reconciliation, notifications and reporting.
 - [ ] Test delayed/duplicate events, worker crashes, queue backpressure, poison messages, partial outages and replay without duplicate financial effects.
 
+- [ ] Exercise incident, payment-provider outage, delayed webhook, duplicate event and financial reconciliation playbooks.
+
 
 ## Phase 17 — Security engineering and comprehensive verification
 
@@ -407,7 +359,7 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 
 ### Security baseline requirements
 
-- [ ] Map application security controls to a pinned, reviewed version of OWASP ASVS (currently stable v5.0.0) and the applicable OWASP Top 10 edition; record scope and exceptions.
+- [ ] Map application security controls to a pinned, reviewed version of OWASP ASVS (stable v5.0.0 at roadmap publication) and the applicable OWASP Top 10 edition; record scope and exceptions.
 - [ ] Run SAST, software-composition/dependency, license and secret scans; add DAST/container checks where applicable and produce SBOM/provenance for release artifacts.
 - [ ] Harden CI supply chain: least-privilege workflow permissions, protected environments, and third-party Actions pinned to verified full commit SHAs or an approved immutable dependency-lock mechanism.
 - [ ] Test SSRF and egress controls, CSP/security headers, session/cookie hardening, rate limits/bot abuse, log redaction, artifact integrity and tenant isolation.
