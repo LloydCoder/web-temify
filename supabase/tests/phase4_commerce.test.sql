@@ -1,5 +1,5 @@
 begin;
-select plan(130);
+select plan(131);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
