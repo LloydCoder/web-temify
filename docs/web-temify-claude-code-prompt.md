@@ -1,3 +1,5 @@
+> **LEGACY BUILD PROMPT — reviewed 2026-10-13.** This long-form prompt is historical requirements input, not an executable source of truth. It contains mixed framework, provider, payment, schema, and feature assumptions that may conflict with accepted ADRs and the current phase gates. Do not execute wholesale. Use current source, Supabase migrations, tests, `docs/roadmap/phase-gates.md`, and the canonical product manifest instead.
+
 # WEB-TEMIFY — CLAUDE CODE MASTER BUILD PROMPT
 ## Complete PHP Platform Build Brief
 ### Version 3.0 | May 2026 | Pure PHP/MySQL
