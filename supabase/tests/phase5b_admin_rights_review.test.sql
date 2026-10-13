@@ -81,7 +81,7 @@ select throws_ok(
 revoke insert on public.audit_events from service_role;
 set local role service_role;
 select throws_ok(
-  $select public.admin_review_product_rights('89000000-0000-4000-8000-000000000090', '89100000-0000-4000-8000-000000000090', '88000000-0000-4000-8000-000000000088', 'verified', 'Attempt must roll back when audit persistence is unavailable.', '89200000-0000-4000-8000-000000000095')$,
+  $$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000090', '89100000-0000-4000-8000-000000000090', '88000000-0000-4000-8000-000000000088', 'verified', 'Attempt must roll back when audit persistence is unavailable.', '89200000-0000-4000-8000-000000000095')$$,
   '42501',
   'permission denied for table audit_events',
   'review decision fails when append-only audit persistence is unavailable'
