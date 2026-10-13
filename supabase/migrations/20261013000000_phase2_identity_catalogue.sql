@@ -60,7 +60,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $function$
 begin
   insert into public.profiles (id, display_name)
   values (
@@ -70,7 +70,7 @@ begin
   on conflict (id) do nothing;
   return new;
 end;
-$;
+$function$;
 revoke all on function public.handle_new_user() from public, anon, authenticated, service_role;
 create trigger on_auth_user_created
 after insert on auth.users
