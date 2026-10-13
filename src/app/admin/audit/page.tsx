@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { UrlObject } from "url";
 import { notFound } from "next/navigation";
 import { getAdminContext } from "@/server/admin/authorization";
 import { parseAuditFilters } from "@/server/admin/audit-filters";
@@ -17,11 +18,11 @@ function formatTimestamp(value: string) {
   })} UTC`;
 }
 
-function buildNextHref(filters: { action?: string; entityType?: string }, cursor: string) {
-  const params = new URLSearchParams({ cursor });
-  if (filters.action) params.set("action", filters.action);
-  if (filters.entityType) params.set("entityType", filters.entityType);
-  return `/admin/audit?${params.toString()}`;
+function buildNextHref(filters: { action?: string; entityType?: string }, cursor: string): UrlObject {
+  const query: Record<string, string> = { cursor };
+  if (filters.action) query.action = filters.action;
+  if (filters.entityType) query.entityType = filters.entityType;
+  return { pathname: "/admin/audit", query };
 }
 
 export default async function AdminAuditExplorerPage({ searchParams }: PageProps) {
