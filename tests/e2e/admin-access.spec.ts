@@ -26,3 +26,13 @@ test("admin rights-review mutation endpoint denies unauthenticated visitors", as
   expect(response.status()).toBe(404);
   await expect(response.json()).resolves.toEqual({ error: "not_found" });
 });
+
+test("admin audit and rights-review pages deny unauthenticated visitors", async ({ page }) => {
+  for (const route of ["/admin/audit", "/admin/reviews"]) {
+    await page.goto(route);
+    await expect(page.getByText("404 — Not found")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Wrong turn." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /audit explorer|product rights review/i })).toHaveCount(0);
+    await expect(page.getByRole("navigation", { name: "Audit pagination" })).toHaveCount(0);
+  }
+});
