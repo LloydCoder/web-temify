@@ -188,7 +188,7 @@ select throws_ok(
 select is((select count(*) from public.ledger_transactions where order_id = '88000000-0000-4000-8000-000000000088'), 1::bigint, 'successful payment is journaled exactly once');
 
 select throws_ok(
-  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, order_id, payment_attempt_id)
+  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id)
   values ('sandbox', 'phase4-payment-event-0001', 'payment.succeeded', repeat('e', 64), true, '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090')$sql$,
   '23505', null, 'duplicate provider event identifiers are rejected'
 );
