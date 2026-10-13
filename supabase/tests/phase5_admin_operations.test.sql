@@ -1,5 +1,5 @@
 begin;
-select plan(16);
+select plan(14);
 
 select has_table('public', 'audit_events', 'administrative audit events use the canonical audit table');
 select ok((select relrowsecurity from pg_class where oid = 'public.audit_events'::regclass), 'audit events have RLS enabled');
