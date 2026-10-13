@@ -39,7 +39,7 @@ export const ProductRightsAttestationInputSchema = z.object({
   rightsBasis: z.enum(["original_work", "authorized_distribution", "open_source_compliance", "licensed_assets", "other"]),
   statement: z.string().trim().min(20).max(4000),
   evidenceReference: z.string().trim().max(2048).optional(),
-});
+}).strict();
 export type ProductSummary = z.infer<typeof ProductSummarySchema>;
 export type ProductStatus = z.infer<typeof ProductStatusSchema>;
 export type ProductCatalogItem = z.infer<typeof ProductCatalogItemSchema>;
