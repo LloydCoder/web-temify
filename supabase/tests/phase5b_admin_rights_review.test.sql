@@ -1,5 +1,5 @@
 begin;
-select plan(24);
+select plan(26);
 
 select ok((select n.nspname = 'public' from pg_proc f join pg_namespace n on n.oid = f.pronamespace where f.oid = 'public.admin_review_product_rights(uuid,uuid,uuid,text,text,uuid)'::regprocedure), 'RPC is in the exposed schema for server-side PostgREST access');
 select has_function('public', 'admin_review_product_rights', array['uuid','uuid','uuid','text','text','uuid'], 'admin rights-review RPC exists');
@@ -61,6 +61,20 @@ select throws_ok(
   '42501',
   'Reviewers cannot review their own rights evidence.',
   'creator cannot review their own rights evidence'
+);
+
+select throws_ok(
+  $select public.admin_review_product_rights('89000000-0000-4000-8000-000000000092', '89100000-0000-4000-8000-000000000092', '87000000-0000-4000-8000-000000000087', 'verified', 'Non-admin must not review this evidence.', '89200000-0000-4000-8000-000000000093')$,
+  '42501',
+  'Reviewer must have the admin role.',
+  'non-admin identity cannot submit a review'
+);
+
+select throws_ok(
+  $select public.admin_review_product_rights('89000000-0000-4000-8000-000000000089', '89100000-0000-4000-8000-000000000089', '88000000-0000-4000-8000-000000000088', 'verified', 'Attempt to change an already resolved decision.', '89200000-0000-4000-8000-000000000094')$,
+  'P0002',
+  'Rights attestation is already resolved.',
+  'resolved evidence cannot be silently re-reviewed'
 );
 
 select * from finish();

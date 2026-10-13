@@ -16,7 +16,8 @@ export default async function AdminRightsReviewPage() {
     .order("created_at", { ascending: true })
     .limit(50);
 
-  const productIds = [...new Set((attestations.data ?? []).map((item) => item.product_id))];
+  const reviewItems = attestations.data ?? [];
+  const productIds = [...new Set(reviewItems.map((item) => item.product_id))];
   const products = productIds.length
     ? await admin.from("products").select("id,name,slug,status,rights_status").in("id", productIds)
     : { data: [], error: null };
@@ -39,11 +40,11 @@ export default async function AdminRightsReviewPage() {
       </section>
       {unavailable ? (
         <p className="notice" role="status">The review queue is unavailable. No underlying database details are exposed.</p>
-      ) : attestations.data.length === 0 ? (
+      ) : reviewItems.length === 0 ? (
         <p className="notice" role="status">No product rights attestations are waiting for review.</p>
       ) : (
         <section className="admin-review-list" aria-label="Pending product rights attestations">
-          {attestations.data.map((item) => {
+          {reviewItems.map((item) => {
             const product = productById.get(item.product_id);
             const safeEvidenceUrl = item.evidence_reference && /^https:\/\/[^\s\r\n]+$/i.test(item.evidence_reference)
               ? item.evidence_reference

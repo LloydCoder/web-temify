@@ -20,6 +20,13 @@ begin
   if p_reviewer_id is null or p_product_id is null or p_attestation_id is null or p_request_id is null then
     raise exception using errcode = '22023', message = 'Required review identifiers are missing.';
   end if;
+  if not exists (
+    select 1 from public.user_roles
+    where user_id = p_reviewer_id and role = 'admin'::public.app_role
+  ) then
+    raise exception using errcode = '42501', message = 'Reviewer must have the admin role.';
+  end if;
+
   if p_decision is null or p_decision not in ('under_review', 'verified', 'rejected') then
     raise exception using errcode = '22023', message = 'Unsupported product-rights review decision.';
   end if;
