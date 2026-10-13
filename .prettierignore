@@ -1,0 +1,10 @@
+# Generated outputs and package-manager-owned lockfiles
+node_modules/
+.next/
+coverage/
+playwright-report/
+test-results/
+supabase/.temp/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
