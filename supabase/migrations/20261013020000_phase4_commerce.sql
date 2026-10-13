@@ -263,11 +263,11 @@ begin
       on lt.payment_attempt_id = pa.id
       and lt.order_id = new.id
       and lt.source_type = 'payment'
-      and lt.amount_minor = new.total_minor
+      and lt.amount_minor = (new.subtotal_minor + new.tax_minor)
       and lt.currency = new.currency
     where pa.order_id = new.id
       and pa.status = 'succeeded'
-      and pa.amount_minor = new.total_minor
+      and pa.amount_minor = (new.subtotal_minor + new.tax_minor)
       and pa.currency = new.currency
   ) then
     raise exception using errcode = '23514', message = 'order cannot be paid without a processed verified payment and ledger entry';
@@ -291,12 +291,12 @@ begin
       from public.refunds r
       where r.order_id = new.id and r.status = 'succeeded';
       required_attempt_status := case when new.status = 'partially_refunded' then 'partially_refunded' else 'refunded' end;
-      if (new.status = 'partially_refunded' and (refunded_minor <= 0 or refunded_minor >= new.total_minor))
-        or (new.status = 'refunded' and refunded_minor <> new.total_minor)
+      if (new.status = 'partially_refunded' and (refunded_minor <= 0 or refunded_minor >= (new.subtotal_minor + new.tax_minor)))
+        or (new.status = 'refunded' and refunded_minor <> (new.subtotal_minor + new.tax_minor))
         or not exists (
           select 1 from public.payment_attempts pa
           where pa.order_id = new.id and pa.status = required_attempt_status
-            and pa.amount_minor = new.total_minor and pa.currency = new.currency
+            and pa.amount_minor = (new.subtotal_minor + new.tax_minor) and pa.currency = new.currency
         ) then
         raise exception using errcode = '23514', message = 'refund order state must match settled refund and payment totals';
       end if;
