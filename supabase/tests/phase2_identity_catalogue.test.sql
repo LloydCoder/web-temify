@@ -28,11 +28,11 @@ insert into public.categories (id, slug, name, is_active) values
 on conflict (id) do nothing;
 insert into public.products (id, creator_id, category_id, slug, name, product_type, status, rights_status, rights_verified_at, rights_verified_by, artifact_sha256)
 values
- ('50000000-0000-4000-8000-000000000005', '10000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000003', 'published-product', 'Published product', 'template', 'published', 'verified', now(), '20000000-0000-4000-8000-000000000002', repeat('a', 64)),
+ ('50000000-0000-4000-8000-000000000005', '10000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000003', 'published-product', 'Published product', 'template', 'published', 'verified', '2026-10-13T12:00:00Z'::timestamptz, '20000000-0000-4000-8000-000000000002', repeat('a', 64)),
  ('60000000-0000-4000-8000-000000000006', '10000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000003', 'draft-product', 'Draft product', 'template', 'draft', 'unverified', null, null, null)
 on conflict (id) do nothing;
 insert into public.product_rights_attestations (product_id, attested_by, rights_basis, statement, evidence_reference, review_status, reviewed_by, reviewed_at)
-values ('50000000-0000-4000-8000-000000000005', '10000000-0000-4000-8000-000000000001', 'original_work', 'Synthetic phase-two fixture reviewed by a different user.', 'test-fixture://phase2/rights', 'verified', '20000000-0000-4000-8000-000000000002', now())
+values ('50000000-0000-4000-8000-000000000005', '10000000-0000-4000-8000-000000000001', 'original_work', 'Synthetic phase-two fixture reviewed by a different user.', 'test-fixture://phase2/rights', 'verified', '20000000-0000-4000-8000-000000000002', '2026-10-13T12:00:00Z'::timestamptz)
 on conflict do nothing;
 insert into public.product_versions (product_id, version, release_state, release_notes, artifact_sha256, artifact_storage_path, manifest, compatibility, created_by, released_at)
 values ('50000000-0000-4000-8000-000000000005', '1.0.0', 'released', 'Synthetic phase-two fixture release', repeat('a', 64), 'private/phase2/published-product-1.0.0.zip', '{}'::jsonb, '{}'::jsonb, '10000000-0000-4000-8000-000000000001', now())
