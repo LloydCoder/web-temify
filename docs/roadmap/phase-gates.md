@@ -93,7 +93,7 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - **Residual risks and explicit non-claims:** `signature_verified` is a trusted-ingress assertion, not cryptographic proof by this migration; no raw-body provider signature verifier, checkout/order-creation API, durable webhook worker, provider sandbox integration, signed-URL issuer, seller payout/commission/tax/settlement accounting, chargeback workflow, production Supabase/Vercel configuration, formal penetration test, or full WCAG 2.2 AA audit is delivered here. The ledger is gross payment/refund transfer evidence only. These are later gates and must remain disabled/unclaimed until separately implemented and verified.
 - **Gate decision:** Phase 4A is merged and passes for its database-invariant scope only. Phase 4 as a whole remains in progress because the provider-neutral/live-provider boundary, durable event guarantees, and end-to-end delivery readiness must be verified against the canonical Phase 4 gate; this record is not launch approval.
 
-Phase 4B — server-side commerce workflows (implementation in progress):
+### Phase 4B — server-side commerce workflows (complete for sandbox-only scope)
 - [x] Atomic server-only order creation derives price, currency, seller, rights, release version and artifact digest from the canonical database; basket and idempotency replay are validated.
 - [x] Checkout and sandbox completion are authenticated, idempotent, non-production only, and fail closed when the provider is disabled or the environment is production.
 - [x] Raw-body HMAC verification enforces event identity, timestamp tolerance, constant-time signature comparison, streaming payload limits and strict event contracts.
