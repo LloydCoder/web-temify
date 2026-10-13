@@ -1,10 +1,6 @@
 -- Phase 5B: narrow, audited, transactional product-rights review.
 -- The function is invoker-security and callable only by the trusted server role.
-create schema if not exists private;
-revoke all on schema private from public, anon, authenticated;
-grant usage on schema private to service_role;
-
-create or replace function private.admin_review_product_rights(
+create or replace function public.admin_review_product_rights(
   p_product_id uuid,
   p_attestation_id uuid,
   p_reviewer_id uuid,
@@ -14,7 +10,7 @@ create or replace function private.admin_review_product_rights(
 )
 returns jsonb
 language plpgsql
-set search_path = pg_catalog, public, private
+set search_path = pg_catalog, public
 as $function$
 declare
   v_attested_by uuid;
@@ -88,5 +84,5 @@ begin
 end;
 $function$;
 
-revoke all on function private.admin_review_product_rights(uuid, uuid, uuid, text, text, uuid) from public, anon, authenticated;
-grant execute on function private.admin_review_product_rights(uuid, uuid, uuid, text, text, uuid) to service_role;
+revoke all on function public.admin_review_product_rights(uuid, uuid, uuid, text, text, uuid) from public, anon, authenticated;
+grant execute on function public.admin_review_product_rights(uuid, uuid, uuid, text, text, uuid) to service_role;

@@ -1,11 +1,11 @@
 begin;
 select plan(24);
 
-select has_schema('private', 'narrow admin RPC lives in a non-exposed schema');
-select has_function('private', 'admin_review_product_rights', array['uuid','uuid','uuid','text','text','uuid'], 'admin rights-review RPC exists');
-select ok(has_function_privilege('service_role', 'private.admin_review_product_rights(uuid,uuid,uuid,text,text,uuid)', 'EXECUTE'), 'trusted server role can call the rights-review RPC');
-select ok(not has_function_privilege('authenticated', 'private.admin_review_product_rights(uuid,uuid,uuid,text,text,uuid)', 'EXECUTE'), 'authenticated clients cannot call the rights-review RPC');
-select ok(not has_function_privilege('anon', 'private.admin_review_product_rights(uuid,uuid,uuid,text,text,uuid)', 'EXECUTE'), 'anonymous clients cannot call the rights-review RPC');
+select ok((select n.nspname = 'public' from pg_proc f join pg_namespace n on n.oid = f.pronamespace where f.oid = 'public.admin_review_product_rights(uuid,uuid,uuid,text,text,uuid)'::regprocedure), 'RPC is in the exposed schema for server-side PostgREST access');
+select has_function('public', 'admin_review_product_rights', array['uuid','uuid','uuid','text','text','uuid'], 'admin rights-review RPC exists');
+select ok(has_function_privilege('service_role', 'public.admin_review_product_rights(uuid,uuid,uuid,text,text,uuid)', 'EXECUTE'), 'trusted server role can call the rights-review RPC');
+select ok(not has_function_privilege('authenticated', 'public.admin_review_product_rights(uuid,uuid,uuid,text,text,uuid)', 'EXECUTE'), 'authenticated clients cannot call the rights-review RPC');
+select ok(not has_function_privilege('anon', 'public.admin_review_product_rights(uuid,uuid,uuid,text,text,uuid)', 'EXECUTE'), 'anonymous clients cannot call the rights-review RPC');
 
 insert into auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, created_at, updated_at, raw_app_meta_data, raw_user_meta_data)
 values
@@ -33,9 +33,9 @@ values
 on conflict (id) do nothing;
 
 set local role service_role;
-select lives_ok($$select private.admin_review_product_rights('89000000-0000-4000-8000-000000000089', '89100000-0000-4000-8000-000000000089', '88000000-0000-4000-8000-000000000088', 'verified', 'Reviewed the declared rights and evidence reference.', '89200000-0000-4000-8000-000000000089')$$, 'verified decision applies transactionally');
-select lives_ok($$select private.admin_review_product_rights('89000000-0000-4000-8000-000000000090', '89100000-0000-4000-8000-000000000090', '88000000-0000-4000-8000-000000000088', 'under_review', 'Requesting additional evidence before final review.', '89200000-0000-4000-8000-000000000090')$$, 'under-review decision remains unresolved');
-select lives_ok($$select private.admin_review_product_rights('89000000-0000-4000-8000-000000000091', '89100000-0000-4000-8000-000000000091', '88000000-0000-4000-8000-000000000088', 'rejected', 'The submitted rights evidence is insufficient for approval.', '89200000-0000-4000-8000-000000000091')$$, 'rejected decision applies transactionally');
+select lives_ok($$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000089', '89100000-0000-4000-8000-000000000089', '88000000-0000-4000-8000-000000000088', 'verified', 'Reviewed the declared rights and evidence reference.', '89200000-0000-4000-8000-000000000089')$$, 'verified decision applies transactionally');
+select lives_ok($$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000090', '89100000-0000-4000-8000-000000000090', '88000000-0000-4000-8000-000000000088', 'under_review', 'Requesting additional evidence before final review.', '89200000-0000-4000-8000-000000000090')$$, 'under-review decision remains unresolved');
+select lives_ok($$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000091', '89100000-0000-4000-8000-000000000091', '88000000-0000-4000-8000-000000000088', 'rejected', 'The submitted rights evidence is insufficient for approval.', '89200000-0000-4000-8000-000000000091')$$, 'rejected decision applies transactionally');
 reset role;
 
 select is((select review_status from public.product_rights_attestations where id = '89100000-0000-4000-8000-000000000089'), 'verified', 'verified attestation state persists');
@@ -57,7 +57,7 @@ select is((select rights_status from public.products where id = '89000000-0000-4
 select is((select rights_verified_at from public.products where id = '89000000-0000-4000-8000-000000000091'), null::timestamptz, 'rejected product has no verification timestamp');
 
 select throws_ok(
-  $$select private.admin_review_product_rights('89000000-0000-4000-8000-000000000092', '89100000-0000-4000-8000-000000000092', '88000000-0000-4000-8000-000000000088', 'verified', 'Attempt to review my own evidence.', '89200000-0000-4000-8000-000000000092')$$,
+  $$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000092', '89100000-0000-4000-8000-000000000092', '88000000-0000-4000-8000-000000000088', 'verified', 'Attempt to review my own evidence.', '89200000-0000-4000-8000-000000000092')$$,
   '42501',
   'Reviewers cannot review their own rights evidence.',
   'creator cannot review their own rights evidence'
