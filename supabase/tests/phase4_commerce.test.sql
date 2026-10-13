@@ -306,7 +306,7 @@ where id = '88000000-0000-4000-8000-000000000088';
 select is((select status from public.orders where id = '88000000-0000-4000-8000-000000000088'), 'partially_refunded', 'partial refund requires verified refund evidence and balanced ledger');
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '82000000-0000-4000-8000-000000000082', true);
-select is(public.consume_download_grant('93000000-0000-4000-8000-000000000093'), false, 'download is denied after order leaves paid state');
+select is(public.consume_download_grant('93000000-0000-4000-8000-000000000093'), false, 'exhausted download grant remains unusable after partial refund');
 reset role;
 
 insert into public.refunds (id, order_id, payment_attempt_id, amount_minor, currency, reason, idempotency_key, requested_by)
