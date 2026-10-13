@@ -1,974 +1,3355 @@
 <!-- CANONICAL VISUAL REFERENCE ONLY (reviewed 2026-10-13): preserve this page's visual identity as the design baseline. Product cards, testimonials, metrics, gateway claims, prices, links, and service claims are illustrative legacy content, not evidence of live features, real customers, or available products. Canonical stack and product inventory are maintained separately. -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web-Temify — From Idea to Deployable Web Product in Hours</title>
-<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg:      #fffbf4;
-  --ink:     #0f0d0a;
-  --coral:   #ff5733;
-  --yellow:  #ffd60a;
-  --mint:    #00c48c;
-  --sky:     #4f8ef7;
-  --lilac:   #c084fc;
-  --surface: #fff8ed;
-  --muted:   #6b6559;
-  --r:       2px;
-  --shadow:  4px 4px 0 var(--ink);
-  --shadow-lg: 6px 6px 0 var(--ink);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:'Cabinet Grotesk',sans-serif;overflow-x:hidden}
-a{color:inherit;text-decoration:none}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web-Temify — From Idea to Deployable Web Product in Hours</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #fffbf4;
+        --ink: #0f0d0a;
+        --coral: #ff5733;
+        --yellow: #ffd60a;
+        --mint: #00c48c;
+        --sky: #4f8ef7;
+        --lilac: #c084fc;
+        --surface: #fff8ed;
+        --muted: #6b6559;
+        --r: 2px;
+        --shadow: 4px 4px 0 var(--ink);
+        --shadow-lg: 6px 6px 0 var(--ink);
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Cabinet Grotesk", sans-serif;
+        overflow-x: hidden;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
 
-/* ── BUTTONS ── */
-.btn{font-family:'Cabinet Grotesk',sans-serif;font-weight:800;font-size:.82rem;border:2px solid var(--ink);padding:.55rem 1.3rem;cursor:pointer;border-radius:var(--r);transition:transform .15s,box-shadow .15s;text-decoration:none;display:inline-block;letter-spacing:.01em}
-.btn:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow)}
-.btn:active{transform:none;box-shadow:none}
-.btn-big{font-size:1rem;padding:.9rem 2rem;font-weight:900}
-.btn-ghost{background:transparent;color:var(--ink)}
-.btn-fill{background:var(--coral);color:#fff;border-color:var(--coral)}
-.btn-fill:hover{border-color:var(--ink)}
-.btn-yellow{background:var(--yellow);color:var(--ink)}
-.btn-mint{background:var(--mint);color:#fff;border-color:var(--mint)}
-.btn-mint:hover{border-color:var(--ink)}
-.btn-dark{background:var(--ink);color:#fff}
-.btn-white{background:#fff;color:var(--ink);border-color:var(--ink)}
-.btn-outline-white{background:transparent;color:#fff;border-color:#fff}
-.btn-outline-white:hover{box-shadow:4px 4px 0 rgba(255,255,255,.4)}
+      /* ── BUTTONS ── */
+      .btn {
+        font-family: "Cabinet Grotesk", sans-serif;
+        font-weight: 800;
+        font-size: 0.82rem;
+        border: 2px solid var(--ink);
+        padding: 0.55rem 1.3rem;
+        cursor: pointer;
+        border-radius: var(--r);
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+        text-decoration: none;
+        display: inline-block;
+        letter-spacing: 0.01em;
+      }
+      .btn:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: var(--shadow);
+      }
+      .btn:active {
+        transform: none;
+        box-shadow: none;
+      }
+      .btn-big {
+        font-size: 1rem;
+        padding: 0.9rem 2rem;
+        font-weight: 900;
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--ink);
+      }
+      .btn-fill {
+        background: var(--coral);
+        color: #fff;
+        border-color: var(--coral);
+      }
+      .btn-fill:hover {
+        border-color: var(--ink);
+      }
+      .btn-yellow {
+        background: var(--yellow);
+        color: var(--ink);
+      }
+      .btn-mint {
+        background: var(--mint);
+        color: #fff;
+        border-color: var(--mint);
+      }
+      .btn-mint:hover {
+        border-color: var(--ink);
+      }
+      .btn-dark {
+        background: var(--ink);
+        color: #fff;
+      }
+      .btn-white {
+        background: #fff;
+        color: var(--ink);
+        border-color: var(--ink);
+      }
+      .btn-outline-white {
+        background: transparent;
+        color: #fff;
+        border-color: #fff;
+      }
+      .btn-outline-white:hover {
+        box-shadow: 4px 4px 0 rgba(255, 255, 255, 0.4);
+      }
 
-/* ── EYEBROW / SECTION LABELS ── */
-.eyebrow{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.15em;color:var(--coral);margin-bottom:.75rem}
-.section-title{font-size:clamp(2rem,3.5vw,3rem);font-weight:900;line-height:1.05;letter-spacing:-.03em;max-width:560px}
-.section-title .serif{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400}
-.section-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2.5rem;gap:1.5rem;flex-wrap:wrap}
+      /* ── EYEBROW / SECTION LABELS ── */
+      .eyebrow {
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--coral);
+        margin-bottom: 0.75rem;
+      }
+      .section-title {
+        font-size: clamp(2rem, 3.5vw, 3rem);
+        font-weight: 900;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+        max-width: 560px;
+      }
+      .section-title .serif {
+        font-family: "Instrument Serif", serif;
+        font-style: italic;
+        font-weight: 400;
+      }
+      .section-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 2.5rem;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
 
-/* ── NAVBAR ── */
-nav{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:var(--bg);border-bottom:2px solid var(--ink);z-index:200;animation:slideDown .5s ease both}
-.logo{font-size:1.4rem;font-weight:900;letter-spacing:-.02em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:.3rem}
-.logo-dot{width:10px;height:10px;background:var(--coral);border-radius:50%;display:inline-block;animation:blink 2s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.nav-links{display:flex;list-style:none;gap:2rem}
-.nav-links a{font-size:.9rem;font-weight:700;color:var(--ink);text-decoration:none;transition:color .15s}
-.nav-links a:hover{color:var(--coral)}
-.nav-new{position:relative}
-.nav-new::after{content:'NEW';position:absolute;top:-10px;right:-10px;background:var(--coral);color:#fff;font-size:.48rem;font-weight:900;padding:2px 5px;border:1.5px solid var(--ink);border-radius:2px;letter-spacing:.06em}
-.nav-actions{display:flex;gap:.75rem;align-items:center}
+      /* ── NAVBAR ── */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 2.5rem;
+        background: var(--bg);
+        border-bottom: 2px solid var(--ink);
+        z-index: 200;
+        animation: slideDown 0.5s ease both;
+      }
+      .logo {
+        font-size: 1.4rem;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        text-decoration: none;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+      .logo-dot {
+        width: 10px;
+        height: 10px;
+        background: var(--coral);
+        border-radius: 50%;
+        display: inline-block;
+        animation: blink 2s ease-in-out infinite;
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+      .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+      }
+      .nav-links a {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--ink);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+      .nav-links a:hover {
+        color: var(--coral);
+      }
+      .nav-new {
+        position: relative;
+      }
+      .nav-new::after {
+        content: "NEW";
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: var(--coral);
+        color: #fff;
+        font-size: 0.48rem;
+        font-weight: 900;
+        padding: 2px 5px;
+        border: 1.5px solid var(--ink);
+        border-radius: 2px;
+        letter-spacing: 0.06em;
+      }
+      .nav-actions {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+      }
 
-/* ── HERO ── */
-.hero{min-height:100vh;padding:7rem 2.5rem 4rem;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;border-bottom:2px solid var(--ink);position:relative;overflow:hidden}
-.hero-bg-shape{position:absolute;border-radius:50%;z-index:0}
-.shape-1{width:500px;height:500px;background:var(--yellow);top:-150px;right:-100px;opacity:.35}
-.shape-2{width:250px;height:250px;background:var(--mint);bottom:40px;left:-80px;opacity:.3}
-.shape-3{width:160px;height:160px;background:var(--coral);top:200px;right:200px;opacity:.15;border-radius:12px;transform:rotate(25deg)}
-.hero-left{position:relative;z-index:1}
-.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--yellow);border:2px solid var(--ink);padding:.35rem .9rem;font-size:.75rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.8rem;animation:fadeUp .5s .1s ease both}
-.hero-badge::before{content:'★';font-size:.7rem}
-.hero h1{font-size:clamp(3rem,5.5vw,5.5rem);font-weight:900;line-height:.95;letter-spacing:-.03em;margin-bottom:1.5rem;animation:fadeUp .5s .2s ease both}
-.hero h1 .serif{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--coral)}
-.hero-desc{font-size:1rem;color:var(--muted);line-height:1.7;max-width:420px;margin-bottom:2rem;font-weight:500;animation:fadeUp .5s .3s ease both}
-.hero-cta{display:flex;gap:.75rem;flex-wrap:wrap;animation:fadeUp .5s .4s ease both}
-.hero-trust{margin-top:2.5rem;display:flex;align-items:center;gap:1rem;animation:fadeUp .5s .5s ease both}
-.trust-faces{display:flex}
-.face{width:36px;height:36px;border-radius:50%;border:2px solid var(--bg);margin-left:-10px;font-size:1.1rem;display:flex;align-items:center;justify-content:center}
-.face:first-child{margin-left:0}
-.f1{background:#ffcba4}.f2{background:#a8d5ba}.f3{background:#b5c8f5}.f4{background:#ffd6e0}
-.trust-text{font-size:.78rem;font-weight:700;color:var(--muted);line-height:1.4}
-.trust-text strong{color:var(--ink)}
-.hero-right{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:1rem;animation:fadeUp .6s .35s ease both}
-.preview-card{border:2px solid var(--ink);border-radius:6px;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:pointer}
-.preview-card:hover{transform:translate(-3px,-3px);box-shadow:5px 5px 0 var(--ink)}
-.preview-card:nth-child(1){grid-column:span 2}
-.card-header{padding:.6rem .8rem;border-bottom:2px solid var(--ink);display:flex;align-items:center;gap:.4rem;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
-.dot{width:8px;height:8px;border-radius:50%}
-.dot-r{background:#ff5f57}.dot-y{background:#ffbd2e}.dot-g{background:#28ca41}
-.card-body{padding:1.2rem;min-height:100px}
-.cb-1{background:#fff5f0}.cb-2{background:#f0fff8}.cb-3{background:#f5f0ff}.cb-4{background:#fff8f0}
-.card-body h4{font-size:1.1rem;font-weight:900;margin-bottom:.3rem;letter-spacing:-.02em}
-.card-body p{font-size:.72rem;color:var(--muted);font-weight:500;line-height:1.5}
-.card-tag{display:inline-block;margin-top:.6rem;font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .5rem;border:1.5px solid var(--ink);border-radius:2px}
-.mock-bar{height:6px;border-radius:3px;margin-bottom:5px}
-.mock-block{height:28px;border-radius:3px;margin-bottom:6px}
+      /* ── HERO ── */
+      .hero {
+        min-height: 100vh;
+        padding: 7rem 2.5rem 4rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: center;
+        border-bottom: 2px solid var(--ink);
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-bg-shape {
+        position: absolute;
+        border-radius: 50%;
+        z-index: 0;
+      }
+      .shape-1 {
+        width: 500px;
+        height: 500px;
+        background: var(--yellow);
+        top: -150px;
+        right: -100px;
+        opacity: 0.35;
+      }
+      .shape-2 {
+        width: 250px;
+        height: 250px;
+        background: var(--mint);
+        bottom: 40px;
+        left: -80px;
+        opacity: 0.3;
+      }
+      .shape-3 {
+        width: 160px;
+        height: 160px;
+        background: var(--coral);
+        top: 200px;
+        right: 200px;
+        opacity: 0.15;
+        border-radius: 12px;
+        transform: rotate(25deg);
+      }
+      .hero-left {
+        position: relative;
+        z-index: 1;
+      }
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--yellow);
+        border: 2px solid var(--ink);
+        padding: 0.35rem 0.9rem;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 1.8rem;
+        animation: fadeUp 0.5s 0.1s ease both;
+      }
+      .hero-badge::before {
+        content: "★";
+        font-size: 0.7rem;
+      }
+      .hero h1 {
+        font-size: clamp(3rem, 5.5vw, 5.5rem);
+        font-weight: 900;
+        line-height: 0.95;
+        letter-spacing: -0.03em;
+        margin-bottom: 1.5rem;
+        animation: fadeUp 0.5s 0.2s ease both;
+      }
+      .hero h1 .serif {
+        font-family: "Instrument Serif", serif;
+        font-style: italic;
+        font-weight: 400;
+        color: var(--coral);
+      }
+      .hero-desc {
+        font-size: 1rem;
+        color: var(--muted);
+        line-height: 1.7;
+        max-width: 420px;
+        margin-bottom: 2rem;
+        font-weight: 500;
+        animation: fadeUp 0.5s 0.3s ease both;
+      }
+      .hero-cta {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        animation: fadeUp 0.5s 0.4s ease both;
+      }
+      .hero-trust {
+        margin-top: 2.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        animation: fadeUp 0.5s 0.5s ease both;
+      }
+      .trust-faces {
+        display: flex;
+      }
+      .face {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 2px solid var(--bg);
+        margin-left: -10px;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .face:first-child {
+        margin-left: 0;
+      }
+      .f1 {
+        background: #ffcba4;
+      }
+      .f2 {
+        background: #a8d5ba;
+      }
+      .f3 {
+        background: #b5c8f5;
+      }
+      .f4 {
+        background: #ffd6e0;
+      }
+      .trust-text {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--muted);
+        line-height: 1.4;
+      }
+      .trust-text strong {
+        color: var(--ink);
+      }
+      .hero-right {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        animation: fadeUp 0.6s 0.35s ease both;
+      }
+      .preview-card {
+        border: 2px solid var(--ink);
+        border-radius: 6px;
+        overflow: hidden;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        cursor: pointer;
+      }
+      .preview-card:hover {
+        transform: translate(-3px, -3px);
+        box-shadow: 5px 5px 0 var(--ink);
+      }
+      .preview-card:nth-child(1) {
+        grid-column: span 2;
+      }
+      .card-header {
+        padding: 0.6rem 0.8rem;
+        border-bottom: 2px solid var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+      .dot-r {
+        background: #ff5f57;
+      }
+      .dot-y {
+        background: #ffbd2e;
+      }
+      .dot-g {
+        background: #28ca41;
+      }
+      .card-body {
+        padding: 1.2rem;
+        min-height: 100px;
+      }
+      .cb-1 {
+        background: #fff5f0;
+      }
+      .cb-2 {
+        background: #f0fff8;
+      }
+      .cb-3 {
+        background: #f5f0ff;
+      }
+      .cb-4 {
+        background: #fff8f0;
+      }
+      .card-body h4 {
+        font-size: 1.1rem;
+        font-weight: 900;
+        margin-bottom: 0.3rem;
+        letter-spacing: -0.02em;
+      }
+      .card-body p {
+        font-size: 0.72rem;
+        color: var(--muted);
+        font-weight: 500;
+        line-height: 1.5;
+      }
+      .card-tag {
+        display: inline-block;
+        margin-top: 0.6rem;
+        font-size: 0.62rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 0.2rem 0.5rem;
+        border: 1.5px solid var(--ink);
+        border-radius: 2px;
+      }
+      .mock-bar {
+        height: 6px;
+        border-radius: 3px;
+        margin-bottom: 5px;
+      }
+      .mock-block {
+        height: 28px;
+        border-radius: 3px;
+        margin-bottom: 6px;
+      }
 
-/* ── STRIP ── */
-.strip{background:var(--coral);border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);overflow:hidden;padding:.75rem 0}
-.strip-inner{display:flex;gap:2.5rem;white-space:nowrap;animation:scroll 22s linear infinite;font-size:.85rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#fff}
-.strip-inner span{color:var(--yellow);font-size:1rem}
-@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+      /* ── STRIP ── */
+      .strip {
+        background: var(--coral);
+        border-top: 2px solid var(--ink);
+        border-bottom: 2px solid var(--ink);
+        overflow: hidden;
+        padding: 0.75rem 0;
+      }
+      .strip-inner {
+        display: flex;
+        gap: 2.5rem;
+        white-space: nowrap;
+        animation: scroll 22s linear infinite;
+        font-size: 0.85rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #fff;
+      }
+      .strip-inner span {
+        color: var(--yellow);
+        font-size: 1rem;
+      }
+      @keyframes scroll {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
 
-/* ── SECTION WRAPPER ── */
-section{padding:5rem 2.5rem;border-bottom:2px solid var(--ink)}
-.section-alt{background:var(--surface);border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
-.section-dark{background:var(--ink);color:#fff;border-bottom:2px solid var(--ink)}
-.section-dark .eyebrow{color:var(--yellow)}
-.section-dark .section-title{color:#fff}
-.section-dark .section-title .serif{color:var(--yellow)}
+      /* ── SECTION WRAPPER ── */
+      section {
+        padding: 5rem 2.5rem;
+        border-bottom: 2px solid var(--ink);
+      }
+      .section-alt {
+        background: var(--surface);
+        border-top: 2px solid var(--ink);
+        border-bottom: 2px solid var(--ink);
+      }
+      .section-dark {
+        background: var(--ink);
+        color: #fff;
+        border-bottom: 2px solid var(--ink);
+      }
+      .section-dark .eyebrow {
+        color: var(--yellow);
+      }
+      .section-dark .section-title {
+        color: #fff;
+      }
+      .section-dark .section-title .serif {
+        color: var(--yellow);
+      }
 
-/* ── CATEGORIES ── */
-.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
-.cat-card{border:2px solid var(--ink);border-radius:4px;padding:1.8rem 1.5rem;position:relative;cursor:pointer;transition:transform .2s,box-shadow .2s;overflow:hidden}
-.cat-card:hover{transform:translate(-3px,-3px);box-shadow:5px 5px 0 var(--ink)}
-.cat-emoji{font-size:2rem;margin-bottom:1rem;display:block}
-.cat-card h3{font-size:1.05rem;font-weight:900;margin-bottom:.4rem;letter-spacing:-.01em}
-.cat-card p{font-size:.75rem;color:var(--muted);font-weight:500;line-height:1.6}
-.cat-count{position:absolute;top:1rem;right:1rem;font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:.06em}
-.cc-1{background:#fff5f0}.cc-2{background:#f0fff8}.cc-3{background:#f5f3ff}.cc-4{background:#fefce8}
-.cc-5{background:#f0f9ff}.cc-6{background:#fff0f5}.cc-7{background:#f0fdf4}.cc-8{background:#faf0ff}
-.cc-9{background:#fff5f0}.cc-10{background:#f0fff8}.cc-11{background:#fefce8}.cc-12{background:#f5f3ff}
+      /* ── CATEGORIES ── */
+      .cat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+      }
+      .cat-card {
+        border: 2px solid var(--ink);
+        border-radius: 4px;
+        padding: 1.8rem 1.5rem;
+        position: relative;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        overflow: hidden;
+      }
+      .cat-card:hover {
+        transform: translate(-3px, -3px);
+        box-shadow: 5px 5px 0 var(--ink);
+      }
+      .cat-emoji {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+      .cat-card h3 {
+        font-size: 1.05rem;
+        font-weight: 900;
+        margin-bottom: 0.4rem;
+        letter-spacing: -0.01em;
+      }
+      .cat-card p {
+        font-size: 0.75rem;
+        color: var(--muted);
+        font-weight: 500;
+        line-height: 1.6;
+      }
+      .cat-count {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: var(--muted);
+        letter-spacing: 0.06em;
+      }
+      .cc-1 {
+        background: #fff5f0;
+      }
+      .cc-2 {
+        background: #f0fff8;
+      }
+      .cc-3 {
+        background: #f5f3ff;
+      }
+      .cc-4 {
+        background: #fefce8;
+      }
+      .cc-5 {
+        background: #f0f9ff;
+      }
+      .cc-6 {
+        background: #fff0f5;
+      }
+      .cc-7 {
+        background: #f0fdf4;
+      }
+      .cc-8 {
+        background: #faf0ff;
+      }
+      .cc-9 {
+        background: #fff5f0;
+      }
+      .cc-10 {
+        background: #f0fff8;
+      }
+      .cc-11 {
+        background: #fefce8;
+      }
+      .cc-12 {
+        background: #f5f3ff;
+      }
 
-/* ── TEMPLATES GRID ── */
-.templates-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
-.tpl-card{border:2px solid var(--ink);border-radius:6px;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:pointer;background:var(--bg)}
-.tpl-card:hover{transform:translate(-3px,-3px);box-shadow:var(--shadow-lg)}
-.tpl-preview{height:170px;position:relative;display:flex;align-items:center;justify-content:center;font-size:3rem;border-bottom:2px solid var(--ink)}
-.tpl-badge{position:absolute;top:.5rem;left:.5rem;font-size:.6rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border:1.5px solid var(--ink);border-radius:2px}
-.badge-hot{background:var(--coral);color:#fff;border-color:var(--coral)}
-.badge-new{background:var(--mint);color:#fff;border-color:var(--mint)}
-.badge-web3{background:var(--sky);color:#fff;border-color:var(--sky)}
-.badge-top{background:var(--yellow);color:var(--ink)}
-.tpl-body{padding:1rem}
-.tpl-name{font-size:.95rem;font-weight:900;margin-bottom:.2rem;letter-spacing:-.01em}
-.tpl-type{font-size:.7rem;color:var(--muted);font-weight:700;margin-bottom:.75rem}
-.tpl-footer{display:flex;justify-content:space-between;align-items:center;padding-top:.6rem;border-top:1.5px solid rgba(15,13,10,.1)}
-.tpl-price{font-weight:900;font-size:1rem}
-.tpl-stats{font-size:.7rem;color:var(--muted);font-weight:700}
+      /* ── TEMPLATES GRID ── */
+      .templates-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+      }
+      .tpl-card {
+        border: 2px solid var(--ink);
+        border-radius: 6px;
+        overflow: hidden;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        cursor: pointer;
+        background: var(--bg);
+      }
+      .tpl-card:hover {
+        transform: translate(-3px, -3px);
+        box-shadow: var(--shadow-lg);
+      }
+      .tpl-preview {
+        height: 170px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        border-bottom: 2px solid var(--ink);
+      }
+      .tpl-badge {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.5rem;
+        font-size: 0.6rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 0.2rem 0.6rem;
+        border: 1.5px solid var(--ink);
+        border-radius: 2px;
+      }
+      .badge-hot {
+        background: var(--coral);
+        color: #fff;
+        border-color: var(--coral);
+      }
+      .badge-new {
+        background: var(--mint);
+        color: #fff;
+        border-color: var(--mint);
+      }
+      .badge-web3 {
+        background: var(--sky);
+        color: #fff;
+        border-color: var(--sky);
+      }
+      .badge-top {
+        background: var(--yellow);
+        color: var(--ink);
+      }
+      .tpl-body {
+        padding: 1rem;
+      }
+      .tpl-name {
+        font-size: 0.95rem;
+        font-weight: 900;
+        margin-bottom: 0.2rem;
+        letter-spacing: -0.01em;
+      }
+      .tpl-type {
+        font-size: 0.7rem;
+        color: var(--muted);
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+      }
+      .tpl-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 0.6rem;
+        border-top: 1.5px solid rgba(15, 13, 10, 0.1);
+      }
+      .tpl-price {
+        font-weight: 900;
+        font-size: 1rem;
+      }
+      .tpl-stats {
+        font-size: 0.7rem;
+        color: var(--muted);
+        font-weight: 700;
+      }
 
-/* ── LAUNCH KITS ── */
-.kits-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem}
-.kit-card{border:2px solid var(--ink);border-radius:8px;padding:2rem;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:pointer;background:var(--surface)}
-.kit-card:hover{transform:translate(-3px,-3px);box-shadow:var(--shadow-lg)}
-.kit-card.dark{background:var(--ink);color:#fff}
-.kit-card.dark .kit-desc{color:rgba(255,255,255,.65)}
-.kit-card.dark .kit-item{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.75)}
-.kit-card.dark .kit-was{color:rgba(255,255,255,.4)}
-.kit-watermark{position:absolute;right:-10px;top:-10px;font-size:6rem;opacity:.06;line-height:1}
-.kit-tag{display:inline-flex;align-items:center;gap:6px;background:var(--yellow);border:2px solid var(--ink);color:var(--ink);padding:.25rem .7rem;border-radius:2px;font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem}
-.kit-card.dark .kit-tag{background:var(--yellow);color:var(--ink);border-color:var(--yellow)}
-.kit-name{font-size:1.5rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.5rem}
-.kit-desc{font-size:.875rem;color:var(--muted);line-height:1.65;margin-bottom:1.25rem;font-weight:500}
-.kit-items{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
-.kit-item{padding:.25rem .75rem;background:var(--bg);border:1.5px solid var(--ink);border-radius:2px;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
-.kit-footer{display:flex;align-items:center;justify-content:space-between}
-.kit-price{font-size:1.6rem;font-weight:900;letter-spacing:-.04em}
-.kit-was{font-size:.8rem;font-weight:600;color:var(--muted);text-decoration:line-through;margin-left:.4rem}
+      /* ── LAUNCH KITS ── */
+      .kits-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+      }
+      .kit-card {
+        border: 2px solid var(--ink);
+        border-radius: 8px;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        cursor: pointer;
+        background: var(--surface);
+      }
+      .kit-card:hover {
+        transform: translate(-3px, -3px);
+        box-shadow: var(--shadow-lg);
+      }
+      .kit-card.dark {
+        background: var(--ink);
+        color: #fff;
+      }
+      .kit-card.dark .kit-desc {
+        color: rgba(255, 255, 255, 0.65);
+      }
+      .kit-card.dark .kit-item {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.75);
+      }
+      .kit-card.dark .kit-was {
+        color: rgba(255, 255, 255, 0.4);
+      }
+      .kit-watermark {
+        position: absolute;
+        right: -10px;
+        top: -10px;
+        font-size: 6rem;
+        opacity: 0.06;
+        line-height: 1;
+      }
+      .kit-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--yellow);
+        border: 2px solid var(--ink);
+        color: var(--ink);
+        padding: 0.25rem 0.7rem;
+        border-radius: 2px;
+        font-size: 0.65rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 1rem;
+      }
+      .kit-card.dark .kit-tag {
+        background: var(--yellow);
+        color: var(--ink);
+        border-color: var(--yellow);
+      }
+      .kit-name {
+        font-size: 1.5rem;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        margin-bottom: 0.5rem;
+      }
+      .kit-desc {
+        font-size: 0.875rem;
+        color: var(--muted);
+        line-height: 1.65;
+        margin-bottom: 1.25rem;
+        font-weight: 500;
+      }
+      .kit-items {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+      }
+      .kit-item {
+        padding: 0.25rem 0.75rem;
+        background: var(--bg);
+        border: 1.5px solid var(--ink);
+        border-radius: 2px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .kit-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .kit-price {
+        font-size: 1.6rem;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+      }
+      .kit-was {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--muted);
+        text-decoration: line-through;
+        margin-left: 0.4rem;
+      }
 
-/* ── AI BOX ── */
-.ai-box{background:var(--ink);color:#fff;border:2px solid var(--ink);border-radius:12px;padding:3.5rem;text-align:center;position:relative;overflow:hidden}
-.ai-box::before{content:'✦';position:absolute;top:-20px;right:40px;font-size:9rem;opacity:.05;line-height:1}
-.ai-box .eyebrow{color:var(--yellow);justify-content:center;display:flex;align-items:center;gap:6px}
-.ai-box .section-title{color:#fff;margin:0 auto .75rem}
-.ai-sub{font-size:.95rem;color:rgba(255,255,255,.6);max-width:440px;margin:0 auto;line-height:1.65;font-weight:500}
-.ai-input-row{display:flex;gap:.75rem;max-width:520px;margin:2rem auto 1rem}
-.ai-input{flex:1;padding:.9rem 1.2rem;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.2);color:#fff;border-radius:4px;font-size:.9rem;font-family:'Cabinet Grotesk',sans-serif;outline:none;transition:border-color .2s}
-.ai-input:focus{border-color:var(--yellow)}
-.ai-input::placeholder{color:rgba(255,255,255,.35)}
-.ai-chips{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap}
-.ai-chip{padding:.3rem .9rem;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);border-radius:100px;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .15s;font-family:'Cabinet Grotesk',sans-serif}
-.ai-chip:hover{background:rgba(255,213,10,.15);border-color:var(--yellow);color:var(--yellow)}
+      /* ── AI BOX ── */
+      .ai-box {
+        background: var(--ink);
+        color: #fff;
+        border: 2px solid var(--ink);
+        border-radius: 12px;
+        padding: 3.5rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .ai-box::before {
+        content: "✦";
+        position: absolute;
+        top: -20px;
+        right: 40px;
+        font-size: 9rem;
+        opacity: 0.05;
+        line-height: 1;
+      }
+      .ai-box .eyebrow {
+        color: var(--yellow);
+        justify-content: center;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .ai-box .section-title {
+        color: #fff;
+        margin: 0 auto 0.75rem;
+      }
+      .ai-sub {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.6);
+        max-width: 440px;
+        margin: 0 auto;
+        line-height: 1.65;
+        font-weight: 500;
+      }
+      .ai-input-row {
+        display: flex;
+        gap: 0.75rem;
+        max-width: 520px;
+        margin: 2rem auto 1rem;
+      }
+      .ai-input {
+        flex: 1;
+        padding: 0.9rem 1.2rem;
+        background: rgba(255, 255, 255, 0.07);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        color: #fff;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-family: "Cabinet Grotesk", sans-serif;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .ai-input:focus {
+        border-color: var(--yellow);
+      }
+      .ai-input::placeholder {
+        color: rgba(255, 255, 255, 0.35);
+      }
+      .ai-chips {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .ai-chip {
+        padding: 0.3rem 0.9rem;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1.5px solid rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.7);
+        border-radius: 100px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.15s;
+        font-family: "Cabinet Grotesk", sans-serif;
+      }
+      .ai-chip:hover {
+        background: rgba(255, 213, 10, 0.15);
+        border-color: var(--yellow);
+        color: var(--yellow);
+      }
 
-/* ── WEB3 GRID ── */
-.web3-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:2px solid var(--ink);border-radius:8px;overflow:hidden}
-.web3-card{padding:2rem 1.5rem;border-right:2px solid var(--ink);background:var(--surface);transition:background .15s,transform .15s;cursor:pointer;position:relative}
-.web3-card:last-child{border-right:none}
-.web3-card:hover{background:var(--sky);color:#fff}
-.web3-card:hover .web3-desc{color:rgba(255,255,255,.75)}
-.web3-icon{font-size:2rem;margin-bottom:.75rem;display:block}
-.web3-name{font-size:1rem;font-weight:900;margin-bottom:.4rem;letter-spacing:-.02em}
-.web3-desc{font-size:.78rem;color:var(--muted);line-height:1.55;font-weight:500}
+      /* ── WEB3 GRID ── */
+      .web3-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+        border: 2px solid var(--ink);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .web3-card {
+        padding: 2rem 1.5rem;
+        border-right: 2px solid var(--ink);
+        background: var(--surface);
+        transition:
+          background 0.15s,
+          transform 0.15s;
+        cursor: pointer;
+        position: relative;
+      }
+      .web3-card:last-child {
+        border-right: none;
+      }
+      .web3-card:hover {
+        background: var(--sky);
+        color: #fff;
+      }
+      .web3-card:hover .web3-desc {
+        color: rgba(255, 255, 255, 0.75);
+      }
+      .web3-icon {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        display: block;
+      }
+      .web3-name {
+        font-size: 1rem;
+        font-weight: 900;
+        margin-bottom: 0.4rem;
+        letter-spacing: -0.02em;
+      }
+      .web3-desc {
+        font-size: 0.78rem;
+        color: var(--muted);
+        line-height: 1.55;
+        font-weight: 500;
+      }
 
-/* ── DIRECTORY ── */
-.dir-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem}
-.dir-tab{padding:.45rem 1rem;background:transparent;border:2px solid var(--ink);border-radius:100px;font-size:.75rem;font-weight:800;cursor:pointer;transition:all .15s;font-family:'Cabinet Grotesk',sans-serif;color:var(--ink)}
-.dir-tab.active,.dir-tab:hover{background:var(--coral);color:#fff;border-color:var(--coral)}
-.dir-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-.dir-card{background:var(--bg);border:2px solid var(--ink);border-radius:6px;padding:1.25rem;display:flex;gap:.9rem;align-items:flex-start;transition:transform .15s,box-shadow .15s;cursor:pointer;text-decoration:none;color:inherit}
-.dir-card:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow)}
-.dir-card.featured{border-color:var(--coral)}
-.dir-logo{width:38px;height:38px;border:2px solid var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;background:var(--surface);flex-shrink:0}
-.dir-info{flex:1;min-width:0}
-.dir-name{font-weight:900;font-size:.88rem;margin-bottom:.2rem;display:flex;align-items:center;gap:.4rem}
-.dir-name .star{color:var(--coral);font-size:.7rem}
-.dir-desc{font-size:.73rem;color:var(--muted);line-height:1.5;margin-bottom:.6rem;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.dir-pills{display:flex;gap:.35rem;flex-wrap:wrap}
-.dir-pill{padding:2px 7px;background:var(--surface);border:1.5px solid var(--ink);border-radius:2px;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+      /* ── DIRECTORY ── */
+      .dir-tabs {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+      }
+      .dir-tab {
+        padding: 0.45rem 1rem;
+        background: transparent;
+        border: 2px solid var(--ink);
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.15s;
+        font-family: "Cabinet Grotesk", sans-serif;
+        color: var(--ink);
+      }
+      .dir-tab.active,
+      .dir-tab:hover {
+        background: var(--coral);
+        color: #fff;
+        border-color: var(--coral);
+      }
+      .dir-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+      .dir-card {
+        background: var(--bg);
+        border: 2px solid var(--ink);
+        border-radius: 6px;
+        padding: 1.25rem;
+        display: flex;
+        gap: 0.9rem;
+        align-items: flex-start;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+      }
+      .dir-card:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: var(--shadow);
+      }
+      .dir-card.featured {
+        border-color: var(--coral);
+      }
+      .dir-logo {
+        width: 38px;
+        height: 38px;
+        border: 2px solid var(--ink);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        background: var(--surface);
+        flex-shrink: 0;
+      }
+      .dir-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .dir-name {
+        font-weight: 900;
+        font-size: 0.88rem;
+        margin-bottom: 0.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .dir-name .star {
+        color: var(--coral);
+        font-size: 0.7rem;
+      }
+      .dir-desc {
+        font-size: 0.73rem;
+        color: var(--muted);
+        line-height: 1.5;
+        margin-bottom: 0.6rem;
+        font-weight: 500;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .dir-pills {
+        display: flex;
+        gap: 0.35rem;
+        flex-wrap: wrap;
+      }
+      .dir-pill {
+        padding: 2px 7px;
+        background: var(--surface);
+        border: 1.5px solid var(--ink);
+        border-radius: 2px;
+        font-size: 0.6rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
 
-/* ── HOW IT WORKS ── */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:2px solid rgba(255,255,255,.15);margin-top:3rem}
-.step{padding:2.5rem;border-right:2px solid rgba(255,255,255,.12);position:relative;transition:background .25s}
-.step:last-child{border-right:none}
-.step:hover{background:rgba(255,255,255,.04)}
-.step-num{font-size:4rem;font-weight:900;line-height:1;color:rgba(255,255,255,.1);margin-bottom:1rem;letter-spacing:-.04em;transition:color .25s}
-.step:hover .step-num{color:var(--yellow)}
-.step h3{font-size:1.2rem;font-weight:900;margin-bottom:.7rem;letter-spacing:-.02em}
-.step p{font-size:.8rem;color:rgba(255,255,255,.55);line-height:1.75;font-weight:500}
-.step-icon{position:absolute;top:2rem;right:2rem;font-size:1.6rem;opacity:.4;transition:opacity .25s}
-.step:hover .step-icon{opacity:1}
+      /* ── HOW IT WORKS ── */
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        margin-top: 3rem;
+      }
+      .step {
+        padding: 2.5rem;
+        border-right: 2px solid rgba(255, 255, 255, 0.12);
+        position: relative;
+        transition: background 0.25s;
+      }
+      .step:last-child {
+        border-right: none;
+      }
+      .step:hover {
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .step-num {
+        font-size: 4rem;
+        font-weight: 900;
+        line-height: 1;
+        color: rgba(255, 255, 255, 0.1);
+        margin-bottom: 1rem;
+        letter-spacing: -0.04em;
+        transition: color 0.25s;
+      }
+      .step:hover .step-num {
+        color: var(--yellow);
+      }
+      .step h3 {
+        font-size: 1.2rem;
+        font-weight: 900;
+        margin-bottom: 0.7rem;
+        letter-spacing: -0.02em;
+      }
+      .step p {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.55);
+        line-height: 1.75;
+        font-weight: 500;
+      }
+      .step-icon {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        font-size: 1.6rem;
+        opacity: 0.4;
+        transition: opacity 0.25s;
+      }
+      .step:hover .step-icon {
+        opacity: 1;
+      }
 
-/* ── FEATURES ── */
-.features-layout{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;margin-top:3rem}
-.feature-list{display:flex;flex-direction:column;gap:1.2rem}
-.feat-item{display:flex;gap:1rem;padding:1.2rem;border:2px solid var(--ink);border-radius:4px;transition:background .2s,transform .2s,box-shadow .2s;cursor:default}
-.feat-item:hover{background:var(--yellow);transform:translate(-3px,-3px);box-shadow:var(--shadow)}
-.feat-icon{font-size:1.5rem;flex-shrink:0;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:2px solid var(--ink);border-radius:4px;transition:background .2s}
-.feat-item:hover .feat-icon{background:#fff}
-.feat-text h4{font-size:.95rem;font-weight:900;margin-bottom:.25rem;letter-spacing:-.01em}
-.feat-text p{font-size:.75rem;color:var(--muted);font-weight:500;line-height:1.6}
-.feat-item:hover .feat-text p{color:var(--ink)}
-.feature-visual{border:2px solid var(--ink);border-radius:8px;overflow:hidden}
-.fv-header{background:var(--ink);padding:.8rem 1.2rem;display:flex;gap:.5rem;align-items:center}
-.fv-body{background:#fafafa;padding:1.5rem;min-height:360px;display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
-.mini-template{border:2px solid var(--ink);border-radius:4px;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:pointer}
-.mini-template:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink)}
-.mt-hero{height:60px;display:flex;align-items:center;justify-content:center}
-.mt-body{padding:.6rem}
-.mt-line{height:5px;border-radius:3px;margin-bottom:4px}
-.mt-label{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:.25rem .4rem;border-top:1.5px solid var(--ink);color:var(--muted);text-align:center}
+      /* ── FEATURES ── */
+      .features-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: center;
+        margin-top: 3rem;
+      }
+      .feature-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+      }
+      .feat-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1.2rem;
+        border: 2px solid var(--ink);
+        border-radius: 4px;
+        transition:
+          background 0.2s,
+          transform 0.2s,
+          box-shadow 0.2s;
+        cursor: default;
+      }
+      .feat-item:hover {
+        background: var(--yellow);
+        transform: translate(-3px, -3px);
+        box-shadow: var(--shadow);
+      }
+      .feat-icon {
+        font-size: 1.5rem;
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: 4px;
+        transition: background 0.2s;
+      }
+      .feat-item:hover .feat-icon {
+        background: #fff;
+      }
+      .feat-text h4 {
+        font-size: 0.95rem;
+        font-weight: 900;
+        margin-bottom: 0.25rem;
+        letter-spacing: -0.01em;
+      }
+      .feat-text p {
+        font-size: 0.75rem;
+        color: var(--muted);
+        font-weight: 500;
+        line-height: 1.6;
+      }
+      .feat-item:hover .feat-text p {
+        color: var(--ink);
+      }
+      .feature-visual {
+        border: 2px solid var(--ink);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .fv-header {
+        background: var(--ink);
+        padding: 0.8rem 1.2rem;
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+      .fv-body {
+        background: #fafafa;
+        padding: 1.5rem;
+        min-height: 360px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.8rem;
+      }
+      .mini-template {
+        border: 2px solid var(--ink);
+        border-radius: 4px;
+        overflow: hidden;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        cursor: pointer;
+      }
+      .mini-template:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 3px 3px 0 var(--ink);
+      }
+      .mt-hero {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .mt-body {
+        padding: 0.6rem;
+      }
+      .mt-line {
+        height: 5px;
+        border-radius: 3px;
+        margin-bottom: 4px;
+      }
+      .mt-label {
+        font-size: 0.6rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 0.25rem 0.4rem;
+        border-top: 1.5px solid var(--ink);
+        color: var(--muted);
+        text-align: center;
+      }
 
-/* ── SERVICES ── */
-.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-.svc-card{border:2px solid var(--ink);border-radius:6px;padding:1.75rem 1.5rem;transition:transform .2s,box-shadow .2s;cursor:pointer;background:var(--surface);position:relative;overflow:hidden}
-.svc-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--coral);transform:scaleX(0);transform-origin:left;transition:transform .25s}
-.svc-card:hover::after{transform:scaleX(1)}
-.svc-card:hover{transform:translate(-3px,-3px);box-shadow:var(--shadow)}
-.svc-icon{font-size:1.6rem;margin-bottom:1rem;display:block}
-.svc-name{font-size:1rem;font-weight:900;margin-bottom:.4rem;letter-spacing:-.02em}
-.svc-desc{font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:1rem;font-weight:500}
-.svc-price{font-size:.85rem;font-weight:900;color:var(--coral)}
+      /* ── SERVICES ── */
+      .services-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+      .svc-card {
+        border: 2px solid var(--ink);
+        border-radius: 6px;
+        padding: 1.75rem 1.5rem;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        cursor: pointer;
+        background: var(--surface);
+        position: relative;
+        overflow: hidden;
+      }
+      .svc-card::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--coral);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.25s;
+      }
+      .svc-card:hover::after {
+        transform: scaleX(1);
+      }
+      .svc-card:hover {
+        transform: translate(-3px, -3px);
+        box-shadow: var(--shadow);
+      }
+      .svc-icon {
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+      .svc-name {
+        font-size: 1rem;
+        font-weight: 900;
+        margin-bottom: 0.4rem;
+        letter-spacing: -0.02em;
+      }
+      .svc-desc {
+        font-size: 0.8rem;
+        color: var(--muted);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        font-weight: 500;
+      }
+      .svc-price {
+        font-size: 0.85rem;
+        font-weight: 900;
+        color: var(--coral);
+      }
 
-/* ── VENDOR BOX ── */
-.vendor-box{background:var(--yellow);border:2px solid var(--ink);border-radius:12px;padding:3rem;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;box-shadow:var(--shadow-lg)}
-.vendor-steps-list{display:flex;flex-direction:column;gap:.75rem;margin-top:1.5rem}
-.vstep{display:flex;align-items:center;gap:.75rem;font-size:.875rem;font-weight:600}
-.vstep-num{width:24px;height:24px;background:var(--ink);color:var(--yellow);border-radius:50%;font-size:.7rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid var(--ink)}
+      /* ── VENDOR BOX ── */
+      .vendor-box {
+        background: var(--yellow);
+        border: 2px solid var(--ink);
+        border-radius: 12px;
+        padding: 3rem;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 3rem;
+        align-items: center;
+        box-shadow: var(--shadow-lg);
+      }
+      .vendor-steps-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+      }
+      .vstep {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+      .vstep-num {
+        width: 24px;
+        height: 24px;
+        background: var(--ink);
+        color: var(--yellow);
+        border-radius: 50%;
+        font-size: 0.7rem;
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border: 2px solid var(--ink);
+      }
 
-/* ── GAMIFY ── */
-.gamify-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:2px solid var(--ink);border-radius:8px;overflow:hidden}
-.gamify-card{padding:2rem 1.5rem;border-right:2px solid var(--ink);background:var(--surface);text-align:center;transition:background .2s}
-.gamify-card:last-child{border-right:none}
-.gamify-card:hover{background:var(--yellow)}
-.gamify-icon{font-size:1.8rem;margin-bottom:.75rem;display:block}
-.gamify-name{font-size:.95rem;font-weight:900;margin-bottom:.4rem;letter-spacing:-.01em}
-.gamify-desc{font-size:.75rem;color:var(--muted);line-height:1.55;font-weight:500}
+      /* ── GAMIFY ── */
+      .gamify-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+        border: 2px solid var(--ink);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .gamify-card {
+        padding: 2rem 1.5rem;
+        border-right: 2px solid var(--ink);
+        background: var(--surface);
+        text-align: center;
+        transition: background 0.2s;
+      }
+      .gamify-card:last-child {
+        border-right: none;
+      }
+      .gamify-card:hover {
+        background: var(--yellow);
+      }
+      .gamify-icon {
+        font-size: 1.8rem;
+        margin-bottom: 0.75rem;
+        display: block;
+      }
+      .gamify-name {
+        font-size: 0.95rem;
+        font-weight: 900;
+        margin-bottom: 0.4rem;
+        letter-spacing: -0.01em;
+      }
+      .gamify-desc {
+        font-size: 0.75rem;
+        color: var(--muted);
+        line-height: 1.55;
+        font-weight: 500;
+      }
 
-/* ── TESTIMONIALS ── */
-.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:3rem}
-.testi-card{border:2px solid var(--ink);border-radius:6px;padding:1.8rem;transition:transform .2s,box-shadow .2s;cursor:default}
-.testi-card:hover{transform:translate(-3px,-3px);box-shadow:var(--shadow)}
-.tc-1{background:#fff5f0}.tc-2{background:#f0fff8}.tc-3{background:#fefce8}
-.testi-stars{font-size:.8rem;margin-bottom:.8rem;letter-spacing:.05em}
-.testi-quote{font-family:'Instrument Serif',serif;font-style:italic;font-size:1.1rem;line-height:1.5;margin-bottom:1.2rem;color:var(--ink)}
-.testi-author{display:flex;align-items:center;gap:.7rem}
-.testi-avatar{width:36px;height:36px;border-radius:50%;border:2px solid var(--ink);font-size:1rem;display:flex;align-items:center;justify-content:center}
-.testi-name{font-size:.8rem;font-weight:800}
-.testi-role{font-size:.7rem;color:var(--muted);font-weight:600}
+      /* ── TESTIMONIALS ── */
+      .testi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.2rem;
+        margin-top: 3rem;
+      }
+      .testi-card {
+        border: 2px solid var(--ink);
+        border-radius: 6px;
+        padding: 1.8rem;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        cursor: default;
+      }
+      .testi-card:hover {
+        transform: translate(-3px, -3px);
+        box-shadow: var(--shadow);
+      }
+      .tc-1 {
+        background: #fff5f0;
+      }
+      .tc-2 {
+        background: #f0fff8;
+      }
+      .tc-3 {
+        background: #fefce8;
+      }
+      .testi-stars {
+        font-size: 0.8rem;
+        margin-bottom: 0.8rem;
+        letter-spacing: 0.05em;
+      }
+      .testi-quote {
+        font-family: "Instrument Serif", serif;
+        font-style: italic;
+        font-size: 1.1rem;
+        line-height: 1.5;
+        margin-bottom: 1.2rem;
+        color: var(--ink);
+      }
+      .testi-author {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+      }
+      .testi-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 2px solid var(--ink);
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .testi-name {
+        font-size: 0.8rem;
+        font-weight: 800;
+      }
+      .testi-role {
+        font-size: 0.7rem;
+        color: var(--muted);
+        font-weight: 600;
+      }
 
-/* ── PRICING ── */
-.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;max-width:1100px;margin:3rem auto 0}
-.price-card{border:2px solid var(--ink);border-radius:6px;overflow:hidden;background:var(--bg);transition:transform .2s,box-shadow .2s}
-.price-card:hover{transform:translate(-4px,-4px);box-shadow:6px 6px 0 var(--ink)}
-.price-card.featured{background:var(--ink);color:#fff}
-.price-top{padding:1.8rem 1.8rem 1.2rem;border-bottom:2px solid var(--ink)}
-.price-card.featured .price-top{border-bottom-color:rgba(255,255,255,.2)}
-.price-label{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:.5rem}
-.price-card.featured .price-label{color:var(--yellow)}
-.price-amount{font-size:2.8rem;font-weight:900;letter-spacing:-.04em;line-height:1;margin-bottom:.3rem}
-.price-amount sup{font-size:1.2rem;vertical-align:top;margin-top:.5rem;display:inline-block}
-.price-period{font-size:.75rem;font-weight:700;color:var(--muted)}
-.price-card.featured .price-period{color:rgba(255,255,255,.5)}
-.price-features{padding:1.5rem 1.8rem;display:flex;flex-direction:column;gap:.7rem}
-.pf-item{display:flex;align-items:center;gap:.6rem;font-size:.8rem;font-weight:600}
-.pf-check{width:18px;height:18px;border-radius:50%;background:var(--mint);border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#fff;flex-shrink:0}
-.price-card.featured .pf-check{background:var(--yellow);color:var(--ink)}
-.pf-off{opacity:.4}
-.pf-off .pf-check{background:#ccc}
-.price-footer{padding:0 1.8rem 1.8rem}
+      /* ── PRICING ── */
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.2rem;
+        max-width: 1100px;
+        margin: 3rem auto 0;
+      }
+      .price-card {
+        border: 2px solid var(--ink);
+        border-radius: 6px;
+        overflow: hidden;
+        background: var(--bg);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .price-card:hover {
+        transform: translate(-4px, -4px);
+        box-shadow: 6px 6px 0 var(--ink);
+      }
+      .price-card.featured {
+        background: var(--ink);
+        color: #fff;
+      }
+      .price-top {
+        padding: 1.8rem 1.8rem 1.2rem;
+        border-bottom: 2px solid var(--ink);
+      }
+      .price-card.featured .price-top {
+        border-bottom-color: rgba(255, 255, 255, 0.2);
+      }
+      .price-label {
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        margin-bottom: 0.5rem;
+      }
+      .price-card.featured .price-label {
+        color: var(--yellow);
+      }
+      .price-amount {
+        font-size: 2.8rem;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        line-height: 1;
+        margin-bottom: 0.3rem;
+      }
+      .price-amount sup {
+        font-size: 1.2rem;
+        vertical-align: top;
+        margin-top: 0.5rem;
+        display: inline-block;
+      }
+      .price-period {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .price-card.featured .price-period {
+        color: rgba(255, 255, 255, 0.5);
+      }
+      .price-features {
+        padding: 1.5rem 1.8rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+      }
+      .pf-item {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+      .pf-check {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--mint);
+        border: 1.5px solid var(--ink);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.6rem;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .price-card.featured .pf-check {
+        background: var(--yellow);
+        color: var(--ink);
+      }
+      .pf-off {
+        opacity: 0.4;
+      }
+      .pf-off .pf-check {
+        background: #ccc;
+      }
+      .price-footer {
+        padding: 0 1.8rem 1.8rem;
+      }
 
-/* ── NEWSLETTER ── */
-.nl-box{background:var(--surface);border:2px solid var(--ink);border-radius:12px;padding:3rem;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;box-shadow:var(--shadow)}
-.nl-form{display:flex;gap:.6rem}
-.nl-input{flex:1;padding:.75rem 1rem;background:#fff;border:2px solid var(--ink);border-radius:4px;font-size:.875rem;font-family:'Cabinet Grotesk',sans-serif;outline:none;transition:box-shadow .2s}
-.nl-input:focus{box-shadow:inset 0 0 0 2px var(--coral)}
+      /* ── NEWSLETTER ── */
+      .nl-box {
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: 12px;
+        padding: 3rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: center;
+        box-shadow: var(--shadow);
+      }
+      .nl-form {
+        display: flex;
+        gap: 0.6rem;
+      }
+      .nl-input {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        background: #fff;
+        border: 2px solid var(--ink);
+        border-radius: 4px;
+        font-size: 0.875rem;
+        font-family: "Cabinet Grotesk", sans-serif;
+        outline: none;
+        transition: box-shadow 0.2s;
+      }
+      .nl-input:focus {
+        box-shadow: inset 0 0 0 2px var(--coral);
+      }
 
-/* ── CTA FINAL ── */
-.cta-section{padding:6rem 2.5rem;background:var(--coral);border-top:2px solid var(--ink);text-align:center;position:relative;overflow:hidden}
-.cta-bg-text{position:absolute;font-size:clamp(6rem,18vw,16rem);font-weight:900;letter-spacing:-.05em;color:rgba(255,255,255,.1);top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none;user-select:none}
-.cta-section h2{font-size:clamp(2.5rem,5vw,4.5rem);font-weight:900;color:#fff;letter-spacing:-.03em;line-height:1.05;margin-bottom:1.2rem;position:relative}
-.cta-section h2 .serif{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400}
-.cta-section p{font-size:1rem;color:rgba(255,255,255,.8);font-weight:600;margin-bottom:2rem;position:relative}
-.cta-buttons{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;position:relative}
+      /* ── CTA FINAL ── */
+      .cta-section {
+        padding: 6rem 2.5rem;
+        background: var(--coral);
+        border-top: 2px solid var(--ink);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .cta-bg-text {
+        position: absolute;
+        font-size: clamp(6rem, 18vw, 16rem);
+        font-weight: 900;
+        letter-spacing: -0.05em;
+        color: rgba(255, 255, 255, 0.1);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        white-space: nowrap;
+        pointer-events: none;
+        user-select: none;
+      }
+      .cta-section h2 {
+        font-size: clamp(2.5rem, 5vw, 4.5rem);
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+        margin-bottom: 1.2rem;
+        position: relative;
+      }
+      .cta-section h2 .serif {
+        font-family: "Instrument Serif", serif;
+        font-style: italic;
+        font-weight: 400;
+      }
+      .cta-section p {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 600;
+        margin-bottom: 2rem;
+        position: relative;
+      }
+      .cta-buttons {
+        display: flex;
+        gap: 0.8rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        position: relative;
+      }
 
-/* ── FOOTER ── */
-footer{padding:3rem 2.5rem;border-top:2px solid var(--ink);display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;gap:2rem}
-.footer-brand .logo{font-size:1.2rem;margin-bottom:.8rem;display:flex}
-.footer-brand p{font-size:.78rem;color:var(--muted);font-weight:500;line-height:1.7;max-width:220px}
-.footer-brand .sister{margin-top:1rem;font-size:.7rem;font-weight:700;color:var(--muted);border-top:1.5px solid var(--ink);padding-top:.8rem}
-.footer-brand .sister a{color:var(--coral);font-weight:800}
-.footer-badges-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.75rem}
-.f-badge{padding:3px 8px;background:var(--surface);border:1.5px solid var(--ink);border-radius:2px;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
-.footer-col h5{font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem}
-.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:.5rem}
-.footer-col a{font-size:.82rem;color:var(--muted);text-decoration:none;font-weight:600;transition:color .15s}
-.footer-col a:hover{color:var(--coral)}
-.footer-bottom{border-top:2px solid var(--ink);padding:1.2rem 2.5rem;display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--muted);font-weight:600;flex-wrap:wrap;gap:.5rem}
-.footer-socials{display:flex;gap:.5rem}
-.social-btn{width:30px;height:30px;background:var(--surface);border:2px solid var(--ink);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.8rem;cursor:pointer;transition:all .15s;text-decoration:none;color:var(--ink)}
-.social-btn:hover{background:var(--coral);color:#fff;border-color:var(--coral)}
+      /* ── FOOTER ── */
+      footer {
+        padding: 3rem 2.5rem;
+        border-top: 2px solid var(--ink);
+        display: grid;
+        grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+        gap: 2rem;
+      }
+      .footer-brand .logo {
+        font-size: 1.2rem;
+        margin-bottom: 0.8rem;
+        display: flex;
+      }
+      .footer-brand p {
+        font-size: 0.78rem;
+        color: var(--muted);
+        font-weight: 500;
+        line-height: 1.7;
+        max-width: 220px;
+      }
+      .footer-brand .sister {
+        margin-top: 1rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--muted);
+        border-top: 1.5px solid var(--ink);
+        padding-top: 0.8rem;
+      }
+      .footer-brand .sister a {
+        color: var(--coral);
+        font-weight: 800;
+      }
+      .footer-badges-row {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        margin-top: 0.75rem;
+      }
+      .f-badge {
+        padding: 3px 8px;
+        background: var(--surface);
+        border: 1.5px solid var(--ink);
+        border-radius: 2px;
+        font-size: 0.6rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+      }
+      .footer-col h5 {
+        font-size: 0.72rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 1rem;
+      }
+      .footer-col ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .footer-col a {
+        font-size: 0.82rem;
+        color: var(--muted);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.15s;
+      }
+      .footer-col a:hover {
+        color: var(--coral);
+      }
+      .footer-bottom {
+        border-top: 2px solid var(--ink);
+        padding: 1.2rem 2.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.72rem;
+        color: var(--muted);
+        font-weight: 600;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .footer-socials {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .social-btn {
+        width: 30px;
+        height: 30px;
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-decoration: none;
+        color: var(--ink);
+      }
+      .social-btn:hover {
+        background: var(--coral);
+        color: #fff;
+        border-color: var(--coral);
+      }
 
-/* ── ANIMATIONS ── */
-@keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
-.reveal.visible{opacity:1;transform:none}
+      /* ── ANIMATIONS ── */
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: none;
+      }
 
-/* ── RESPONSIVE ── */
-@media(max-width:1024px){
-  nav{padding:1rem 1.5rem}
-  .nav-links{display:none}
-  section{padding:3.5rem 1.5rem}
-  .hero{grid-template-columns:1fr;padding:6rem 1.5rem 3rem}
-  .hero-right{display:none}
-  .cat-grid{grid-template-columns:repeat(2,1fr)}
-  .web3-grid,.gamify-grid{grid-template-columns:repeat(2,1fr)}
-  .web3-card:nth-child(2),.gamify-card:nth-child(2){border-right:none}
-  .web3-card:nth-child(3),.gamify-card:nth-child(3){border-top:2px solid var(--ink)}
-  .templates-grid{grid-template-columns:repeat(2,1fr)}
-  .kits-grid{grid-template-columns:1fr}
-  .features-layout{grid-template-columns:1fr}
-  .feature-visual{display:none}
-  .steps{grid-template-columns:1fr}
-  .step{border-right:none;border-bottom:2px solid rgba(255,255,255,.12)}
-  .step:last-child{border-bottom:none}
-  .services-grid{grid-template-columns:repeat(2,1fr)}
-  .vendor-box{grid-template-columns:1fr}
-  .testi-grid{grid-template-columns:1fr}
-  .pricing-grid{grid-template-columns:repeat(2,1fr);max-width:600px}
-  .nl-box{grid-template-columns:1fr}
-  .dir-grid{grid-template-columns:repeat(2,1fr)}
-  footer{grid-template-columns:1fr 1fr;gap:1.5rem}
-}
-@media(max-width:640px){
-  nav{padding:1rem 1.2rem}
-  section{padding:3rem 1.2rem}
-  .cat-grid{grid-template-columns:repeat(2,1fr)}
-  .services-grid,.templates-grid,.dir-grid{grid-template-columns:1fr}
-  .pricing-grid{grid-template-columns:1fr;max-width:100%}
-  .web3-grid,.gamify-grid{grid-template-columns:1fr}
-  .web3-card,.gamify-card{border-right:none;border-bottom:2px solid var(--ink)}
-  .web3-card:last-child,.gamify-card:last-child{border-bottom:none}
-  .ai-input-row{flex-direction:column}
-  footer{grid-template-columns:1fr}
-  .footer-bottom{flex-direction:column;text-align:center}
-  .nl-form{flex-direction:column}
-}
-</style>
-</head>
-<body>
-
-<!-- ═══ NAVBAR ═══ -->
-<nav>
-  <a href="#" class="logo">Web-Temify <span class="logo-dot"></span></a>
-  <ul class="nav-links">
-    <li><a href="#templates">Templates</a></li>
-    <li><a href="#scripts">Scripts</a></li>
-    <li class="nav-new"><a href="#kits">Launch Kits</a></li>
-    <li><a href="#web3">Web3</a></li>
-    <li><a href="#directory">Directory</a></li>
-    <li><a href="#services">Services</a></li>
-    <li><a href="#pricing">Pricing</a></li>
-  </ul>
-  <div class="nav-actions">
-    <a href="#" class="btn btn-ghost">Log in</a>
-    <a href="#templates" class="btn btn-fill">Browse Templates →</a>
-  </div>
-</nav>
-
-<!-- ═══ HERO ═══ -->
-<section class="hero">
-  <div class="hero-bg-shape shape-1"></div>
-  <div class="hero-bg-shape shape-2"></div>
-  <div class="hero-bg-shape shape-3"></div>
-
-  <div class="hero-left">
-    <div class="hero-badge">500+ Premium Templates</div>
-    <h1>Your website,<br><span class="serif">ready in</span><br>minutes.</h1>
-    <p class="hero-desc">Premium templates, scripts, Web3 kits, and a curated tech directory — for developers, agencies, and founders across Africa and beyond.</p>
-    <div class="hero-cta">
-      <a href="#templates" class="btn btn-fill btn-big">Browse Templates</a>
-      <a href="#how" class="btn btn-ghost btn-big">See how it works</a>
-    </div>
-    <div class="hero-trust">
-      <div class="trust-faces">
-        <div class="face f1">😊</div>
-        <div class="face f2">🙂</div>
-        <div class="face f3">😄</div>
-        <div class="face f4">🤩</div>
+      /* ── RESPONSIVE ── */
+      @media (max-width: 1024px) {
+        nav {
+          padding: 1rem 1.5rem;
+        }
+        .nav-links {
+          display: none;
+        }
+        section {
+          padding: 3.5rem 1.5rem;
+        }
+        .hero {
+          grid-template-columns: 1fr;
+          padding: 6rem 1.5rem 3rem;
+        }
+        .hero-right {
+          display: none;
+        }
+        .cat-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .web3-grid,
+        .gamify-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .web3-card:nth-child(2),
+        .gamify-card:nth-child(2) {
+          border-right: none;
+        }
+        .web3-card:nth-child(3),
+        .gamify-card:nth-child(3) {
+          border-top: 2px solid var(--ink);
+        }
+        .templates-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .kits-grid {
+          grid-template-columns: 1fr;
+        }
+        .features-layout {
+          grid-template-columns: 1fr;
+        }
+        .feature-visual {
+          display: none;
+        }
+        .steps {
+          grid-template-columns: 1fr;
+        }
+        .step {
+          border-right: none;
+          border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+        }
+        .step:last-child {
+          border-bottom: none;
+        }
+        .services-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .vendor-box {
+          grid-template-columns: 1fr;
+        }
+        .testi-grid {
+          grid-template-columns: 1fr;
+        }
+        .pricing-grid {
+          grid-template-columns: repeat(2, 1fr);
+          max-width: 600px;
+        }
+        .nl-box {
+          grid-template-columns: 1fr;
+        }
+        .dir-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        footer {
+          grid-template-columns: 1fr 1fr;
+          gap: 1.5rem;
+        }
+      }
+      @media (max-width: 640px) {
+        nav {
+          padding: 1rem 1.2rem;
+        }
+        section {
+          padding: 3rem 1.2rem;
+        }
+        .cat-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .services-grid,
+        .templates-grid,
+        .dir-grid {
+          grid-template-columns: 1fr;
+        }
+        .pricing-grid {
+          grid-template-columns: 1fr;
+          max-width: 100%;
+        }
+        .web3-grid,
+        .gamify-grid {
+          grid-template-columns: 1fr;
+        }
+        .web3-card,
+        .gamify-card {
+          border-right: none;
+          border-bottom: 2px solid var(--ink);
+        }
+        .web3-card:last-child,
+        .gamify-card:last-child {
+          border-bottom: none;
+        }
+        .ai-input-row {
+          flex-direction: column;
+        }
+        footer {
+          grid-template-columns: 1fr;
+        }
+        .footer-bottom {
+          flex-direction: column;
+          text-align: center;
+        }
+        .nl-form {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ═══ NAVBAR ═══ -->
+    <nav>
+      <a href="#" class="logo">Web-Temify <span class="logo-dot"></span></a>
+      <ul class="nav-links">
+        <li><a href="#templates">Templates</a></li>
+        <li><a href="#scripts">Scripts</a></li>
+        <li class="nav-new"><a href="#kits">Launch Kits</a></li>
+        <li><a href="#web3">Web3</a></li>
+        <li><a href="#directory">Directory</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="#" class="btn btn-ghost">Log in</a>
+        <a href="#templates" class="btn btn-fill">Browse Templates →</a>
       </div>
-      <div class="trust-text"><strong>2,400+ businesses</strong><br>launched with Web-Temify</div>
-    </div>
-  </div>
+    </nav>
 
-  <div class="hero-right">
-    <div class="preview-card">
-      <div class="card-header"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>&nbsp; NeoBank Pro Template</div>
-      <div class="card-body cb-1">
-        <h4>🏦 NeoBank Pro</h4>
-        <p>Modern digital banking UI with Paystack integration.</p>
-        <div style="margin-top:.8rem">
-          <div class="mock-bar" style="background:#ff5733;width:70%"></div>
-          <div class="mock-bar" style="background:#ffd60a;width:45%"></div>
-          <div class="mock-bar" style="background:#0f0d0a22;width:90%"></div>
+    <!-- ═══ HERO ═══ -->
+    <section class="hero">
+      <div class="hero-bg-shape shape-1"></div>
+      <div class="hero-bg-shape shape-2"></div>
+      <div class="hero-bg-shape shape-3"></div>
+
+      <div class="hero-left">
+        <div class="hero-badge">500+ Premium Templates</div>
+        <h1>
+          Your website,<br /><span class="serif">ready in</span><br />minutes.
+        </h1>
+        <p class="hero-desc">
+          Premium templates, scripts, Web3 kits, and a curated tech directory —
+          for developers, agencies, and founders across Africa and beyond.
+        </p>
+        <div class="hero-cta">
+          <a href="#templates" class="btn btn-fill btn-big">Browse Templates</a>
+          <a href="#how" class="btn btn-ghost btn-big">See how it works</a>
         </div>
-        <span class="card-tag" style="background:#fff5f0">Fintech · $149</span>
-      </div>
-    </div>
-    <div class="preview-card">
-      <div class="card-header"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>&nbsp; Web3 DApp Kit</div>
-      <div class="card-body cb-2">
-        <h4>⛓️ DApp Kit</h4>
-        <p>Wallet connect, NFT gallery, smart contract UI.</p>
-        <div style="margin-top:.8rem">
-          <div class="mock-block" style="background:#4f8ef733"></div>
-          <div class="mock-bar" style="background:#4f8ef7;width:60%"></div>
+        <div class="hero-trust">
+          <div class="trust-faces">
+            <div class="face f1">😊</div>
+            <div class="face f2">🙂</div>
+            <div class="face f3">😄</div>
+            <div class="face f4">🤩</div>
+          </div>
+          <div class="trust-text">
+            <strong>2,400+ businesses</strong><br />launched with Web-Temify
+          </div>
         </div>
-        <span class="card-tag" style="background:#f0f8ff">Web3 · $199</span>
       </div>
-    </div>
-    <div class="preview-card">
-      <div class="card-header"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>&nbsp; P2P Trading Script</div>
-      <div class="card-body cb-3">
-        <h4>💱 P2P Script</h4>
-        <p>Full escrow trading platform with PHP + Laravel.</p>
-        <div style="margin-top:.8rem">
-          <div class="mock-block" style="background:#c084fc44"></div>
-          <div class="mock-bar" style="background:#c084fc;width:50%"></div>
+
+      <div class="hero-right">
+        <div class="preview-card">
+          <div class="card-header">
+            <span class="dot dot-r"></span><span class="dot dot-y"></span
+            ><span class="dot dot-g"></span>&nbsp; NeoBank Pro Template
+          </div>
+          <div class="card-body cb-1">
+            <h4>🏦 NeoBank Pro</h4>
+            <p>Modern digital banking UI with Paystack integration.</p>
+            <div style="margin-top: 0.8rem">
+              <div
+                class="mock-bar"
+                style="background: #ff5733; width: 70%"
+              ></div>
+              <div
+                class="mock-bar"
+                style="background: #ffd60a; width: 45%"
+              ></div>
+              <div
+                class="mock-bar"
+                style="background: #0f0d0a22; width: 90%"
+              ></div>
+            </div>
+            <span class="card-tag" style="background: #fff5f0"
+              >Fintech · $149</span
+            >
+          </div>
         </div>
-        <span class="card-tag" style="background:#f5f0ff">Script · $499</span>
+        <div class="preview-card">
+          <div class="card-header">
+            <span class="dot dot-r"></span><span class="dot dot-y"></span
+            ><span class="dot dot-g"></span>&nbsp; Web3 DApp Kit
+          </div>
+          <div class="card-body cb-2">
+            <h4>⛓️ DApp Kit</h4>
+            <p>Wallet connect, NFT gallery, smart contract UI.</p>
+            <div style="margin-top: 0.8rem">
+              <div class="mock-block" style="background: #4f8ef733"></div>
+              <div
+                class="mock-bar"
+                style="background: #4f8ef7; width: 60%"
+              ></div>
+            </div>
+            <span class="card-tag" style="background: #f0f8ff"
+              >Web3 · $199</span
+            >
+          </div>
+        </div>
+        <div class="preview-card">
+          <div class="card-header">
+            <span class="dot dot-r"></span><span class="dot dot-y"></span
+            ><span class="dot dot-g"></span>&nbsp; P2P Trading Script
+          </div>
+          <div class="card-body cb-3">
+            <h4>💱 P2P Script</h4>
+            <p>Full escrow trading platform with PHP + Laravel.</p>
+            <div style="margin-top: 0.8rem">
+              <div class="mock-block" style="background: #c084fc44"></div>
+              <div
+                class="mock-bar"
+                style="background: #c084fc; width: 50%"
+              ></div>
+            </div>
+            <span class="card-tag" style="background: #f5f0ff"
+              >Script · $499</span
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ STRIP ═══ -->
+    <div class="strip">
+      <div class="strip-inner">
+        Website Templates <span>✦</span> Banking Scripts <span>✦</span> Web3
+        DApp Kits <span>✦</span> NFT Marketplace <span>✦</span> Courier
+        Templates <span>✦</span> P2P Crypto Scripts <span>✦</span> Loan
+        Management <span>✦</span> AI Page Generator <span>✦</span> Tech
+        Directory <span>✦</span> Paystack · Stripe · LemonSqueezy
+        <span>✦</span> Website Templates <span>✦</span> Banking Scripts
+        <span>✦</span> Web3 DApp Kits <span>✦</span> NFT Marketplace
+        <span>✦</span> Courier Templates <span>✦</span> P2P Crypto Scripts
+        <span>✦</span> Loan Management <span>✦</span> AI Page Generator
+        <span>✦</span> Tech Directory <span>✦</span> Paystack · Stripe ·
+        LemonSqueezy <span>✦</span>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- ═══ STRIP ═══ -->
-<div class="strip">
-  <div class="strip-inner">
-    Website Templates <span>✦</span> Banking Scripts <span>✦</span> Web3 DApp Kits <span>✦</span> NFT Marketplace <span>✦</span> Courier Templates <span>✦</span> P2P Crypto Scripts <span>✦</span> Loan Management <span>✦</span> AI Page Generator <span>✦</span> Tech Directory <span>✦</span> Paystack · Stripe · LemonSqueezy <span>✦</span>
-    Website Templates <span>✦</span> Banking Scripts <span>✦</span> Web3 DApp Kits <span>✦</span> NFT Marketplace <span>✦</span> Courier Templates <span>✦</span> P2P Crypto Scripts <span>✦</span> Loan Management <span>✦</span> AI Page Generator <span>✦</span> Tech Directory <span>✦</span> Paystack · Stripe · LemonSqueezy <span>✦</span>
-  </div>
-</div>
-
-<!-- ═══ CATEGORIES ═══ -->
-<section id="templates">
-  <div class="section-head reveal">
-    <div>
-      <p class="eyebrow">Browse by Category</p>
-      <h2 class="section-title">Whatever your<br><span class="serif">business needs</span></h2>
-    </div>
-    <a href="#" class="btn btn-ghost">View All →</a>
-  </div>
-  <div class="cat-grid reveal">
-    <div class="cat-card cc-1"><span class="cat-count">24 products</span><span class="cat-emoji">🏦</span><h3>Fintech & Banking</h3><p>Banking UIs, loan platforms, and payment system templates for the African market.</p></div>
-    <div class="cat-card cc-2"><span class="cat-count">18 products</span><span class="cat-emoji">⛓️</span><h3>Web3 & Blockchain</h3><p>NFT marketplaces, DeFi dashboards, DAO governance, and wallet UI kits.</p></div>
-    <div class="cat-card cc-3"><span class="cat-count">12 products</span><span class="cat-emoji">🚚</span><h3>Logistics & Courier</h3><p>Delivery company sites with rate calculators, tracking UI, and fleet management.</p></div>
-    <div class="cat-card cc-4"><span class="cat-count">31 products</span><span class="cat-emoji">🚀</span><h3>SaaS & Startups</h3><p>Modern landing pages, app showcases, and product-led growth templates.</p></div>
-    <div class="cat-card cc-5"><span class="cat-count">22 products</span><span class="cat-emoji">🎨</span><h3>Agency & Portfolio</h3><p>Bold, conversion-focused designs for creative agencies and freelancers.</p></div>
-    <div class="cat-card cc-6"><span class="cat-count">19 products</span><span class="cat-emoji">🛒</span><h3>E-commerce</h3><p>Ready-to-sell storefronts for digital products, subscriptions, and physical goods.</p></div>
-    <div class="cat-card cc-7"><span class="cat-count">8 products</span><span class="cat-emoji">🏘️</span><h3>Real Estate</h3><p>Property listing, agent profiles, and developer portfolio templates.</p></div>
-    <div class="cat-card cc-8"><span class="cat-count">40+</span><span class="cat-emoji">⚡</span><h3>Scripts & Tools</h3><p>Full-stack functional scripts — P2P trading, loan management, banking, POS, and more.</p></div>
-  </div>
-</section>
-
-<!-- ═══ FEATURED TEMPLATES ═══ -->
-<section class="section-alt" id="featured">
-  <div class="section-head reveal">
-    <div>
-      <p class="eyebrow">Featured Products</p>
-      <h2 class="section-title">Top-selling templates<br><span class="serif">& scripts</span></h2>
-    </div>
-    <a href="#" class="btn btn-ghost">View All →</a>
-  </div>
-  <div class="templates-grid reveal">
-    <div class="tpl-card">
-      <div class="tpl-preview" style="background:#fff5f0"><span class="tpl-badge badge-hot">🔥 Hot</span>🏦</div>
-      <div class="tpl-body"><div class="tpl-name">NeoBank Pro Template</div><div class="tpl-type">HTML5 + React · 12 pages</div><div class="tpl-footer"><span class="tpl-price">$149</span><span class="tpl-stats">★ 4.9 · 847 sales</span></div></div>
-    </div>
-    <div class="tpl-card">
-      <div class="tpl-preview" style="background:#f0f8ff"><span class="tpl-badge badge-web3">Web3</span>⛓️</div>
-      <div class="tpl-body"><div class="tpl-name">NFT Marketplace UI Kit</div><div class="tpl-type">Next.js 15 · 18 pages</div><div class="tpl-footer"><span class="tpl-price">$199</span><span class="tpl-stats">★ 4.8 · 421 sales</span></div></div>
-    </div>
-    <div class="tpl-card">
-      <div class="tpl-preview" style="background:#fff8e1"><span class="tpl-badge badge-new">✨ New</span>🚚</div>
-      <div class="tpl-body"><div class="tpl-name">Courier & Logistics Pro</div><div class="tpl-type">WordPress · Elementor · 10 pages</div><div class="tpl-footer"><span class="tpl-price">$99</span><span class="tpl-stats">★ 4.7 · 312 sales</span></div></div>
-    </div>
-    <div class="tpl-card">
-      <div class="tpl-preview" style="background:#f5f0ff"><span class="tpl-badge badge-hot">🔥 Hot</span>💱</div>
-      <div class="tpl-body"><div class="tpl-name">P2P Trading Script</div><div class="tpl-type">PHP + Laravel · Full script</div><div class="tpl-footer"><span class="tpl-price">$499</span><span class="tpl-stats">★ 4.9 · 189 sales</span></div></div>
-    </div>
-    <div class="tpl-card">
-      <div class="tpl-preview" style="background:#f0fff8"><span class="tpl-badge badge-new">✨ New</span>🏘️</div>
-      <div class="tpl-body"><div class="tpl-name">Real Estate Listings Pro</div><div class="tpl-type">Next.js + Supabase · 14 pages</div><div class="tpl-footer"><span class="tpl-price">$129</span><span class="tpl-stats">★ 4.6 · 203 sales</span></div></div>
-    </div>
-    <div class="tpl-card">
-      <div class="tpl-preview" style="background:#fff5f0"><span class="tpl-badge badge-top">⭐ Top</span>💰</div>
-      <div class="tpl-body"><div class="tpl-name">Loan Management System</div><div class="tpl-type">PHP + MySQL · Full script</div><div class="tpl-footer"><span class="tpl-price">$349</span><span class="tpl-stats">★ 4.8 · 276 sales</span></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ LAUNCH KITS ═══ -->
-<section id="kits">
-  <div class="section-head reveal">
-    <div>
-      <p class="eyebrow">Launch Kits</p>
-      <h2 class="section-title">Complete systems,<br><span class="serif">not just templates</span></h2>
-      <p style="font-size:.9rem;color:var(--muted);margin-top:.75rem;font-weight:500;max-width:400px">Everything bundled, tested, and ready to deploy — not just a single file.</p>
-    </div>
-  </div>
-  <div class="kits-grid reveal">
-    <div class="kit-card dark">
-      <div class="kit-watermark">🚀</div>
-      <div class="kit-tag">⚡ Most Popular</div>
-      <div class="kit-name">SaaS Starter Kit</div>
-      <div class="kit-desc">Launch a SaaS product in a weekend — auth, billing, dashboard, onboarding, and landing page, all included.</div>
-      <div class="kit-items"><span class="kit-item">Landing Page</span><span class="kit-item">Auth System</span><span class="kit-item">Dashboard UI</span><span class="kit-item">Stripe Billing</span><span class="kit-item">Admin Panel</span></div>
-      <div class="kit-footer"><div><span class="kit-price" style="color:var(--yellow)">$299</span><span class="kit-was">$490</span></div><a href="#" class="btn btn-yellow">Get Kit →</a></div>
-    </div>
-    <div class="kit-card">
-      <div class="kit-watermark">⛓️</div>
-      <div class="kit-tag">🔥 Web3</div>
-      <div class="kit-name">Web3 DApp Starter Kit</div>
-      <div class="kit-desc">Wallet connect, smart contract UI, token dashboard, and NFT components — launch your dApp without starting from scratch.</div>
-      <div class="kit-items"><span class="kit-item">Wallet Connect</span><span class="kit-item">Smart Contract UI</span><span class="kit-item">NFT Gallery</span><span class="kit-item">DAO Governance</span><span class="kit-item">Mint Page</span></div>
-      <div class="kit-footer"><div><span class="kit-price">$399</span><span class="kit-was">$620</span></div><a href="#" class="btn btn-fill">Get Kit →</a></div>
-    </div>
-    <div class="kit-card">
-      <div class="kit-watermark">🏦</div>
-      <div class="kit-tag">💰 Fintech</div>
-      <div class="kit-name">Fintech Launch Kit</div>
-      <div class="kit-desc">Banking UI, loan calculator, KYC flow, Paystack integration, and compliance pages. Africa-ready from day one.</div>
-      <div class="kit-items"><span class="kit-item">Banking Template</span><span class="kit-item">Loan Calculator</span><span class="kit-item">KYC Flow</span><span class="kit-item">Paystack Ready</span><span class="kit-item">Admin Dashboard</span></div>
-      <div class="kit-footer"><div><span class="kit-price">$349</span><span class="kit-was">$560</span></div><a href="#" class="btn btn-fill">Get Kit →</a></div>
-    </div>
-    <div class="kit-card">
-      <div class="kit-watermark">🎨</div>
-      <div class="kit-tag">🏢 Agency</div>
-      <div class="kit-name">Agency Starter Kit</div>
-      <div class="kit-desc">Portfolio, services pages, case studies, contact forms, and lead capture — everything an agency needs to launch.</div>
-      <div class="kit-items"><span class="kit-item">Portfolio Pages</span><span class="kit-item">Services Layout</span><span class="kit-item">Case Studies</span><span class="kit-item">Lead Forms</span><span class="kit-item">Blog Engine</span></div>
-      <div class="kit-footer"><div><span class="kit-price">$249</span><span class="kit-was">$390</span></div><a href="#" class="btn btn-fill">Get Kit →</a></div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ AI PAGE GENERATOR ═══ -->
-<section>
-  <div class="ai-box reveal">
-    <p class="eyebrow">AI-Powered</p>
-    <h2 class="section-title" style="text-align:center;margin:0 auto .75rem">Generate a landing page<br><span class="serif">in 60 seconds</span></h2>
-    <p class="ai-sub">Describe your business and our AI generates a complete, ready-to-deploy landing page — copy, layout, and all.</p>
-    <div class="ai-input-row">
-      <input type="text" class="ai-input" placeholder="e.g. A fintech app for Nigerian SMEs...">
-      <button class="btn btn-yellow" style="white-space:nowrap">Generate →</button>
-    </div>
-    <div class="ai-chips">
-      <span class="ai-chip">Logistics company</span>
-      <span class="ai-chip">NFT marketplace</span>
-      <span class="ai-chip">Loan app Nigeria</span>
-      <span class="ai-chip">SaaS dashboard</span>
-      <span class="ai-chip">Crypto exchange</span>
-      <span class="ai-chip">Real estate agency</span>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ WEB3 HUB ═══ -->
-<section class="section-alt" id="web3">
-  <div class="section-head reveal">
-    <div>
-      <p class="eyebrow">Web3 Hub</p>
-      <h2 class="section-title">Build the decentralised<br><span class="serif">web faster</span></h2>
-      <p style="font-size:.9rem;color:var(--muted);margin-top:.75rem;font-weight:500">Components, kits, and scripts for the next generation of the internet.</p>
-    </div>
-    <a href="#" class="btn btn-ghost">Explore Web3 →</a>
-  </div>
-  <div class="web3-grid reveal">
-    <div class="web3-card"><span class="web3-icon">👛</span><div class="web3-name">Wallet Auth UI</div><div class="web3-desc">MetaMask, WalletConnect, Coinbase — ready-made connection flows for any project</div></div>
-    <div class="web3-card"><span class="web3-icon">🖼️</span><div class="web3-name">NFT Galleries</div><div class="web3-desc">Collection displays, mint pages, and auction interfaces built and tested</div></div>
-    <div class="web3-card"><span class="web3-icon">📊</span><div class="web3-name">DeFi Dashboards</div><div class="web3-desc">Staking, liquidity pools, and yield farming — complete UI kits ready to download</div></div>
-    <div class="web3-card"><span class="web3-icon">🏛️</span><div class="web3-name">DAO Governance</div><div class="web3-desc">Proposal voting, treasury management, and member portals for your community</div></div>
-  </div>
-</section>
-
-<!-- ═══ TECH DIRECTORY ═══ -->
-<section id="directory">
-  <div class="section-head reveal">
-    <div>
-      <p class="eyebrow">Tech Directory</p>
-      <h2 class="section-title">1,200+ curated tools<br><span class="serif">for builders</span></h2>
-      <p style="font-size:.9rem;color:var(--muted);margin-top:.75rem;font-weight:500;max-width:400px">AI tools, Web3 resources, hosting, design utilities — all in one place. Submit your tool or get featured.</p>
-    </div>
-    <a href="#" class="btn btn-ghost">Browse All →</a>
-  </div>
-  <div class="dir-tabs reveal">
-    <button class="dir-tab active">All Tools</button>
-    <button class="dir-tab">AI & ML</button>
-    <button class="dir-tab">Web3 & Blockchain</button>
-    <button class="dir-tab">Hosting & Infra</button>
-    <button class="dir-tab">Design Tools</button>
-    <button class="dir-tab">No-Code</button>
-    <button class="dir-tab">Dev Tools</button>
-    <button class="dir-tab">Freelancer Resources</button>
-  </div>
-  <div class="dir-grid reveal">
-    <a class="dir-card featured" href="#">
-      <div class="dir-logo">🤖</div>
-      <div class="dir-info">
-        <div class="dir-name">Claude by Anthropic <span class="star">★ Featured</span></div>
-        <div class="dir-desc">Most capable AI assistant for coding, writing, and complex analysis tasks</div>
-        <div class="dir-pills"><span class="dir-pill">AI</span><span class="dir-pill">Coding</span><span class="dir-pill">Free tier</span></div>
+    <!-- ═══ CATEGORIES ═══ -->
+    <section id="templates">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Browse by Category</p>
+          <h2 class="section-title">
+            Whatever your<br /><span class="serif">business needs</span>
+          </h2>
+        </div>
+        <a href="#" class="btn btn-ghost">View All →</a>
       </div>
-    </a>
-    <a class="dir-card featured" href="#">
-      <div class="dir-logo">▲</div>
-      <div class="dir-info">
-        <div class="dir-name">Vercel <span class="star">★ Featured</span></div>
-        <div class="dir-desc">Deploy web projects instantly — the fastest frontend cloud platform available</div>
-        <div class="dir-pills"><span class="dir-pill">Hosting</span><span class="dir-pill">CI/CD</span><span class="dir-pill">Free tier</span></div>
+      <div class="cat-grid reveal">
+        <div class="cat-card cc-1">
+          <span class="cat-count">24 products</span
+          ><span class="cat-emoji">🏦</span>
+          <h3>Fintech & Banking</h3>
+          <p>
+            Banking UIs, loan platforms, and payment system templates for the
+            African market.
+          </p>
+        </div>
+        <div class="cat-card cc-2">
+          <span class="cat-count">18 products</span
+          ><span class="cat-emoji">⛓️</span>
+          <h3>Web3 & Blockchain</h3>
+          <p>
+            NFT marketplaces, DeFi dashboards, DAO governance, and wallet UI
+            kits.
+          </p>
+        </div>
+        <div class="cat-card cc-3">
+          <span class="cat-count">12 products</span
+          ><span class="cat-emoji">🚚</span>
+          <h3>Logistics & Courier</h3>
+          <p>
+            Delivery company sites with rate calculators, tracking UI, and fleet
+            management.
+          </p>
+        </div>
+        <div class="cat-card cc-4">
+          <span class="cat-count">31 products</span
+          ><span class="cat-emoji">🚀</span>
+          <h3>SaaS & Startups</h3>
+          <p>
+            Modern landing pages, app showcases, and product-led growth
+            templates.
+          </p>
+        </div>
+        <div class="cat-card cc-5">
+          <span class="cat-count">22 products</span
+          ><span class="cat-emoji">🎨</span>
+          <h3>Agency & Portfolio</h3>
+          <p>
+            Bold, conversion-focused designs for creative agencies and
+            freelancers.
+          </p>
+        </div>
+        <div class="cat-card cc-6">
+          <span class="cat-count">19 products</span
+          ><span class="cat-emoji">🛒</span>
+          <h3>E-commerce</h3>
+          <p>
+            Ready-to-sell storefronts for digital products, subscriptions, and
+            physical goods.
+          </p>
+        </div>
+        <div class="cat-card cc-7">
+          <span class="cat-count">8 products</span
+          ><span class="cat-emoji">🏘️</span>
+          <h3>Real Estate</h3>
+          <p>
+            Property listing, agent profiles, and developer portfolio templates.
+          </p>
+        </div>
+        <div class="cat-card cc-8">
+          <span class="cat-count">40+</span><span class="cat-emoji">⚡</span>
+          <h3>Scripts & Tools</h3>
+          <p>
+            Full-stack functional scripts — P2P trading, loan management,
+            banking, POS, and more.
+          </p>
+        </div>
       </div>
-    </a>
-    <a class="dir-card" href="#">
-      <div class="dir-logo">🔷</div>
-      <div class="dir-info">
-        <div class="dir-name">Supabase</div>
-        <div class="dir-desc">Open source Firebase alternative — Postgres, auth, storage, and edge functions</div>
-        <div class="dir-pills"><span class="dir-pill">Database</span><span class="dir-pill">BaaS</span><span class="dir-pill">Free tier</span></div>
+    </section>
+
+    <!-- ═══ FEATURED TEMPLATES ═══ -->
+    <section class="section-alt" id="featured">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Featured Products</p>
+          <h2 class="section-title">
+            Top-selling templates<br /><span class="serif">& scripts</span>
+          </h2>
+        </div>
+        <a href="#" class="btn btn-ghost">View All →</a>
       </div>
-    </a>
-    <a class="dir-card" href="#">
-      <div class="dir-logo">🔥</div>
-      <div class="dir-info">
-        <div class="dir-name">Hardhat</div>
-        <div class="dir-desc">Ethereum development environment for smart contract testing and deployment</div>
-        <div class="dir-pills"><span class="dir-pill">Web3</span><span class="dir-pill">Ethereum</span><span class="dir-pill">Free</span></div>
+      <div class="templates-grid reveal">
+        <div class="tpl-card">
+          <div class="tpl-preview" style="background: #fff5f0">
+            <span class="tpl-badge badge-hot">🔥 Hot</span>🏦
+          </div>
+          <div class="tpl-body">
+            <div class="tpl-name">NeoBank Pro Template</div>
+            <div class="tpl-type">HTML5 + React · 12 pages</div>
+            <div class="tpl-footer">
+              <span class="tpl-price">$149</span
+              ><span class="tpl-stats">★ 4.9 · 847 sales</span>
+            </div>
+          </div>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-preview" style="background: #f0f8ff">
+            <span class="tpl-badge badge-web3">Web3</span>⛓️
+          </div>
+          <div class="tpl-body">
+            <div class="tpl-name">NFT Marketplace UI Kit</div>
+            <div class="tpl-type">Next.js 15 · 18 pages</div>
+            <div class="tpl-footer">
+              <span class="tpl-price">$199</span
+              ><span class="tpl-stats">★ 4.8 · 421 sales</span>
+            </div>
+          </div>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-preview" style="background: #fff8e1">
+            <span class="tpl-badge badge-new">✨ New</span>🚚
+          </div>
+          <div class="tpl-body">
+            <div class="tpl-name">Courier & Logistics Pro</div>
+            <div class="tpl-type">WordPress · Elementor · 10 pages</div>
+            <div class="tpl-footer">
+              <span class="tpl-price">$99</span
+              ><span class="tpl-stats">★ 4.7 · 312 sales</span>
+            </div>
+          </div>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-preview" style="background: #f5f0ff">
+            <span class="tpl-badge badge-hot">🔥 Hot</span>💱
+          </div>
+          <div class="tpl-body">
+            <div class="tpl-name">P2P Trading Script</div>
+            <div class="tpl-type">PHP + Laravel · Full script</div>
+            <div class="tpl-footer">
+              <span class="tpl-price">$499</span
+              ><span class="tpl-stats">★ 4.9 · 189 sales</span>
+            </div>
+          </div>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-preview" style="background: #f0fff8">
+            <span class="tpl-badge badge-new">✨ New</span>🏘️
+          </div>
+          <div class="tpl-body">
+            <div class="tpl-name">Real Estate Listings Pro</div>
+            <div class="tpl-type">Next.js + Supabase · 14 pages</div>
+            <div class="tpl-footer">
+              <span class="tpl-price">$129</span
+              ><span class="tpl-stats">★ 4.6 · 203 sales</span>
+            </div>
+          </div>
+        </div>
+        <div class="tpl-card">
+          <div class="tpl-preview" style="background: #fff5f0">
+            <span class="tpl-badge badge-top">⭐ Top</span>💰
+          </div>
+          <div class="tpl-body">
+            <div class="tpl-name">Loan Management System</div>
+            <div class="tpl-type">PHP + MySQL · Full script</div>
+            <div class="tpl-footer">
+              <span class="tpl-price">$349</span
+              ><span class="tpl-stats">★ 4.8 · 276 sales</span>
+            </div>
+          </div>
+        </div>
       </div>
-    </a>
-    <a class="dir-card" href="#">
-      <div class="dir-logo">💳</div>
-      <div class="dir-info">
-        <div class="dir-name">Paystack</div>
-        <div class="dir-desc">Africa's leading payment gateway — cards, bank transfers, USSD, mobile money</div>
-        <div class="dir-pills"><span class="dir-pill">Payments</span><span class="dir-pill">Nigeria</span><span class="dir-pill">Africa</span></div>
+    </section>
+
+    <!-- ═══ LAUNCH KITS ═══ -->
+    <section id="kits">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Launch Kits</p>
+          <h2 class="section-title">
+            Complete systems,<br /><span class="serif">not just templates</span>
+          </h2>
+          <p
+            style="
+              font-size: 0.9rem;
+              color: var(--muted);
+              margin-top: 0.75rem;
+              font-weight: 500;
+              max-width: 400px;
+            "
+          >
+            Everything bundled, tested, and ready to deploy — not just a single
+            file.
+          </p>
+        </div>
       </div>
-    </a>
-    <a class="dir-card" href="#">
-      <div class="dir-logo">🎨</div>
-      <div class="dir-info">
-        <div class="dir-name">Figma</div>
-        <div class="dir-desc">Collaborative UI/UX design tool used by millions of teams worldwide</div>
-        <div class="dir-pills"><span class="dir-pill">Design</span><span class="dir-pill">UI/UX</span><span class="dir-pill">Free tier</span></div>
+      <div class="kits-grid reveal">
+        <div class="kit-card dark">
+          <div class="kit-watermark">🚀</div>
+          <div class="kit-tag">⚡ Most Popular</div>
+          <div class="kit-name">SaaS Starter Kit</div>
+          <div class="kit-desc">
+            Launch a SaaS product in a weekend — auth, billing, dashboard,
+            onboarding, and landing page, all included.
+          </div>
+          <div class="kit-items">
+            <span class="kit-item">Landing Page</span
+            ><span class="kit-item">Auth System</span
+            ><span class="kit-item">Dashboard UI</span
+            ><span class="kit-item">Stripe Billing</span
+            ><span class="kit-item">Admin Panel</span>
+          </div>
+          <div class="kit-footer">
+            <div>
+              <span class="kit-price" style="color: var(--yellow)">$299</span
+              ><span class="kit-was">$490</span>
+            </div>
+            <a href="#" class="btn btn-yellow">Get Kit →</a>
+          </div>
+        </div>
+        <div class="kit-card">
+          <div class="kit-watermark">⛓️</div>
+          <div class="kit-tag">🔥 Web3</div>
+          <div class="kit-name">Web3 DApp Starter Kit</div>
+          <div class="kit-desc">
+            Wallet connect, smart contract UI, token dashboard, and NFT
+            components — launch your dApp without starting from scratch.
+          </div>
+          <div class="kit-items">
+            <span class="kit-item">Wallet Connect</span
+            ><span class="kit-item">Smart Contract UI</span
+            ><span class="kit-item">NFT Gallery</span
+            ><span class="kit-item">DAO Governance</span
+            ><span class="kit-item">Mint Page</span>
+          </div>
+          <div class="kit-footer">
+            <div>
+              <span class="kit-price">$399</span
+              ><span class="kit-was">$620</span>
+            </div>
+            <a href="#" class="btn btn-fill">Get Kit →</a>
+          </div>
+        </div>
+        <div class="kit-card">
+          <div class="kit-watermark">🏦</div>
+          <div class="kit-tag">💰 Fintech</div>
+          <div class="kit-name">Fintech Launch Kit</div>
+          <div class="kit-desc">
+            Banking UI, loan calculator, KYC flow, Paystack integration, and
+            compliance pages. Africa-ready from day one.
+          </div>
+          <div class="kit-items">
+            <span class="kit-item">Banking Template</span
+            ><span class="kit-item">Loan Calculator</span
+            ><span class="kit-item">KYC Flow</span
+            ><span class="kit-item">Paystack Ready</span
+            ><span class="kit-item">Admin Dashboard</span>
+          </div>
+          <div class="kit-footer">
+            <div>
+              <span class="kit-price">$349</span
+              ><span class="kit-was">$560</span>
+            </div>
+            <a href="#" class="btn btn-fill">Get Kit →</a>
+          </div>
+        </div>
+        <div class="kit-card">
+          <div class="kit-watermark">🎨</div>
+          <div class="kit-tag">🏢 Agency</div>
+          <div class="kit-name">Agency Starter Kit</div>
+          <div class="kit-desc">
+            Portfolio, services pages, case studies, contact forms, and lead
+            capture — everything an agency needs to launch.
+          </div>
+          <div class="kit-items">
+            <span class="kit-item">Portfolio Pages</span
+            ><span class="kit-item">Services Layout</span
+            ><span class="kit-item">Case Studies</span
+            ><span class="kit-item">Lead Forms</span
+            ><span class="kit-item">Blog Engine</span>
+          </div>
+          <div class="kit-footer">
+            <div>
+              <span class="kit-price">$249</span
+              ><span class="kit-was">$390</span>
+            </div>
+            <a href="#" class="btn btn-fill">Get Kit →</a>
+          </div>
+        </div>
       </div>
-    </a>
-  </div>
-</section>
+    </section>
 
-<!-- ═══ HOW IT WORKS ═══ -->
-<section class="section-dark" id="how">
-  <p class="eyebrow reveal">How it works</p>
-  <h2 class="section-title reveal">Three steps to<br><span class="serif">your dream site</span></h2>
-  <div class="steps reveal">
-    <div class="step"><div class="step-num">01</div><span class="step-icon">🔍</span><h3>Find Your Template</h3><p>Browse 500+ professionally designed templates, scripts, and Web3 kits. Filter by category, tech stack, and price. Preview before you buy.</p></div>
-    <div class="step"><div class="step-num">02</div><span class="step-icon">⚡</span><h3>Download & Deploy</h3><p>Instant secure download after purchase. Full source files and setup guides. Pay via Paystack, Stripe, or LemonSqueezy — your choice.</p></div>
-    <div class="step"><div class="step-num">03</div><span class="step-icon">🛠️</span><h3>Need Customisation?</h3><p>Our team at Tinlance builds custom implementations and full products. Request a service directly from any template page.</p></div>
-  </div>
-</section>
-
-<!-- ═══ FEATURES ═══ -->
-<section>
-  <p class="eyebrow reveal">Why Web-Temify</p>
-  <h2 class="section-title reveal">Everything you need,<br><span class="serif">nothing you don't</span></h2>
-  <div class="features-layout">
-    <div class="feature-list reveal">
-      <div class="feat-item"><div class="feat-icon">⚡</div><div class="feat-text"><h4>Lightning Fast Load Times</h4><p>Every template is performance-optimised. 95+ Lighthouse scores on all products.</p></div></div>
-      <div class="feat-item"><div class="feat-icon">📱</div><div class="feat-text"><h4>Mobile-First by Default</h4><p>Perfect on phones, tablets, and desktops — no extra work required from you.</p></div></div>
-      <div class="feat-item"><div class="feat-icon">🔍</div><div class="feat-text"><h4>SEO Built In</h4><p>Meta tags, sitemaps, and structured data — all handled so Google can find your site.</p></div></div>
-      <div class="feat-item"><div class="feat-icon">🔒</div><div class="feat-text"><h4>Secure Downloads</h4><p>Token-based secure downloads, VirusTotal malware scanning on every file upload.</p></div></div>
-      <div class="feat-item"><div class="feat-icon">💳</div><div class="feat-text"><h4>3 Payment Gateways</h4><p>Paystack for Africa, Stripe internationally, LemonSqueezy for global digital sales.</p></div></div>
-    </div>
-    <div class="feature-visual reveal">
-      <div class="fv-header">
-        <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
-        <span style="color:rgba(255,255,255,.4);font-size:.7rem;margin-left:.5rem;font-weight:700">Template Gallery</span>
+    <!-- ═══ AI PAGE GENERATOR ═══ -->
+    <section>
+      <div class="ai-box reveal">
+        <p class="eyebrow">AI-Powered</p>
+        <h2
+          class="section-title"
+          style="text-align: center; margin: 0 auto 0.75rem"
+        >
+          Generate a landing page<br /><span class="serif">in 60 seconds</span>
+        </h2>
+        <p class="ai-sub">
+          Describe your business and our AI generates a complete,
+          ready-to-deploy landing page — copy, layout, and all.
+        </p>
+        <div class="ai-input-row">
+          <input
+            type="text"
+            class="ai-input"
+            placeholder="e.g. A fintech app for Nigerian SMEs..."
+          />
+          <button class="btn btn-yellow" style="white-space: nowrap">
+            Generate →
+          </button>
+        </div>
+        <div class="ai-chips">
+          <span class="ai-chip">Logistics company</span>
+          <span class="ai-chip">NFT marketplace</span>
+          <span class="ai-chip">Loan app Nigeria</span>
+          <span class="ai-chip">SaaS dashboard</span>
+          <span class="ai-chip">Crypto exchange</span>
+          <span class="ai-chip">Real estate agency</span>
+        </div>
       </div>
-      <div class="fv-body">
-        <div class="mini-template"><div class="mt-hero" style="background:linear-gradient(135deg,#ff5733,#ffd60a)"><span style="font-size:1.4rem">🏦</span></div><div class="mt-body"><div class="mt-line" style="background:#ff5733;width:80%"></div><div class="mt-line" style="background:#0f0d0a22;width:60%"></div></div><div class="mt-label">NeoBank</div></div>
-        <div class="mini-template"><div class="mt-hero" style="background:linear-gradient(135deg,#4f8ef7,#c084fc)"><span style="font-size:1.4rem">⛓️</span></div><div class="mt-body"><div class="mt-line" style="background:#4f8ef7;width:70%"></div><div class="mt-line" style="background:#0f0d0a22;width:50%"></div></div><div class="mt-label">Web3 Kit</div></div>
-        <div class="mini-template"><div class="mt-hero" style="background:linear-gradient(135deg,#00c48c,#ffd60a)"><span style="font-size:1.4rem">🚚</span></div><div class="mt-body"><div class="mt-line" style="background:#00c48c;width:65%"></div><div class="mt-line" style="background:#0f0d0a22;width:45%"></div></div><div class="mt-label">Courier</div></div>
-        <div class="mini-template"><div class="mt-hero" style="background:linear-gradient(135deg,#ffd60a,#ff5733)"><span style="font-size:1.4rem">💱</span></div><div class="mt-body"><div class="mt-line" style="background:#ffd60a;width:75%"></div><div class="mt-line" style="background:#0f0d0a22;width:55%"></div></div><div class="mt-label">P2P Script</div></div>
+    </section>
+
+    <!-- ═══ WEB3 HUB ═══ -->
+    <section class="section-alt" id="web3">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Web3 Hub</p>
+          <h2 class="section-title">
+            Build the decentralised<br /><span class="serif">web faster</span>
+          </h2>
+          <p
+            style="
+              font-size: 0.9rem;
+              color: var(--muted);
+              margin-top: 0.75rem;
+              font-weight: 500;
+            "
+          >
+            Components, kits, and scripts for the next generation of the
+            internet.
+          </p>
+        </div>
+        <a href="#" class="btn btn-ghost">Explore Web3 →</a>
+      </div>
+      <div class="web3-grid reveal">
+        <div class="web3-card">
+          <span class="web3-icon">👛</span>
+          <div class="web3-name">Wallet Auth UI</div>
+          <div class="web3-desc">
+            MetaMask, WalletConnect, Coinbase — ready-made connection flows for
+            any project
+          </div>
+        </div>
+        <div class="web3-card">
+          <span class="web3-icon">🖼️</span>
+          <div class="web3-name">NFT Galleries</div>
+          <div class="web3-desc">
+            Collection displays, mint pages, and auction interfaces built and
+            tested
+          </div>
+        </div>
+        <div class="web3-card">
+          <span class="web3-icon">📊</span>
+          <div class="web3-name">DeFi Dashboards</div>
+          <div class="web3-desc">
+            Staking, liquidity pools, and yield farming — complete UI kits ready
+            to download
+          </div>
+        </div>
+        <div class="web3-card">
+          <span class="web3-icon">🏛️</span>
+          <div class="web3-name">DAO Governance</div>
+          <div class="web3-desc">
+            Proposal voting, treasury management, and member portals for your
+            community
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ TECH DIRECTORY ═══ -->
+    <section id="directory">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Tech Directory</p>
+          <h2 class="section-title">
+            1,200+ curated tools<br /><span class="serif">for builders</span>
+          </h2>
+          <p
+            style="
+              font-size: 0.9rem;
+              color: var(--muted);
+              margin-top: 0.75rem;
+              font-weight: 500;
+              max-width: 400px;
+            "
+          >
+            AI tools, Web3 resources, hosting, design utilities — all in one
+            place. Submit your tool or get featured.
+          </p>
+        </div>
+        <a href="#" class="btn btn-ghost">Browse All →</a>
+      </div>
+      <div class="dir-tabs reveal">
+        <button class="dir-tab active">All Tools</button>
+        <button class="dir-tab">AI & ML</button>
+        <button class="dir-tab">Web3 & Blockchain</button>
+        <button class="dir-tab">Hosting & Infra</button>
+        <button class="dir-tab">Design Tools</button>
+        <button class="dir-tab">No-Code</button>
+        <button class="dir-tab">Dev Tools</button>
+        <button class="dir-tab">Freelancer Resources</button>
+      </div>
+      <div class="dir-grid reveal">
+        <a class="dir-card featured" href="#">
+          <div class="dir-logo">🤖</div>
+          <div class="dir-info">
+            <div class="dir-name">
+              Claude by Anthropic <span class="star">★ Featured</span>
+            </div>
+            <div class="dir-desc">
+              Most capable AI assistant for coding, writing, and complex
+              analysis tasks
+            </div>
+            <div class="dir-pills">
+              <span class="dir-pill">AI</span
+              ><span class="dir-pill">Coding</span
+              ><span class="dir-pill">Free tier</span>
+            </div>
+          </div>
+        </a>
+        <a class="dir-card featured" href="#">
+          <div class="dir-logo">▲</div>
+          <div class="dir-info">
+            <div class="dir-name">
+              Vercel <span class="star">★ Featured</span>
+            </div>
+            <div class="dir-desc">
+              Deploy web projects instantly — the fastest frontend cloud
+              platform available
+            </div>
+            <div class="dir-pills">
+              <span class="dir-pill">Hosting</span
+              ><span class="dir-pill">CI/CD</span
+              ><span class="dir-pill">Free tier</span>
+            </div>
+          </div>
+        </a>
+        <a class="dir-card" href="#">
+          <div class="dir-logo">🔷</div>
+          <div class="dir-info">
+            <div class="dir-name">Supabase</div>
+            <div class="dir-desc">
+              Open source Firebase alternative — Postgres, auth, storage, and
+              edge functions
+            </div>
+            <div class="dir-pills">
+              <span class="dir-pill">Database</span
+              ><span class="dir-pill">BaaS</span
+              ><span class="dir-pill">Free tier</span>
+            </div>
+          </div>
+        </a>
+        <a class="dir-card" href="#">
+          <div class="dir-logo">🔥</div>
+          <div class="dir-info">
+            <div class="dir-name">Hardhat</div>
+            <div class="dir-desc">
+              Ethereum development environment for smart contract testing and
+              deployment
+            </div>
+            <div class="dir-pills">
+              <span class="dir-pill">Web3</span
+              ><span class="dir-pill">Ethereum</span
+              ><span class="dir-pill">Free</span>
+            </div>
+          </div>
+        </a>
+        <a class="dir-card" href="#">
+          <div class="dir-logo">💳</div>
+          <div class="dir-info">
+            <div class="dir-name">Paystack</div>
+            <div class="dir-desc">
+              Africa's leading payment gateway — cards, bank transfers, USSD,
+              mobile money
+            </div>
+            <div class="dir-pills">
+              <span class="dir-pill">Payments</span
+              ><span class="dir-pill">Nigeria</span
+              ><span class="dir-pill">Africa</span>
+            </div>
+          </div>
+        </a>
+        <a class="dir-card" href="#">
+          <div class="dir-logo">🎨</div>
+          <div class="dir-info">
+            <div class="dir-name">Figma</div>
+            <div class="dir-desc">
+              Collaborative UI/UX design tool used by millions of teams
+              worldwide
+            </div>
+            <div class="dir-pills">
+              <span class="dir-pill">Design</span
+              ><span class="dir-pill">UI/UX</span
+              ><span class="dir-pill">Free tier</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ═══ HOW IT WORKS ═══ -->
+    <section class="section-dark" id="how">
+      <p class="eyebrow reveal">How it works</p>
+      <h2 class="section-title reveal">
+        Three steps to<br /><span class="serif">your dream site</span>
+      </h2>
+      <div class="steps reveal">
+        <div class="step">
+          <div class="step-num">01</div>
+          <span class="step-icon">🔍</span>
+          <h3>Find Your Template</h3>
+          <p>
+            Browse 500+ professionally designed templates, scripts, and Web3
+            kits. Filter by category, tech stack, and price. Preview before you
+            buy.
+          </p>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <span class="step-icon">⚡</span>
+          <h3>Download & Deploy</h3>
+          <p>
+            Instant secure download after purchase. Full source files and setup
+            guides. Pay via Paystack, Stripe, or LemonSqueezy — your choice.
+          </p>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <span class="step-icon">🛠️</span>
+          <h3>Need Customisation?</h3>
+          <p>
+            Our team at Tinlance builds custom implementations and full
+            products. Request a service directly from any template page.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ FEATURES ═══ -->
+    <section>
+      <p class="eyebrow reveal">Why Web-Temify</p>
+      <h2 class="section-title reveal">
+        Everything you need,<br /><span class="serif">nothing you don't</span>
+      </h2>
+      <div class="features-layout">
+        <div class="feature-list reveal">
+          <div class="feat-item">
+            <div class="feat-icon">⚡</div>
+            <div class="feat-text">
+              <h4>Lightning Fast Load Times</h4>
+              <p>
+                Every template is performance-optimised. 95+ Lighthouse scores
+                on all products.
+              </p>
+            </div>
+          </div>
+          <div class="feat-item">
+            <div class="feat-icon">📱</div>
+            <div class="feat-text">
+              <h4>Mobile-First by Default</h4>
+              <p>
+                Perfect on phones, tablets, and desktops — no extra work
+                required from you.
+              </p>
+            </div>
+          </div>
+          <div class="feat-item">
+            <div class="feat-icon">🔍</div>
+            <div class="feat-text">
+              <h4>SEO Built In</h4>
+              <p>
+                Meta tags, sitemaps, and structured data — all handled so Google
+                can find your site.
+              </p>
+            </div>
+          </div>
+          <div class="feat-item">
+            <div class="feat-icon">🔒</div>
+            <div class="feat-text">
+              <h4>Secure Downloads</h4>
+              <p>
+                Token-based secure downloads, VirusTotal malware scanning on
+                every file upload.
+              </p>
+            </div>
+          </div>
+          <div class="feat-item">
+            <div class="feat-icon">💳</div>
+            <div class="feat-text">
+              <h4>3 Payment Gateways</h4>
+              <p>
+                Paystack for Africa, Stripe internationally, LemonSqueezy for
+                global digital sales.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="feature-visual reveal">
+          <div class="fv-header">
+            <span class="dot dot-r"></span><span class="dot dot-y"></span
+            ><span class="dot dot-g"></span>
+            <span
+              style="
+                color: rgba(255, 255, 255, 0.4);
+                font-size: 0.7rem;
+                margin-left: 0.5rem;
+                font-weight: 700;
+              "
+              >Template Gallery</span
+            >
+          </div>
+          <div class="fv-body">
+            <div class="mini-template">
+              <div
+                class="mt-hero"
+                style="background: linear-gradient(135deg, #ff5733, #ffd60a)"
+              >
+                <span style="font-size: 1.4rem">🏦</span>
+              </div>
+              <div class="mt-body">
+                <div
+                  class="mt-line"
+                  style="background: #ff5733; width: 80%"
+                ></div>
+                <div
+                  class="mt-line"
+                  style="background: #0f0d0a22; width: 60%"
+                ></div>
+              </div>
+              <div class="mt-label">NeoBank</div>
+            </div>
+            <div class="mini-template">
+              <div
+                class="mt-hero"
+                style="background: linear-gradient(135deg, #4f8ef7, #c084fc)"
+              >
+                <span style="font-size: 1.4rem">⛓️</span>
+              </div>
+              <div class="mt-body">
+                <div
+                  class="mt-line"
+                  style="background: #4f8ef7; width: 70%"
+                ></div>
+                <div
+                  class="mt-line"
+                  style="background: #0f0d0a22; width: 50%"
+                ></div>
+              </div>
+              <div class="mt-label">Web3 Kit</div>
+            </div>
+            <div class="mini-template">
+              <div
+                class="mt-hero"
+                style="background: linear-gradient(135deg, #00c48c, #ffd60a)"
+              >
+                <span style="font-size: 1.4rem">🚚</span>
+              </div>
+              <div class="mt-body">
+                <div
+                  class="mt-line"
+                  style="background: #00c48c; width: 65%"
+                ></div>
+                <div
+                  class="mt-line"
+                  style="background: #0f0d0a22; width: 45%"
+                ></div>
+              </div>
+              <div class="mt-label">Courier</div>
+            </div>
+            <div class="mini-template">
+              <div
+                class="mt-hero"
+                style="background: linear-gradient(135deg, #ffd60a, #ff5733)"
+              >
+                <span style="font-size: 1.4rem">💱</span>
+              </div>
+              <div class="mt-body">
+                <div
+                  class="mt-line"
+                  style="background: #ffd60a; width: 75%"
+                ></div>
+                <div
+                  class="mt-line"
+                  style="background: #0f0d0a22; width: 55%"
+                ></div>
+              </div>
+              <div class="mt-label">P2P Script</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SERVICES ═══ -->
+    <section class="section-alt" id="services">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Services by Tinlance</p>
+          <h2 class="section-title">
+            Need it built<br /><span class="serif">from scratch?</span>
+          </h2>
+          <p
+            style="
+              font-size: 0.9rem;
+              color: var(--muted);
+              margin-top: 0.75rem;
+              font-weight: 500;
+              max-width: 400px;
+            "
+          >
+            Our engineering team builds custom products for founders and
+            businesses across Africa.
+          </p>
+        </div>
+        <a href="#" class="btn btn-fill">Request a Service →</a>
+      </div>
+      <div class="services-grid reveal">
+        <div class="svc-card">
+          <span class="svc-icon">🌐</span>
+          <div class="svc-name">Custom Website Build</div>
+          <div class="svc-desc">
+            Professional websites and landing pages designed to convert and
+            built to perform.
+          </div>
+          <div class="svc-price">From $500</div>
+        </div>
+        <div class="svc-card">
+          <span class="svc-icon">⛓️</span>
+          <div class="svc-name">Web3 / DApp Development</div>
+          <div class="svc-desc">
+            Smart contracts, DeFi interfaces, and wallet integrations. Ethereum,
+            Solana, Polygon.
+          </div>
+          <div class="svc-price">From $1,500</div>
+        </div>
+        <div class="svc-card">
+          <span class="svc-icon">🚀</span>
+          <div class="svc-name">SaaS MVP Build</div>
+          <div class="svc-desc">
+            Full-stack SaaS with auth, billing, and dashboards —
+            production-ready in weeks.
+          </div>
+          <div class="svc-price">From $3,000</div>
+        </div>
+        <div class="svc-card">
+          <span class="svc-icon">🏦</span>
+          <div class="svc-name">Fintech Solutions</div>
+          <div class="svc-desc">
+            Payment systems, loan platforms, and Paystack integrations for
+            African markets.
+          </div>
+          <div class="svc-price">From $2,000</div>
+        </div>
+        <div class="svc-card">
+          <span class="svc-icon">🎨</span>
+          <div class="svc-name">Template Customisation</div>
+          <div class="svc-desc">
+            Bought a template? We customise it to your brand and deploy it for
+            you.
+          </div>
+          <div class="svc-price">From $200</div>
+        </div>
+        <div class="svc-card">
+          <span class="svc-icon">🔗</span>
+          <div class="svc-name">API & Integrations</div>
+          <div class="svc-desc">
+            Third-party APIs, webhook systems, and automation pipelines for any
+            stack.
+          </div>
+          <div class="svc-price">From $300</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ VENDOR CTA ═══ -->
+    <section>
+      <div class="vendor-box reveal">
+        <div>
+          <p class="eyebrow">Become a Vendor</p>
+          <h2
+            class="section-title"
+            style="font-size: clamp(1.6rem, 3vw, 2.4rem)"
+          >
+            Sell your templates<br /><span class="serif">& scripts here</span>
+          </h2>
+          <p
+            style="
+              font-size: 0.9rem;
+              color: var(--ink);
+              margin-top: 0.75rem;
+              font-weight: 500;
+              max-width: 400px;
+              opacity: 0.7;
+            "
+          >
+            Join 120+ developers already earning. Keep 70–80% of every sale. We
+            handle payments, delivery, and support.
+          </p>
+          <div class="vendor-steps-list">
+            <div class="vstep">
+              <span class="vstep-num">1</span> Create your vendor account and
+              complete your profile
+            </div>
+            <div class="vstep">
+              <span class="vstep-num">2</span> Upload your product with
+              screenshots and demo link
+            </div>
+            <div class="vstep">
+              <span class="vstep-num">3</span> Approved within 48 hours — start
+              earning immediately
+            </div>
+            <div class="vstep">
+              <span class="vstep-num">4</span> Withdraw via Paystack, Stripe, or
+              LemonSqueezy
+            </div>
+          </div>
+        </div>
+        <div
+          style="
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            align-items: center;
+          "
+        >
+          <div>
+            <div
+              style="
+                font-size: 3.5rem;
+                font-weight: 900;
+                letter-spacing: -0.05em;
+              "
+            >
+              70–80%
+            </div>
+            <div
+              style="
+                font-size: 0.72rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                opacity: 0.6;
+              "
+            >
+              Revenue Share
+            </div>
+          </div>
+          <a href="#" class="btn btn-dark btn-big">Start Selling →</a>
+          <div style="font-size: 0.75rem; opacity: 0.55; font-weight: 700">
+            Free to join · No monthly fees
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ GAMIFICATION ═══ -->
+    <section class="section-alt">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Rewards & Community</p>
+          <h2 class="section-title">
+            Earn points,<br /><span class="serif">unlock rewards</span>
+          </h2>
+        </div>
+      </div>
+      <div class="gamify-grid reveal">
+        <div class="gamify-card">
+          <span class="gamify-icon">🏆</span>
+          <div class="gamify-name">Earn Points</div>
+          <div class="gamify-desc">
+            Points for purchases, reviews, referrals, and daily logins — redeem
+            for discounts
+          </div>
+        </div>
+        <div class="gamify-card">
+          <span class="gamify-icon">🎖️</span>
+          <div class="gamify-name">Unlock Badges</div>
+          <div class="gamify-desc">
+            Early Adopter, Web3 Pioneer, Review Champion — visible on your
+            public profile
+          </div>
+        </div>
+        <div class="gamify-card">
+          <span class="gamify-icon">📊</span>
+          <div class="gamify-name">Leaderboard</div>
+          <div class="gamify-desc">
+            Top buyers, top vendors, and top reviewers ranked monthly with cash
+            rewards
+          </div>
+        </div>
+        <div class="gamify-card">
+          <span class="gamify-icon">🤝</span>
+          <div class="gamify-name">Refer & Earn</div>
+          <div class="gamify-desc">
+            Invite developers — earn 20% commission on their first purchase,
+            forever
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ TESTIMONIALS ═══ -->
+    <section>
+      <p class="eyebrow reveal">Testimonials</p>
+      <h2 class="section-title reveal">
+        Loved by<br /><span class="serif">real builders</span>
+      </h2>
+      <div class="testi-grid reveal">
+        <div class="testi-card tc-1">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">
+            "The NeoBank template saved me 3 weeks of work. Deployed it for a
+            fintech client in Lagos in 2 days. Paystack was already built in —
+            incredible value."
+          </p>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background: #ffd6c0">👨🏾</div>
+            <div>
+              <div class="testi-name">Emeka Okonkwo</div>
+              <div class="testi-role">Full-Stack Dev · Lagos, Nigeria</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card tc-2">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">
+            "Used the SaaS Starter Kit for my startup. Production-ready stack
+            from day one. The AI page generator helped me test 3 different
+            landing pages in an afternoon."
+          </p>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background: #c8f0e0">👩🏾</div>
+            <div>
+              <div class="testi-name">Amina Diallo</div>
+              <div class="testi-role">Founder · Dakar, Senegal</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card tc-3">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote">
+            "The P2P crypto script is remarkable — fully working escrow out of
+            the box. Tinlance customised and deployed it in 3 days. Best
+            investment for my exchange project."
+          </p>
+          <div class="testi-author">
+            <div class="testi-avatar" style="background: #fef9c3">👨🏾</div>
+            <div>
+              <div class="testi-name">Kwame Mensah</div>
+              <div class="testi-role">Web3 Developer · Accra, Ghana</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PRICING ═══ -->
+    <section class="section-alt" id="pricing">
+      <p class="eyebrow reveal" style="text-align: center">Pricing</p>
+      <h2
+        class="section-title reveal"
+        style="text-align: center; margin: 0 auto"
+      >
+        Simple pricing,<br /><span class="serif">no surprises</span>
+      </h2>
+      <p
+        style="
+          text-align: center;
+          font-size: 0.9rem;
+          color: var(--muted);
+          margin: 0.75rem auto 0;
+          font-weight: 500;
+          max-width: 420px;
+        "
+        class="reveal"
+      >
+        All plans include Paystack, Stripe, and LemonSqueezy checkout. Cancel
+        anytime.
+      </p>
+      <div class="pricing-grid reveal">
+        <div class="price-card">
+          <div class="price-top">
+            <div class="price-label">Free</div>
+            <div class="price-amount"><sup>$</sup>0</div>
+            <div class="price-period">Free forever</div>
+          </div>
+          <div class="price-features">
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              Free templates
+            </div>
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              Browse directory
+            </div>
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              Community forum
+            </div>
+            <div class="pf-item pf-off">
+              <div class="pf-check">✗</div>
+              Premium templates
+            </div>
+            <div class="pf-item pf-off">
+              <div class="pf-check">✗</div>
+              Scripts & kits
+            </div>
+          </div>
+          <div class="price-footer">
+            <a
+              href="#"
+              class="btn btn-ghost"
+              style="width: 100%; text-align: center"
+              >Get Started Free</a
+            >
+          </div>
+        </div>
+        <div class="price-card featured">
+          <div class="price-top">
+            <div class="price-label">Pro ⭐ Most Popular</div>
+            <div class="price-amount"><sup>$</sup>19</div>
+            <div class="price-period">per month</div>
+          </div>
+          <div class="price-features">
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              All 500+ templates
+            </div>
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              All scripts & kits
+            </div>
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              API access
+            </div>
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              Priority support
+            </div>
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              Dark mode + collections
+            </div>
+          </div>
+          <div class="price-footer">
+            <a
+              href="#"
+              class="btn btn-yellow"
+              style="width: 100%; text-align: center; border-color: transparent"
+              >Start Pro Plan →</a
+            >
+          </div>
+        </div>
+        <div class="price-card">
+          <div class="price-top">
+            <div class="price-label">Business</div>
+            <div class="price-amount"><sup>$</sup>49</div>
+            <div class="price-period">per month</div>
+          </div>
+          <div class="price-features">
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              Everything in Pro
+            </div>
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              White-label rights
+            </div>
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              Volume licensing
+            </div>
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              Early access
+            </div>
+            <div class="pf-item pf-off">
+              <div class="pf-check">✗</div>
+              Team seats
+            </div>
+          </div>
+          <div class="price-footer">
+            <a
+              href="#"
+              class="btn btn-fill"
+              style="width: 100%; text-align: center"
+              >Get Business</a
+            >
+          </div>
+        </div>
+        <div class="price-card">
+          <div class="price-top">
+            <div class="price-label">Agency</div>
+            <div class="price-amount"><sup>$</sup>99</div>
+            <div class="price-period">per month</div>
+          </div>
+          <div class="price-features">
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              Everything in Business
+            </div>
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              5 team seats
+            </div>
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              Unlimited client sites
+            </div>
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              Dedicated support
+            </div>
+            <div class="pf-item">
+              <div class="pf-check">✓</div>
+              Custom invoicing
+            </div>
+          </div>
+          <div class="price-footer">
+            <a
+              href="#"
+              class="btn btn-ghost"
+              style="width: 100%; text-align: center"
+              >Get Agency</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ NEWSLETTER ═══ -->
+    <section>
+      <div class="nl-box reveal">
+        <div>
+          <p class="eyebrow">Stay in the Loop</p>
+          <h2
+            class="section-title"
+            style="font-size: clamp(1.4rem, 2.5vw, 2rem)"
+          >
+            New templates every week.<br /><span class="serif"
+              >Dev tips. Tool discoveries.</span
+            >
+          </h2>
+          <p
+            style="
+              font-size: 0.875rem;
+              color: var(--muted);
+              margin-top: 0.6rem;
+              font-weight: 500;
+            "
+          >
+            Join 3,400+ developers. No spam — only the good stuff.
+          </p>
+        </div>
+        <div>
+          <div class="nl-form">
+            <input type="email" class="nl-input" placeholder="your@email.com" />
+            <button class="btn btn-fill">Subscribe →</button>
+          </div>
+          <p
+            style="font-size: 0.72rem; color: var(--muted); margin-top: 0.6rem"
+          >
+            By subscribing you agree to our
+            <a href="#" style="color: var(--coral)">Privacy Policy</a>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ CTA FINAL ═══ -->
+    <section class="cta-section">
+      <div class="cta-bg-text">LAUNCH</div>
+      <h2>
+        Ready to build<br />your <span class="serif">dream product?</span>
+      </h2>
+      <p>Join 2,400+ businesses already live with Web-Temify.</p>
+      <div class="cta-buttons">
+        <a href="#templates" class="btn btn-white btn-big"
+          >Browse Templates →</a
+        >
+        <a href="#services" class="btn btn-outline-white btn-big">Talk to us</a>
+      </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer>
+      <div class="footer-brand">
+        <a href="#" class="logo">Web-Temify <span class="logo-dot"></span></a>
+        <p>
+          Premium templates, scripts, Web3 kits, and dev tools for builders
+          across Africa and beyond. No code, no stress.
+        </p>
+        <div class="footer-badges-row">
+          <span class="f-badge">🇳🇬 Nigeria</span>
+          <span class="f-badge">RC: 7999659</span>
+        </div>
+        <div
+          class="sister"
+          style="
+            margin-top: 1rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--muted);
+            border-top: 1.5px solid var(--ink);
+            padding-top: 0.8rem;
+          "
+        >
+          A sister company of
+          <a href="#" style="color: var(--coral); font-weight: 800"
+            >Tinlance Limited →</a
+          ><br />Need a custom-built product? That's their lane.
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Marketplace</h5>
+        <ul>
+          <li><a href="#">All Templates</a></li>
+          <li><a href="#">Scripts</a></li>
+          <li><a href="#">Launch Kits</a></li>
+          <li><a href="#">Web3 Hub</a></li>
+          <li><a href="#">Free Templates</a></li>
+          <li><a href="#">New Arrivals</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Directory</h5>
+        <ul>
+          <li><a href="#">All Tools</a></li>
+          <li><a href="#">AI Tools</a></li>
+          <li><a href="#">Web3 Tools</a></li>
+          <li><a href="#">Hosting</a></li>
+          <li><a href="#">Design Tools</a></li>
+          <li><a href="#">Submit a Tool</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Platform</h5>
+        <ul>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">Become a Vendor</a></li>
+          <li><a href="#">Services</a></li>
+          <li><a href="#">Affiliates</a></li>
+          <li><a href="#">API Docs</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">Our Story</a></li>
+          <li><a href="#">Roadmap</a></li>
+          <li><a href="#">Changelog</a></li>
+          <li><a href="#">Press Kit</a></li>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+        </ul>
+      </div>
+    </footer>
+    <div class="footer-bottom">
+      <span>© 2026 Web-Temify LTD. All rights reserved. RC: 7999659</span>
+      <div class="footer-socials">
+        <a href="#" class="social-btn">𝕏</a>
+        <a href="#" class="social-btn">⌥</a>
+        <a href="#" class="social-btn">📱</a>
+        <a href="#" class="social-btn">in</a>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- ═══ SERVICES ═══ -->
-<section class="section-alt" id="services">
-  <div class="section-head reveal">
-    <div>
-      <p class="eyebrow">Services by Tinlance</p>
-      <h2 class="section-title">Need it built<br><span class="serif">from scratch?</span></h2>
-      <p style="font-size:.9rem;color:var(--muted);margin-top:.75rem;font-weight:500;max-width:400px">Our engineering team builds custom products for founders and businesses across Africa.</p>
-    </div>
-    <a href="#" class="btn btn-fill">Request a Service →</a>
-  </div>
-  <div class="services-grid reveal">
-    <div class="svc-card"><span class="svc-icon">🌐</span><div class="svc-name">Custom Website Build</div><div class="svc-desc">Professional websites and landing pages designed to convert and built to perform.</div><div class="svc-price">From $500</div></div>
-    <div class="svc-card"><span class="svc-icon">⛓️</span><div class="svc-name">Web3 / DApp Development</div><div class="svc-desc">Smart contracts, DeFi interfaces, and wallet integrations. Ethereum, Solana, Polygon.</div><div class="svc-price">From $1,500</div></div>
-    <div class="svc-card"><span class="svc-icon">🚀</span><div class="svc-name">SaaS MVP Build</div><div class="svc-desc">Full-stack SaaS with auth, billing, and dashboards — production-ready in weeks.</div><div class="svc-price">From $3,000</div></div>
-    <div class="svc-card"><span class="svc-icon">🏦</span><div class="svc-name">Fintech Solutions</div><div class="svc-desc">Payment systems, loan platforms, and Paystack integrations for African markets.</div><div class="svc-price">From $2,000</div></div>
-    <div class="svc-card"><span class="svc-icon">🎨</span><div class="svc-name">Template Customisation</div><div class="svc-desc">Bought a template? We customise it to your brand and deploy it for you.</div><div class="svc-price">From $200</div></div>
-    <div class="svc-card"><span class="svc-icon">🔗</span><div class="svc-name">API & Integrations</div><div class="svc-desc">Third-party APIs, webhook systems, and automation pipelines for any stack.</div><div class="svc-price">From $300</div></div>
-  </div>
-</section>
+    <script>
+      // Scroll reveal
+      const obs = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e, i) => {
+            if (e.isIntersecting) {
+              setTimeout(() => e.target.classList.add("visible"), i * 70);
+              obs.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.08 },
+      );
+      document.querySelectorAll(".reveal").forEach((el) => obs.observe(el));
 
-<!-- ═══ VENDOR CTA ═══ -->
-<section>
-  <div class="vendor-box reveal">
-    <div>
-      <p class="eyebrow">Become a Vendor</p>
-      <h2 class="section-title" style="font-size:clamp(1.6rem,3vw,2.4rem)">Sell your templates<br><span class="serif">& scripts here</span></h2>
-      <p style="font-size:.9rem;color:var(--ink);margin-top:.75rem;font-weight:500;max-width:400px;opacity:.7">Join 120+ developers already earning. Keep 70–80% of every sale. We handle payments, delivery, and support.</p>
-      <div class="vendor-steps-list">
-        <div class="vstep"><span class="vstep-num">1</span> Create your vendor account and complete your profile</div>
-        <div class="vstep"><span class="vstep-num">2</span> Upload your product with screenshots and demo link</div>
-        <div class="vstep"><span class="vstep-num">3</span> Approved within 48 hours — start earning immediately</div>
-        <div class="vstep"><span class="vstep-num">4</span> Withdraw via Paystack, Stripe, or LemonSqueezy</div>
-      </div>
-    </div>
-    <div style="text-align:center;display:flex;flex-direction:column;gap:1.25rem;align-items:center">
-      <div><div style="font-size:3.5rem;font-weight:900;letter-spacing:-.05em">70–80%</div><div style="font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;opacity:.6">Revenue Share</div></div>
-      <a href="#" class="btn btn-dark btn-big">Start Selling →</a>
-      <div style="font-size:.75rem;opacity:.55;font-weight:700">Free to join · No monthly fees</div>
-    </div>
-  </div>
-</section>
+      // Directory tabs
+      document.querySelectorAll(".dir-tab").forEach((tab) => {
+        tab.addEventListener("click", function () {
+          document
+            .querySelectorAll(".dir-tab")
+            .forEach((t) => t.classList.remove("active"));
+          this.classList.add("active");
+        });
+      });
 
-<!-- ═══ GAMIFICATION ═══ -->
-<section class="section-alt">
-  <div class="section-head reveal">
-    <div>
-      <p class="eyebrow">Rewards & Community</p>
-      <h2 class="section-title">Earn points,<br><span class="serif">unlock rewards</span></h2>
-    </div>
-  </div>
-  <div class="gamify-grid reveal">
-    <div class="gamify-card"><span class="gamify-icon">🏆</span><div class="gamify-name">Earn Points</div><div class="gamify-desc">Points for purchases, reviews, referrals, and daily logins — redeem for discounts</div></div>
-    <div class="gamify-card"><span class="gamify-icon">🎖️</span><div class="gamify-name">Unlock Badges</div><div class="gamify-desc">Early Adopter, Web3 Pioneer, Review Champion — visible on your public profile</div></div>
-    <div class="gamify-card"><span class="gamify-icon">📊</span><div class="gamify-name">Leaderboard</div><div class="gamify-desc">Top buyers, top vendors, and top reviewers ranked monthly with cash rewards</div></div>
-    <div class="gamify-card"><span class="gamify-icon">🤝</span><div class="gamify-name">Refer & Earn</div><div class="gamify-desc">Invite developers — earn 20% commission on their first purchase, forever</div></div>
-  </div>
-</section>
-
-<!-- ═══ TESTIMONIALS ═══ -->
-<section>
-  <p class="eyebrow reveal">Testimonials</p>
-  <h2 class="section-title reveal">Loved by<br><span class="serif">real builders</span></h2>
-  <div class="testi-grid reveal">
-    <div class="testi-card tc-1">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-quote">"The NeoBank template saved me 3 weeks of work. Deployed it for a fintech client in Lagos in 2 days. Paystack was already built in — incredible value."</p>
-      <div class="testi-author"><div class="testi-avatar" style="background:#ffd6c0">👨🏾</div><div><div class="testi-name">Emeka Okonkwo</div><div class="testi-role">Full-Stack Dev · Lagos, Nigeria</div></div></div>
-    </div>
-    <div class="testi-card tc-2">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-quote">"Used the SaaS Starter Kit for my startup. Production-ready stack from day one. The AI page generator helped me test 3 different landing pages in an afternoon."</p>
-      <div class="testi-author"><div class="testi-avatar" style="background:#c8f0e0">👩🏾</div><div><div class="testi-name">Amina Diallo</div><div class="testi-role">Founder · Dakar, Senegal</div></div></div>
-    </div>
-    <div class="testi-card tc-3">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-quote">"The P2P crypto script is remarkable — fully working escrow out of the box. Tinlance customised and deployed it in 3 days. Best investment for my exchange project."</p>
-      <div class="testi-author"><div class="testi-avatar" style="background:#fef9c3">👨🏾</div><div><div class="testi-name">Kwame Mensah</div><div class="testi-role">Web3 Developer · Accra, Ghana</div></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ PRICING ═══ -->
-<section class="section-alt" id="pricing">
-  <p class="eyebrow reveal" style="text-align:center">Pricing</p>
-  <h2 class="section-title reveal" style="text-align:center;margin:0 auto">Simple pricing,<br><span class="serif">no surprises</span></h2>
-  <p style="text-align:center;font-size:.9rem;color:var(--muted);margin:.75rem auto 0;font-weight:500;max-width:420px" class="reveal">All plans include Paystack, Stripe, and LemonSqueezy checkout. Cancel anytime.</p>
-  <div class="pricing-grid reveal">
-    <div class="price-card">
-      <div class="price-top"><div class="price-label">Free</div><div class="price-amount"><sup>$</sup>0</div><div class="price-period">Free forever</div></div>
-      <div class="price-features">
-        <div class="pf-item"><div class="pf-check">✓</div> Free templates</div>
-        <div class="pf-item"><div class="pf-check">✓</div> Browse directory</div>
-        <div class="pf-item"><div class="pf-check">✓</div> Community forum</div>
-        <div class="pf-item pf-off"><div class="pf-check">✗</div> Premium templates</div>
-        <div class="pf-item pf-off"><div class="pf-check">✗</div> Scripts & kits</div>
-      </div>
-      <div class="price-footer"><a href="#" class="btn btn-ghost" style="width:100%;text-align:center">Get Started Free</a></div>
-    </div>
-    <div class="price-card featured">
-      <div class="price-top"><div class="price-label">Pro ⭐ Most Popular</div><div class="price-amount"><sup>$</sup>19</div><div class="price-period">per month</div></div>
-      <div class="price-features">
-        <div class="pf-item"><div class="pf-check">✓</div> All 500+ templates</div>
-        <div class="pf-item"><div class="pf-check">✓</div> All scripts & kits</div>
-        <div class="pf-item"><div class="pf-check">✓</div> API access</div>
-        <div class="pf-item"><div class="pf-check">✓</div> Priority support</div>
-        <div class="pf-item"><div class="pf-check">✓</div> Dark mode + collections</div>
-      </div>
-      <div class="price-footer"><a href="#" class="btn btn-yellow" style="width:100%;text-align:center;border-color:transparent">Start Pro Plan →</a></div>
-    </div>
-    <div class="price-card">
-      <div class="price-top"><div class="price-label">Business</div><div class="price-amount"><sup>$</sup>49</div><div class="price-period">per month</div></div>
-      <div class="price-features">
-        <div class="pf-item"><div class="pf-check">✓</div> Everything in Pro</div>
-        <div class="pf-item"><div class="pf-check">✓</div> White-label rights</div>
-        <div class="pf-item"><div class="pf-check">✓</div> Volume licensing</div>
-        <div class="pf-item"><div class="pf-check">✓</div> Early access</div>
-        <div class="pf-item pf-off"><div class="pf-check">✗</div> Team seats</div>
-      </div>
-      <div class="price-footer"><a href="#" class="btn btn-fill" style="width:100%;text-align:center">Get Business</a></div>
-    </div>
-    <div class="price-card">
-      <div class="price-top"><div class="price-label">Agency</div><div class="price-amount"><sup>$</sup>99</div><div class="price-period">per month</div></div>
-      <div class="price-features">
-        <div class="pf-item"><div class="pf-check">✓</div> Everything in Business</div>
-        <div class="pf-item"><div class="pf-check">✓</div> 5 team seats</div>
-        <div class="pf-item"><div class="pf-check">✓</div> Unlimited client sites</div>
-        <div class="pf-item"><div class="pf-check">✓</div> Dedicated support</div>
-        <div class="pf-item"><div class="pf-check">✓</div> Custom invoicing</div>
-      </div>
-      <div class="price-footer"><a href="#" class="btn btn-ghost" style="width:100%;text-align:center">Get Agency</a></div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ NEWSLETTER ═══ -->
-<section>
-  <div class="nl-box reveal">
-    <div>
-      <p class="eyebrow">Stay in the Loop</p>
-      <h2 class="section-title" style="font-size:clamp(1.4rem,2.5vw,2rem)">New templates every week.<br><span class="serif">Dev tips. Tool discoveries.</span></h2>
-      <p style="font-size:.875rem;color:var(--muted);margin-top:.6rem;font-weight:500">Join 3,400+ developers. No spam — only the good stuff.</p>
-    </div>
-    <div>
-      <div class="nl-form">
-        <input type="email" class="nl-input" placeholder="your@email.com">
-        <button class="btn btn-fill">Subscribe →</button>
-      </div>
-      <p style="font-size:.72rem;color:var(--muted);margin-top:.6rem">By subscribing you agree to our <a href="#" style="color:var(--coral)">Privacy Policy</a>.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ CTA FINAL ═══ -->
-<section class="cta-section">
-  <div class="cta-bg-text">LAUNCH</div>
-  <h2>Ready to build<br>your <span class="serif">dream product?</span></h2>
-  <p>Join 2,400+ businesses already live with Web-Temify.</p>
-  <div class="cta-buttons">
-    <a href="#templates" class="btn btn-white btn-big">Browse Templates →</a>
-    <a href="#services" class="btn btn-outline-white btn-big">Talk to us</a>
-  </div>
-</section>
-
-<!-- ═══ FOOTER ═══ -->
-<footer>
-  <div class="footer-brand">
-    <a href="#" class="logo">Web-Temify <span class="logo-dot"></span></a>
-    <p>Premium templates, scripts, Web3 kits, and dev tools for builders across Africa and beyond. No code, no stress.</p>
-    <div class="footer-badges-row">
-      <span class="f-badge">🇳🇬 Nigeria</span>
-      <span class="f-badge">RC: 7999659</span>
-    </div>
-    <div class="sister" style="margin-top:1rem;font-size:.7rem;font-weight:700;color:var(--muted);border-top:1.5px solid var(--ink);padding-top:.8rem">A sister company of <a href="#" style="color:var(--coral);font-weight:800">Tinlance Limited →</a><br>Need a custom-built product? That's their lane.</div>
-  </div>
-  <div class="footer-col">
-    <h5>Marketplace</h5>
-    <ul>
-      <li><a href="#">All Templates</a></li>
-      <li><a href="#">Scripts</a></li>
-      <li><a href="#">Launch Kits</a></li>
-      <li><a href="#">Web3 Hub</a></li>
-      <li><a href="#">Free Templates</a></li>
-      <li><a href="#">New Arrivals</a></li>
-    </ul>
-  </div>
-  <div class="footer-col">
-    <h5>Directory</h5>
-    <ul>
-      <li><a href="#">All Tools</a></li>
-      <li><a href="#">AI Tools</a></li>
-      <li><a href="#">Web3 Tools</a></li>
-      <li><a href="#">Hosting</a></li>
-      <li><a href="#">Design Tools</a></li>
-      <li><a href="#">Submit a Tool</a></li>
-    </ul>
-  </div>
-  <div class="footer-col">
-    <h5>Platform</h5>
-    <ul>
-      <li><a href="#">Pricing</a></li>
-      <li><a href="#">Become a Vendor</a></li>
-      <li><a href="#">Services</a></li>
-      <li><a href="#">Affiliates</a></li>
-      <li><a href="#">API Docs</a></li>
-      <li><a href="#">Blog</a></li>
-    </ul>
-  </div>
-  <div class="footer-col">
-    <h5>Company</h5>
-    <ul>
-      <li><a href="#">Our Story</a></li>
-      <li><a href="#">Roadmap</a></li>
-      <li><a href="#">Changelog</a></li>
-      <li><a href="#">Press Kit</a></li>
-      <li><a href="#">Privacy</a></li>
-      <li><a href="#">Terms</a></li>
-    </ul>
-  </div>
-</footer>
-<div class="footer-bottom">
-  <span>© 2026 Web-Temify LTD. All rights reserved. RC: 7999659</span>
-  <div class="footer-socials">
-    <a href="#" class="social-btn">𝕏</a>
-    <a href="#" class="social-btn">⌥</a>
-    <a href="#" class="social-btn">📱</a>
-    <a href="#" class="social-btn">in</a>
-  </div>
-</div>
-
-<script>
-// Scroll reveal
-const obs = new IntersectionObserver(entries => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('visible'), i * 70);
-      obs.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.08 });
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-// Directory tabs
-document.querySelectorAll('.dir-tab').forEach(tab => {
-  tab.addEventListener('click', function() {
-    document.querySelectorAll('.dir-tab').forEach(t => t.classList.remove('active'));
-    this.classList.add('active');
-  });
-});
-
-// AI chips
-document.querySelectorAll('.ai-chip').forEach(chip => {
-  chip.addEventListener('click', function() {
-    document.querySelector('.ai-input').value = this.textContent + ' website';
-    document.querySelector('.ai-input').focus();
-  });
-});
-</script>
-</body>
+      // AI chips
+      document.querySelectorAll(".ai-chip").forEach((chip) => {
+        chip.addEventListener("click", function () {
+          document.querySelector(".ai-input").value =
+            this.textContent + " website";
+          document.querySelector(".ai-input").focus();
+        });
+      });
+    </script>
+  </body>
 </html>

@@ -1,7 +1,9 @@
 > **LEGACY BUILD PROMPT — reviewed 2026-10-13.** This long-form prompt is historical requirements input, not an executable source of truth. It contains mixed framework, provider, payment, schema, and feature assumptions that may conflict with accepted ADRs and the current phase gates. Do not execute wholesale. Use current source, Supabase migrations, tests, `docs/roadmap/phase-gates.md`, and the canonical product manifest instead.
 
 # WEB-TEMIFY — CLAUDE CODE MASTER BUILD PROMPT
+
 ## Complete PHP Platform Build Brief
+
 ### Version 3.0 | May 2026 | Pure PHP/MySQL
 
 ---
@@ -743,6 +745,7 @@ define('FEATURE_AI_GENERATOR', false);    // Enable in Phase 3
 **Phase 3 (Add):** USDT/USDC via NOWPayments (auto-convert, no volatile crypto)
 
 ### Checkout Flow (applies to ALL payment flows)
+
 ```
 1. Order summary displayed (items, subtotal, tax, discount, total)
 2. Coupon code field (AJAX validation)
@@ -756,6 +759,7 @@ define('FEATURE_AI_GENERATOR', false);    // Enable in Phase 3
 ```
 
 ### Paystack Integration
+
 ```php
 // Always verify webhook HMAC:
 $hash = hash_hmac('sha512', $payload, PAYSTACK_WEBHOOK_SECRET);
@@ -770,6 +774,7 @@ if ($hash !== $_SERVER['HTTP_X_PAYSTACK_SIGNATURE']) { die('Invalid'); }
 ```
 
 ### Stripe Integration
+
 ```php
 // Verify webhook:
 $event = \Stripe\Webhook::constructEvent($payload, $sig, STRIPE_WEBHOOK_SECRET);
@@ -783,6 +788,7 @@ $event = \Stripe\Webhook::constructEvent($payload, $sig, STRIPE_WEBHOOK_SECRET);
 ```
 
 ### LemonSqueezy Integration
+
 ```php
 // Verify webhook HMAC:
 $hash = hash_hmac('sha256', $payload, LEMONSQUEEZY_WEBHOOK_SECRET);
@@ -795,6 +801,7 @@ $hash = hash_hmac('sha256', $payload, LEMONSQUEEZY_WEBHOOK_SECRET);
 ```
 
 ### NOWPayments (Crypto — Phase 3)
+
 ```php
 // Auto-convert USDT/USDC to fiat
 // IPN verification:
@@ -1155,6 +1162,7 @@ php_value memory_limit 256M
 **Goal:** Platform live at web-temify.com with clean URLs and all 3 gateways working.
 
 Files to create/verify:
+
 1. `.htaccess` — complete URL rewriting (above)
 2. `config/config.php` — all environment variables
 3. `config/.env.example` — template for production
@@ -1176,6 +1184,7 @@ Files to create/verify:
 ### PHASE 2 — REVENUE FOUNDATION (Month 1–2)
 
 Priority order:
+
 1. Vendor system (vendor-register, vendor-dashboard, vendor-upload,
    admin/vendors, revenue split, payouts via all 3 gateways)
 2. License key system (license.php, validate-license API endpoint,
@@ -1198,6 +1207,7 @@ Priority order:
 ### PHASE 3 — GROWTH ENGINE (Month 2–4)
 
 Priority order:
+
 1. Gamification (points, badges, challenges, leaderboard tables + UI)
 2. Social login (Google + GitHub OAuth via oauth/ handlers)
 3. AI page generator (api/ai-generate.php + public/ai-generator.php)
@@ -1261,6 +1271,7 @@ Priority order:
 ## DESIGN COMPONENT EXAMPLES
 
 ### Standard Button
+
 ```html
 <a href="#" class="btn btn-fill">Browse Templates →</a>
 <a href="#" class="btn btn-ghost">See how it works</a>
@@ -1269,6 +1280,7 @@ Priority order:
 ```
 
 ### Template Card
+
 ```html
 <div class="tpl-card">
   <div class="tpl-preview" style="background:#fff5f0">
@@ -1287,11 +1299,13 @@ Priority order:
 ```
 
 ### Section Header
+
 ```html
 <div class="section-head">
   <div>
     <p class="eyebrow">Browse by Category</p>
-    <h2 class="section-title">Whatever your<br>
+    <h2 class="section-title">
+      Whatever your<br />
       <span class="serif">business needs</span>
     </h2>
   </div>
@@ -1300,14 +1314,15 @@ Priority order:
 ```
 
 ### Coral Marquee Strip
+
 ```html
 <div class="strip">
   <div class="strip-inner">
-    Templates <span>✦</span> Scripts <span>✦</span>
-    Web3 Kits <span>✦</span> Launch Today <span>✦</span>
+    Templates <span>✦</span> Scripts <span>✦</span> Web3 Kits
+    <span>✦</span> Launch Today <span>✦</span>
     <!-- duplicate for seamless loop -->
-    Templates <span>✦</span> Scripts <span>✦</span>
-    Web3 Kits <span>✦</span> Launch Today <span>✦</span>
+    Templates <span>✦</span> Scripts <span>✦</span> Web3 Kits
+    <span>✦</span> Launch Today <span>✦</span>
   </div>
 </div>
 ```
@@ -1371,6 +1386,6 @@ No need to re-explain anything between phases.
 
 ---
 
-*Web-Temify Master Build Prompt v3.0 — May 2026*
-*215 features · 26 feature groups · 5 build phases*
-*PHP/MySQL · Supabase Storage · Contabo VPS*
+_Web-Temify Master Build Prompt v3.0 — May 2026_
+_215 features · 26 feature groups · 5 build phases_
+_PHP/MySQL · Supabase Storage · Contabo VPS_

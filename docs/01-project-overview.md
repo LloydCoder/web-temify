@@ -1,7 +1,9 @@
 > **LEGACY / NON-CANONICAL — reviewed 2026-10-13.** Retained for historical requirements and design context only. Do not treat its framework, database/migration strategy, provider list, security examples, product count, phase status, pricing, testimonials, metrics, or “built/production-ready” claims as current truth. Canonical authority is in `docs/architecture/overview.md`, `docs/architecture/decisions/`, `docs/roadmap/phase-gates.md`, `docs/security/`, `docs/quality/testing-strategy.md`, the tested source and Supabase migrations, and `LloydCoder/web-temify-products/catalog/products.json`. Implement only through the current phase gates and verified evidence.
 
 # WEB-TEMIFY — PROJECT OVERVIEW & BRIEF
+
 ## For: Development Team / Builder
+
 ## Version: 5.0 | May 2026
 
 ---
@@ -38,6 +40,7 @@ Repo:         GitHub (auto-deploy to Vercel on push)
 ```
 
 **DO NOT use:**
+
 - PHP or Laravel (previous build — discarded)
 - NextAuth (use Supabase Auth instead)
 - MySQL (use Supabase Postgres instead)
@@ -48,16 +51,17 @@ Repo:         GitHub (auto-deploy to Vercel on push)
 
 ## PAYMENT GATEWAYS — ALL 6 MUST BE IMPLEMENTED
 
-| Gateway | Purpose | Phase |
-|---|---|---|
-| Paystack | Nigeria + Africa (cards, bank transfer, USSD) | Phase 1 |
-| Stripe | International cards + subscriptions | Phase 1 |
-| LemonSqueezy | Global digital products + VAT handling | Phase 1 |
-| MTN MoMo / Airtel / M-Pesa | Mobile money Africa | Phase 2 |
-| Carbon / FairMoney (BNPL) | Buy now pay later Nigeria | Phase 2 |
-| NOWPayments (USDT/USDC) | Stablecoins — auto-convert to fiat | Phase 3 |
+| Gateway                    | Purpose                                       | Phase   |
+| -------------------------- | --------------------------------------------- | ------- |
+| Paystack                   | Nigeria + Africa (cards, bank transfer, USSD) | Phase 1 |
+| Stripe                     | International cards + subscriptions           | Phase 1 |
+| LemonSqueezy               | Global digital products + VAT handling        | Phase 1 |
+| MTN MoMo / Airtel / M-Pesa | Mobile money Africa                           | Phase 2 |
+| Carbon / FairMoney (BNPL)  | Buy now pay later Nigeria                     | Phase 2 |
+| NOWPayments (USDT/USDC)    | Stablecoins — auto-convert to fiat            | Phase 3 |
 
 **NOWPayments rules (CRITICAL):**
+
 - USDT and USDC ONLY — never BTC, ETH, SOL, or volatile coins
 - TRC-20 network preferred (cheapest fees)
 - Auto-converts to fiat instantly — never hold crypto
@@ -72,33 +76,21 @@ Repo:         GitHub (auto-deploy to Vercel on push)
 ## DESIGN SYSTEM — NEVER DEVIATE
 
 ```css
---bg:      #fffbf4  /* warm cream — NOT white */
---ink:     #0f0d0a  /* near black */
---coral:   #ff5733  /* primary CTA */
---yellow:  #ffd60a  /* badges, highlights */
---mint:    #00c48c  /* success, checkmarks */
---sky:     #4f8ef7  /* info, Web3 elements */
---lilac:   #c084fc  /* AI features */
---surface: #fff8ed  /* card backgrounds */
---muted:   #6b6559  /* secondary text */
-
-Fonts:
-  Display/Headings: Cabinet Grotesk (900, 800, 700)
-  Italic accents:   Instrument Serif (italic)
-  Monospace/labels: DM Mono
-
-Design Rules:
-  - 2px solid #0f0d0a borders on ALL cards and buttons
-  - 4px 4px 0 #0f0d0a box-shadow on hover (brutalist lift)
-  - 6px 6px 0 #0f0d0a for large card hover
-  - Warm cream background everywhere — never pure white
-  - Coral scrolling marquee strips between major sections
-  - Dark ink (#0f0d0a) sections for "How it works" content
-  - Yellow for featured/popular/hot badges
-  - All buttons have 2px solid border + hover lift effect
-  - Dark mode must work on every single page
-  - Mobile responsive (375px, 768px, 1200px breakpoints)
-  - RTL support for Arabic/Hausa content
+--bg: #fffbf4 /* warm cream — NOT white */ --ink: #0f0d0a /* near black */
+  --coral: #ff5733 /* primary CTA */ --yellow: #ffd60a /* badges, highlights */
+  --mint: #00c48c /* success, checkmarks */ --sky: #4f8ef7
+  /* info, Web3 elements */ --lilac: #c084fc /* AI features */
+  --surface: #fff8ed /* card backgrounds */ --muted: #6b6559
+  /* secondary text */ Fonts: Display/Headings: Cabinet Grotesk (900, 800, 700)
+  Italic accents: Instrument Serif (italic) Monospace/labels: DM Mono Design
+  Rules: - 2px solid #0f0d0a borders on ALL cards and buttons - 4px 4px 0
+  #0f0d0a box-shadow on hover (brutalist lift) - 6px 6px 0 #0f0d0a for large
+  card hover - Warm cream background everywhere — never pure white - Coral
+  scrolling marquee strips between major sections - Dark ink (#0f0d0a) sections
+  for "How it works" content - Yellow for featured/popular/hot badges - All
+  buttons have 2px solid border + hover lift effect - Dark mode must work on
+  every single page - Mobile responsive (375px, 768px, 1200px breakpoints) - RTL
+  support for Arabic/Hausa content;
 ```
 
 **Reference:** See `05-homepage-design.html` for exact visual implementation.
@@ -131,19 +123,24 @@ Providers:
 ## BUILD PHASES
 
 ### Phase 1 — Launch (Ship First)
+
 Core marketplace, payments, licensing, downloads, admin.
 **Do not add Phase 2+ features until Phase 1 is live and making money.**
 
 ### Phase 2 — Revenue Foundation
+
 Vendor system, directory hub, services/leads, mobile money, fraud prevention, messaging.
 
 ### Phase 3 — Growth
+
 Gamification, AI generator, community forum, courses, crypto payments.
 
 ### Phase 4 — Scale
+
 Automation engine, programmatic SEO, mobile app API, affiliate marketplace.
 
 ### Phase 5 — Enterprise
+
 SOC 2, white-label, Merchant of Record, GDPR CMP v2, SDK libraries.
 
 ---

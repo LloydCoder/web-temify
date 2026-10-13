@@ -1,12 +1,15 @@
 > **LEGACY / NON-CANONICAL — reviewed 2026-10-13.** Retained for historical requirements and design context only. Do not treat its framework, database/migration strategy, provider list, security examples, product count, phase status, pricing, testimonials, metrics, or “built/production-ready” claims as current truth. Canonical authority is in `docs/architecture/overview.md`, `docs/architecture/decisions/`, `docs/roadmap/phase-gates.md`, `docs/security/`, `docs/quality/testing-strategy.md`, the tested source and Supabase migrations, and `LloydCoder/web-temify-products/catalog/products.json`. Implement only through the current phase gates and verified evidence.
 
 # WEB-TEMIFY — COMPLETE FEATURE MASTER LIST
+
 ## 332 Total Features | 219 To Build | 34 Groups
+
 ## Version 5.0 | May 2026
 
 ---
 
 ## ALREADY BUILT (113 checks — existing PHP build)
+
 These exist in the old PHP build and must be rebuilt in Next.js:
 Auth, marketplace listing, template preview, Paystack/Stripe/LemonSqueezy
 payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
@@ -17,6 +20,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 ## PHASE 1 — LAUNCH (Build These First)
 
 ### Core Marketplace
+
 - [ ] Homepage matching web-temify-v3.html design exactly
 - [ ] Template listing page with category + filter sidebar
 - [ ] Template preview page (desktop/tablet/mobile device switcher)
@@ -34,6 +38,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Hot / New / Web3 / Pro badges on template cards
 
 ### Auth
+
 - [ ] Email + password registration (Supabase Auth)
 - [ ] Email verification flow
 - [ ] Login page
@@ -48,6 +53,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Honeypot on register form
 
 ### Checkout & Payments
+
 - [ ] Checkout page with ALL enabled gateway tabs
 - [ ] Paystack payment initiation + callback
 - [ ] Stripe payment intent + confirmation
@@ -70,6 +76,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] 2FA required for purchases above $200
 
 ### License System
+
 - [ ] License key auto-generated on purchase
 - [ ] License key shown in user dashboard
 - [ ] License validation API endpoint (/api/v1/validate-license)
@@ -81,12 +88,14 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Bulk license purchases
 
 ### Downloads
+
 - [ ] Secure token-based download (expires 24h, max 5 uses)
 - [ ] Signed Supabase Storage URL (expires 5 minutes)
 - [ ] Re-download from dashboard without support
 - [ ] Product update notifications to existing buyers
 
 ### User Dashboard
+
 - [ ] Dashboard home (stats, recent downloads, subscription status)
 - [ ] My downloads history
 - [ ] My purchases library
@@ -104,6 +113,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Referral links + earnings
 
 ### Admin Panel
+
 - [ ] Admin dashboard (revenue chart, MRR, ARR, LTV, churn)
 - [ ] User list + search + segments
 - [ ] User detail + suspension + impersonation
@@ -136,6 +146,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Global admin search
 
 ### SEO & Performance
+
 - [ ] Dynamic sitemap.ts (all pages, products, blog posts)
 - [ ] Dynamic robots.ts
 - [ ] Open Graph meta on every page
@@ -150,12 +161,14 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Cloudflare CDN for static assets
 
 ### PWA
+
 - [ ] manifest.json
 - [ ] Service worker (offline fallback)
 - [ ] Push notification opt-in (new products in watched categories)
 - [ ] offline.html fallback page
 
 ### Emails (25 templates — Resend)
+
 - [ ] Welcome
 - [ ] Verify email
 - [ ] Password reset
@@ -187,6 +200,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 ## PHASE 2 — REVENUE FOUNDATION
 
 ### Vendor System
+
 - [ ] Vendor registration + step-by-step onboarding wizard
 - [ ] Vendor dashboard (earnings, products, analytics)
 - [ ] Product submission flow (upload, price, description, demo, screenshots)
@@ -216,6 +230,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Canned responses for vendor support
 
 ### Vendor Financial Services
+
 - [ ] Vendor earnings wallet
 - [ ] Instant payouts (Paystack transfer on sale confirmed)
 - [ ] Revenue advance for top vendors
@@ -223,6 +238,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Vendor earnings interest/yield (3-5% APY)
 
 ### Directory Hub
+
 - [ ] Directory homepage (all 10 categories)
 - [ ] 10 category pages (AI, Web Dev, Web3, Design, No-Code, Hosting, Plugins, Blockchain, Freelancer, Learning)
 - [ ] Individual tool listing page (SEO indexed)
@@ -237,6 +253,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Internal linking (directory → related templates)
 
 ### Services & Leads (→ Tinlance)
+
 - [ ] Services page (listing Tinlance capabilities)
 - [ ] 6 service category selection
 - [ ] Project brief form (budget, timeline, description, attachments)
@@ -247,6 +264,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Upsell hook at checkout ("Want us to install this?")
 
 ### Fraud Prevention
+
 - [ ] Fraud risk scoring on registration + purchase
 - [ ] Chargeback protection (track ratio, auto-hold payouts)
 - [ ] Device fingerprinting on registration
@@ -257,18 +275,21 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Fraud dashboard in admin
 
 ### Messaging & Support
+
 - [ ] Buyer-vendor direct messaging (post-purchase threads)
 - [ ] Support ticket system (per purchase, SLA tracking)
 - [ ] AI support auto-responder (Claude API first response)
 - [ ] Canned responses for vendors
 
 ### Mobile Money (Phase 2 feature flag)
+
 - [ ] MTN MoMo integration
 - [ ] Airtel Money integration
 - [ ] M-Pesa integration
-- [ ] USSD payment option (*737# etc.)
+- [ ] USSD payment option (\*737# etc.)
 
 ### BNPL (Phase 2 feature flag)
+
 - [ ] Carbon instalments integration
 - [ ] FairMoney instalments integration
 - [ ] 3-month instalment display at checkout
@@ -278,6 +299,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 ## PHASE 3 — GROWTH ENGINE
 
 ### Gamification
+
 - [ ] Points system (earn for purchases, reviews, referrals, logins)
 - [ ] Badges + achievements system
 - [ ] Monthly leaderboard (buyers, sellers, reviewers)
@@ -291,6 +313,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Review incentive programme (50 points for review)
 
 ### AI Features
+
 - [ ] AI page generator ("generate landing page in 60 seconds")
 - [ ] Editable in-browser template sandbox
 - [ ] AI product description generator (vendor upload assist)
@@ -303,6 +326,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Multi-LLM fallback chain (Claude → Grok → Gemini → GPT-4o)
 
 ### Community
+
 - [ ] Forum (categories, threads, replies, moderation)
 - [ ] Forum Q&A sections (Show Your Builds, Web3 Dev Chat, etc.)
 - [ ] Template showcase gallery ("Built with Web-Temify")
@@ -311,6 +335,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Template request system (buyers post requests, sellers bid)
 
 ### Courses (Phase 3 feature flag)
+
 - [ ] Mini course builder for vendors
 - [ ] Video lesson hosting (Supabase Storage player)
 - [ ] Course progress tracking per user
@@ -319,6 +344,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Certificate PDF auto-generation
 
 ### Crypto Payments (Phase 3 feature flag)
+
 - [ ] NOWPayments USDT/USDC integration
 - [ ] QR code + wallet address display at checkout
 - [ ] 30-minute payment countdown timer
@@ -326,6 +352,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Crypto refund = platform credits only policy
 
 ### Discovery Enhancements
+
 - [ ] Visual/screenshot-based search
 - [ ] "Collections by Use Case" curated pages
 - [ ] "Complete the Kit" cross-sell engine
@@ -338,12 +365,14 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 ## PHASE 4 — SCALE & AUTOMATE
 
 ### Content Automation
+
 - [ ] Python automation engine (Claude API → SEO blog drafts)
 - [ ] Blog auto-generator (1500w SEO posts → admin draft)
 - [ ] Directory auto-populator (Product Hunt + GitHub + RSS → draft listings)
 - [ ] Programmatic SEO niche pages (auto-generated from DB keywords)
 
 ### Marketing & Analytics
+
 - [ ] Affiliate marketplace (public page for affiliates to find products)
 - [ ] Affiliate performance tiers (Starter → Silver → Gold → Platinum)
 - [ ] Co-marketing system (vendor + platform joint promotions)
@@ -357,6 +386,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Seasonal promotion calendar
 
 ### B2B Features
+
 - [ ] Agency client management portal
 - [ ] Team collaboration on vendor accounts (roles)
 - [ ] B2B bulk order system (quote request)
@@ -366,6 +396,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Reseller programme (40% discount, white-label invoice)
 
 ### Platform Operations
+
 - [ ] API key management for buyers (create/rotate/revoke)
 - [ ] Staging environment for Business/Agency plan users
 - [ ] Webhook testing tool in admin (send test payloads)
@@ -378,6 +409,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Staged deployment checklist in admin
 
 ### Africa-Specific
+
 - [ ] Diaspora payment support (GBP/CAD/AUD via Stripe → local currency)
 - [ ] Africa timezone smart scheduling (WAT/EAT optimal send times)
 - [ ] Naira pricing psychology (₦14,999 not ₦15,000)
@@ -414,6 +446,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 ## PRODUCTS TO BUILD (44 total — separate build)
 
 ### Tier 1 — Build First (6)
+
 - [ ] Courier & Logistics Template ($79–$199)
 - [ ] Loan & Lending Template ($99–$249)
 - [ ] NeoBank & Digital Banking Template ($99–$299)
@@ -422,6 +455,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Portfolio & Freelancer Template ($29–$79)
 
 ### Tier 2 — Medium Term (12)
+
 - [ ] P2P Crypto Trading Script ($299–$799)
 - [ ] Online Banking Lite Script ($199–$499)
 - [ ] Loan Management System Script ($199–$499)
@@ -436,6 +470,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] POS System Script ($149–$399)
 
 ### Tier 3 — Later (16)
+
 - [ ] CEX Lite Exchange Script ($499–$999)
 - [ ] DeFi Dashboard Template ($199–$499)
 - [ ] Fleet Management Script ($199–$499)
@@ -454,12 +489,14 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 - [ ] Ajo / Esusu Savings Script ($149–$399)
 
 ### Tier 4 — Launch Kits (4)
+
 - [ ] SaaS Starter Kit ($299)
 - [ ] Web3 DApp Starter Kit ($399)
 - [ ] Fintech Launch Kit ($349)
 - [ ] Agency Starter Kit ($249)
 
 ### Tier 5 — Africa Niche (6)
+
 - [ ] Islamic Finance / Halal Banking Template ($99–$249)
 - [ ] Agritech & Farm Marketplace Template ($79–$179)
 - [ ] ISP & Telecom Company Template ($79–$179)
@@ -472,6 +509,7 @@ payments, webhooks, admin panel, blog, affiliate, 2FA, dark mode, RTL,
 ## DESIGN RULES — BUILDER CHECKLIST
 
 For every page built, verify:
+
 - [ ] Background is #fffbf4 (warm cream) — never pure white
 - [ ] All cards have 2px solid #0f0d0a border
 - [ ] All buttons have 2px solid border
@@ -493,6 +531,7 @@ For every page built, verify:
 ## SECURITY CHECKLIST — BUILDER MUST FOLLOW
 
 For every API route and server action:
+
 - [ ] Verify user is authenticated (Supabase getUser)
 - [ ] Validate all input with Zod schema
 - [ ] Use Prisma for all DB queries (never raw SQL)

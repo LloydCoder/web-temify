@@ -41,6 +41,7 @@ Requires an authenticated customer and a grant ID. It checks grant ownership and
 ## Database invariants
 
 Migration 20261013030000_phase4b_checkout_webhooks.sql provides:
+
 - create_order_for_checkout: service-role-only atomic order/item creation with server-derived price and idempotency validation.
 - Financial webhook columns to validate event amount, currency, and provider reference.
 - process_payment_webhook_event: service-role-only, row-locked, idempotent state processor. It checks event/attempt/order/refund/amount/currency evidence, posts a unique ledger transfer, transitions the order, and creates entitlements within one transaction. Failed processing leaves a retryable failed inbox row; raw provider payloads are not retained.

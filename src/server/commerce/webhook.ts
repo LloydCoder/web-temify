@@ -8,12 +8,18 @@ const eventIdentity = {
   paymentAttemptId: z.string().uuid(),
   amountMinor: z.number().int().positive().safe(),
   currency: z.string().regex(/^[A-Z]{3}$/),
-  providerReference: z.string().trim().min(1).max(240)
+  providerReference: z.string().trim().min(1).max(240),
 };
 export const SandboxPaymentEventSchema = z.discriminatedUnion("type", [
   z.object({ ...eventIdentity, type: z.literal("payment.succeeded") }).strict(),
   z.object({ ...eventIdentity, type: z.literal("payment.failed") }).strict(),
-  z.object({ ...eventIdentity, type: z.literal("refund.succeeded"), refundId: z.string().uuid() }).strict()
+  z
+    .object({
+      ...eventIdentity,
+      type: z.literal("refund.succeeded"),
+      refundId: z.string().uuid(),
+    })
+    .strict(),
 ]);
 export type SandboxPaymentEvent = z.infer<typeof SandboxPaymentEventSchema>;
 type AdminClient = ReturnType<typeof createSupabaseAdminClient>;
@@ -26,9 +32,11 @@ export type WebhookIngestResult =
 export async function ingestVerifiedSandboxEvent(
   admin: AdminClient,
   event: SandboxPaymentEvent,
-  rawBody: string
+  rawBody: string,
 ): Promise<WebhookIngestResult> {
-  const payloadSha256 = createHash("sha256").update(rawBody, "utf8").digest("hex");
+  const payloadSha256 = createHash("sha256")
+    .update(rawBody, "utf8")
+    .digest("hex");
   const row = {
     provider: "sandbox",
     provider_event_id: event.id,
@@ -41,11 +49,14 @@ export async function ingestVerifiedSandboxEvent(
     refund_id: event.type === "refund.succeeded" ? event.refundId : null,
     amount_minor: event.amountMinor,
     currency: event.currency,
-    provider_reference: event.providerReference
+    provider_reference: event.providerReference,
   };
   const { error: insertError } = await admin
     .from("payment_webhook_events")
-    .upsert(row, { onConflict: "provider,provider_event_id", ignoreDuplicates: true });
+    .upsert(row, {
+      onConflict: "provider,provider_event_id",
+      ignoreDuplicates: true,
+    });
   if (insertError) return { kind: "retry" };
 
   const { data: stored, error: readError } = await admin
@@ -56,11 +67,18 @@ export async function ingestVerifiedSandboxEvent(
     .maybeSingle();
   if (readError || !stored) return { kind: "retry" };
   if (stored.payload_sha256 !== payloadSha256) return { kind: "conflict" };
-  if (stored.processing_status === "processed" || stored.processing_status === "ignored") return { kind: "processed" };
+  if (
+    stored.processing_status === "processed" ||
+    stored.processing_status === "ignored"
+  )
+    return { kind: "processed" };
 
-  const { data: processed, error: processError } = await admin.rpc("process_payment_webhook_event", {
-    target_event_id: stored.id
-  });
+  const { data: processed, error: processError } = await admin.rpc(
+    "process_payment_webhook_event",
+    {
+      target_event_id: stored.id,
+    },
+  );
   if (processError || processed !== true) return { kind: "retry" };
   return { kind: "processed" };
 }

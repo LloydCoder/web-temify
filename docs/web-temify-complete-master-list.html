@@ -1,515 +1,3236 @@
 <!-- LEGACY FEATURE BACKLOG (reviewed 2026-10-13): any “production ready”, “checks passing”, built-status, product count, instant payout/yield, or capability claims in this mockup are unverified and non-canonical. Use phase gates and tested repository evidence; product inventory lives in web-temify-products/catalog/products.json. -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web-Temify — Complete Master Feature List (332 Items)</title>
-<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#fffbf4;--ink:#0f0d0a;--coral:#ff5733;--yellow:#ffd60a;--mint:#00c48c;--sky:#4f8ef7;--lilac:#c084fc;--surface:#fff8ed;--muted:#6b6559}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font-family:'Cabinet Grotesk',sans-serif;padding:2rem;max-width:1300px;margin:0 auto;line-height:1.6}
-h1{font-size:2.6rem;font-weight:900;letter-spacing:-.04em;margin-bottom:.3rem}
-.sub{color:var(--muted);font-size:.9rem;font-weight:500;margin-bottom:1.5rem}
-.stats{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:2px solid var(--ink)}
-.stat{background:var(--surface);border:2px solid var(--ink);border-radius:4px;padding:.45rem .9rem;text-align:center;min-width:90px}
-.sn{font-size:1.5rem;font-weight:900;letter-spacing:-.04em;color:var(--coral);display:block;line-height:1}
-.sl{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:.15rem;display:block}
-.legend{display:flex;gap:1.2rem;flex-wrap:wrap;margin-bottom:1.5rem;padding:.65rem 1rem;background:var(--surface);border:2px solid var(--ink);border-radius:4px}
-.leg{display:flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:700}
-.ld{width:9px;height:9px;border-radius:2px;border:1.5px solid var(--ink)}
-.group{margin-bottom:2rem;page-break-inside:avoid}
-.gh{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;padding-bottom:.6rem;border-bottom:2px solid var(--ink);flex-wrap:wrap}
-.gb{padding:.28rem .75rem;border:2px solid var(--ink);border-radius:2px;font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap}
-.gb-1{background:var(--coral);color:#fff;border-color:var(--coral)}
-.gb-2{background:var(--mint);color:#fff;border-color:var(--mint)}
-.gb-3{background:var(--sky);color:#fff;border-color:var(--sky)}
-.gb-4{background:var(--yellow);color:var(--ink)}
-.gb-5{background:var(--lilac);color:#fff;border-color:var(--lilac)}
-.gb-6{background:var(--ink);color:#fff}
-.gt{font-size:1.1rem;font-weight:900;letter-spacing:-.02em;flex:1}
-.gc{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted)}
-.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
-.fgrid-2{grid-template-columns:repeat(2,1fr)}
-.fgrid-4{grid-template-columns:repeat(4,1fr)}
-.f{background:var(--surface);border:2px solid var(--ink);border-radius:4px;padding:.65rem .9rem;display:flex;gap:.6rem;align-items:flex-start;transition:transform .12s,box-shadow .12s}
-.f:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink)}
-.f.new{border-left:3px solid var(--mint)}
-.f.hot{border-left:3px solid var(--coral)}
-.f.built{border-left:3px solid var(--sky);opacity:.7}
-.fnum{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);flex-shrink:0;min-width:26px;margin-top:.1rem}
-.fname{font-size:.8rem;font-weight:800;letter-spacing:-.01em;margin-bottom:.15rem}
-.fdesc{font-size:.68rem;color:var(--muted);line-height:1.5;font-weight:500}
-.tag{display:inline-block;font-size:.52rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;padding:1px 5px;border:1.5px solid var(--ink);border-radius:2px;margin-right:.25rem;margin-bottom:.2rem}
-.tn{background:var(--mint);color:#fff;border-color:var(--mint)}
-.tp{background:var(--coral);color:#fff;border-color:var(--coral)}
-.ta{background:var(--yellow);color:var(--ink)}
-.ti{background:var(--sky);color:#fff;border-color:var(--sky)}
-.tl{background:var(--lilac);color:#fff;border-color:var(--lilac)}
-.phases{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-top:1.5rem}
-.phase{background:var(--surface);border:2px solid var(--ink);border-radius:6px;padding:1.1rem}
-.pn{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--coral);margin-bottom:.4rem}
-.pt{font-size:.9rem;font-weight:900;letter-spacing:-.02em;margin-bottom:.4rem}
-.pi{font-size:.7rem;color:var(--muted);font-weight:500;line-height:1.6}
-.summary-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:.6rem;margin:1.5rem 0}
-.sg{background:var(--surface);border:2px solid var(--ink);border-radius:4px;padding:.75rem;text-align:center}
-.sgn{font-size:1.6rem;font-weight:900;letter-spacing:-.04em;color:var(--coral);display:block;line-height:1}
-.sgl{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:.2rem;display:block}
-@media(max-width:900px){.fgrid,.fgrid-2,.fgrid-4{grid-template-columns:1fr}.phases{grid-template-columns:1fr}.summary-grid{grid-template-columns:repeat(3,1fr)}}
-</style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web-Temify — Complete Master Feature List (332 Items)</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #fffbf4;
+        --ink: #0f0d0a;
+        --coral: #ff5733;
+        --yellow: #ffd60a;
+        --mint: #00c48c;
+        --sky: #4f8ef7;
+        --lilac: #c084fc;
+        --surface: #fff8ed;
+        --muted: #6b6559;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Cabinet Grotesk", sans-serif;
+        padding: 2rem;
+        max-width: 1300px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+      h1 {
+        font-size: 2.6rem;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        margin-bottom: 0.3rem;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+      }
+      .stats {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid var(--ink);
+      }
+      .stat {
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: 4px;
+        padding: 0.45rem 0.9rem;
+        text-align: center;
+        min-width: 90px;
+      }
+      .sn {
+        font-size: 1.5rem;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        color: var(--coral);
+        display: block;
+        line-height: 1;
+      }
+      .sl {
+        font-size: 0.58rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        margin-top: 0.15rem;
+        display: block;
+      }
+      .legend {
+        display: flex;
+        gap: 1.2rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+        padding: 0.65rem 1rem;
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: 4px;
+      }
+      .leg {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+      }
+      .ld {
+        width: 9px;
+        height: 9px;
+        border-radius: 2px;
+        border: 1.5px solid var(--ink);
+      }
+      .group {
+        margin-bottom: 2rem;
+        page-break-inside: avoid;
+      }
+      .gh {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 2px solid var(--ink);
+        flex-wrap: wrap;
+      }
+      .gb {
+        padding: 0.28rem 0.75rem;
+        border: 2px solid var(--ink);
+        border-radius: 2px;
+        font-size: 0.65rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        white-space: nowrap;
+      }
+      .gb-1 {
+        background: var(--coral);
+        color: #fff;
+        border-color: var(--coral);
+      }
+      .gb-2 {
+        background: var(--mint);
+        color: #fff;
+        border-color: var(--mint);
+      }
+      .gb-3 {
+        background: var(--sky);
+        color: #fff;
+        border-color: var(--sky);
+      }
+      .gb-4 {
+        background: var(--yellow);
+        color: var(--ink);
+      }
+      .gb-5 {
+        background: var(--lilac);
+        color: #fff;
+        border-color: var(--lilac);
+      }
+      .gb-6 {
+        background: var(--ink);
+        color: #fff;
+      }
+      .gt {
+        font-size: 1.1rem;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        flex: 1;
+      }
+      .gc {
+        font-family: "DM Mono", monospace;
+        font-size: 0.68rem;
+        color: var(--muted);
+      }
+      .fgrid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.6rem;
+      }
+      .fgrid-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .fgrid-4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .f {
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: 4px;
+        padding: 0.65rem 0.9rem;
+        display: flex;
+        gap: 0.6rem;
+        align-items: flex-start;
+        transition:
+          transform 0.12s,
+          box-shadow 0.12s;
+      }
+      .f:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 3px 3px 0 var(--ink);
+      }
+      .f.new {
+        border-left: 3px solid var(--mint);
+      }
+      .f.hot {
+        border-left: 3px solid var(--coral);
+      }
+      .f.built {
+        border-left: 3px solid var(--sky);
+        opacity: 0.7;
+      }
+      .fnum {
+        font-family: "DM Mono", monospace;
+        font-size: 0.6rem;
+        color: var(--muted);
+        flex-shrink: 0;
+        min-width: 26px;
+        margin-top: 0.1rem;
+      }
+      .fname {
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        margin-bottom: 0.15rem;
+      }
+      .fdesc {
+        font-size: 0.68rem;
+        color: var(--muted);
+        line-height: 1.5;
+        font-weight: 500;
+      }
+      .tag {
+        display: inline-block;
+        font-size: 0.52rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 1px 5px;
+        border: 1.5px solid var(--ink);
+        border-radius: 2px;
+        margin-right: 0.25rem;
+        margin-bottom: 0.2rem;
+      }
+      .tn {
+        background: var(--mint);
+        color: #fff;
+        border-color: var(--mint);
+      }
+      .tp {
+        background: var(--coral);
+        color: #fff;
+        border-color: var(--coral);
+      }
+      .ta {
+        background: var(--yellow);
+        color: var(--ink);
+      }
+      .ti {
+        background: var(--sky);
+        color: #fff;
+        border-color: var(--sky);
+      }
+      .tl {
+        background: var(--lilac);
+        color: #fff;
+        border-color: var(--lilac);
+      }
+      .phases {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+      }
+      .phase {
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: 6px;
+        padding: 1.1rem;
+      }
+      .pn {
+        font-size: 0.62rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--coral);
+        margin-bottom: 0.4rem;
+      }
+      .pt {
+        font-size: 0.9rem;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.4rem;
+      }
+      .pi {
+        font-size: 0.7rem;
+        color: var(--muted);
+        font-weight: 500;
+        line-height: 1.6;
+      }
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.6rem;
+        margin: 1.5rem 0;
+      }
+      .sg {
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: 4px;
+        padding: 0.75rem;
+        text-align: center;
+      }
+      .sgn {
+        font-size: 1.6rem;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        color: var(--coral);
+        display: block;
+        line-height: 1;
+      }
+      .sgl {
+        font-size: 0.58rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        margin-top: 0.2rem;
+        display: block;
+      }
+      @media (max-width: 900px) {
+        .fgrid,
+        .fgrid-2,
+        .fgrid-4 {
+          grid-template-columns: 1fr;
+        }
+        .phases {
+          grid-template-columns: 1fr;
+        }
+        .summary-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>
+      Web-Temify <span style="color: var(--coral)">●</span> Complete Master
+      Feature List
+    </h1>
+    <p class="sub">
+      All features discussed across all sessions · PHP Platform · Updated May
+      2026
+    </p>
 
-<h1>Web-Temify <span style="color:var(--coral)">●</span> Complete Master Feature List</h1>
-<p class="sub">All features discussed across all sessions · PHP Platform · Updated May 2026</p>
-
-<div class="stats">
-  <div class="stat"><span class="sn">332</span><span class="sl">Total Items</span></div>
-  <div class="stat"><span class="sn">113</span><span class="sl">Already Built</span></div>
-  <div class="stat"><span class="sn">219</span><span class="sl">Not Built Yet</span></div>
-  <div class="stat"><span class="sn">32</span><span class="sl">Feature Groups</span></div>
-  <div class="stat"><span class="sn">6</span><span class="sl">Gateways</span></div>
-  <div class="stat"><span class="sn">5</span><span class="sl">Build Phases</span></div>
-  <div class="stat"><span class="sn">44</span><span class="sl">Products</span></div>
-  <div class="stat"><span class="sn">7</span><span class="sl">Platforms</span></div>
-</div>
-
-<div class="legend">
-  <div class="leg"><div class="ld" style="background:var(--mint);border-color:var(--mint)"></div> New from research</div>
-  <div class="leg"><div class="ld" style="background:var(--coral);border-color:var(--coral)"></div> High priority</div>
-  <div class="leg"><div class="ld" style="background:var(--yellow)"></div> Africa-specific</div>
-  <div class="leg"><div class="ld" style="background:var(--sky);border-color:var(--sky)"></div> AI-powered</div>
-  <div class="leg"><div class="ld" style="background:var(--lilac);border-color:var(--lilac)"></div> Payment-related</div>
-  <div class="leg"><div class="ld" style="background:var(--ink)"></div> Already built (summary)</div>
-</div>
-
-<!-- ALREADY BUILT -->
-<div class="group">
-  <div class="gh">
-    <span class="gb gb-6">✅ Already Built</span>
-    <div class="gt">134 Files · 113/113 Checks Passing · Production Ready</div>
-  </div>
-  <div class="fgrid-4">
-    <div class="f built"><span class="fnum">—</span><div><div class="fname">Full Auth System</div><div class="fdesc">Registration, login, 2FA, brute-force lockout, session management, RBAC, age verify, terms log</div></div></div>
-    <div class="f built"><span class="fnum">—</span><div><div class="fname">Template Marketplace</div><div class="fdesc">Cards, filters, preview, compare, wishlist, collections, VirusTotal scan, secure downloads</div></div></div>
-    <div class="f built"><span class="fnum">—</span><div><div class="fname">3 Payment Gateways</div><div class="fdesc">Paystack + Stripe + LemonSqueezy. Webhooks, HMAC verify, idempotency, dunning, subscriptions</div></div></div>
-    <div class="f built"><span class="fnum">—</span><div><div class="fname">Full Admin Panel</div><div class="fdesc">Revenue charts, MRR/ARR/LTV/Churn, user management, email campaigns, A/B test, activity log</div></div></div>
-    <div class="f built"><span class="fnum">—</span><div><div class="fname">Blog Engine</div><div class="fdesc">TinyMCE, SEO meta, scheduling, featured images, categories, draft/published, AI-ready</div></div></div>
-    <div class="f built"><span class="fnum">—</span><div><div class="fname">Affiliate System</div><div class="fdesc">Tiered 20/30/40% commissions, sub-affiliate, 30-day cookie, referral invite email</div></div></div>
-    <div class="f built"><span class="fnum">—</span><div><div class="fname">SEO Infrastructure</div><div class="fdesc">XML sitemap, robots.txt, OG tags, JSON-LD, GTM, GA4, hreflang, lazy loading, RTL, WCAG</div></div></div>
-    <div class="f built"><span class="fnum">—</span><div><div class="fname">PWA + 9 Cron Jobs</div><div class="fdesc">Service worker, manifest, offline page. Expiry, downgrade, abandoned checkout, drip, MRR calc</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 1 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-1">Group 1</span><div class="gt">Platform Infrastructure</div><span class="gc">2 items · 001–002</span></div>
-  <div class="fgrid">
-    <div class="f hot"><span class="fnum">001</span><div><div class="fname"><span class="tag tp">Phase 1</span>Supabase Storage Integration</div><div class="fdesc">Offload all template previews, videos, screenshots, avatars to Supabase CDN. PHP helper class + JS uploader. Replaces local file storage with CDN URLs in DB.</div></div></div>
-    <div class="f new"><span class="fnum">002</span><div><div class="fname"><span class="tag tn">New</span>Cloudflare CDN for Static Assets</div><div class="fdesc">Serve all CSS, JS, fonts, images from Cloudflare free tier. Reduces latency for African mobile users. Free DDoS protection, HTTPS, and performance analytics included.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 2 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-1">Group 2</span><div class="gt">Auth & Trust Additions</div><span class="gc">9 items · 003–011</span></div>
-  <div class="fgrid">
-    <div class="f"><span class="fnum">003</span><div><div class="fname">Social Login — Google OAuth</div><div class="fdesc">One-click Google sign-in. Biggest registration friction reducer. Store Google ID + avatar in users table.</div></div></div>
-    <div class="f"><span class="fnum">004</span><div><div class="fname">Social Login — GitHub OAuth</div><div class="fdesc">One-click GitHub sign-in. Signals developer-first platform. Auto-populate profile from GitHub.</div></div></div>
-    <div class="f"><span class="fnum">005</span><div><div class="fname">Social Login — Twitter/X OAuth</div><div class="fdesc">One-click Twitter/X sign-in for creator and indie founder audience.</div></div></div>
-    <div class="f hot"><span class="fnum">006</span><div><div class="fname">Verified Seller Badges</div><div class="fdesc">ID/business proof submission + admin approval. Checkmark on every product card. Major trust signal for high-ticket script buyers.</div></div></div>
-    <div class="f"><span class="fnum">007</span><div><div class="fname">Money-Back Guarantee Badge</div><div class="fdesc">30-day guarantee on all product pages and checkout. Reduces purchase anxiety. Single DB flag.</div></div></div>
-    <div class="f"><span class="fnum">008</span><div><div class="fname">"As Seen In" Press Bar</div><div class="fdesc">Scrolling strip of media logos. Admin CMS managed. Even early social proof increases conversion.</div></div></div>
-    <div class="f"><span class="fnum">009</span><div><div class="fname">Purchase Counter on Cards</div><div class="fdesc">"847 purchases" on every template card. Pulled from orders table. ThemeForest uses this heavily.</div></div></div>
-    <div class="f"><span class="fnum">010</span><div><div class="fname">Live Purchase Notifications Toast</div><div class="fdesc">"Someone in Lagos just bought the Banking Template." Real-time, location-specific, product-specific.</div></div></div>
-    <div class="f new"><span class="fnum">011</span><div><div class="fname"><span class="tag tn">New</span>Trust Score Displayed to Buyers</div><div class="fdesc">Vendor trust score (0–100) combining: verified identity, chargeback rate, response time, review score, sales volume. Public bar on vendor storefront.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 3 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-1">Group 3</span><div class="gt">Discovery & Search</div><span class="gc">7 items · 012–018</span></div>
-  <div class="fgrid">
-    <div class="f"><span class="fnum">012</span><div><div class="fname"><span class="tag ti">AI</span>Semantic Search (Claude API)</div><div class="fdesc">"I need a website for my logistics company" returns Courier templates. Intent-based, not keyword-only.</div></div></div>
-    <div class="f"><span class="fnum">013</span><div><div class="fname">Visual / Screenshot Search</div><div class="fdesc">Upload a screenshot → find similar templates. Image hash comparison + category matching.</div></div></div>
-    <div class="f"><span class="fnum">014</span><div><div class="fname"><span class="tag ti">AI</span>Personalised Homepage</div><div class="fdesc">Return visits show recommendations from browsing history + plan + purchases. "Recommended for you."</div></div></div>
-    <div class="f"><span class="fnum">015</span><div><div class="fname">Advanced Filter System</div><div class="fdesc">Filter by: tech stack, colour scheme, page count, industry, price range, license type, file format, last updated, compatibility.</div></div></div>
-    <div class="f"><span class="fnum">016</span><div><div class="fname">"Collections by Use Case" Pages</div><div class="fdesc">"Best for Nigerian Startups", "Web3 Founder Pack". Rank in Google + convert better than raw categories.</div></div></div>
-    <div class="f"><span class="fnum">017</span><div><div class="fname">Recently Viewed Templates</div><div class="fdesc">Persistent across sessions. DB per user, cookie for guests. Shown on homepage and listing page.</div></div></div>
-    <div class="f"><span class="fnum">018</span><div><div class="fname">"Complete the Kit" Cross-Sell</div><div class="fdesc">After purchase: "Buyers also bought these." Recommendation engine on thank-you page + dashboard.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 4 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-1">Group 4</span><div class="gt">New Sections & Pages</div><span class="gc">10 items · 019–028</span></div>
-  <div class="fgrid">
-    <div class="f"><span class="fnum">019</span><div><div class="fname">Resources / Tools Directory (10 Categories)</div><div class="fdesc">AI, Web Dev, Web3, Design, No-Code, Hosting, Plugins, Blockchain, Freelancer, Learning. SEO goldmine + featured listing revenue.</div></div></div>
-    <div class="f"><span class="fnum">020</span><div><div class="fname">Web3 Dedicated Hub Page</div><div class="fdesc">NFT, DeFi, DAO, token-gated templates. Separate nav item with own SEO.</div></div></div>
-    <div class="f"><span class="fnum">021</span><div><div class="fname">Launch Kits Section</div><div class="fdesc">SaaS Kit, Agency Kit, Fintech Kit, Web3 DApp Kit. Bundled systems at premium price.</div></div></div>
-    <div class="f"><span class="fnum">022</span><div><div class="fname">Founder Story Page</div><div class="fdesc">Personal brand, faith foundation, vision. "About" is corporate. "Our Story" is human.</div></div></div>
-    <div class="f"><span class="fnum">023</span><div><div class="fname">Programmatic SEO Niche Pages</div><div class="fdesc">Auto-generated: "best courier template Nigeria", "Web3 landing page template 2026". Each targets a long-tail keyword.</div></div></div>
-    <div class="f"><span class="fnum">024</span><div><div class="fname">Developer Hub</div><div class="fdesc">API docs, code snippets, component browser, GitHub signal. Retains developer audience between purchases.</div></div></div>
-    <div class="f"><span class="fnum">025</span><div><div class="fname">Understanding Licenses Page</div><div class="fdesc">Plain English: Regular vs Extended vs White-Label with real-world examples. Reduces disputes.</div></div></div>
-    <div class="f"><span class="fnum">026</span><div><div class="fname">Free Tools Section</div><div class="fdesc">Colour palette generator, font pairing tool, website checklist PDF. Organic traffic + list building.</div></div></div>
-    <div class="f"><span class="fnum">027</span><div><div class="fname">Template Showcase Gallery</div><div class="fdesc">"Built with Web-Temify" user submissions. Social proof + community pride.</div></div></div>
-    <div class="f"><span class="fnum">028</span><div><div class="fname">Community Forum</div><div class="fdesc">"Show Your Builds", "Web3 Dev Chat", "Freelancer Lounge". Increases time-on-site dramatically.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 5 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-1">Group 5</span><div class="gt">Buyer Experience</div><span class="gc">11 items · 029–039</span></div>
-  <div class="fgrid">
-    <div class="f"><span class="fnum">029</span><div><div class="fname">Template Request System</div><div class="fdesc">Buyers post: "I need X template, willing to pay $Y." Sellers bid or Tinlance builds. Validates demand.</div></div></div>
-    <div class="f"><span class="fnum">030</span><div><div class="fname">Preview with Real Content</div><div class="fdesc">Buyer types company name → appears live in preview. JS text replacement on preview iframe.</div></div></div>
-    <div class="f"><span class="fnum">031</span><div><div class="fname">Free Download Tier (No Card)</div><div class="fdesc">Email signup only. Loss-leader strategy. Builds list, drives trust, converts to paid.</div></div></div>
-    <div class="f"><span class="fnum">032</span><div><div class="fname">Re-Download Button</div><div class="fdesc">Re-download past purchases from dashboard without contacting support.</div></div></div>
-    <div class="f"><span class="fnum">033</span><div><div class="fname">Self-Service Subscription Pause</div><div class="fdesc">User pauses own subscription from dashboard. Currently admin-only.</div></div></div>
-    <div class="f"><span class="fnum">034</span><div><div class="fname">"Request Customisation" Per Template</div><div class="fdesc">Context-aware brief pre-fills template name/category → goes to Tinlance as qualified lead.</div></div></div>
-    <div class="f"><span class="fnum">035</span><div><div class="fname">Template Compatibility Checker</div><div class="fdesc">User selects stack → compatibility confirmed or warned before downloading.</div></div></div>
-    <div class="f"><span class="fnum">036</span><div><div class="fname">Subscription Gifting</div><div class="fdesc">Buy Pro/Business as a gift for another user. All 3 gateways.</div></div></div>
-    <div class="f"><span class="fnum">037</span><div><div class="fname">Two-Click Checkout (Returning Buyers)</div><div class="fdesc">Stored payment method, one confirmation. Eliminates repeat buyer friction.</div></div></div>
-    <div class="f"><span class="fnum">038</span><div><div class="fname">Tutorial Video Per Template</div><div class="fdesc">2–3 min setup video on preview page. Reduces support tickets, increases conversion.</div></div></div>
-    <div class="f"><span class="fnum">039</span><div><div class="fname">Product Update Notifications to Buyers</div><div class="fdesc">Email when seller releases new version. "Your template updated to v2.1 — re-download now."</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 6 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-2">Group 6 — New</span><div class="gt">License Key Management System</div><span class="gc">8 items · 040–047</span></div>
-  <div class="fgrid">
-    <div class="f new hot"><span class="fnum">040</span><div><div class="fname"><span class="tag tn">New</span><span class="tag tp">Critical</span>License Key Generator</div><div class="fdesc">Auto-generate unique key per purchase. Tied to buyer's account and domain. Stored with activation limit + expiry.</div></div></div>
-    <div class="f new hot"><span class="fnum">041</span><div><div class="fname"><span class="tag tn">New</span>License Activation Tracking</div><div class="fdesc">Activation limit enforced. Domain + IP recorded. Buyers activate from their site via API call.</div></div></div>
-    <div class="f new hot"><span class="fnum">042</span><div><div class="fname"><span class="tag tn">New</span>License Validation API Endpoint</div><div class="fdesc">/api/v1/validate-license returns {status, expiry, plan_tier, domain_allowed}. Essential for scripts.</div></div></div>
-    <div class="f new"><span class="fnum">043</span><div><div class="fname"><span class="tag tn">New</span>License Deactivation</div><div class="fdesc">Buyer deactivates one domain, reactivates on another from dashboard. No support ticket.</div></div></div>
-    <div class="f new"><span class="fnum">044</span><div><div class="fname"><span class="tag tn">New</span>License Revocation (Admin)</div><div class="fdesc">Admin revokes on chargeback/fraud. Instantly breaks all validation API calls. Logged in activity.</div></div></div>
-    <div class="f new"><span class="fnum">045</span><div><div class="fname"><span class="tag tn">New</span>License Expiry & Renewal</div><div class="fdesc">Annual licenses expire. 30-day reminder + renewal link via all 3 gateways. Recurring revenue.</div></div></div>
-    <div class="f new"><span class="fnum">046</span><div><div class="fname"><span class="tag tn">New</span>License Upgrade Path</div><div class="fdesc">Single-site → multi-site → agency. Proration charged via any of 3 gateways.</div></div></div>
-    <div class="f new"><span class="fnum">047</span><div><div class="fname"><span class="tag tn">New</span>Bulk License Purchases</div><div class="fdesc">Agencies buy 10+ licenses at bulk rate. All 3 gateways. Admin sets 5/10/25-pack tiers.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 7 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-1">Group 7</span><div class="gt">Vendor / Seller System</div><span class="gc">23 items · 048–070</span></div>
-  <div class="fgrid">
-    <div class="f"><span class="fnum">048</span><div><div class="fname">Vendor Registration + Onboarding Wizard</div><div class="fdesc">Step-by-step: profile → product → pricing → payout → live. Reduces drop-off significantly.</div></div></div>
-    <div class="f"><span class="fnum">049</span><div><div class="fname">Vendor Dashboard</div><div class="fdesc">Manage listings, view earnings, request withdrawals, see analytics.</div></div></div>
-    <div class="f"><span class="fnum">050</span><div><div class="fname">Product Submission Flow</div><div class="fdesc">Upload, price, description, screenshots, demo link, license type. Admin approval required.</div></div></div>
-    <div class="f"><span class="fnum">051</span><div><div class="fname">Admin Vendor Approval Queue</div><div class="fdesc">Review, approve, reject, revise. Rejection sends automated feedback email.</div></div></div>
-    <div class="f"><span class="fnum">052</span><div><div class="fname"><span class="tag tl">Payments</span>Revenue Split System</div><div class="fdesc">20–30% platform commission. All 3 gateways for payouts.</div></div></div>
-    <div class="f"><span class="fnum">053</span><div><div class="fname"><span class="tag tl">Payments</span>Vendor Payout System</div><div class="fdesc">Withdrawal requests. Admin processes via Paystack/Stripe/LemonSqueezy. History + status.</div></div></div>
-    <div class="f"><span class="fnum">054</span><div><div class="fname">Vendor Analytics Dashboard</div><div class="fdesc">Sales stats, downloads, revenue charts, conversion rate per product.</div></div></div>
-    <div class="f"><span class="fnum">055</span><div><div class="fname">Vendor Revenue Forecasting</div><div class="fdesc">Projected next 30 days based on trend and seasonal patterns.</div></div></div>
-    <div class="f"><span class="fnum">056</span><div><div class="fname">Conversion Funnel Per Product</div><div class="fdesc">Views → preview clicks → purchases per product. Helps vendors optimise listings.</div></div></div>
-    <div class="f"><span class="fnum">057</span><div><div class="fname">Vendor Public Storefront</div><div class="fdesc">Customisable banner, bio, social links, speciality tags, follower count at /vendor/username.</div></div></div>
-    <div class="f"><span class="fnum">058</span><div><div class="fname">"Follow a Seller" Feature</div><div class="fdesc">Followers notified on new product release. Passive repeat purchases.</div></div></div>
-    <div class="f"><span class="fnum">059</span><div><div class="fname">Seller Q&A on Product Pages</div><div class="fdesc">Public questions + answers visible to all. Reduces support tickets, increases conversion.</div></div></div>
-    <div class="f"><span class="fnum">060</span><div><div class="fname">Dispute Resolution System</div><div class="fdesc">Open → seller responds → admin mediates → resolved. Protects both sides.</div></div></div>
-    <div class="f"><span class="fnum">061</span><div><div class="fname">Bulk Product Import</div><div class="fdesc">CSV/JSON import from existing catalogues. Attracts Envato exodus sellers.</div></div></div>
-    <div class="f"><span class="fnum">062</span><div><div class="fname">Seller Webhook Events</div><div class="fdesc">Register URL for: new purchase, new review, payout processed. Enables seller automation.</div></div></div>
-    <div class="f"><span class="fnum">063</span><div><div class="fname">Seller API Rate Limit Dashboard</div><div class="fdesc">Usage visibility, rate limit status, request history per vendor.</div></div></div>
-    <div class="f"><span class="fnum">064</span><div><div class="fname">Vendor Tier Badges</div><div class="fdesc">Verified, Pro Seller, Top Contributor. On product cards + storefront.</div></div></div>
-    <div class="f new"><span class="fnum">065</span><div><div class="fname"><span class="tag tn">New</span>Exclusive Listing Programme</div><div class="fdesc">Web-Temify Exclusive = 85% revenue share + exclusive badge. Direct counter to Envato's 50%.</div></div></div>
-    <div class="f new"><span class="fnum">066</span><div><div class="fname"><span class="tag tn">New</span>Listing Quality Score (0–100)</div><div class="fdesc">Screenshots + description + demo + tags + price = score. Shown to vendor only. Nudges improvement.</div></div></div>
-    <div class="f new"><span class="fnum">067</span><div><div class="fname"><span class="tag tn">New</span>Automated Listing Feedback</div><div class="fdesc">Rejection sends specific improvement suggestions. "Screenshots too low resolution. Description under 100 words."</div></div></div>
-    <div class="f new"><span class="fnum">068</span><div><div class="fname"><span class="tag tn">New</span>Vendor Earnings Forecast at Upload</div><div class="fdesc">"Based on 247 similar products, estimated $200–$800/month." Motivates vendors to complete listings.</div></div></div>
-    <div class="f new"><span class="fnum">069</span><div><div class="fname"><span class="tag tn">New</span>Vendor SLA Dashboard</div><div class="fdesc">Approval time, response time, chargeback rate, review score. Below-threshold = warnings before suspension.</div></div></div>
-    <div class="f new"><span class="fnum">070</span><div><div class="fname"><span class="tag tn">New</span>Vendor Academy</div><div class="fdesc">Guides/videos: write descriptions, price competitively, pass review. Improves marketplace quality.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 8 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-2">Group 8 — New</span><div class="gt">Trust & Fraud Prevention</div><span class="gc">9 items · 071–079</span></div>
-  <div class="fgrid">
-    <div class="f new hot"><span class="fnum">071</span><div><div class="fname"><span class="tag tn">New</span><span class="tag tp">Critical</span>Fraud Risk Scoring</div><div class="fdesc">Every registration + purchase gets a risk score: device fingerprint + email rep + IP + behaviour. High-risk flagged before download released.</div></div></div>
-    <div class="f new hot"><span class="fnum">072</span><div><div class="fname"><span class="tag tn">New</span><span class="tag tp">Critical</span>Chargeback Protection System</div><div class="fdesc">Track ratio per vendor. Flag >1%. Auto-hold payouts on dispute. Evidence packet auto-generated.</div></div></div>
-    <div class="f new"><span class="fnum">073</span><div><div class="fname"><span class="tag tn">New</span>Device Fingerprinting on Registration</div><div class="fdesc">Detect same person creating multiple accounts to abuse free trials or coupons.</div></div></div>
-    <div class="f new"><span class="fnum">074</span><div><div class="fname"><span class="tag tn">New</span>Velocity Checks</div><div class="fdesc">Flag accounts downloading abnormally fast (50 downloads in 10 mins). Auto-suspend pending review.</div></div></div>
-    <div class="f new"><span class="fnum">075</span><div><div class="fname"><span class="tag tn">New</span>Stolen Card Detection</div><div class="fdesc">Cross-reference purchase IP vs billing address. Integrate with Paystack fraud signals.</div></div></div>
-    <div class="f new"><span class="fnum">076</span><div><div class="fname"><span class="tag tn">New</span>Vendor Fraud Detection</div><div class="fdesc">Detect uploaded plagiarised content. Reverse image search on screenshots. File hash comparison.</div></div></div>
-    <div class="f new"><span class="fnum">077</span><div><div class="fname"><span class="tag tn">New</span>Content ID System</div><div class="fdesc">Hash comparison + similarity scoring on all uploaded files before approval. Prevents duplicate products.</div></div></div>
-    <div class="f new"><span class="fnum">078</span><div><div class="fname"><span class="tag tn">New</span>2FA for High-Value Checkout (>$200)</div><div class="fdesc">Purchases above $200 require 2FA confirmation before payment processes. Reduces chargebacks dramatically.</div></div></div>
-    <div class="f new"><span class="fnum">079</span><div><div class="fname"><span class="tag tn">New</span>IP Allowlist for Admin Panel</div><div class="fdesc">Admin accessible from whitelisted IPs only. Configurable from settings. Prevents admin access even if credentials compromised.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 9 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-2">Group 9 — New</span><div class="gt">Messaging & Support System</div><span class="gc">5 items · 080–084</span></div>
-  <div class="fgrid">
-    <div class="f new hot"><span class="fnum">080</span><div><div class="fname"><span class="tag tn">New</span><span class="tag tp">High Value</span>Buyer-Vendor Direct Messaging</div><div class="fdesc">Post-purchase threaded conversations. Admin can see all threads. Biggest trust gap in current build.</div></div></div>
-    <div class="f new"><span class="fnum">081</span><div><div class="fname"><span class="tag tn">New</span>Support Ticket System</div><div class="fdesc">Per-purchase: open → in progress → resolved. SLA tracking (24h response). Admin + vendor can reply.</div></div></div>
-    <div class="f new"><span class="fnum">082</span><div><div class="fname"><span class="tag tn">New</span>Vendor Response Time Badge</div><div class="fdesc">"Avg response: 4 hours" on vendor storefront. Calculated from ticket data. Massive trust signal.</div></div></div>
-    <div class="f new"><span class="fnum">083</span><div><div class="fname"><span class="tag tn">New</span>Canned Responses for Vendors</div><div class="fdesc">Saved reply templates for common questions. One-click insert. Speeds up support dramatically.</div></div></div>
-    <div class="f new"><span class="fnum">084</span><div><div class="fname"><span class="tag tn">New</span><span class="tag ti">AI</span>AI Support Auto-Responder</div><div class="fdesc">First response AI-generated from product FAQ + description via Claude API. Vendor reviews before sending.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 10 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-2">Group 10 — New</span><div class="gt">Courses & Knowledge Products</div><span class="gc">5 items · 085–089</span></div>
-  <div class="fgrid">
-    <div class="f new"><span class="fnum">085</span><div><div class="fname"><span class="tag tn">New</span>Mini Course Builder</div><div class="fdesc">Vendors create structured courses tied to their templates. "Buy template + learn to use it in 5 lessons."</div></div></div>
-    <div class="f new"><span class="fnum">086</span><div><div class="fname"><span class="tag tn">New</span>Video Lesson Hosting</div><div class="fdesc">Upload to Supabase. Custom player with progress tracking, playback speed, chapter markers.</div></div></div>
-    <div class="f new"><span class="fnum">087</span><div><div class="fname"><span class="tag tn">New</span>Course Progress + Certificate PDF</div><div class="fdesc">Per-user progress bar. Certificate auto-generated with name, course, date, Web-Temify seal.</div></div></div>
-    <div class="f new"><span class="fnum">088</span><div><div class="fname"><span class="tag tn">New</span>Prerequisite Gating</div><div class="fdesc">Lesson 3 unlocks only after lesson 2 completed. Progress stored per user per course.</div></div></div>
-    <div class="f new"><span class="fnum">089</span><div><div class="fname"><span class="tag tn">New</span>Quiz / Assessment Builder</div><div class="fdesc">Multiple choice quizzes. Pass/fail gates for certificate issuance. Admin and vendor create quizzes.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 11 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-1">Group 11</span><div class="gt">Monetisation Additions</div><span class="gc">18 items · 090–107</span></div>
-  <div class="fgrid">
-    <div class="f"><span class="fnum">090</span><div><div class="fname"><span class="tag tl">Payments</span>Paid Featured Listings (Directory)</div><div class="fdesc">$50–$500/year. Paystack + Stripe + LemonSqueezy. Core directory monetisation.</div></div></div>
-    <div class="f"><span class="fnum">091</span><div><div class="fname"><span class="tag tl">Payments</span>White-Label Licensing Tier</div><div class="fdesc">Agencies rebrand + resell templates. All 3 gateways.</div></div></div>
-    <div class="f"><span class="fnum">092</span><div><div class="fname"><span class="tag tl">Payments</span>Bundle / Launch Kit Checkout</div><div class="fdesc">Multiple templates, one transaction. Discounted vs individual. All 3 gateways.</div></div></div>
-    <div class="f"><span class="fnum">093</span><div><div class="fname">Directory Affiliate Link Tracking</div><div class="fdesc">Passive SaaS affiliate commissions (20–30% recurring) from directory tool referrals.</div></div></div>
-    <div class="f"><span class="fnum">094</span><div><div class="fname">Sponsorship Ad Zones (Directory)</div><div class="fdesc">Banner slots within directory category pages. Direct deal or AdSense fallback.</div></div></div>
-    <div class="f"><span class="fnum">095</span><div><div class="fname">"Pay What You Want" Pricing</div><div class="fdesc">Seller sets minimum. Buyer can pay more. Gumroad built their reputation on this.</div></div></div>
-    <div class="f"><span class="fnum">096</span><div><div class="fname"><span class="tag tl">Payments</span>Team / Agency Plan (4th Tier)</div><div class="fdesc">5 seats, $99–$199/month. All 3 gateways. Agencies managing multiple client projects.</div></div></div>
-    <div class="f"><span class="fnum">097</span><div><div class="fname">Volume Licensing for Agencies</div><div class="fdesc">Single purchase covers up to 10 client sites. ThemeForest Extended License equivalent.</div></div></div>
-    <div class="f"><span class="fnum">098</span><div><div class="fname">Template Rental / Time-Limited Access</div><div class="fdesc">30-day at 30% of full price. For freelancers on a single project. Auto-expires via cron.</div></div></div>
-    <div class="f"><span class="fnum">099</span><div><div class="fname">Early Access / Pre-Launch Listings</div><div class="fdesc">Discounted pre-launch. Buyers pay now, access on release. Creates urgency + validates demand.</div></div></div>
-    <div class="f"><span class="fnum">100</span><div><div class="fname">Tip / Donation Button (Free Templates)</div><div class="fdesc">"Buy the seller a coffee — $5." Some sellers make meaningful income from tips alone.</div></div></div>
-    <div class="f"><span class="fnum">101</span><div><div class="fname"><span class="tag ta">Africa</span>Buy Now Pay Later (BNPL)</div><div class="fdesc">Carbon or FairMoney: 3-month instalments. Unlocks high-ticket purchases for cash-limited buyers.</div></div></div>
-    <div class="f new"><span class="fnum">102</span><div><div class="fname"><span class="tag tn">New</span>Usage-Based Pricing</div><div class="fdesc">For API tools/scripts: charge per API call or per active user. Metered billing via Paystack recurring.</div></div></div>
-    <div class="f new"><span class="fnum">103</span><div><div class="fname"><span class="tag tn">New</span>Dynamic Pricing / Flash Sales</div><div class="fdesc">Time-limited sale price per template. Auto-expires at set date/time. Countdown timer on card.</div></div></div>
-    <div class="f new"><span class="fnum">104</span><div><div class="fname"><span class="tag tn">New</span>Revenue Share on Vendor Referrals</div><div class="fdesc">Vendors earn % of revenue from buyers they bring to the platform (not just their own products).</div></div></div>
-    <div class="f new"><span class="fnum">105</span><div><div class="fname"><span class="tag tn">New</span>Sponsored Placement Auctions</div><div class="fdesc">Vendors bid for featured category placement. Weekly reset via cron. Automated.</div></div></div>
-    <div class="f new"><span class="fnum">106</span><div><div class="fname"><span class="tag tn">New</span>Multi-Currency Invoicing</div><div class="fdesc">Invoices in buyer's local currency (NGN/KES/GHS/USD/EUR). Required for African business expense claims.</div></div></div>
-    <div class="f new"><span class="fnum">107</span><div><div class="fname"><span class="tag tn">New</span>Reseller Programme</div><div class="fdesc">40% discount for resellers. White-label invoice with reseller branding. B2B channel.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 12 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-1">Group 12</span><div class="gt">Community & Engagement</div><span class="gc">11 items · 108–118</span></div>
-  <div class="fgrid">
-    <div class="f"><span class="fnum">108</span><div><div class="fname">Points & Rewards System</div><div class="fdesc">Earn for purchases, reviews, referrals, logins. Redeem for credits. 48%+ engagement increase.</div></div></div>
-    <div class="f"><span class="fnum">109</span><div><div class="fname">Badges & Achievements</div><div class="fdesc">"First Purchase", "Web3 Pioneer", "Review Champion", "Early Adopter". Profile visible.</div></div></div>
-    <div class="f"><span class="fnum">110</span><div><div class="fname">Leaderboard</div><div class="fdesc">Top buyers, sellers, reviewers. Monthly reset with prizes.</div></div></div>
-    <div class="f"><span class="fnum">111</span><div><div class="fname">Weekly Auto-Generated Newsletter</div><div class="fdesc">New templates, top sellers, community showcase, dev tips. Auto-generated from platform data.</div></div></div>
-    <div class="f"><span class="fnum">112</span><div><div class="fname">Seasonal Challenges / Contests</div><div class="fdesc">"Best fintech build — winner gets $100 credit." Low cost, high engagement.</div></div></div>
-    <div class="f new"><span class="fnum">113</span><div><div class="fname"><span class="tag tn">New</span>Annual Recap Email</div><div class="fdesc">"Your Web-Temify Year in Review" — January, every year. Viral potential. Users share on social.</div></div></div>
-    <div class="f new"><span class="fnum">114</span><div><div class="fname"><span class="tag tn">New</span>Win-Back Campaign</div><div class="fdesc">60-day inactive users get personalised "we miss you" email + discount. Pure passive revenue recovery.</div></div></div>
-    <div class="f new"><span class="fnum">115</span><div><div class="fname"><span class="tag tn">New</span>Upgrade Nudge System</div><div class="fdesc">Free users who viewed 5+ premium templates: "Get full access for $19/month." Funnel closer.</div></div></div>
-    <div class="f new"><span class="fnum">116</span><div><div class="fname"><span class="tag tn">New</span>Usage Milestone Celebrations</div><div class="fdesc">"You've downloaded your 10th template! 🎉" In-app notification + social share prompt.</div></div></div>
-    <div class="f new"><span class="fnum">117</span><div><div class="fname"><span class="tag tn">New</span>Referral Contest</div><div class="fdesc">Top 3 referrers this month win $100 credit. Monthly, tracked on leaderboard. Zero cost word-of-mouth.</div></div></div>
-    <div class="f new"><span class="fnum">118</span><div><div class="fname"><span class="tag tn">New</span>Exit Survey on Cancellation</div><div class="fdesc">3-question survey before cancellation confirmed. Captures churn reasons. Feeds product roadmap.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUPS 13–27 CONDENSED -->
-<div class="group">
-  <div class="gh"><span class="gb gb-3">Groups 13–20</span><div class="gt">Services · Analytics · Africa · Technical · SEO · AI · Mobile · Compliance</div><span class="gc">47 items · 119–165</span></div>
-  <div class="fgrid">
-    <div class="f"><span class="fnum">119–125</span><div><div class="fname">Services & Leads — 7 items (Group 13)</div><div class="fdesc">Service request system, 6 categories, project brief form, lead management admin, services page, CTA hooks on every template page, checkout upsell. All route to Tinlance.</div></div></div>
-    <div class="f"><span class="fnum">126–129</span><div><div class="fname">New Analytics — 4 items (Group 14)</div><div class="fdesc">Geographic sales heatmap, revenue attribution dashboard, Product Opportunity Report (zero-result searches), seller conversion funnel per product.</div></div></div>
-    <div class="f"><span class="fnum">130–134</span><div><div class="fname"><span class="tag ta">Africa</span>Africa-Specific — 5 items (Group 15)</div><div class="fdesc">MTN MoMo + Airtel + M-Pesa, Naira/multi-currency display (NGN/KES/GHS/ZAR), low-bandwidth mode, WhatsApp Business support, WhatsApp order notifications.</div></div></div>
-    <div class="f"><span class="fnum">135–139</span><div><div class="fname">Technical Upgrades — 5 items (Group 16)</div><div class="fdesc">Mobile-optimised checkout, PWA push notifications, Zapier/Make.com native integration, white-label platform option, Merchant of Record global tax handling.</div></div></div>
-    <div class="f new"><span class="fnum">140–145</span><div><div class="fname"><span class="tag tn">New</span>Discovery & External Integrations — 6 items (Group 17)</div><div class="fdesc">ProductHunt-style launch system, Google Shopping integration, SoftwareApplication JSON-LD schema, Figma Community integration, GitHub repo button on preview, NPM/composer install commands.</div></div></div>
-    <div class="f"><span class="fnum">146–148</span><div><div class="fname">SEO & Content — 3 items (Group 18)</div><div class="fdesc">User-generated review pages (indexable), template comparison landing pages (auto-generated), AI content automation engine (Python + Claude → blog drafts → cron).</div></div></div>
-    <div class="f"><span class="fnum">149–154</span><div><div class="fname"><span class="tag ti">AI</span>AI Features — 6 items (Group 19)</div><div class="fdesc">AI page generator (60s, Claude API), editable sandbox, AI product description generator for vendors, AI pricing recommendation, AI review summariser, AI chargeback predictor.</div></div></div>
-    <div class="f new"><span class="fnum">155–156</span><div><div class="fname"><span class="tag tn">New</span>Mobile App — 2 items (Group 20)</div><div class="fdesc">iOS + Android React Native apps. Browse, purchase, download, push notifications for new products in watched categories, order confirmations.</div></div></div>
-    <div class="f new"><span class="fnum">157–160</span><div><div class="fname"><span class="tag tn">New</span>Compliance & Legal — 4 items (Group 21)</div><div class="fdesc">EU VAT invoice auto-generation, licensing clarity page, GDPR CMP v2 (IAB TCF 2.2), SOC 2 readiness checklist in admin panel.</div></div></div>
-    <div class="f new"><span class="fnum">161–163</span><div><div class="fname"><span class="tag tn">New</span>Platform Operations — 3 items (Group 22)</div><div class="fdesc">API key management for buyers (create/rotate/revoke), staging environment for Business/Agency users, bulk license purchase system.</div></div></div>
-    <div class="f"><span class="fnum">164–165</span><div><div class="fname">Homepage & Positioning — 2 items (Group 23)</div><div class="fdesc">Hero copy update ("From idea to deployable web product in hours"). Core positioning wired through all meta, OG, and landing pages.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 24 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-1">Group 24</span><div class="gt">Tech Directory Hub — 10 Categories + Platform Features</div><span class="gc">21 items · 166–186</span></div>
-  <div class="fgrid">
-    <div class="f"><span class="fnum">166–175</span><div><div class="fname">10 Directory Categories</div><div class="fdesc">Tech & AI · Web Dev Tools · Web3 & Blockchain · Design & UI · No-Code/Low-Code · Hosting & Infra · Plugins & Extensions · Blockchain & Crypto · Freelancer & Agency Resources · Learning & Community</div></div></div>
-    <div class="f"><span class="fnum">176</span><div><div class="fname">Directory Search + Filter System</div><div class="fdesc">Search all 10 categories. Filter by: pricing tier, type, region, rating. Live results.</div></div></div>
-    <div class="f"><span class="fnum">177</span><div><div class="fname"><span class="tag tl">Payments</span>Featured Listing Payments</div><div class="fdesc">$50–$500/year. Paystack + Stripe + LemonSqueezy. Top placement + featured badge.</div></div></div>
-    <div class="f"><span class="fnum">178–186</span><div><div class="fname">9 More Directory Features</div><div class="fdesc">Sponsored banners · Affiliate tracking · User ratings + reviews · Community submission + admin approval · AI auto-populate (Product Hunt + GitHub + RSS) · Individual SEO page per listing · Compare Tools · Weekly "Top Tools" digest · Internal linking to templates</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 25 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-4">Group 25</span><div class="gt">Vendor Financial Services</div><span class="gc">5 items · 187–191</span></div>
-  <div class="fgrid">
-    <div class="f new hot"><span class="fnum">187</span><div><div class="fname"><span class="tag tn">New</span><span class="tag tp">High Value</span>Vendor Earnings Wallet</div><div class="fdesc">Platform-native wallet. Earnings accumulate. Vendor withdraws when ready. Switching platforms = losing financial infrastructure. Massive retention tool.</div></div></div>
-    <div class="f new hot"><span class="fnum">188</span><div><div class="fname"><span class="tag tn">New</span>Instant Payouts</div><div class="fdesc">Funds reach vendor's Paystack account the moment a sale is confirmed. Not weekly/monthly batch. Competitive advantage over every African marketplace.</div></div></div>
-    <div class="f new"><span class="fnum">189</span><div><div class="fname"><span class="tag tn">New</span>Revenue Advance for Vendors</div><div class="fdesc">"You've averaged ₦200K/month for 6 months. We'll advance ₦400K." Repaid from future sales. Like Shopify Capital.</div></div></div>
-    <div class="f new"><span class="fnum">190</span><div><div class="fname"><span class="tag tn">New</span>Vendor Tax Reserve Sub-Wallet</div><div class="fdesc">Auto-set aside configurable % of each sale into tax reserve. Vendor never spends their tax money accidentally.</div></div></div>
-    <div class="f new"><span class="fnum">191</span><div><div class="fname"><span class="tag tn">New</span>Vendor Earnings Interest / Yield</div><div class="fdesc">3–5% APY on wallet balance. Via Paystack savings or stablecoin yield. Unprecedented in African marketplace space.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 26 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-2">Group 26 — New</span><div class="gt">B2B & Enterprise Features</div><span class="gc">5 items · 192–196</span></div>
-  <div class="fgrid">
-    <div class="f new hot"><span class="fnum">192</span><div><div class="fname"><span class="tag tn">New</span>Agency Client Management Portal</div><div class="fdesc">Agency plan: manage multiple client sub-accounts, each with own branding and template library. Generate branded invoice per client. Justifies $99/month Agency tier.</div></div></div>
-    <div class="f new"><span class="fnum">193</span><div><div class="fname"><span class="tag tn">New</span>Team Collaboration on Vendor Account</div><div class="fdesc">Multiple team members: Owner/Editor/Analyst roles. Editor uploads products. Analyst views stats only.</div></div></div>
-    <div class="f new hot"><span class="fnum">194</span><div><div class="fname"><span class="tag tn">New</span>B2B Bulk Order System</div><div class="fdesc">Companies request quote for 50+ licences. Admin reviews, sends custom invoice. Closes enterprise deals.</div></div></div>
-    <div class="f new hot"><span class="fnum">195</span><div><div class="fname"><span class="tag tn">New</span>Purchase Order (PO) Support</div><div class="fdesc">Enterprise buyers submit PO number. Invoice with PO reference. Bank transfer + NET15/NET30 terms. Corporate finance teams can pay.</div></div></div>
-    <div class="f new"><span class="fnum">196</span><div><div class="fname"><span class="tag tn">New</span>Client Onboarding Checklist (Agency)</div><div class="fdesc">"Download → Customise → Connect domain → Launch." Each step trackable. Agency looks professional to their client.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 27 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-2">Group 27 — New</span><div class="gt">Advanced Identity & Security</div><span class="gc">4 items · 197–200</span></div>
-  <div class="fgrid">
-    <div class="f new"><span class="fnum">197</span><div><div class="fname"><span class="tag tn">New</span>Persistent Identity Verification Layer</div><div class="fdesc">Continuous monitoring. Sudden volume spike/new bank account/new country triggers re-verify before payouts.</div></div></div>
-    <div class="f new"><span class="fnum">198</span><div><div class="fname"><span class="tag tn">New</span>AI Agent Verification Badge</div><div class="fdesc">Detect automated agents doing bulk downloads or submissions. Flag and verify the human behind it.</div></div></div>
-    <div class="f new hot"><span class="fnum">199</span><div><div class="fname"><span class="tag tn">New</span>Escrow for High-Value Service Requests</div><div class="fdesc">Custom Tinlance service >$500: funds held in escrow. Released in milestones: 50% on start, 50% on delivery. Both sides protected.</div></div></div>
-    <div class="f new"><span class="fnum">200</span><div><div class="fname"><span class="tag tn">New</span>Nigerian Business Registry Verification</div><div class="fdesc">Vendors verify their CAC registration number. "Verified Nigerian Business" badge. Extra trust for enterprise buyers.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 28 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-2">Group 28 — New</span><div class="gt">Accessibility (WCAG 2.2)</div><span class="gc">5 items · 201–205</span></div>
-  <div class="fgrid">
-    <div class="f new"><span class="fnum">201</span><div><div class="fname"><span class="tag tn">New</span>WCAG 2.2 Level AA Full Compliance</div><div class="fdesc">Focus indicators, accessible names, 24×24px target size, consistent help mechanisms. Legal protection + 28% revenue increase per research.</div></div></div>
-    <div class="f new"><span class="fnum">202</span><div><div class="fname"><span class="tag tn">New</span>Screen Reader Optimisation</div><div class="fdesc">ARIA labels on all dynamic content. Screen reader announces cart updates, download progress, notifications.</div></div></div>
-    <div class="f new"><span class="fnum">203</span><div><div class="fname"><span class="tag tn">New</span>Keyboard Navigation Complete</div><div class="fdesc">Every feature operable via keyboard. Tab order logical. Escape closes modals. No mouse required anywhere.</div></div></div>
-    <div class="f new"><span class="fnum">204</span><div><div class="fname"><span class="tag tn">New</span>High Contrast Mode</div><div class="fdesc">Toggle in accessibility settings. Black/white/yellow high-contrast scheme for low vision users.</div></div></div>
-    <div class="f new"><span class="fnum">205</span><div><div class="fname"><span class="tag tn">New</span>Dyslexia-Friendly Font Mode</div><div class="fdesc">Toggle in settings → switches to OpenDyslexic font. Small feature, massive inclusivity signal.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 29 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-2">Group 29 — New</span><div class="gt">Performance & Core Web Vitals 2026</div><span class="gc">5 items · 206–210</span></div>
-  <div class="fgrid">
-    <div class="f new hot"><span class="fnum">206</span><div><div class="fname"><span class="tag tn">New</span><span class="tag tp">Critical</span>Redis/Memcached Query Caching</div><div class="fdesc">Cache frequent DB queries (template listings, categories, pricing). Reduces DB load 70–80%. Essential as traffic scales.</div></div></div>
-    <div class="f new"><span class="fnum">207</span><div><div class="fname"><span class="tag tn">New</span>Core Web Vitals Dashboard (Admin)</div><div class="fdesc">Real LCP, INP, CLS scores per page from Google Search Console API. Poor-score pages flagged. Tied to rankings + ad costs.</div></div></div>
-    <div class="f new"><span class="fnum">208</span><div><div class="fname"><span class="tag tn">New</span>Image WebP Auto-Conversion</div><div class="fdesc">All uploaded preview images auto-converted to WebP on upload. Reduces page weight 30–40%. Direct LCP improvement.</div></div></div>
-    <div class="f new"><span class="fnum">209</span><div><div class="fname"><span class="tag tn">New</span>Critical CSS Inlining</div><div class="fdesc">Above-fold CSS inlined into HTML head. Non-critical CSS async loaded. 200–400ms LCP improvement on slow connections.</div></div></div>
-    <div class="f new"><span class="fnum">210</span><div><div class="fname"><span class="tag tn">New</span>Automated Backup System</div><div class="fdesc">Daily DB backup to Supabase Storage + weekly off-site. Backup integrity verification. One-click restore. Currently none specified.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 30 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-2">Group 30 — New</span><div class="gt">Personalisation & Africa-Specific Additions</div><span class="gc">10 items · 211–220</span></div>
-  <div class="fgrid">
-    <div class="f new"><span class="fnum">211</span><div><div class="fname"><span class="tag tn">New</span>Preference Centre ("My Interests")</div><div class="fdesc">Users select interests (Fintech, Web3, etc.) during onboarding. Homepage + newsletter personalised. "Psychology of Control" increases opt-in.</div></div></div>
-    <div class="f new"><span class="fnum">212</span><div><div class="fname"><span class="tag tn">New</span>Personalised Email Digest Frequency</div><div class="fdesc">Users choose daily/weekly/monthly/never per category. Reduces unsubscribes dramatically.</div></div></div>
-    <div class="f new"><span class="fnum">213</span><div><div class="fname"><span class="tag tn">New</span>"Do Not Track" Personalisation Toggle</div><div class="fdesc">One-click in privacy settings to disable all personalisation. GDPR data minimisation principle.</div></div></div>
-    <div class="f new"><span class="fnum">214</span><div><div class="fname"><span class="tag tn">New</span>Localised Content by Region</div><div class="fdesc">Nigeria sees NGN + Paystack-first. Kenya sees KES + M-Pesa. UK/US sees USD + Stripe. Auto IP detection, user overridable.</div></div></div>
-    <div class="f new"><span class="fnum">215</span><div><div class="fname"><span class="tag tn">New</span><span class="tag ta">Africa</span>Diaspora Payment Support</div><div class="fdesc">Nigerian/Ghanaian/Kenyan diaspora in UK/US/Canada buying for businesses back home. GBP/CAD/AUD via Stripe, delivered in local currency.</div></div></div>
-    <div class="f new hot"><span class="fnum">216</span><div><div class="fname"><span class="tag tn">New</span><span class="tag ta">Africa</span>USSD Payment Option</div><div class="fdesc">Paystack USSD (*737# etc.) for feature phone users. No internet required. Expands buyer base to non-smartphone users.</div></div></div>
-    <div class="f new"><span class="fnum">217</span><div><div class="fname"><span class="tag tn">New</span><span class="tag ta">Africa</span>Africa Time Zone Smart Scheduling</div><div class="fdesc">Cron jobs, emails, flash sales fire at optimal WAT/EAT times (9am–6pm) not UTC midnight. Small but significant conversion impact.</div></div></div>
-    <div class="f new"><span class="fnum">218</span><div><div class="fname"><span class="tag tn">New</span><span class="tag ta">Africa</span>Naira Pricing Psychology</div><div class="fdesc">₦14,999 not ₦15,000. ₦49,999 not ₦50,000. Auto-applied in PPP engine when currency is NGN.</div></div></div>
-    <div class="f new"><span class="fnum">219</span><div><div class="fname"><span class="tag tn">New</span>Seasonal Promotion Calendar</div><div class="fdesc">Pre-schedule: Black Friday, New Year, Africa Day, Ramadan, Nigerian Independence Day. Auto-activates/deactivates. All 3 gateways.</div></div></div>
-    <div class="f new"><span class="fnum">220</span><div><div class="fname"><span class="tag tn">New</span>Multilingual Customer Support</div><div class="fdesc">Tickets in English, French, Yoruba, Igbo, Hausa. AI auto-detects language + routes to response template.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 31 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-2">Group 31 — New</span><div class="gt">Advanced Marketing, Analytics & Developer Experience</div><span class="gc">19 items · 221–239</span></div>
-  <div class="fgrid">
-    <div class="f new hot"><span class="fnum">221</span><div><div class="fname"><span class="tag tn">New</span>Affiliate Marketplace (Public)</div><div class="fdesc">Public page where affiliates browse products to promote + get affiliate links instantly. Whop scaled to 30,000 affiliates with this.</div></div></div>
-    <div class="f new"><span class="fnum">222</span><div><div class="fname"><span class="tag tn">New</span>Affiliate Performance Tiers (Auto)</div><div class="fdesc">Starter → Silver → Gold → Platinum based on referred revenue. Higher tier = higher commission. Fully automatic.</div></div></div>
-    <div class="f new"><span class="fnum">223</span><div><div class="fname"><span class="tag tn">New</span>Co-Marketing with Vendors</div><div class="fdesc">Vendor + platform joint promotions. Vendor pays promo fee. Platform features in newsletter + homepage. Both benefit.</div></div></div>
-    <div class="f new hot"><span class="fnum">224</span><div><div class="fname"><span class="tag tn">New</span>"Verified Purchase" Review System</div><div class="fdesc">Only buyers who purchased can leave a review. "Verified Purchase" badge shown. Prevents fake reviews. Critical for high-ticket scripts.</div></div></div>
-    <div class="f new"><span class="fnum">225</span><div><div class="fname"><span class="tag tn">New</span>Review Incentive Programme</div><div class="fdesc">Post-download: "Leave a review and earn 50 points." Increases review volume on new products with zero reviews.</div></div></div>
-    <div class="f new"><span class="fnum">226</span><div><div class="fname"><span class="tag tn">New</span>Revenue Forecasting Dashboard (Admin)</div><div class="fdesc">ML-based MRR prediction for next 30/60/90 days. Forward-looking not just historical. Based on growth + churn + seasonal patterns.</div></div></div>
-    <div class="f new"><span class="fnum">227</span><div><div class="fname"><span class="tag tn">New</span>Buyer LTV Segmentation</div><div class="fdesc">Low/Medium/High/VIP segments by lifetime value. Different retention strategies per segment. VIP buyers get personal email from founder.</div></div></div>
-    <div class="f new"><span class="fnum">228</span><div><div class="fname"><span class="tag tn">New</span>Product Performance Score (Admin)</div><div class="fdesc">Weekly automated score per product: views + conversion rate + reviews + update frequency + support time + refund rate. Decides featuring or delisting.</div></div></div>
-    <div class="f new"><span class="fnum">229</span><div><div class="fname"><span class="tag tn">New</span>Traffic Source Heatmap</div><div class="fdesc">Countries + cities + referral sources vs revenue. Visualised as world heatmap. Informs marketing spend allocation.</div></div></div>
-    <div class="f new hot"><span class="fnum">230</span><div><div class="fname"><span class="tag tn">New</span>A/B Testing Framework</div><div class="fdesc">Test: pricing variants, button copy, hero messaging. Built-in statistical significance calculator. Results before full rollout.</div></div></div>
-    <div class="f new"><span class="fnum">231</span><div><div class="fname"><span class="tag tn">New</span>Template Preview API</div><div class="fdesc">3rd-party developers embed Web-Temify previews on their sites. Returns preview URL, name, price, purchase link. Affiliates build showcase pages.</div></div></div>
-    <div class="f new"><span class="fnum">232</span><div><div class="fname"><span class="tag tn">New</span>Postman Collection for API</div><div class="fdesc">Pre-built Postman collection with all endpoints, examples, responses. One-click import. Developers test full API in 5 minutes.</div></div></div>
-    <div class="f new"><span class="fnum">233</span><div><div class="fname"><span class="tag tn">New</span>API Versioning (/api/v1, /api/v2)</div><div class="fdesc">Old versions stay 12 months before deprecation. Documented deprecation notices. Professional API management.</div></div></div>
-    <div class="f new"><span class="fnum">234</span><div><div class="fname"><span class="tag tn">New</span>Webhook Testing Tool (Admin)</div><div class="fdesc">Send test webhook payloads to registered URLs without making a real purchase. "Test" button in webhook config.</div></div></div>
-    <div class="f new"><span class="fnum">235</span><div><div class="fname"><span class="tag tn">New</span>SDK / Code Libraries</div><div class="fdesc">PHP SDK for license validation. JS SDK for AI generator embed. Published on GitHub. Increases platform stickiness.</div></div></div>
-    <div class="f new"><span class="fnum">236</span><div><div class="fname"><span class="tag tn">New</span>Uptime Monitoring + Status Page</div><div class="fdesc">UptimeRobot/BetterStack free tier. Status page auto-updated. Subscribers get email/SMS on downtime. Enterprise buyer trust.</div></div></div>
-    <div class="f new"><span class="fnum">237</span><div><div class="fname"><span class="tag tn">New</span>Database Health Dashboard</div><div class="fdesc">Admin sees: slow queries, table sizes, index health, query count/hour. Proactive performance monitoring at scale.</div></div></div>
-    <div class="f new"><span class="fnum">238</span><div><div class="fname"><span class="tag tn">New</span>Audit Log Export (CSV/JSON)</div><div class="fdesc">Full activity log exportable for any date range. Required for compliance audits, fraud investigations, dispute resolution.</div></div></div>
-    <div class="f new"><span class="fnum">239</span><div><div class="fname"><span class="tag tn">New</span>Changelog Subscription</div><div class="fdesc">Users subscribe to platform changelog separately from newsletter. Developer audience loves this. Builds anticipation.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 32 -->
-<div class="group">
-  <div class="gh"><span class="gb gb-2">Group 32 — New</span><div class="gt">Product-Led Growth & Onboarding</div><span class="gc">8 items · 240–247</span></div>
-  <div class="fgrid">
-    <div class="f new hot"><span class="fnum">240</span><div><div class="fname"><span class="tag tn">New</span><span class="tag tp">High Impact</span>Interactive Onboarding Walkthroughs</div><div class="fdesc">New user guided through key features: upload template, browse marketplace, set up vendor account. Interactive tooltips + hotspots. Reduces drop-off by 40%. Research: 80% of conversions happen during onboarding.</div></div></div>
-    <div class="f new"><span class="fnum">241</span><div><div class="fname"><span class="tag tn">New</span>Feature Discovery Tooltips</div><div class="fdesc">Contextual tooltips appear when user first encounters a feature. "This is your earnings wallet. Withdraw anytime." Distributed over time not all at once.</div></div></div>
-    <div class="f new"><span class="fnum">242</span><div><div class="fname"><span class="tag tn">New</span>Progress-Based Onboarding Checklist</div><div class="fdesc">New vendor: "Complete your profile (✓) → Upload first product (○) → Set payout method (○) → Go live." Visual progress. Completion unlocks Founding Vendor badge.</div></div></div>
-    <div class="f new"><span class="fnum">243</span><div><div class="fname"><span class="tag tn">New</span>Time-to-Value Optimisation</div><div class="fdesc">New buyer sees a browseable product within 60 seconds of registration. No friction between signup and first value moment. Onboarding designed around outcomes not features.</div></div></div>
-    <div class="f new"><span class="fnum">244</span><div><div class="fname"><span class="tag tn">New</span>In-App Announcement System (User-Specific)</div><div class="fdesc">Targeted announcements per segment: "This goes to Pro subscribers only." "This goes to vendors with 0 sales." Personalised in-app without email.</div></div></div>
-    <div class="f new"><span class="fnum">245</span><div><div class="fname"><span class="tag tn">New</span>Public API Status Feed (RSS + JSON)</div><div class="fdesc">Developers building on Web-Temify API subscribe to API status feed. Maintenance windows published. Standard for developer-first platforms.</div></div></div>
-    <div class="f new"><span class="fnum">246</span><div><div class="fname"><span class="tag tn">New</span><span class="tag ti">AI</span>Live Demo / Video Showcase Per Template</div><div class="fdesc">Short shoppable video demo on each template card. Vendor records 60-second walkthrough. Hosted on Supabase. Video commerce converting 66% better than static images.</div></div></div>
-    <div class="f new"><span class="fnum">247</span><div><div class="fname"><span class="tag tn">New</span>Staged Deployment Checklist (Admin)</div><div class="fdesc">Pre-production: run migrations → clear cache → test gateways → verify crons → check error logs. One-click execute each step. Prevents deployment disasters.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUPS 33-34: Products and Automation -->
-<div class="group">
-  <div class="gh"><span class="gb gb-4">Groups 33–34</span><div class="gt">Template & Script Products + AI Automation Engine</div><span class="gc">47 items · 248–294</span></div>
-  <div class="fgrid">
-    <div class="f hot"><span class="fnum">248–253</span><div><div class="fname"><span class="tag tp">Tier 1 — Build First (6 products)</span></div><div class="fdesc">Courier/Logistics ($99–$199) · Loan/Lending ($99–$249) · NeoBank/Digital Banking ($99–$299) · Digital Agency ($49–$99) · SaaS Landing Page ($49–$99) · Portfolio/Freelancer ($29–$79)</div></div></div>
-    <div class="f"><span class="fnum">254–265</span><div><div class="fname">Tier 2 — Medium Term (12 products)</div><div class="fdesc">P2P Crypto Script ($299–$799) · Online Banking Script ($199–$499) · Loan Management Script ($199–$499) · NFT Marketplace ($99–$249) · Real Estate ($79–$199) · Invoice/Billing Script ($149–$399) · E-commerce ($79–$199) · Restaurant ($79–$199) · Hospital ($79–$199) · School ($79–$199) · SaaS Dashboard ($99–$249) · POS Script ($149–$399)</div></div></div>
-    <div class="f"><span class="fnum">266–281</span><div><div class="fname">Tier 3 — Later (16 products)</div><div class="fdesc">CEX Lite ($499–$999) · DeFi Dashboard ($199–$499) · Fleet Management ($199–$499) · Crowdfunding Script ($199–$499) · Crypto Trading Dashboard ($99–$249) · Web3 dApp Landing ($79–$199) · Blockchain Agency ($79–$199) · Token/ICO Script ($149–$399) · Event Ticketing ($99–$249) · Multi-Vendor Marketplace ($299–$799) · DAO Governance ($99–$249) · LMS Lite ($149–$399) · Pharmacy ($79–$179) · Construction ($59–$149) · Travel ($59–$149) · Ajo/Esusu Script ($149–$399)</div></div></div>
-    <div class="f hot"><span class="fnum">282–285</span><div><div class="fname"><span class="tag tp">Tier 4 — Launch Kits (4 bundles)</span></div><div class="fdesc">SaaS Starter Kit ($299) · Web3 DApp Kit ($399) · Fintech Launch Kit ($349) · Agency Starter Kit ($249)</div></div></div>
-    <div class="f"><span class="fnum">286–291</span><div><div class="fname"><span class="tag ta">Africa</span>Tier 5 — Africa Niche (6 products)</div><div class="fdesc">Islamic Finance/Halal Banking ($99–$249) · Agritech/Farm Marketplace ($79–$179) · ISP & Telecom ($79–$179) · Solar Energy ($79–$179) · Ride-Hailing Landing ($59–$149) · Ajo/Esusu Script ($149–$399)</div></div></div>
-    <div class="f new"><span class="fnum">292–294</span><div><div class="fname"><span class="tag tn">New</span>AI Automation Engine (3 items)</div><div class="fdesc">Python + Claude Sonnet content orchestrator · Blog post generator (1500w SEO posts → drafts → cron) · Directory auto-populator (Product Hunt + GitHub + RSS → draft listings)</div></div></div>
-  </div>
-</div>
-
-<!-- SUMMARY -->
-<div style="background:var(--ink);color:#fff;border-radius:8px;padding:2rem;margin-top:2rem">
-  <div style="font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--yellow);margin-bottom:1.25rem">Complete Summary — All Items</div>
-  <div class="summary-grid">
-    <div class="sg"><span class="sgn">332</span><span class="sgl">Total Features</span></div>
-    <div class="sg"><span class="sgn">113</span><span class="sgl">Already Built</span></div>
-    <div class="sg"><span class="sgn">219</span><span class="sgl">To Build</span></div>
-    <div class="sg"><span class="sgn">34</span><span class="sgl">Feature Groups</span></div>
-    <div class="sg"><span class="sgn">44</span><span class="sgl">Products</span></div>
-    <div class="sg"><span class="sgn">6</span><span class="sgl">Pay Gateways</span></div>
-  </div>
-
-  <div style="font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--yellow);margin-bottom:.75rem">Build Phases</div>
-  <div class="phases">
-    <div class="phase">
-      <div class="pn">Phase 1 · Week 1–2</div>
-      <div class="pt">Deploy & Go Live</div>
-      <div class="pi">Deploy PHP platform · .htaccess URL rewriting · Supabase storage · Cloudflare CDN · Verify all 3 gateways · Homepage positioning · Go live</div>
+    <div class="stats">
+      <div class="stat">
+        <span class="sn">332</span><span class="sl">Total Items</span>
+      </div>
+      <div class="stat">
+        <span class="sn">113</span><span class="sl">Already Built</span>
+      </div>
+      <div class="stat">
+        <span class="sn">219</span><span class="sl">Not Built Yet</span>
+      </div>
+      <div class="stat">
+        <span class="sn">32</span><span class="sl">Feature Groups</span>
+      </div>
+      <div class="stat">
+        <span class="sn">6</span><span class="sl">Gateways</span>
+      </div>
+      <div class="stat">
+        <span class="sn">5</span><span class="sl">Build Phases</span>
+      </div>
+      <div class="stat">
+        <span class="sn">44</span><span class="sl">Products</span>
+      </div>
+      <div class="stat">
+        <span class="sn">7</span><span class="sl">Platforms</span>
+      </div>
     </div>
-    <div class="phase">
-      <div class="pn">Phase 2 · Month 1–2</div>
-      <div class="pt">Revenue Foundation</div>
-      <div class="pi">Vendor system · License key system · Directory hub (10 cats) · Services/leads → Tinlance · Fraud prevention · Mobile Money · Instant payouts · Chargeback protection</div>
-    </div>
-    <div class="phase">
-      <div class="pn">Phase 3 · Month 2–4</div>
-      <div class="pt">Growth Engine</div>
-      <div class="pi">Gamification · Social login · AI page generator · Community forum · Courses builder · Launch kits · Advanced analytics · Buyer-vendor messaging · Vendor wallet · B2B features</div>
-    </div>
-    <div class="phase">
-      <div class="pn">Phase 4 · Month 4–8</div>
-      <div class="pt">Scale & Automate</div>
-      <div class="pi">Python automation engine · Programmatic SEO · Mobile app iOS + Android · BNPL · ProductHunt launches · Win-back campaigns · A/B testing · Affiliate marketplace · Redis caching</div>
-    </div>
-    <div class="phase">
-      <div class="pn">Phase 5 · Month 8–12</div>
-      <div class="pt">Enterprise & Global</div>
-      <div class="pi">SOC 2 compliance · White-label platform · Merchant of Record · GDPR CMP v2 · PO/NET30 support · Revenue advance · Vendor yield · Diaspora payments · USSD · SDK libraries</div>
-    </div>
-  </div>
 
-  <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.75rem;font-size:.72rem;opacity:.45;font-family:'DM Mono',monospace;margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.1)">
-    <span>Web-Temify LTD · RC: 7999659 · Nigeria · Sister company: Tinlance Limited RC: 7962164</span>
-    <span>Master Feature List v4.0 · May 2026 · 332 total items · 219 to build</span>
-    <span>Paystack · Stripe · LemonSqueezy · MTN MoMo · BNPL · USDT/USDC (NOWPayments)</span>
-  </div>
-</div>
+    <div class="legend">
+      <div class="leg">
+        <div
+          class="ld"
+          style="background: var(--mint); border-color: var(--mint)"
+        ></div>
+        New from research
+      </div>
+      <div class="leg">
+        <div
+          class="ld"
+          style="background: var(--coral); border-color: var(--coral)"
+        ></div>
+        High priority
+      </div>
+      <div class="leg">
+        <div class="ld" style="background: var(--yellow)"></div>
+        Africa-specific
+      </div>
+      <div class="leg">
+        <div
+          class="ld"
+          style="background: var(--sky); border-color: var(--sky)"
+        ></div>
+        AI-powered
+      </div>
+      <div class="leg">
+        <div
+          class="ld"
+          style="background: var(--lilac); border-color: var(--lilac)"
+        ></div>
+        Payment-related
+      </div>
+      <div class="leg">
+        <div class="ld" style="background: var(--ink)"></div>
+        Already built (summary)
+      </div>
+    </div>
 
-</body>
+    <!-- ALREADY BUILT -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-6">✅ Already Built</span>
+        <div class="gt">
+          134 Files · 113/113 Checks Passing · Production Ready
+        </div>
+      </div>
+      <div class="fgrid-4">
+        <div class="f built">
+          <span class="fnum">—</span>
+          <div>
+            <div class="fname">Full Auth System</div>
+            <div class="fdesc">
+              Registration, login, 2FA, brute-force lockout, session management,
+              RBAC, age verify, terms log
+            </div>
+          </div>
+        </div>
+        <div class="f built">
+          <span class="fnum">—</span>
+          <div>
+            <div class="fname">Template Marketplace</div>
+            <div class="fdesc">
+              Cards, filters, preview, compare, wishlist, collections,
+              VirusTotal scan, secure downloads
+            </div>
+          </div>
+        </div>
+        <div class="f built">
+          <span class="fnum">—</span>
+          <div>
+            <div class="fname">3 Payment Gateways</div>
+            <div class="fdesc">
+              Paystack + Stripe + LemonSqueezy. Webhooks, HMAC verify,
+              idempotency, dunning, subscriptions
+            </div>
+          </div>
+        </div>
+        <div class="f built">
+          <span class="fnum">—</span>
+          <div>
+            <div class="fname">Full Admin Panel</div>
+            <div class="fdesc">
+              Revenue charts, MRR/ARR/LTV/Churn, user management, email
+              campaigns, A/B test, activity log
+            </div>
+          </div>
+        </div>
+        <div class="f built">
+          <span class="fnum">—</span>
+          <div>
+            <div class="fname">Blog Engine</div>
+            <div class="fdesc">
+              TinyMCE, SEO meta, scheduling, featured images, categories,
+              draft/published, AI-ready
+            </div>
+          </div>
+        </div>
+        <div class="f built">
+          <span class="fnum">—</span>
+          <div>
+            <div class="fname">Affiliate System</div>
+            <div class="fdesc">
+              Tiered 20/30/40% commissions, sub-affiliate, 30-day cookie,
+              referral invite email
+            </div>
+          </div>
+        </div>
+        <div class="f built">
+          <span class="fnum">—</span>
+          <div>
+            <div class="fname">SEO Infrastructure</div>
+            <div class="fdesc">
+              XML sitemap, robots.txt, OG tags, JSON-LD, GTM, GA4, hreflang,
+              lazy loading, RTL, WCAG
+            </div>
+          </div>
+        </div>
+        <div class="f built">
+          <span class="fnum">—</span>
+          <div>
+            <div class="fname">PWA + 9 Cron Jobs</div>
+            <div class="fdesc">
+              Service worker, manifest, offline page. Expiry, downgrade,
+              abandoned checkout, drip, MRR calc
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 1 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-1">Group 1</span>
+        <div class="gt">Platform Infrastructure</div>
+        <span class="gc">2 items · 001–002</span>
+      </div>
+      <div class="fgrid">
+        <div class="f hot">
+          <span class="fnum">001</span>
+          <div>
+            <div class="fname">
+              <span class="tag tp">Phase 1</span>Supabase Storage Integration
+            </div>
+            <div class="fdesc">
+              Offload all template previews, videos, screenshots, avatars to
+              Supabase CDN. PHP helper class + JS uploader. Replaces local file
+              storage with CDN URLs in DB.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">002</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Cloudflare CDN for Static Assets
+            </div>
+            <div class="fdesc">
+              Serve all CSS, JS, fonts, images from Cloudflare free tier.
+              Reduces latency for African mobile users. Free DDoS protection,
+              HTTPS, and performance analytics included.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 2 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-1">Group 2</span>
+        <div class="gt">Auth & Trust Additions</div>
+        <span class="gc">9 items · 003–011</span>
+      </div>
+      <div class="fgrid">
+        <div class="f">
+          <span class="fnum">003</span>
+          <div>
+            <div class="fname">Social Login — Google OAuth</div>
+            <div class="fdesc">
+              One-click Google sign-in. Biggest registration friction reducer.
+              Store Google ID + avatar in users table.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">004</span>
+          <div>
+            <div class="fname">Social Login — GitHub OAuth</div>
+            <div class="fdesc">
+              One-click GitHub sign-in. Signals developer-first platform.
+              Auto-populate profile from GitHub.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">005</span>
+          <div>
+            <div class="fname">Social Login — Twitter/X OAuth</div>
+            <div class="fdesc">
+              One-click Twitter/X sign-in for creator and indie founder
+              audience.
+            </div>
+          </div>
+        </div>
+        <div class="f hot">
+          <span class="fnum">006</span>
+          <div>
+            <div class="fname">Verified Seller Badges</div>
+            <div class="fdesc">
+              ID/business proof submission + admin approval. Checkmark on every
+              product card. Major trust signal for high-ticket script buyers.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">007</span>
+          <div>
+            <div class="fname">Money-Back Guarantee Badge</div>
+            <div class="fdesc">
+              30-day guarantee on all product pages and checkout. Reduces
+              purchase anxiety. Single DB flag.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">008</span>
+          <div>
+            <div class="fname">"As Seen In" Press Bar</div>
+            <div class="fdesc">
+              Scrolling strip of media logos. Admin CMS managed. Even early
+              social proof increases conversion.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">009</span>
+          <div>
+            <div class="fname">Purchase Counter on Cards</div>
+            <div class="fdesc">
+              "847 purchases" on every template card. Pulled from orders table.
+              ThemeForest uses this heavily.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">010</span>
+          <div>
+            <div class="fname">Live Purchase Notifications Toast</div>
+            <div class="fdesc">
+              "Someone in Lagos just bought the Banking Template." Real-time,
+              location-specific, product-specific.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">011</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Trust Score Displayed to Buyers
+            </div>
+            <div class="fdesc">
+              Vendor trust score (0–100) combining: verified identity,
+              chargeback rate, response time, review score, sales volume. Public
+              bar on vendor storefront.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 3 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-1">Group 3</span>
+        <div class="gt">Discovery & Search</div>
+        <span class="gc">7 items · 012–018</span>
+      </div>
+      <div class="fgrid">
+        <div class="f">
+          <span class="fnum">012</span>
+          <div>
+            <div class="fname">
+              <span class="tag ti">AI</span>Semantic Search (Claude API)
+            </div>
+            <div class="fdesc">
+              "I need a website for my logistics company" returns Courier
+              templates. Intent-based, not keyword-only.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">013</span>
+          <div>
+            <div class="fname">Visual / Screenshot Search</div>
+            <div class="fdesc">
+              Upload a screenshot → find similar templates. Image hash
+              comparison + category matching.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">014</span>
+          <div>
+            <div class="fname">
+              <span class="tag ti">AI</span>Personalised Homepage
+            </div>
+            <div class="fdesc">
+              Return visits show recommendations from browsing history + plan +
+              purchases. "Recommended for you."
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">015</span>
+          <div>
+            <div class="fname">Advanced Filter System</div>
+            <div class="fdesc">
+              Filter by: tech stack, colour scheme, page count, industry, price
+              range, license type, file format, last updated, compatibility.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">016</span>
+          <div>
+            <div class="fname">"Collections by Use Case" Pages</div>
+            <div class="fdesc">
+              "Best for Nigerian Startups", "Web3 Founder Pack". Rank in Google
+              + convert better than raw categories.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">017</span>
+          <div>
+            <div class="fname">Recently Viewed Templates</div>
+            <div class="fdesc">
+              Persistent across sessions. DB per user, cookie for guests. Shown
+              on homepage and listing page.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">018</span>
+          <div>
+            <div class="fname">"Complete the Kit" Cross-Sell</div>
+            <div class="fdesc">
+              After purchase: "Buyers also bought these." Recommendation engine
+              on thank-you page + dashboard.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 4 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-1">Group 4</span>
+        <div class="gt">New Sections & Pages</div>
+        <span class="gc">10 items · 019–028</span>
+      </div>
+      <div class="fgrid">
+        <div class="f">
+          <span class="fnum">019</span>
+          <div>
+            <div class="fname">Resources / Tools Directory (10 Categories)</div>
+            <div class="fdesc">
+              AI, Web Dev, Web3, Design, No-Code, Hosting, Plugins, Blockchain,
+              Freelancer, Learning. SEO goldmine + featured listing revenue.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">020</span>
+          <div>
+            <div class="fname">Web3 Dedicated Hub Page</div>
+            <div class="fdesc">
+              NFT, DeFi, DAO, token-gated templates. Separate nav item with own
+              SEO.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">021</span>
+          <div>
+            <div class="fname">Launch Kits Section</div>
+            <div class="fdesc">
+              SaaS Kit, Agency Kit, Fintech Kit, Web3 DApp Kit. Bundled systems
+              at premium price.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">022</span>
+          <div>
+            <div class="fname">Founder Story Page</div>
+            <div class="fdesc">
+              Personal brand, faith foundation, vision. "About" is corporate.
+              "Our Story" is human.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">023</span>
+          <div>
+            <div class="fname">Programmatic SEO Niche Pages</div>
+            <div class="fdesc">
+              Auto-generated: "best courier template Nigeria", "Web3 landing
+              page template 2026". Each targets a long-tail keyword.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">024</span>
+          <div>
+            <div class="fname">Developer Hub</div>
+            <div class="fdesc">
+              API docs, code snippets, component browser, GitHub signal. Retains
+              developer audience between purchases.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">025</span>
+          <div>
+            <div class="fname">Understanding Licenses Page</div>
+            <div class="fdesc">
+              Plain English: Regular vs Extended vs White-Label with real-world
+              examples. Reduces disputes.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">026</span>
+          <div>
+            <div class="fname">Free Tools Section</div>
+            <div class="fdesc">
+              Colour palette generator, font pairing tool, website checklist
+              PDF. Organic traffic + list building.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">027</span>
+          <div>
+            <div class="fname">Template Showcase Gallery</div>
+            <div class="fdesc">
+              "Built with Web-Temify" user submissions. Social proof + community
+              pride.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">028</span>
+          <div>
+            <div class="fname">Community Forum</div>
+            <div class="fdesc">
+              "Show Your Builds", "Web3 Dev Chat", "Freelancer Lounge".
+              Increases time-on-site dramatically.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 5 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-1">Group 5</span>
+        <div class="gt">Buyer Experience</div>
+        <span class="gc">11 items · 029–039</span>
+      </div>
+      <div class="fgrid">
+        <div class="f">
+          <span class="fnum">029</span>
+          <div>
+            <div class="fname">Template Request System</div>
+            <div class="fdesc">
+              Buyers post: "I need X template, willing to pay $Y." Sellers bid
+              or Tinlance builds. Validates demand.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">030</span>
+          <div>
+            <div class="fname">Preview with Real Content</div>
+            <div class="fdesc">
+              Buyer types company name → appears live in preview. JS text
+              replacement on preview iframe.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">031</span>
+          <div>
+            <div class="fname">Free Download Tier (No Card)</div>
+            <div class="fdesc">
+              Email signup only. Loss-leader strategy. Builds list, drives
+              trust, converts to paid.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">032</span>
+          <div>
+            <div class="fname">Re-Download Button</div>
+            <div class="fdesc">
+              Re-download past purchases from dashboard without contacting
+              support.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">033</span>
+          <div>
+            <div class="fname">Self-Service Subscription Pause</div>
+            <div class="fdesc">
+              User pauses own subscription from dashboard. Currently admin-only.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">034</span>
+          <div>
+            <div class="fname">"Request Customisation" Per Template</div>
+            <div class="fdesc">
+              Context-aware brief pre-fills template name/category → goes to
+              Tinlance as qualified lead.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">035</span>
+          <div>
+            <div class="fname">Template Compatibility Checker</div>
+            <div class="fdesc">
+              User selects stack → compatibility confirmed or warned before
+              downloading.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">036</span>
+          <div>
+            <div class="fname">Subscription Gifting</div>
+            <div class="fdesc">
+              Buy Pro/Business as a gift for another user. All 3 gateways.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">037</span>
+          <div>
+            <div class="fname">Two-Click Checkout (Returning Buyers)</div>
+            <div class="fdesc">
+              Stored payment method, one confirmation. Eliminates repeat buyer
+              friction.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">038</span>
+          <div>
+            <div class="fname">Tutorial Video Per Template</div>
+            <div class="fdesc">
+              2–3 min setup video on preview page. Reduces support tickets,
+              increases conversion.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">039</span>
+          <div>
+            <div class="fname">Product Update Notifications to Buyers</div>
+            <div class="fdesc">
+              Email when seller releases new version. "Your template updated to
+              v2.1 — re-download now."
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 6 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-2">Group 6 — New</span>
+        <div class="gt">License Key Management System</div>
+        <span class="gc">8 items · 040–047</span>
+      </div>
+      <div class="fgrid">
+        <div class="f new hot">
+          <span class="fnum">040</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span
+              ><span class="tag tp">Critical</span>License Key Generator
+            </div>
+            <div class="fdesc">
+              Auto-generate unique key per purchase. Tied to buyer's account and
+              domain. Stored with activation limit + expiry.
+            </div>
+          </div>
+        </div>
+        <div class="f new hot">
+          <span class="fnum">041</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>License Activation Tracking
+            </div>
+            <div class="fdesc">
+              Activation limit enforced. Domain + IP recorded. Buyers activate
+              from their site via API call.
+            </div>
+          </div>
+        </div>
+        <div class="f new hot">
+          <span class="fnum">042</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>License Validation API Endpoint
+            </div>
+            <div class="fdesc">
+              /api/v1/validate-license returns {status, expiry, plan_tier,
+              domain_allowed}. Essential for scripts.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">043</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>License Deactivation
+            </div>
+            <div class="fdesc">
+              Buyer deactivates one domain, reactivates on another from
+              dashboard. No support ticket.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">044</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>License Revocation (Admin)
+            </div>
+            <div class="fdesc">
+              Admin revokes on chargeback/fraud. Instantly breaks all validation
+              API calls. Logged in activity.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">045</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>License Expiry & Renewal
+            </div>
+            <div class="fdesc">
+              Annual licenses expire. 30-day reminder + renewal link via all 3
+              gateways. Recurring revenue.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">046</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>License Upgrade Path
+            </div>
+            <div class="fdesc">
+              Single-site → multi-site → agency. Proration charged via any of 3
+              gateways.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">047</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Bulk License Purchases
+            </div>
+            <div class="fdesc">
+              Agencies buy 10+ licenses at bulk rate. All 3 gateways. Admin sets
+              5/10/25-pack tiers.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 7 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-1">Group 7</span>
+        <div class="gt">Vendor / Seller System</div>
+        <span class="gc">23 items · 048–070</span>
+      </div>
+      <div class="fgrid">
+        <div class="f">
+          <span class="fnum">048</span>
+          <div>
+            <div class="fname">Vendor Registration + Onboarding Wizard</div>
+            <div class="fdesc">
+              Step-by-step: profile → product → pricing → payout → live. Reduces
+              drop-off significantly.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">049</span>
+          <div>
+            <div class="fname">Vendor Dashboard</div>
+            <div class="fdesc">
+              Manage listings, view earnings, request withdrawals, see
+              analytics.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">050</span>
+          <div>
+            <div class="fname">Product Submission Flow</div>
+            <div class="fdesc">
+              Upload, price, description, screenshots, demo link, license type.
+              Admin approval required.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">051</span>
+          <div>
+            <div class="fname">Admin Vendor Approval Queue</div>
+            <div class="fdesc">
+              Review, approve, reject, revise. Rejection sends automated
+              feedback email.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">052</span>
+          <div>
+            <div class="fname">
+              <span class="tag tl">Payments</span>Revenue Split System
+            </div>
+            <div class="fdesc">
+              20–30% platform commission. All 3 gateways for payouts.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">053</span>
+          <div>
+            <div class="fname">
+              <span class="tag tl">Payments</span>Vendor Payout System
+            </div>
+            <div class="fdesc">
+              Withdrawal requests. Admin processes via
+              Paystack/Stripe/LemonSqueezy. History + status.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">054</span>
+          <div>
+            <div class="fname">Vendor Analytics Dashboard</div>
+            <div class="fdesc">
+              Sales stats, downloads, revenue charts, conversion rate per
+              product.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">055</span>
+          <div>
+            <div class="fname">Vendor Revenue Forecasting</div>
+            <div class="fdesc">
+              Projected next 30 days based on trend and seasonal patterns.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">056</span>
+          <div>
+            <div class="fname">Conversion Funnel Per Product</div>
+            <div class="fdesc">
+              Views → preview clicks → purchases per product. Helps vendors
+              optimise listings.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">057</span>
+          <div>
+            <div class="fname">Vendor Public Storefront</div>
+            <div class="fdesc">
+              Customisable banner, bio, social links, speciality tags, follower
+              count at /vendor/username.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">058</span>
+          <div>
+            <div class="fname">"Follow a Seller" Feature</div>
+            <div class="fdesc">
+              Followers notified on new product release. Passive repeat
+              purchases.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">059</span>
+          <div>
+            <div class="fname">Seller Q&A on Product Pages</div>
+            <div class="fdesc">
+              Public questions + answers visible to all. Reduces support
+              tickets, increases conversion.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">060</span>
+          <div>
+            <div class="fname">Dispute Resolution System</div>
+            <div class="fdesc">
+              Open → seller responds → admin mediates → resolved. Protects both
+              sides.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">061</span>
+          <div>
+            <div class="fname">Bulk Product Import</div>
+            <div class="fdesc">
+              CSV/JSON import from existing catalogues. Attracts Envato exodus
+              sellers.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">062</span>
+          <div>
+            <div class="fname">Seller Webhook Events</div>
+            <div class="fdesc">
+              Register URL for: new purchase, new review, payout processed.
+              Enables seller automation.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">063</span>
+          <div>
+            <div class="fname">Seller API Rate Limit Dashboard</div>
+            <div class="fdesc">
+              Usage visibility, rate limit status, request history per vendor.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">064</span>
+          <div>
+            <div class="fname">Vendor Tier Badges</div>
+            <div class="fdesc">
+              Verified, Pro Seller, Top Contributor. On product cards +
+              storefront.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">065</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Exclusive Listing Programme
+            </div>
+            <div class="fdesc">
+              Web-Temify Exclusive = 85% revenue share + exclusive badge. Direct
+              counter to Envato's 50%.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">066</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Listing Quality Score (0–100)
+            </div>
+            <div class="fdesc">
+              Screenshots + description + demo + tags + price = score. Shown to
+              vendor only. Nudges improvement.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">067</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Automated Listing Feedback
+            </div>
+            <div class="fdesc">
+              Rejection sends specific improvement suggestions. "Screenshots too
+              low resolution. Description under 100 words."
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">068</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Vendor Earnings Forecast at Upload
+            </div>
+            <div class="fdesc">
+              "Based on 247 similar products, estimated $200–$800/month."
+              Motivates vendors to complete listings.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">069</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Vendor SLA Dashboard
+            </div>
+            <div class="fdesc">
+              Approval time, response time, chargeback rate, review score.
+              Below-threshold = warnings before suspension.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">070</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Vendor Academy
+            </div>
+            <div class="fdesc">
+              Guides/videos: write descriptions, price competitively, pass
+              review. Improves marketplace quality.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 8 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-2">Group 8 — New</span>
+        <div class="gt">Trust & Fraud Prevention</div>
+        <span class="gc">9 items · 071–079</span>
+      </div>
+      <div class="fgrid">
+        <div class="f new hot">
+          <span class="fnum">071</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span
+              ><span class="tag tp">Critical</span>Fraud Risk Scoring
+            </div>
+            <div class="fdesc">
+              Every registration + purchase gets a risk score: device
+              fingerprint + email rep + IP + behaviour. High-risk flagged before
+              download released.
+            </div>
+          </div>
+        </div>
+        <div class="f new hot">
+          <span class="fnum">072</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span
+              ><span class="tag tp">Critical</span>Chargeback Protection System
+            </div>
+            <div class="fdesc">
+              Track ratio per vendor. Flag >1%. Auto-hold payouts on dispute.
+              Evidence packet auto-generated.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">073</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Device Fingerprinting on
+              Registration
+            </div>
+            <div class="fdesc">
+              Detect same person creating multiple accounts to abuse free trials
+              or coupons.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">074</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Velocity Checks
+            </div>
+            <div class="fdesc">
+              Flag accounts downloading abnormally fast (50 downloads in 10
+              mins). Auto-suspend pending review.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">075</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Stolen Card Detection
+            </div>
+            <div class="fdesc">
+              Cross-reference purchase IP vs billing address. Integrate with
+              Paystack fraud signals.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">076</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Vendor Fraud Detection
+            </div>
+            <div class="fdesc">
+              Detect uploaded plagiarised content. Reverse image search on
+              screenshots. File hash comparison.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">077</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Content ID System
+            </div>
+            <div class="fdesc">
+              Hash comparison + similarity scoring on all uploaded files before
+              approval. Prevents duplicate products.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">078</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>2FA for High-Value Checkout (>$200)
+            </div>
+            <div class="fdesc">
+              Purchases above $200 require 2FA confirmation before payment
+              processes. Reduces chargebacks dramatically.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">079</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>IP Allowlist for Admin Panel
+            </div>
+            <div class="fdesc">
+              Admin accessible from whitelisted IPs only. Configurable from
+              settings. Prevents admin access even if credentials compromised.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 9 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-2">Group 9 — New</span>
+        <div class="gt">Messaging & Support System</div>
+        <span class="gc">5 items · 080–084</span>
+      </div>
+      <div class="fgrid">
+        <div class="f new hot">
+          <span class="fnum">080</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span
+              ><span class="tag tp">High Value</span>Buyer-Vendor Direct
+              Messaging
+            </div>
+            <div class="fdesc">
+              Post-purchase threaded conversations. Admin can see all threads.
+              Biggest trust gap in current build.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">081</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Support Ticket System
+            </div>
+            <div class="fdesc">
+              Per-purchase: open → in progress → resolved. SLA tracking (24h
+              response). Admin + vendor can reply.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">082</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Vendor Response Time Badge
+            </div>
+            <div class="fdesc">
+              "Avg response: 4 hours" on vendor storefront. Calculated from
+              ticket data. Massive trust signal.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">083</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Canned Responses for Vendors
+            </div>
+            <div class="fdesc">
+              Saved reply templates for common questions. One-click insert.
+              Speeds up support dramatically.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">084</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span><span class="tag ti">AI</span>AI
+              Support Auto-Responder
+            </div>
+            <div class="fdesc">
+              First response AI-generated from product FAQ + description via
+              Claude API. Vendor reviews before sending.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 10 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-2">Group 10 — New</span>
+        <div class="gt">Courses & Knowledge Products</div>
+        <span class="gc">5 items · 085–089</span>
+      </div>
+      <div class="fgrid">
+        <div class="f new">
+          <span class="fnum">085</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Mini Course Builder
+            </div>
+            <div class="fdesc">
+              Vendors create structured courses tied to their templates. "Buy
+              template + learn to use it in 5 lessons."
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">086</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Video Lesson Hosting
+            </div>
+            <div class="fdesc">
+              Upload to Supabase. Custom player with progress tracking, playback
+              speed, chapter markers.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">087</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Course Progress + Certificate PDF
+            </div>
+            <div class="fdesc">
+              Per-user progress bar. Certificate auto-generated with name,
+              course, date, Web-Temify seal.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">088</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Prerequisite Gating
+            </div>
+            <div class="fdesc">
+              Lesson 3 unlocks only after lesson 2 completed. Progress stored
+              per user per course.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">089</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Quiz / Assessment Builder
+            </div>
+            <div class="fdesc">
+              Multiple choice quizzes. Pass/fail gates for certificate issuance.
+              Admin and vendor create quizzes.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 11 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-1">Group 11</span>
+        <div class="gt">Monetisation Additions</div>
+        <span class="gc">18 items · 090–107</span>
+      </div>
+      <div class="fgrid">
+        <div class="f">
+          <span class="fnum">090</span>
+          <div>
+            <div class="fname">
+              <span class="tag tl">Payments</span>Paid Featured Listings
+              (Directory)
+            </div>
+            <div class="fdesc">
+              $50–$500/year. Paystack + Stripe + LemonSqueezy. Core directory
+              monetisation.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">091</span>
+          <div>
+            <div class="fname">
+              <span class="tag tl">Payments</span>White-Label Licensing Tier
+            </div>
+            <div class="fdesc">
+              Agencies rebrand + resell templates. All 3 gateways.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">092</span>
+          <div>
+            <div class="fname">
+              <span class="tag tl">Payments</span>Bundle / Launch Kit Checkout
+            </div>
+            <div class="fdesc">
+              Multiple templates, one transaction. Discounted vs individual. All
+              3 gateways.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">093</span>
+          <div>
+            <div class="fname">Directory Affiliate Link Tracking</div>
+            <div class="fdesc">
+              Passive SaaS affiliate commissions (20–30% recurring) from
+              directory tool referrals.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">094</span>
+          <div>
+            <div class="fname">Sponsorship Ad Zones (Directory)</div>
+            <div class="fdesc">
+              Banner slots within directory category pages. Direct deal or
+              AdSense fallback.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">095</span>
+          <div>
+            <div class="fname">"Pay What You Want" Pricing</div>
+            <div class="fdesc">
+              Seller sets minimum. Buyer can pay more. Gumroad built their
+              reputation on this.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">096</span>
+          <div>
+            <div class="fname">
+              <span class="tag tl">Payments</span>Team / Agency Plan (4th Tier)
+            </div>
+            <div class="fdesc">
+              5 seats, $99–$199/month. All 3 gateways. Agencies managing
+              multiple client projects.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">097</span>
+          <div>
+            <div class="fname">Volume Licensing for Agencies</div>
+            <div class="fdesc">
+              Single purchase covers up to 10 client sites. ThemeForest Extended
+              License equivalent.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">098</span>
+          <div>
+            <div class="fname">Template Rental / Time-Limited Access</div>
+            <div class="fdesc">
+              30-day at 30% of full price. For freelancers on a single project.
+              Auto-expires via cron.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">099</span>
+          <div>
+            <div class="fname">Early Access / Pre-Launch Listings</div>
+            <div class="fdesc">
+              Discounted pre-launch. Buyers pay now, access on release. Creates
+              urgency + validates demand.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">100</span>
+          <div>
+            <div class="fname">Tip / Donation Button (Free Templates)</div>
+            <div class="fdesc">
+              "Buy the seller a coffee — $5." Some sellers make meaningful
+              income from tips alone.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">101</span>
+          <div>
+            <div class="fname">
+              <span class="tag ta">Africa</span>Buy Now Pay Later (BNPL)
+            </div>
+            <div class="fdesc">
+              Carbon or FairMoney: 3-month instalments. Unlocks high-ticket
+              purchases for cash-limited buyers.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">102</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Usage-Based Pricing
+            </div>
+            <div class="fdesc">
+              For API tools/scripts: charge per API call or per active user.
+              Metered billing via Paystack recurring.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">103</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Dynamic Pricing / Flash Sales
+            </div>
+            <div class="fdesc">
+              Time-limited sale price per template. Auto-expires at set
+              date/time. Countdown timer on card.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">104</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Revenue Share on Vendor Referrals
+            </div>
+            <div class="fdesc">
+              Vendors earn % of revenue from buyers they bring to the platform
+              (not just their own products).
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">105</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Sponsored Placement Auctions
+            </div>
+            <div class="fdesc">
+              Vendors bid for featured category placement. Weekly reset via
+              cron. Automated.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">106</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Multi-Currency Invoicing
+            </div>
+            <div class="fdesc">
+              Invoices in buyer's local currency (NGN/KES/GHS/USD/EUR). Required
+              for African business expense claims.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">107</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Reseller Programme
+            </div>
+            <div class="fdesc">
+              40% discount for resellers. White-label invoice with reseller
+              branding. B2B channel.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 12 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-1">Group 12</span>
+        <div class="gt">Community & Engagement</div>
+        <span class="gc">11 items · 108–118</span>
+      </div>
+      <div class="fgrid">
+        <div class="f">
+          <span class="fnum">108</span>
+          <div>
+            <div class="fname">Points & Rewards System</div>
+            <div class="fdesc">
+              Earn for purchases, reviews, referrals, logins. Redeem for
+              credits. 48%+ engagement increase.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">109</span>
+          <div>
+            <div class="fname">Badges & Achievements</div>
+            <div class="fdesc">
+              "First Purchase", "Web3 Pioneer", "Review Champion", "Early
+              Adopter". Profile visible.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">110</span>
+          <div>
+            <div class="fname">Leaderboard</div>
+            <div class="fdesc">
+              Top buyers, sellers, reviewers. Monthly reset with prizes.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">111</span>
+          <div>
+            <div class="fname">Weekly Auto-Generated Newsletter</div>
+            <div class="fdesc">
+              New templates, top sellers, community showcase, dev tips.
+              Auto-generated from platform data.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">112</span>
+          <div>
+            <div class="fname">Seasonal Challenges / Contests</div>
+            <div class="fdesc">
+              "Best fintech build — winner gets $100 credit." Low cost, high
+              engagement.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">113</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Annual Recap Email
+            </div>
+            <div class="fdesc">
+              "Your Web-Temify Year in Review" — January, every year. Viral
+              potential. Users share on social.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">114</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Win-Back Campaign
+            </div>
+            <div class="fdesc">
+              60-day inactive users get personalised "we miss you" email +
+              discount. Pure passive revenue recovery.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">115</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Upgrade Nudge System
+            </div>
+            <div class="fdesc">
+              Free users who viewed 5+ premium templates: "Get full access for
+              $19/month." Funnel closer.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">116</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Usage Milestone Celebrations
+            </div>
+            <div class="fdesc">
+              "You've downloaded your 10th template! 🎉" In-app notification +
+              social share prompt.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">117</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Referral Contest
+            </div>
+            <div class="fdesc">
+              Top 3 referrers this month win $100 credit. Monthly, tracked on
+              leaderboard. Zero cost word-of-mouth.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">118</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Exit Survey on Cancellation
+            </div>
+            <div class="fdesc">
+              3-question survey before cancellation confirmed. Captures churn
+              reasons. Feeds product roadmap.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUPS 13–27 CONDENSED -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-3">Groups 13–20</span>
+        <div class="gt">
+          Services · Analytics · Africa · Technical · SEO · AI · Mobile ·
+          Compliance
+        </div>
+        <span class="gc">47 items · 119–165</span>
+      </div>
+      <div class="fgrid">
+        <div class="f">
+          <span class="fnum">119–125</span>
+          <div>
+            <div class="fname">Services & Leads — 7 items (Group 13)</div>
+            <div class="fdesc">
+              Service request system, 6 categories, project brief form, lead
+              management admin, services page, CTA hooks on every template page,
+              checkout upsell. All route to Tinlance.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">126–129</span>
+          <div>
+            <div class="fname">New Analytics — 4 items (Group 14)</div>
+            <div class="fdesc">
+              Geographic sales heatmap, revenue attribution dashboard, Product
+              Opportunity Report (zero-result searches), seller conversion
+              funnel per product.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">130–134</span>
+          <div>
+            <div class="fname">
+              <span class="tag ta">Africa</span>Africa-Specific — 5 items (Group
+              15)
+            </div>
+            <div class="fdesc">
+              MTN MoMo + Airtel + M-Pesa, Naira/multi-currency display
+              (NGN/KES/GHS/ZAR), low-bandwidth mode, WhatsApp Business support,
+              WhatsApp order notifications.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">135–139</span>
+          <div>
+            <div class="fname">Technical Upgrades — 5 items (Group 16)</div>
+            <div class="fdesc">
+              Mobile-optimised checkout, PWA push notifications, Zapier/Make.com
+              native integration, white-label platform option, Merchant of
+              Record global tax handling.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">140–145</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Discovery & External Integrations —
+              6 items (Group 17)
+            </div>
+            <div class="fdesc">
+              ProductHunt-style launch system, Google Shopping integration,
+              SoftwareApplication JSON-LD schema, Figma Community integration,
+              GitHub repo button on preview, NPM/composer install commands.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">146–148</span>
+          <div>
+            <div class="fname">SEO & Content — 3 items (Group 18)</div>
+            <div class="fdesc">
+              User-generated review pages (indexable), template comparison
+              landing pages (auto-generated), AI content automation engine
+              (Python + Claude → blog drafts → cron).
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">149–154</span>
+          <div>
+            <div class="fname">
+              <span class="tag ti">AI</span>AI Features — 6 items (Group 19)
+            </div>
+            <div class="fdesc">
+              AI page generator (60s, Claude API), editable sandbox, AI product
+              description generator for vendors, AI pricing recommendation, AI
+              review summariser, AI chargeback predictor.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">155–156</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Mobile App — 2 items (Group 20)
+            </div>
+            <div class="fdesc">
+              iOS + Android React Native apps. Browse, purchase, download, push
+              notifications for new products in watched categories, order
+              confirmations.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">157–160</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Compliance & Legal — 4 items (Group
+              21)
+            </div>
+            <div class="fdesc">
+              EU VAT invoice auto-generation, licensing clarity page, GDPR CMP
+              v2 (IAB TCF 2.2), SOC 2 readiness checklist in admin panel.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">161–163</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Platform Operations — 3 items
+              (Group 22)
+            </div>
+            <div class="fdesc">
+              API key management for buyers (create/rotate/revoke), staging
+              environment for Business/Agency users, bulk license purchase
+              system.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">164–165</span>
+          <div>
+            <div class="fname">Homepage & Positioning — 2 items (Group 23)</div>
+            <div class="fdesc">
+              Hero copy update ("From idea to deployable web product in hours").
+              Core positioning wired through all meta, OG, and landing pages.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 24 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-1">Group 24</span>
+        <div class="gt">
+          Tech Directory Hub — 10 Categories + Platform Features
+        </div>
+        <span class="gc">21 items · 166–186</span>
+      </div>
+      <div class="fgrid">
+        <div class="f">
+          <span class="fnum">166–175</span>
+          <div>
+            <div class="fname">10 Directory Categories</div>
+            <div class="fdesc">
+              Tech & AI · Web Dev Tools · Web3 & Blockchain · Design & UI ·
+              No-Code/Low-Code · Hosting & Infra · Plugins & Extensions ·
+              Blockchain & Crypto · Freelancer & Agency Resources · Learning &
+              Community
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">176</span>
+          <div>
+            <div class="fname">Directory Search + Filter System</div>
+            <div class="fdesc">
+              Search all 10 categories. Filter by: pricing tier, type, region,
+              rating. Live results.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">177</span>
+          <div>
+            <div class="fname">
+              <span class="tag tl">Payments</span>Featured Listing Payments
+            </div>
+            <div class="fdesc">
+              $50–$500/year. Paystack + Stripe + LemonSqueezy. Top placement +
+              featured badge.
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">178–186</span>
+          <div>
+            <div class="fname">9 More Directory Features</div>
+            <div class="fdesc">
+              Sponsored banners · Affiliate tracking · User ratings + reviews ·
+              Community submission + admin approval · AI auto-populate (Product
+              Hunt + GitHub + RSS) · Individual SEO page per listing · Compare
+              Tools · Weekly "Top Tools" digest · Internal linking to templates
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 25 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-4">Group 25</span>
+        <div class="gt">Vendor Financial Services</div>
+        <span class="gc">5 items · 187–191</span>
+      </div>
+      <div class="fgrid">
+        <div class="f new hot">
+          <span class="fnum">187</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span
+              ><span class="tag tp">High Value</span>Vendor Earnings Wallet
+            </div>
+            <div class="fdesc">
+              Platform-native wallet. Earnings accumulate. Vendor withdraws when
+              ready. Switching platforms = losing financial infrastructure.
+              Massive retention tool.
+            </div>
+          </div>
+        </div>
+        <div class="f new hot">
+          <span class="fnum">188</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Instant Payouts
+            </div>
+            <div class="fdesc">
+              Funds reach vendor's Paystack account the moment a sale is
+              confirmed. Not weekly/monthly batch. Competitive advantage over
+              every African marketplace.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">189</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Revenue Advance for Vendors
+            </div>
+            <div class="fdesc">
+              "You've averaged ₦200K/month for 6 months. We'll advance ₦400K."
+              Repaid from future sales. Like Shopify Capital.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">190</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Vendor Tax Reserve Sub-Wallet
+            </div>
+            <div class="fdesc">
+              Auto-set aside configurable % of each sale into tax reserve.
+              Vendor never spends their tax money accidentally.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">191</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Vendor Earnings Interest / Yield
+            </div>
+            <div class="fdesc">
+              3–5% APY on wallet balance. Via Paystack savings or stablecoin
+              yield. Unprecedented in African marketplace space.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 26 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-2">Group 26 — New</span>
+        <div class="gt">B2B & Enterprise Features</div>
+        <span class="gc">5 items · 192–196</span>
+      </div>
+      <div class="fgrid">
+        <div class="f new hot">
+          <span class="fnum">192</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Agency Client Management Portal
+            </div>
+            <div class="fdesc">
+              Agency plan: manage multiple client sub-accounts, each with own
+              branding and template library. Generate branded invoice per
+              client. Justifies $99/month Agency tier.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">193</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Team Collaboration on Vendor
+              Account
+            </div>
+            <div class="fdesc">
+              Multiple team members: Owner/Editor/Analyst roles. Editor uploads
+              products. Analyst views stats only.
+            </div>
+          </div>
+        </div>
+        <div class="f new hot">
+          <span class="fnum">194</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>B2B Bulk Order System
+            </div>
+            <div class="fdesc">
+              Companies request quote for 50+ licences. Admin reviews, sends
+              custom invoice. Closes enterprise deals.
+            </div>
+          </div>
+        </div>
+        <div class="f new hot">
+          <span class="fnum">195</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Purchase Order (PO) Support
+            </div>
+            <div class="fdesc">
+              Enterprise buyers submit PO number. Invoice with PO reference.
+              Bank transfer + NET15/NET30 terms. Corporate finance teams can
+              pay.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">196</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Client Onboarding Checklist
+              (Agency)
+            </div>
+            <div class="fdesc">
+              "Download → Customise → Connect domain → Launch." Each step
+              trackable. Agency looks professional to their client.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 27 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-2">Group 27 — New</span>
+        <div class="gt">Advanced Identity & Security</div>
+        <span class="gc">4 items · 197–200</span>
+      </div>
+      <div class="fgrid">
+        <div class="f new">
+          <span class="fnum">197</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Persistent Identity Verification
+              Layer
+            </div>
+            <div class="fdesc">
+              Continuous monitoring. Sudden volume spike/new bank account/new
+              country triggers re-verify before payouts.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">198</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>AI Agent Verification Badge
+            </div>
+            <div class="fdesc">
+              Detect automated agents doing bulk downloads or submissions. Flag
+              and verify the human behind it.
+            </div>
+          </div>
+        </div>
+        <div class="f new hot">
+          <span class="fnum">199</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Escrow for High-Value Service
+              Requests
+            </div>
+            <div class="fdesc">
+              Custom Tinlance service >$500: funds held in escrow. Released in
+              milestones: 50% on start, 50% on delivery. Both sides protected.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">200</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Nigerian Business Registry
+              Verification
+            </div>
+            <div class="fdesc">
+              Vendors verify their CAC registration number. "Verified Nigerian
+              Business" badge. Extra trust for enterprise buyers.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 28 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-2">Group 28 — New</span>
+        <div class="gt">Accessibility (WCAG 2.2)</div>
+        <span class="gc">5 items · 201–205</span>
+      </div>
+      <div class="fgrid">
+        <div class="f new">
+          <span class="fnum">201</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>WCAG 2.2 Level AA Full Compliance
+            </div>
+            <div class="fdesc">
+              Focus indicators, accessible names, 24×24px target size,
+              consistent help mechanisms. Legal protection + 28% revenue
+              increase per research.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">202</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Screen Reader Optimisation
+            </div>
+            <div class="fdesc">
+              ARIA labels on all dynamic content. Screen reader announces cart
+              updates, download progress, notifications.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">203</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Keyboard Navigation Complete
+            </div>
+            <div class="fdesc">
+              Every feature operable via keyboard. Tab order logical. Escape
+              closes modals. No mouse required anywhere.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">204</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>High Contrast Mode
+            </div>
+            <div class="fdesc">
+              Toggle in accessibility settings. Black/white/yellow high-contrast
+              scheme for low vision users.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">205</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Dyslexia-Friendly Font Mode
+            </div>
+            <div class="fdesc">
+              Toggle in settings → switches to OpenDyslexic font. Small feature,
+              massive inclusivity signal.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 29 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-2">Group 29 — New</span>
+        <div class="gt">Performance & Core Web Vitals 2026</div>
+        <span class="gc">5 items · 206–210</span>
+      </div>
+      <div class="fgrid">
+        <div class="f new hot">
+          <span class="fnum">206</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span
+              ><span class="tag tp">Critical</span>Redis/Memcached Query Caching
+            </div>
+            <div class="fdesc">
+              Cache frequent DB queries (template listings, categories,
+              pricing). Reduces DB load 70–80%. Essential as traffic scales.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">207</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Core Web Vitals Dashboard (Admin)
+            </div>
+            <div class="fdesc">
+              Real LCP, INP, CLS scores per page from Google Search Console API.
+              Poor-score pages flagged. Tied to rankings + ad costs.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">208</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Image WebP Auto-Conversion
+            </div>
+            <div class="fdesc">
+              All uploaded preview images auto-converted to WebP on upload.
+              Reduces page weight 30–40%. Direct LCP improvement.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">209</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Critical CSS Inlining
+            </div>
+            <div class="fdesc">
+              Above-fold CSS inlined into HTML head. Non-critical CSS async
+              loaded. 200–400ms LCP improvement on slow connections.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">210</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Automated Backup System
+            </div>
+            <div class="fdesc">
+              Daily DB backup to Supabase Storage + weekly off-site. Backup
+              integrity verification. One-click restore. Currently none
+              specified.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 30 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-2">Group 30 — New</span>
+        <div class="gt">Personalisation & Africa-Specific Additions</div>
+        <span class="gc">10 items · 211–220</span>
+      </div>
+      <div class="fgrid">
+        <div class="f new">
+          <span class="fnum">211</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Preference Centre ("My Interests")
+            </div>
+            <div class="fdesc">
+              Users select interests (Fintech, Web3, etc.) during onboarding.
+              Homepage + newsletter personalised. "Psychology of Control"
+              increases opt-in.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">212</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Personalised Email Digest Frequency
+            </div>
+            <div class="fdesc">
+              Users choose daily/weekly/monthly/never per category. Reduces
+              unsubscribes dramatically.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">213</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>"Do Not Track" Personalisation
+              Toggle
+            </div>
+            <div class="fdesc">
+              One-click in privacy settings to disable all personalisation. GDPR
+              data minimisation principle.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">214</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Localised Content by Region
+            </div>
+            <div class="fdesc">
+              Nigeria sees NGN + Paystack-first. Kenya sees KES + M-Pesa. UK/US
+              sees USD + Stripe. Auto IP detection, user overridable.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">215</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span
+              ><span class="tag ta">Africa</span>Diaspora Payment Support
+            </div>
+            <div class="fdesc">
+              Nigerian/Ghanaian/Kenyan diaspora in UK/US/Canada buying for
+              businesses back home. GBP/CAD/AUD via Stripe, delivered in local
+              currency.
+            </div>
+          </div>
+        </div>
+        <div class="f new hot">
+          <span class="fnum">216</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span
+              ><span class="tag ta">Africa</span>USSD Payment Option
+            </div>
+            <div class="fdesc">
+              Paystack USSD (*737# etc.) for feature phone users. No internet
+              required. Expands buyer base to non-smartphone users.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">217</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span
+              ><span class="tag ta">Africa</span>Africa Time Zone Smart
+              Scheduling
+            </div>
+            <div class="fdesc">
+              Cron jobs, emails, flash sales fire at optimal WAT/EAT times
+              (9am–6pm) not UTC midnight. Small but significant conversion
+              impact.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">218</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span
+              ><span class="tag ta">Africa</span>Naira Pricing Psychology
+            </div>
+            <div class="fdesc">
+              ₦14,999 not ₦15,000. ₦49,999 not ₦50,000. Auto-applied in PPP
+              engine when currency is NGN.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">219</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Seasonal Promotion Calendar
+            </div>
+            <div class="fdesc">
+              Pre-schedule: Black Friday, New Year, Africa Day, Ramadan,
+              Nigerian Independence Day. Auto-activates/deactivates. All 3
+              gateways.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">220</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Multilingual Customer Support
+            </div>
+            <div class="fdesc">
+              Tickets in English, French, Yoruba, Igbo, Hausa. AI auto-detects
+              language + routes to response template.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 31 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-2">Group 31 — New</span>
+        <div class="gt">
+          Advanced Marketing, Analytics & Developer Experience
+        </div>
+        <span class="gc">19 items · 221–239</span>
+      </div>
+      <div class="fgrid">
+        <div class="f new hot">
+          <span class="fnum">221</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Affiliate Marketplace (Public)
+            </div>
+            <div class="fdesc">
+              Public page where affiliates browse products to promote + get
+              affiliate links instantly. Whop scaled to 30,000 affiliates with
+              this.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">222</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Affiliate Performance Tiers (Auto)
+            </div>
+            <div class="fdesc">
+              Starter → Silver → Gold → Platinum based on referred revenue.
+              Higher tier = higher commission. Fully automatic.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">223</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Co-Marketing with Vendors
+            </div>
+            <div class="fdesc">
+              Vendor + platform joint promotions. Vendor pays promo fee.
+              Platform features in newsletter + homepage. Both benefit.
+            </div>
+          </div>
+        </div>
+        <div class="f new hot">
+          <span class="fnum">224</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>"Verified Purchase" Review System
+            </div>
+            <div class="fdesc">
+              Only buyers who purchased can leave a review. "Verified Purchase"
+              badge shown. Prevents fake reviews. Critical for high-ticket
+              scripts.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">225</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Review Incentive Programme
+            </div>
+            <div class="fdesc">
+              Post-download: "Leave a review and earn 50 points." Increases
+              review volume on new products with zero reviews.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">226</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Revenue Forecasting Dashboard
+              (Admin)
+            </div>
+            <div class="fdesc">
+              ML-based MRR prediction for next 30/60/90 days. Forward-looking
+              not just historical. Based on growth + churn + seasonal patterns.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">227</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Buyer LTV Segmentation
+            </div>
+            <div class="fdesc">
+              Low/Medium/High/VIP segments by lifetime value. Different
+              retention strategies per segment. VIP buyers get personal email
+              from founder.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">228</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Product Performance Score (Admin)
+            </div>
+            <div class="fdesc">
+              Weekly automated score per product: views + conversion rate +
+              reviews + update frequency + support time + refund rate. Decides
+              featuring or delisting.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">229</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Traffic Source Heatmap
+            </div>
+            <div class="fdesc">
+              Countries + cities + referral sources vs revenue. Visualised as
+              world heatmap. Informs marketing spend allocation.
+            </div>
+          </div>
+        </div>
+        <div class="f new hot">
+          <span class="fnum">230</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>A/B Testing Framework
+            </div>
+            <div class="fdesc">
+              Test: pricing variants, button copy, hero messaging. Built-in
+              statistical significance calculator. Results before full rollout.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">231</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Template Preview API
+            </div>
+            <div class="fdesc">
+              3rd-party developers embed Web-Temify previews on their sites.
+              Returns preview URL, name, price, purchase link. Affiliates build
+              showcase pages.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">232</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Postman Collection for API
+            </div>
+            <div class="fdesc">
+              Pre-built Postman collection with all endpoints, examples,
+              responses. One-click import. Developers test full API in 5
+              minutes.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">233</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>API Versioning (/api/v1, /api/v2)
+            </div>
+            <div class="fdesc">
+              Old versions stay 12 months before deprecation. Documented
+              deprecation notices. Professional API management.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">234</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Webhook Testing Tool (Admin)
+            </div>
+            <div class="fdesc">
+              Send test webhook payloads to registered URLs without making a
+              real purchase. "Test" button in webhook config.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">235</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>SDK / Code Libraries
+            </div>
+            <div class="fdesc">
+              PHP SDK for license validation. JS SDK for AI generator embed.
+              Published on GitHub. Increases platform stickiness.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">236</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Uptime Monitoring + Status Page
+            </div>
+            <div class="fdesc">
+              UptimeRobot/BetterStack free tier. Status page auto-updated.
+              Subscribers get email/SMS on downtime. Enterprise buyer trust.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">237</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Database Health Dashboard
+            </div>
+            <div class="fdesc">
+              Admin sees: slow queries, table sizes, index health, query
+              count/hour. Proactive performance monitoring at scale.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">238</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Audit Log Export (CSV/JSON)
+            </div>
+            <div class="fdesc">
+              Full activity log exportable for any date range. Required for
+              compliance audits, fraud investigations, dispute resolution.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">239</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Changelog Subscription
+            </div>
+            <div class="fdesc">
+              Users subscribe to platform changelog separately from newsletter.
+              Developer audience loves this. Builds anticipation.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 32 -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-2">Group 32 — New</span>
+        <div class="gt">Product-Led Growth & Onboarding</div>
+        <span class="gc">8 items · 240–247</span>
+      </div>
+      <div class="fgrid">
+        <div class="f new hot">
+          <span class="fnum">240</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span
+              ><span class="tag tp">High Impact</span>Interactive Onboarding
+              Walkthroughs
+            </div>
+            <div class="fdesc">
+              New user guided through key features: upload template, browse
+              marketplace, set up vendor account. Interactive tooltips +
+              hotspots. Reduces drop-off by 40%. Research: 80% of conversions
+              happen during onboarding.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">241</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Feature Discovery Tooltips
+            </div>
+            <div class="fdesc">
+              Contextual tooltips appear when user first encounters a feature.
+              "This is your earnings wallet. Withdraw anytime." Distributed over
+              time not all at once.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">242</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Progress-Based Onboarding Checklist
+            </div>
+            <div class="fdesc">
+              New vendor: "Complete your profile (✓) → Upload first product (○)
+              → Set payout method (○) → Go live." Visual progress. Completion
+              unlocks Founding Vendor badge.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">243</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Time-to-Value Optimisation
+            </div>
+            <div class="fdesc">
+              New buyer sees a browseable product within 60 seconds of
+              registration. No friction between signup and first value moment.
+              Onboarding designed around outcomes not features.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">244</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>In-App Announcement System
+              (User-Specific)
+            </div>
+            <div class="fdesc">
+              Targeted announcements per segment: "This goes to Pro subscribers
+              only." "This goes to vendors with 0 sales." Personalised in-app
+              without email.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">245</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Public API Status Feed (RSS + JSON)
+            </div>
+            <div class="fdesc">
+              Developers building on Web-Temify API subscribe to API status
+              feed. Maintenance windows published. Standard for developer-first
+              platforms.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">246</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span><span class="tag ti">AI</span>Live
+              Demo / Video Showcase Per Template
+            </div>
+            <div class="fdesc">
+              Short shoppable video demo on each template card. Vendor records
+              60-second walkthrough. Hosted on Supabase. Video commerce
+              converting 66% better than static images.
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">247</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>Staged Deployment Checklist (Admin)
+            </div>
+            <div class="fdesc">
+              Pre-production: run migrations → clear cache → test gateways →
+              verify crons → check error logs. One-click execute each step.
+              Prevents deployment disasters.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUPS 33-34: Products and Automation -->
+    <div class="group">
+      <div class="gh">
+        <span class="gb gb-4">Groups 33–34</span>
+        <div class="gt">Template & Script Products + AI Automation Engine</div>
+        <span class="gc">47 items · 248–294</span>
+      </div>
+      <div class="fgrid">
+        <div class="f hot">
+          <span class="fnum">248–253</span>
+          <div>
+            <div class="fname">
+              <span class="tag tp">Tier 1 — Build First (6 products)</span>
+            </div>
+            <div class="fdesc">
+              Courier/Logistics ($99–$199) · Loan/Lending ($99–$249) ·
+              NeoBank/Digital Banking ($99–$299) · Digital Agency ($49–$99) ·
+              SaaS Landing Page ($49–$99) · Portfolio/Freelancer ($29–$79)
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">254–265</span>
+          <div>
+            <div class="fname">Tier 2 — Medium Term (12 products)</div>
+            <div class="fdesc">
+              P2P Crypto Script ($299–$799) · Online Banking Script ($199–$499)
+              · Loan Management Script ($199–$499) · NFT Marketplace ($99–$249)
+              · Real Estate ($79–$199) · Invoice/Billing Script ($149–$399) ·
+              E-commerce ($79–$199) · Restaurant ($79–$199) · Hospital
+              ($79–$199) · School ($79–$199) · SaaS Dashboard ($99–$249) · POS
+              Script ($149–$399)
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">266–281</span>
+          <div>
+            <div class="fname">Tier 3 — Later (16 products)</div>
+            <div class="fdesc">
+              CEX Lite ($499–$999) · DeFi Dashboard ($199–$499) · Fleet
+              Management ($199–$499) · Crowdfunding Script ($199–$499) · Crypto
+              Trading Dashboard ($99–$249) · Web3 dApp Landing ($79–$199) ·
+              Blockchain Agency ($79–$199) · Token/ICO Script ($149–$399) ·
+              Event Ticketing ($99–$249) · Multi-Vendor Marketplace ($299–$799)
+              · DAO Governance ($99–$249) · LMS Lite ($149–$399) · Pharmacy
+              ($79–$179) · Construction ($59–$149) · Travel ($59–$149) ·
+              Ajo/Esusu Script ($149–$399)
+            </div>
+          </div>
+        </div>
+        <div class="f hot">
+          <span class="fnum">282–285</span>
+          <div>
+            <div class="fname">
+              <span class="tag tp">Tier 4 — Launch Kits (4 bundles)</span>
+            </div>
+            <div class="fdesc">
+              SaaS Starter Kit ($299) · Web3 DApp Kit ($399) · Fintech Launch
+              Kit ($349) · Agency Starter Kit ($249)
+            </div>
+          </div>
+        </div>
+        <div class="f">
+          <span class="fnum">286–291</span>
+          <div>
+            <div class="fname">
+              <span class="tag ta">Africa</span>Tier 5 — Africa Niche (6
+              products)
+            </div>
+            <div class="fdesc">
+              Islamic Finance/Halal Banking ($99–$249) · Agritech/Farm
+              Marketplace ($79–$179) · ISP & Telecom ($79–$179) · Solar Energy
+              ($79–$179) · Ride-Hailing Landing ($59–$149) · Ajo/Esusu Script
+              ($149–$399)
+            </div>
+          </div>
+        </div>
+        <div class="f new">
+          <span class="fnum">292–294</span>
+          <div>
+            <div class="fname">
+              <span class="tag tn">New</span>AI Automation Engine (3 items)
+            </div>
+            <div class="fdesc">
+              Python + Claude Sonnet content orchestrator · Blog post generator
+              (1500w SEO posts → drafts → cron) · Directory auto-populator
+              (Product Hunt + GitHub + RSS → draft listings)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div
+      style="
+        background: var(--ink);
+        color: #fff;
+        border-radius: 8px;
+        padding: 2rem;
+        margin-top: 2rem;
+      "
+    >
+      <div
+        style="
+          font-size: 0.72rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          color: var(--yellow);
+          margin-bottom: 1.25rem;
+        "
+      >
+        Complete Summary — All Items
+      </div>
+      <div class="summary-grid">
+        <div class="sg">
+          <span class="sgn">332</span><span class="sgl">Total Features</span>
+        </div>
+        <div class="sg">
+          <span class="sgn">113</span><span class="sgl">Already Built</span>
+        </div>
+        <div class="sg">
+          <span class="sgn">219</span><span class="sgl">To Build</span>
+        </div>
+        <div class="sg">
+          <span class="sgn">34</span><span class="sgl">Feature Groups</span>
+        </div>
+        <div class="sg">
+          <span class="sgn">44</span><span class="sgl">Products</span>
+        </div>
+        <div class="sg">
+          <span class="sgn">6</span><span class="sgl">Pay Gateways</span>
+        </div>
+      </div>
+
+      <div
+        style="
+          font-size: 0.72rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: var(--yellow);
+          margin-bottom: 0.75rem;
+        "
+      >
+        Build Phases
+      </div>
+      <div class="phases">
+        <div class="phase">
+          <div class="pn">Phase 1 · Week 1–2</div>
+          <div class="pt">Deploy & Go Live</div>
+          <div class="pi">
+            Deploy PHP platform · .htaccess URL rewriting · Supabase storage ·
+            Cloudflare CDN · Verify all 3 gateways · Homepage positioning · Go
+            live
+          </div>
+        </div>
+        <div class="phase">
+          <div class="pn">Phase 2 · Month 1–2</div>
+          <div class="pt">Revenue Foundation</div>
+          <div class="pi">
+            Vendor system · License key system · Directory hub (10 cats) ·
+            Services/leads → Tinlance · Fraud prevention · Mobile Money ·
+            Instant payouts · Chargeback protection
+          </div>
+        </div>
+        <div class="phase">
+          <div class="pn">Phase 3 · Month 2–4</div>
+          <div class="pt">Growth Engine</div>
+          <div class="pi">
+            Gamification · Social login · AI page generator · Community forum ·
+            Courses builder · Launch kits · Advanced analytics · Buyer-vendor
+            messaging · Vendor wallet · B2B features
+          </div>
+        </div>
+        <div class="phase">
+          <div class="pn">Phase 4 · Month 4–8</div>
+          <div class="pt">Scale & Automate</div>
+          <div class="pi">
+            Python automation engine · Programmatic SEO · Mobile app iOS +
+            Android · BNPL · ProductHunt launches · Win-back campaigns · A/B
+            testing · Affiliate marketplace · Redis caching
+          </div>
+        </div>
+        <div class="phase">
+          <div class="pn">Phase 5 · Month 8–12</div>
+          <div class="pt">Enterprise & Global</div>
+          <div class="pi">
+            SOC 2 compliance · White-label platform · Merchant of Record · GDPR
+            CMP v2 · PO/NET30 support · Revenue advance · Vendor yield ·
+            Diaspora payments · USSD · SDK libraries
+          </div>
+        </div>
+      </div>
+
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+          font-size: 0.72rem;
+          opacity: 0.45;
+          font-family: &quot;DM Mono&quot;, monospace;
+          margin-top: 1.5rem;
+          padding-top: 1rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+        "
+      >
+        <span
+          >Web-Temify LTD · RC: 7999659 · Nigeria · Sister company: Tinlance
+          Limited RC: 7962164</span
+        >
+        <span
+          >Master Feature List v4.0 · May 2026 · 332 total items · 219 to
+          build</span
+        >
+        <span
+          >Paystack · Stripe · LemonSqueezy · MTN MoMo · BNPL · USDT/USDC
+          (NOWPayments)</span
+        >
+      </div>
+    </div>
+  </body>
 </html>

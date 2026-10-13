@@ -15,7 +15,7 @@ export async function getAdminContext(surface = "operations_dashboard") {
 
     const { data: isAdmin, error: roleError } = await session.rpc(
       "current_user_has_role",
-      { required_role: "admin" }
+      { required_role: "admin" },
     );
     if (roleError || isAdmin !== true) return null;
 
@@ -26,7 +26,7 @@ export async function getAdminContext(surface = "operations_dashboard") {
       entity_type: "admin_console",
       entity_id: "operations",
       request_id: randomUUID(),
-      metadata: { surface }
+      metadata: { surface },
     });
     // Administrative access is denied if the access audit cannot be persisted.
     if (auditError) return null;

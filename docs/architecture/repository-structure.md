@@ -17,4 +17,4 @@
 - tests/unit, integration, contract, security, e2e: layered quality gates.
 - pnpm-workspace.yaml and turbo.json: workspace and task orchestration.
 
-The root Next.js app remains the first deployable while apps/* and packages/* are supported. Moving it to apps/web is a separately validated structural migration, not a silent partial move.
+The root Next.js app remains the first deployable while apps/_ and packages/_ are supported. Moving it to apps/web is a separately validated structural migration, not a silent partial move.
