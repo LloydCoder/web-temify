@@ -11,7 +11,7 @@ Exit criteria:
 - [ ] Legacy documents reconciled after all planned legacy files are uploaded.
 - [x] Domain boundaries and Tinlance integration contract documented.
 - [x] Threat model and security baseline documented; formal review remains open.
-- [ ] Product areas have phase and maturity status in one canonical inventory, merged and validated in the product-source repository.
+- [x] Product areas have phase and maturity status in the canonical planned inventory, merged and validated in the product-source repository (43 entries; all still planned).
 - [x] No unresolved critical architectural contradiction in the canonical ADRs.
 
 ## Phase 1 — Repository and application skeleton
@@ -58,7 +58,7 @@ Provider adapters; signature verification against raw webhook bodies, idempotenc
 Least-privilege admin controls, moderation queues, support, audit review, financial reconciliation, observability, backup/restore rehearsal, incident response and safe break-glass access.
 
 ## Phase 6 — Seller system and product factory
-Vendor rights verification, quality gates, payout eligibility, disputes, artifact scanning, isolated builds/previews, product manifests, immutable artifacts, SBOM/provenance, product-specific CI and release evidence. The dedicated source monorepo is [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products); its bootstrap PR must pass CI before it becomes the merged inventory authority. Do not copy independent products into the marketplace app repository without an explicit migration decision.
+Vendor rights verification, quality gates, payout eligibility, disputes, artifact scanning, isolated builds/previews, product manifests, immutable artifacts, SBOM/provenance, product-specific CI and release evidence. The dedicated source monorepo is [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products); bootstrap PR #1 was merged after its frozen-install and catalogue-validation CI passed. Its 43-entry inventory is authoritative for planning only; no product-specific source builds or releases are implied. Do not copy independent products into the marketplace app repository without an explicit migration decision.
 
 ## Phase 7 — Tinlance integration
 Versioned authenticated APIs/events, capability scopes, tenant context, approvals, idempotency, audit, budgets, timeouts, kill switch and isolated execution. Start read-only/sandbox. Web-Temify remains the authority for publication, pricing, payments, refunds, entitlements, licenses and downloads.
