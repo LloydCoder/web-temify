@@ -21,6 +21,8 @@ Exit criteria:
 - [x] Clean checkout installs reproducibly with committed pnpm-lock.yaml and CI enforces --frozen-lockfile.
 - [x] Lint, typecheck, foundation tests, and production build passed in CI on the Phase 2 baseline commit.
 - [x] No secrets or local env files are present in the tracked tree.
+- [ ] Formatting check (`pnpm format:check`), high/critical dependency audit, dependency-review license policy, and full-history secret scanning pass on the exact candidate head.
+- [ ] The patched Next.js/React dependency graph has no unresolved high/critical advisories in the CI audit.
 - [ ] CI results are visible on PR; required checks are not yet enforced by repository rules (repository settings gate).
 - [x] Playwright validates semantic landmarks and horizontal overflow at 320px and 1440px; full WCAG 2.2 AA audit remains a launch gate.
 - [x] Unbuilt payment, AI, vendor, and agent capabilities are not shown as live.
