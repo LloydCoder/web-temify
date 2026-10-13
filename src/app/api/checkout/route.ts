@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { readBoundedRequestBody } from "@/server/commerce/read-bounded-body";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { getServerEnv } from "@/lib/env";
@@ -24,9 +25,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Sandbox checkout is not configured." }, { status: 503 });
   }
 
+  const boundedBody = await readBoundedRequestBody(request, 32 * 1024);
+  if (!boundedBody.ok) {
+    const tooLarge = boundedBody.reason === "too_large";
+    return NextResponse.json(
+      { error: tooLarge ? "Request body is too large." : "Invalid request body." },
+      { status: tooLarge ? 413 : 400 }
+    );
+  }
   let input: unknown;
   try {
-    input = await request.json();
+    input = JSON.parse(boundedBody.body);
   } catch {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
