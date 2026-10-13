@@ -72,8 +72,10 @@ export async function POST(request: Request) {
     if (priorError) return NextResponse.json({ error: "Unable to retrieve the existing payment attempt." }, { status: 503 });
 
     let attemptId: string;
+    let attemptStatus: string;
     if (priorAttempt) {
       attemptId = priorAttempt.id;
+      attemptStatus = priorAttempt.status;
     } else {
       const { data: attempt, error: attemptError } = await admin
         .from("payment_attempts")
@@ -87,13 +89,28 @@ export async function POST(request: Request) {
         .select("id,status")
         .single();
       if (attemptError || !attempt) {
-        return NextResponse.json({ error: "Unable to create the payment attempt." }, { status: 409 });
+        // A concurrent request may have won the unique active-attempt constraint.
+        // Re-read that attempt rather than creating a second charge or failing a safe retry.
+        const { data: racedAttempt, error: racedError } = await admin
+          .from("payment_attempts")
+          .select("id,status")
+          .eq("order_id", order.order_id)
+          .eq("provider", "sandbox")
+          .in("status", ["created", "pending"])
+          .maybeSingle();
+        if (racedError || !racedAttempt) {
+          return NextResponse.json({ error: "Unable to create the payment attempt." }, { status: 409 });
+        }
+        attemptId = racedAttempt.id;
+        attemptStatus = racedAttempt.status;
+      } else {
+        attemptId = attempt.id;
+        attemptStatus = attempt.status;
       }
-      attemptId = attempt.id;
-      if (attempt.status === "created") {
-        const { error: pendingError } = await admin.from("payment_attempts").update({ status: "pending" }).eq("id", attempt.id);
-        if (pendingError) return NextResponse.json({ error: "Unable to start the sandbox payment attempt." }, { status: 503 });
-      }
+    }
+    if (attemptStatus === "created") {
+      const { error: pendingError } = await admin.from("payment_attempts").update({ status: "pending" }).eq("id", attemptId);
+      if (pendingError) return NextResponse.json({ error: "Unable to start the sandbox payment attempt." }, { status: 503 });
     }
 
     return NextResponse.json({
