@@ -1,5 +1,5 @@
 begin;
-select plan(18);
+select plan(21);
 
 select has_column('public', 'products', 'summary', 'products have a bounded summary field');
 select has_column('public', 'products', 'compatibility', 'products carry structured compatibility metadata');
@@ -30,7 +30,8 @@ on conflict (id) do nothing;
 insert into public.products (id, creator_id, category_id, slug, name, summary, description, product_type, status, rights_status, rights_verified_at, rights_verified_by, artifact_sha256)
 values
  ('73000000-0000-4000-8000-000000000073', '71000000-0000-4000-8000-000000000071', '72000000-0000-4000-8000-000000000072', 'phase3-verified-product', 'Phase 3 Verified Product', 'Approved fixture', 'Synthetic fixture used only by database tests.', 'template', 'published', 'verified', now(), '75000000-0000-4000-8000-000000000075', repeat('a', 64)),
- ('74000000-0000-4000-8000-000000000074', '71000000-0000-4000-8000-000000000071', '72000000-0000-4000-8000-000000000072', 'phase3-unverified-product', 'Phase 3 Unverified Product', 'Unapproved fixture', 'Synthetic fixture used only by database tests.', 'template', 'published', 'declared', null, null, repeat('b', 64))
+ ('74000000-0000-4000-8000-000000000074', '71000000-0000-4000-8000-000000000071', '72000000-0000-4000-8000-000000000072', 'phase3-unverified-product', 'Phase 3 Unverified Product', 'Unapproved fixture', 'Synthetic fixture used only by database tests.', 'template', 'published', 'declared', null, null, repeat('b', 64)),
+ ('76000000-0000-4000-8000-000000000076', '71000000-0000-4000-8000-000000000071', '72000000-0000-4000-8000-000000000072', 'phase3-draft-product', 'Phase 3 Draft Product', 'Draft fixture', 'Synthetic draft fixture used only by database tests.', 'template', 'draft', 'unverified', null, null, null)
 on conflict (id) do nothing;
 
 insert into public.product_rights_attestations (product_id, attested_by, rights_basis, statement, evidence_reference, review_status, reviewed_by, reviewed_at)
@@ -42,7 +43,24 @@ values ('73000000-0000-4000-8000-000000000073', '1.0.0', 'released', 'Synthetic 
 on conflict (product_id, version) do nothing;
 
 set local role anon;
-select is((select count(*) from public.products where slug like 'phase3-%'), 1::bigint, 'public catalogue excludes products without verified rights');
+select is((select count(*) from public.products where slug like 'phase3-%'), 1::bigint, 'public catalogue excludes products without verified rights and release evidence');
+reset role;
+
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '71000000-0000-4000-8000-000000000071', true);
+insert into public.product_rights_attestations (product_id, attested_by, rights_basis, statement, review_status)
+values ('76000000-0000-4000-8000-000000000076', '71000000-0000-4000-8000-000000000071', 'original_work', 'I created this synthetic test product and have rights to distribute it.', 'declared');
+select is((select count(*) from public.product_rights_attestations where product_id = '76000000-0000-4000-8000-000000000076' and review_status = 'declared'), 1::bigint, 'creator can submit a declaration for their own draft');
+select throws_ok(
+  $sql$insert into public.product_rights_attestations (product_id, attested_by, rights_basis, statement, review_status, reviewed_by, reviewed_at)
+  values ('76000000-0000-4000-8000-000000000076', '71000000-0000-4000-8000-000000000071', 'original_work', 'Attempted self-verification of a synthetic test product.', 'verified', '75000000-0000-4000-8000-000000000075', now())$sql$,
+  '42501', null, 'creator cannot self-verify a rights declaration'
+);
+select throws_ok(
+  $sql$insert into public.product_versions (product_id, version, release_state, release_notes, artifact_sha256, artifact_storage_path, manifest, compatibility, created_by, released_at)
+  values ('76000000-0000-4000-8000-000000000076', '1.0.0', 'released', 'Attempted direct release', repeat('c', 64), 'private/phase3/forged-release.zip', '{}'::jsonb, '{}'::jsonb, '71000000-0000-4000-8000-000000000071', now())$sql$,
+  '42501', null, 'creator cannot insert a released version directly'
+);
 reset role;
 
 select * from finish();
