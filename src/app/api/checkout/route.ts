@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { getServerEnv } from "@/lib/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -81,7 +82,7 @@ export async function POST(request: Request) {
           provider: "sandbox",
           amount_minor: order.total_minor,
           currency: order.currency,
-          idempotency_key: `checkout:${parsed.data.idempotencyKey}`
+          idempotency_key: `checkout:${order.order_id}:${randomUUID()}`
         })
         .select("id,status")
         .single();
