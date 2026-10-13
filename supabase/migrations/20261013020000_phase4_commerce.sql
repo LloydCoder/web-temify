@@ -68,7 +68,7 @@ create table public.payment_webhook_events (
     check (processing_status in ('received', 'processing', 'processed', 'ignored', 'failed')),
   order_id uuid references public.orders(id) on delete restrict,
   payment_attempt_id uuid references public.payment_attempts(id) on delete restrict,
-  refund_id uuid references public.refunds(id) on delete restrict,
+  refund_id uuid,
   retry_count integer not null default 0 check (retry_count between 0 and 100),
   failure_code text check (failure_code is null or char_length(failure_code) <= 120),
   received_at timestamptz not null default now(),
@@ -102,6 +102,9 @@ create unique index refunds_provider_reference_uq
   where provider_refund_reference is not null;
 create index refunds_order_idx on public.refunds (order_id, created_at desc);
 
+alter table public.payment_webhook_events
+  add constraint payment_webhook_refund_fk foreign key (refund_id) references public.refunds(id) on delete restrict;
+
 -- One row is one balanced double-entry transfer: the same amount is debited and credited.
 -- This journal is append-only and is not readable by customer-facing roles.
 create table public.ledger_transactions (
@@ -125,6 +128,60 @@ create table public.ledger_transactions (
   )
 );
 create index ledger_transactions_order_idx on public.ledger_transactions (order_id, created_at);
+
+create function public.validate_ledger_transaction()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  payment_row public.payment_attempts%rowtype;
+  refund_row public.refunds%rowtype;
+  order_row public.orders%rowtype;
+begin
+  if new.source_type = 'payment' then
+    select * into payment_row from public.payment_attempts where id = new.payment_attempt_id;
+    select * into order_row from public.orders where id = new.order_id;
+    if payment_row.id is null or order_row.id is null
+      or payment_row.status <> 'succeeded'
+      or payment_row.order_id <> new.order_id
+      or payment_row.amount_minor <> new.amount_minor
+      or payment_row.currency <> new.currency
+      or order_row.total_minor <> new.amount_minor
+      or order_row.currency <> new.currency
+      or not exists (
+        select 1 from public.payment_webhook_events we
+        where we.payment_attempt_id = payment_row.id and we.order_id = order_row.id
+          and we.provider = payment_row.provider and we.event_type = 'payment.succeeded'
+          and we.signature_verified and we.processing_status in ('processing', 'processed')
+      ) then
+      raise exception using errcode = '23514', message = 'payment ledger entry requires a verified successful payment matching the order';
+    end if;
+  elsif new.source_type = 'refund' then
+    select * into refund_row from public.refunds where id = new.refund_id;
+    if refund_row.id is null or refund_row.status not in ('pending', 'succeeded')
+      or refund_row.order_id <> new.order_id
+      or refund_row.payment_attempt_id is distinct from new.payment_attempt_id
+      or refund_row.amount_minor <> new.amount_minor
+      or refund_row.currency <> new.currency
+      or not exists (
+        select 1 from public.payment_webhook_events we
+        where we.refund_id = refund_row.id and we.order_id = refund_row.order_id
+          and we.payment_attempt_id = refund_row.payment_attempt_id
+          and we.event_type = 'refund.succeeded' and we.signature_verified
+          and we.processing_status in ('processing', 'processed')
+      ) then
+      raise exception using errcode = '23514', message = 'refund ledger entry requires a verified successful refund matching the refund record';
+    end if;
+  end if;
+  return new;
+end;
+$function$;
+revoke all on function public.validate_ledger_transaction() from public, anon, authenticated, service_role;
+create trigger ledger_transactions_guard before insert on public.ledger_transactions
+for each row execute function public.validate_ledger_transaction();
+
 
 create table public.entitlements (
   id uuid primary key default gen_random_uuid(),
@@ -378,6 +435,28 @@ begin
     if new.status <> 'requested' then
       raise exception using errcode = '23514', message = 'refunds must begin requested';
     end if;
+    declare
+      order_row public.orders%rowtype;
+      payment_row public.payment_attempts%rowtype;
+      reserved_minor bigint;
+    begin
+      select * into order_row from public.orders where id = new.order_id for update;
+      select * into payment_row from public.payment_attempts where id = new.payment_attempt_id;
+      if order_row.id is null or payment_row.id is null
+        or order_row.status not in ('paid', 'partially_refunded')
+        or payment_row.order_id <> order_row.id
+        or payment_row.status not in ('succeeded', 'partially_refunded')
+        or payment_row.currency <> new.currency
+        or order_row.currency <> new.currency then
+        raise exception using errcode = '23514', message = 'refund must match a paid order and successful payment';
+      end if;
+      select coalesce(sum(r.amount_minor), 0) into reserved_minor
+      from public.refunds r
+      where r.order_id = new.order_id and r.status in ('requested', 'pending', 'succeeded');
+      if reserved_minor + new.amount_minor > order_row.total_minor then
+        raise exception using errcode = '23514', message = 'refund amount exceeds remaining refundable order balance';
+      end if;
+    end;
     return new;
   end if;
   if new.order_id is distinct from old.order_id
