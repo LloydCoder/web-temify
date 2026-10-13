@@ -117,6 +117,20 @@ Phase 4B — server-side commerce workflows (implementation in progress):
 **Phase 4B limitations:** the only adapter is a non-production sandbox; there is no live payment provider, tax calculation, zero-value/free checkout, seller payout, commission accounting, refund execution, or production download enablement. Provider selection must follow jurisdiction/payout eligibility and sandbox verification. Production launch remains blocked until these gaps and the Phase 5–8 gates are completed.
 
 ## Phase 5 — Admin and operations
+
+### Phase 5A forensic audit record
+
+- **Disposition:** PASS for the read-only admin-console scope only; this is not a complete operations centre or production-readiness approval.
+- **PR:** [#12 — feat: add read-only admin operations console and audit gates](https://github.com/LloydCoder/web-temify/pull/12).
+- **Validated implementation head:** `0c83f1601225e1797d555dff82bd2e4ab9260868`.
+- **CI evidence:** [Foundation CI run 38441726101](https://github.com/LloydCoder/web-temify/actions/runs/38441726101), run 108, passed on the exact implementation head. Frozen dependency installation, foundation/domain tests, typecheck, lint, empty-database migration reset, Supabase schema lint, pgTAP/RLS tests, Playwright E2E, production build, and cleanup all succeeded.
+- **Files reviewed:** `src/app/admin/page.tsx`; `src/server/admin/authorization.ts`; `supabase/migrations/20261013030000_phase5_admin_audit_privileges.sql`; `supabase/tests/phase5_admin_access.test.sql`; `tests/e2e/admin-access.spec.ts`; admin operations documentation; and the full Foundation CI workflow.
+- **Authorization invariants:** server-side Supabase Auth `getUser()` validates the principal; the database-owned role predicate must return true before the privileged client is constructed; missing configuration, auth/role errors, non-admin identities, and audit-persistence failures fail closed; every authorized console view appends an audit record before privileged metrics are queried.
+- **Audit integrity:** ordinary client roles cannot read or forge audit rows; update/delete are not granted; the pgTAP suite covers RLS, append-only privileges, role checks and role elevation denial.
+- **E2E finding and correction:** the first E2E assertion required HTTP 404, but Next.js may return HTTP 200 when `notFound()` is rendered after streaming starts. The corrected test verifies the rendered not-found UI and confirms no admin heading, catalogue metrics or audit activity is exposed to unauthenticated visitors. This tests the authorization outcome rather than a streaming-sensitive status code.
+- **Explicit limits:** the console is read-only. Moderation mutations, support case workflows, provider/settlement reconciliation, disputes and chargebacks, alert delivery, backup restoration drills, incident-response automation, and break-glass governance remain incomplete. Counts are not proof of settlement or financial correctness. Production Supabase/Vercel configuration, legal/tax review, penetration testing, and full WCAG 2.2 AA verification remain separate gates.
+- **Gate decision:** Phase 5A passes only for the read-only visibility and audit scope. Phase 5 overall remains in progress.
+
 Least-privilege admin controls, moderation queues, support, audit review, financial reconciliation, observability, backup/restore rehearsal, incident response and safe break-glass access.
 
 ## Phase 6 — Seller system and product factory
