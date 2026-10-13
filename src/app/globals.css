@@ -33,3 +33,17 @@
 .admin-review-feedback { margin:0; font-size:.875rem; }
 .admin-review-feedback[data-kind="error"] { color:#a32d1b; }
 .admin-review-feedback[data-kind="success"] { color:#17623a; }
+
+.admin-audit-nav { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:10px; }
+.admin-audit-filters { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-block:0 24px; padding:20px; border:1.5px solid var(--border); background:var(--card); }
+.admin-audit-filters label { display:grid; gap:6px; font-size:.85rem; font-weight:800; min-width:0; }
+.admin-audit-filters input { width:100%; min-height:44px; padding:10px 12px; border:1.5px solid var(--border); background:var(--background); color:var(--foreground); font:inherit; }
+.admin-audit-filter-actions { display:flex; flex-wrap:wrap; align-items:center; gap:10px; grid-column:1 / -1; }
+.admin-audit-count { color:var(--muted); font-size:.9rem; }
+.admin-audit-record { align-items:flex-start; }
+.admin-audit-record-main { min-width:0; flex:1; }
+.admin-audit-record h2 { margin:.25rem 0; font-size:1.1rem; overflow-wrap:anywhere; }
+.admin-audit-record p { overflow-wrap:anywhere; }
+.admin-audit-record code { overflow-wrap:anywhere; }
+.admin-audit-pagination { display:flex; justify-content:flex-end; padding-block:18px 40px; }
+@media(max-width:680px) { .admin-audit-nav { justify-content:flex-start; } .admin-audit-filters { grid-template-columns:1fr; } .admin-audit-filter-actions { grid-column:auto; } }
