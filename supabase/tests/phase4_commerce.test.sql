@@ -143,7 +143,7 @@ select throws_ok(
   '23502', null, 'signature verification must be explicitly asserted by the trusted ingress'
 );
 insert into public.payment_webhook_events (
-  id, provider, provider_event_id, event_type, payload_sha256, order_id, payment_attempt_id
+  id, provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id
 ) values (
   '91000000-0000-4000-8000-000000000091', 'sandbox', 'phase4-payment-event-0001',
   'payment.succeeded', repeat('d', 64), true, '88000000-0000-4000-8000-000000000088',
@@ -294,7 +294,7 @@ values (
 );
 update public.refunds set status = 'pending' where id = '96000000-0000-4000-8000-000000000096';
 insert into public.payment_webhook_events (
-  id, provider, provider_event_id, event_type, payload_sha256, order_id, payment_attempt_id, refund_id
+  id, provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id, refund_id
 ) values (
   '97000000-0000-4000-8000-000000000097', 'sandbox', 'phase4-refund-event-0002',
   'refund.succeeded', repeat('a', 64), true, '88000000-0000-4000-8000-000000000088',
