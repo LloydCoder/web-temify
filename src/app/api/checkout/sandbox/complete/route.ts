@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { readBoundedRequestBody } from "@/server/commerce/read-bounded-body";
 import { z } from "zod";
 import { getServerEnv } from "@/lib/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -17,8 +18,20 @@ export async function POST(request: Request) {
   const secret = env.PAYMENT_WEBHOOK_SECRET ?? "";
   if (secret.length < 32) return NextResponse.json({ error: "Sandbox checkout is not configured." }, { status: 503 });
 
+  const boundedBody = await readBoundedRequestBody(request, 32 * 1024);
+  if (!boundedBody.ok) {
+    const tooLarge = boundedBody.reason === "too_large";
+    return NextResponse.json(
+      { error: tooLarge ? "Request body is too large." : "Invalid request body." },
+      { status: tooLarge ? 413 : 400 }
+    );
+  }
   let body: unknown;
-  try { body = await request.json(); } catch { return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 }); }
+  try {
+    body = JSON.parse(boundedBody.body);
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+  }
   const parsed = CompleteSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Invalid payment attempt." }, { status: 400 });
 
