@@ -1,5 +1,5 @@
 begin;
-select plan(50);
+select plan(52);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -160,6 +160,10 @@ values (
   '87000000-0000-4000-8000-000000000087'
 );
 select is((select count(*) from public.entitlements where customer_id = '82000000-0000-4000-8000-000000000082' and status = 'active'), 1::bigint, 'paid order can grant an active entitlement');
+select throws_ok(
+  $sql$update public.entitlements set customer_id = '84000000-0000-4000-8000-000000000084' where id = '92000000-0000-4000-8000-000000000092'$sql$,
+  '23514', null, 'entitlement ownership cannot be reassigned after purchase'
+);
 
 insert into public.download_grants (
   id, entitlement_id, customer_id, product_version_id, artifact_sha256, expires_at, max_downloads
@@ -266,5 +270,10 @@ update public.orders set status = 'refunded'
 where id = '88000000-0000-4000-8000-000000000088';
 select is((select status from public.orders where id = '88000000-0000-4000-8000-000000000088'), 'refunded', 'full refund requires the complete verified refund total');
 select is((select count(*) from public.ledger_transactions where order_id = '88000000-0000-4000-8000-000000000088'), 3::bigint, 'payment and both refunds are preserved as immutable ledger entries');
+update public.entitlements set status = 'revoked', revoked_at = now() where id = '92000000-0000-4000-8000-000000000092';
+select throws_ok(
+  $sql$update public.entitlements set status = 'active', revoked_at = null where id = '92000000-0000-4000-8000-000000000092'$sql$,
+  '23514', null, 'revoked entitlements cannot be reactivated'
+);
 select * from finish();
 rollback;
