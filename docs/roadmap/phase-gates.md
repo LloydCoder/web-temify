@@ -69,18 +69,29 @@ Exit criteria:
 ## Phase 4 — Commerce and secure delivery (in progress)
 Scope: server-owned orders and item snapshots, provider-neutral payment attempts, verified-event inbox, idempotent financial ledger, refunds, paid-order entitlements, and private-download authorization. Provider integrations remain disabled until business eligibility, jurisdiction coverage, fees, webhook semantics, and payout settlement are verified. Chargeback and manual-adjustment ledger sources are explicitly rejected until a dedicated evidence-backed state machine and accounting policy are implemented; unsupported financial states must fail closed. The current ledger only records gross payment/refund transfer evidence and is not a complete commission, seller-payable, tax, or provider-settlement accounting model.
 
-Phase 4A — database invariants:
-- [ ] Orders and item snapshots are immutable and price/currency/release evidence is revalidated at insertion.
-- [ ] Payment attempts cannot alter order amount/currency and cannot become successful without a verified provider event.
-- [ ] Orders cannot become paid without a processed verified success event and matching append-only ledger entry.
-- [ ] The event inbox requires an explicit `signature_verified` assertion, stores only a SHA-256 payload digest (no raw payload), and deduplicates provider event IDs. Provider-specific cryptographic raw-body verification and durable retry processing are Phase 4B requirements, not implemented by this schema migration.
-- [ ] Ledger rows are append-only balanced debit/credit transfers with unique idempotency references.
-- [ ] Refund amounts are reserved under order locking, cannot exceed the remaining balance, and require verified refund evidence and ledger entries.
-- [ ] Entitlements require a paid order and matching release snapshot.
-- [ ] Download grants contain no storage path or signed URL; access consumption is atomic, bounded, time-limited, and checks entitlement/order/release state.
-- [ ] Customer RLS isolates orders, line items, payment attempts, refunds, and entitlements; financial internals are not client-readable.
-- [ ] Empty-database migration reset, adversarial SQL tests, unit/domain tests, typecheck, lint, Playwright and production build pass on one head SHA.
-- [ ] Phase 4 forensic audit records exact code, migration, test and CI evidence plus remaining launch risks.
+Phase 4A — database invariants (implementation and CI verified; phase-specific audit recorded below):
+- [x] Orders and item snapshots are protected by server-only write grants; item insertion revalidates verified rights, released artifact digest, seller, price, currency, version, and release evidence.
+- [x] Payment attempts cannot alter order amount/currency and cannot become successful without a verified provider event.
+- [x] Orders cannot become paid without a processed verified success event and matching append-only ledger entry.
+- [x] The event inbox requires an explicit `signature_verified` assertion, stores only a SHA-256 payload digest (no raw payload), and deduplicates provider event IDs. Provider-specific cryptographic raw-body verification and durable retry processing are Phase 4B requirements, not implemented by this schema migration.
+- [x] Ledger rows are append-only balanced debit/credit transfers with unique idempotency references; unsupported chargeback/manual-adjustment sources fail closed.
+- [x] Refund amounts are reserved under order locking, cannot exceed the remaining balance, and require verified refund evidence and ledger entries.
+- [x] Entitlements require a paid order and matching purchase/release snapshot.
+- [x] Download grants contain no storage path or signed URL; access consumption is atomic, bounded, time-limited, and rechecks entitlement/order/release state.
+- [x] Customer RLS isolates orders, line items, payment attempts, refunds, and entitlements; financial internals are not client-readable.
+- [x] Empty-database migration reset, schema lint, 70 pgTAP assertions, foundation/domain tests, typecheck, lint, Playwright, production build, and service cleanup passed on the reviewed PR head SHA.
+- [x] Phase-specific forensic review recorded with exact code, migration, test and CI evidence plus remaining launch risks.
+
+### Phase 4A forensic audit record
+
+- **Disposition:** PASS for the database-invariant scope only; NOT a live commerce or launch-readiness approval.
+- **PR/head:** [#10 — feat: establish Phase 4A commerce and secure-delivery invariants](https://github.com/LloydCoder/web-temify/pull/10), reviewed head `281faeb794e1462bd8970f9f58bd76e735937999`.
+- **CI evidence:** [Foundation CI run 38425784286](https://github.com/LloydCoder/web-temify/actions/runs/38425784286) completed successfully on that exact head. All 17 substantive and post-job steps succeeded: frozen pnpm install; foundation/domain tests; TypeScript; lint; Supabase CLI; local services; empty-database migration reset; database schema lint; pgTAP/RLS tests; Playwright; production build; and Supabase cleanup.
+- **Files reviewed:** `supabase/migrations/20261013020000_phase4_commerce.sql`; `supabase/tests/phase4_commerce.test.sql`; `.github/workflows/ci.yml`; `supabase/migrations/README.md`; `docs/roadmap/phase-gates.md`.
+- **Database invariants reviewed:** server-owned order/item snapshots; order subtotal equals item totals; current price/currency and independently verified release evidence are revalidated; payment attempts match order amount/currency and have constrained transitions; event identity and provider references are immutable; event IDs and ledger source postings are idempotently unique; order paid-state requires a processed verified success event and matching ledger transfer; refunds are reserved under an order lock and capped to refundable order value; entitlement creation requires a paid matching order; download grants are short-lived and bounded; consumption atomically rechecks current entitlement, order, and release state; customer policies and column grants restrict financial details.
+- **Adversarial test evidence:** 70 pgTAP assertions cover table/RLS setup, client privilege denial, amount mismatches, invalid transitions, missing/false verification assertions, provider/order mismatch, duplicate provider events and ledger posts, premature entitlements, refund/download boundaries, owner/non-owner isolation, atomic download consumption, and append-only restrictions.
+- **Residual risks and explicit non-claims:** `signature_verified` is a trusted-ingress assertion, not cryptographic proof by this migration; no raw-body provider signature verifier, checkout/order-creation API, durable webhook worker, provider sandbox integration, signed-URL issuer, seller payout/commission/tax/settlement accounting, chargeback workflow, production Supabase/Vercel configuration, formal penetration test, or full WCAG 2.2 AA audit is delivered here. The ledger is gross payment/refund transfer evidence only. These are later gates and must remain disabled/unclaimed until separately implemented and verified.
+- **Gate decision:** Phase 4A may merge after the final CI re-run on the documentation-updated head and repeat review. Phase 4 as a whole remains in progress.
 
 Phase 4B — server-side order creation/checkout, provider adapters with raw-body signature verification, durable webhook processing, refund orchestration, and private-storage signed URL issuance — remains unimplemented.
 
