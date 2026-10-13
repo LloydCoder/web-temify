@@ -261,6 +261,12 @@ begin
   ) then
     raise exception using errcode = '23514', message = 'invalid order status transition';
   end if;
+  if new.status = 'cancelled' and exists (
+    select 1 from public.payment_attempts pa
+    where pa.order_id = new.id and pa.status in ('created', 'pending')
+  ) then
+    raise exception using errcode = '23514', message = 'an order cannot be cancelled while a payment attempt is active';
+  end if;
   if new.status = 'paid' and not exists (
     select 1
     from public.payment_attempts pa
@@ -708,6 +714,7 @@ as $function$
 begin
   if new.downloads_used <> 0 or new.revoked_at is not null
     or new.issued_at > now()
+    or new.expires_at <= now()
     or new.expires_at > now() + interval '15 minutes'
     or not exists (
       select 1
