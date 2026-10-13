@@ -8,7 +8,7 @@ Scope: confirm product boundaries and launch scope; reconcile existing docs and 
 Exit criteria:
 - [ ] Product scope and initial release scope approved.
 - [x] Architecture decisions recorded, including migration ownership.
-- [ ] Legacy documents reconciled after all planned legacy files are uploaded.
+- [x] Legacy documents in the 2026-10-13 repository snapshot audited and labelled historical/non-canonical; future uploads follow the reconciliation protocol in `docs/governance/legacy-reconciliation.md`.
 - [x] Domain boundaries and Tinlance integration contract documented.
 - [x] Threat model and security baseline documented; formal review remains open.
 - [x] Product areas have phase and maturity status in the canonical planned inventory, merged and validated in the product-source repository (43 entries; all still planned).
@@ -24,7 +24,7 @@ Exit criteria:
 - [ ] CI results are visible on PR; required checks are not yet enforced by repository rules (repository settings gate).
 - [x] Playwright validates semantic landmarks and horizontal overflow at 320px and 1440px; full WCAG 2.2 AA audit remains a launch gate.
 - [x] Unbuilt payment, AI, vendor, and agent capabilities are not shown as live.
-- [ ] Legacy and current architecture documents are fully reconciled.
+- [x] Legacy/current architecture conflicts are reconciled for the audited repository snapshot; new files must enter the reconciliation register before use.
 
 ## Phase 2 — Identity, data, authorization
 Scope: establish Supabase Auth profile linkage, server-managed application roles, base catalogue primitives, RLS, least-privilege grants, audit event storage, and adversarial authorization tests.
