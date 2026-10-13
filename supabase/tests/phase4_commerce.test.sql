@@ -1,5 +1,5 @@
 begin;
-select plan(89);
+select plan(109);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -467,6 +467,140 @@ select is(
 select lives_ok(
   $sql$set constraints orders_totals_guard, order_items_totals_guard immediate$sql$,
   'deferred order/item total constraints pass after atomic checkout'
+);
+
+-- Exercise the refund-success processor path, including ledger and state reconciliation.
+select lives_ok(
+  $sql$insert into public.refunds (order_id, payment_attempt_id, amount_minor, currency, reason, idempotency_key, requested_by)
+    select o.id, pa.id, 500, o.currency, 'Phase 4B test refund request', 'phase4b-refund-idempotency-0001', o.customer_id
+    from public.orders o
+    join phase4b_checkout_order_ids t on t.order_id = o.id
+    join public.payment_attempts pa on pa.order_id = o.id$sql$,
+  'refund request is created against the paid sandbox order'
+);
+select lives_ok(
+  $sql$insert into public.payment_webhook_events (
+    provider, provider_event_id, event_type, payload_sha256, signature_verified,
+    order_id, payment_attempt_id, refund_id, amount_minor, currency, provider_reference
+  )
+  select 'sandbox', 'phase4b-verified-refund-event-0001', 'refund.succeeded', repeat('c',64), true,
+    r.order_id, r.payment_attempt_id, r.id, r.amount_minor, r.currency, 'phase4b-provider-refund-0001'
+  from public.refunds r
+  where r.idempotency_key = 'phase4b-refund-idempotency-0001'$sql$,
+  'verified refund event is stored with exact refund amount and provider reference'
+);
+select is(
+  (select public.process_payment_webhook_event(we.id)
+   from public.payment_webhook_events we
+   where we.provider_event_id = 'phase4b-verified-refund-event-0001'),
+  true, 'refund-success event processes'
+);
+select is(
+  (select r.status from public.refunds r where r.idempotency_key = 'phase4b-refund-idempotency-0001'),
+  'succeeded', 'refund becomes succeeded only after ledger evidence'
+);
+select is(
+  (select pa.status from public.payment_attempts pa
+   join phase4b_checkout_order_ids t on t.order_id = pa.order_id),
+  'partially_refunded', 'payment attempt reconciles to partially refunded'
+);
+select is(
+  (select o.status from public.orders o join phase4b_checkout_order_ids t on t.order_id = o.id),
+  'partially_refunded', 'order reconciles to partially refunded'
+);
+select is(
+  (select count(*) from public.ledger_transactions lt
+   join public.refunds r on r.id = lt.refund_id
+   where r.idempotency_key = 'phase4b-refund-idempotency-0001'),
+  1::bigint, 'refund processor posts exactly one refund ledger entry'
+);
+select is(
+  (select we.processing_status from public.payment_webhook_events we
+   where we.provider_event_id = 'phase4b-verified-refund-event-0001'),
+  'processed', 'refund event reaches a durable terminal state'
+);
+select is(
+  (select public.process_payment_webhook_event(we.id)
+   from public.payment_webhook_events we
+   where we.provider_event_id = 'phase4b-verified-refund-event-0001'),
+  true, 'replaying a processed refund event is safe'
+);
+select is(
+  (select count(*) from public.ledger_transactions lt
+   join phase4b_checkout_order_ids t on t.order_id = lt.order_id),
+  2::bigint, 'payment and refund replays do not duplicate ledger postings'
+);
+
+-- Exercise the failed-payment path and prove that it never grants an entitlement.
+create temporary table phase4b_failed_order_ids(order_id uuid primary key) on commit drop;
+set constraints orders_totals_guard, order_items_totals_guard deferred;
+select lives_ok(
+  $sql$insert into phase4b_failed_order_ids
+    select order_id from public.create_order_for_checkout(
+      '82000000-0000-4000-8000-000000000082',
+      '[{"product_version_id":"87000000-0000-4000-8000-000000000087","quantity":1}]'::jsonb,
+      'phase4b-failed-checkout-idempotency-0001'
+    )$sql$,
+  'failed-payment test order is created atomically'
+);
+select lives_ok(
+  $sql$set constraints orders_totals_guard, order_items_totals_guard immediate$sql$,
+  'failed-payment order/item totals are valid'
+);
+select lives_ok(
+  $sql$insert into public.payment_attempts (order_id, provider, amount_minor, currency, idempotency_key)
+    select o.id, 'sandbox', o.total_minor, o.currency, 'phase4b-failed-attempt-key-0001'
+    from public.orders o join phase4b_failed_order_ids t on t.order_id = o.id$sql$,
+  'failed-payment attempt is created'
+);
+select lives_ok(
+  $sql$update public.payment_attempts set status = 'pending'
+    where order_id = (select order_id from phase4b_failed_order_ids)$sql$,
+  'failed-payment attempt enters pending state'
+);
+select lives_ok(
+  $sql$insert into public.payment_webhook_events (
+    provider, provider_event_id, event_type, payload_sha256, signature_verified,
+    order_id, payment_attempt_id, amount_minor, currency, provider_reference
+  )
+  select 'sandbox', 'phase4b-verified-failed-event-0001', 'payment.failed', repeat('d',64), true,
+    o.id, pa.id, o.total_minor, o.currency, 'phase4b-provider-failed-ref-0001'
+  from public.orders o
+  join phase4b_failed_order_ids t on t.order_id = o.id
+  join public.payment_attempts pa on pa.order_id = o.id$sql$,
+  'verified failed-payment event is durably recorded'
+);
+select is(
+  (select public.process_payment_webhook_event(we.id)
+   from public.payment_webhook_events we
+   where we.provider_event_id = 'phase4b-verified-failed-event-0001'),
+  true, 'failed-payment event processes'
+);
+select is(
+  (select o.status from public.orders o join phase4b_failed_order_ids t on t.order_id = o.id),
+  'payment_failed', 'failed payment transitions order to payment_failed'
+);
+select is(
+  (select pa.status from public.payment_attempts pa
+   join phase4b_failed_order_ids t on t.order_id = pa.order_id),
+  'failed', 'failed payment transitions the attempt to failed'
+);
+select is(
+  (select count(*) from public.entitlements e
+   join public.order_items oi on oi.id = e.order_item_id
+   join phase4b_failed_order_ids t on t.order_id = oi.order_id),
+  0::bigint, 'failed payment never creates an entitlement'
+);
+select is(
+  (select we.processing_status from public.payment_webhook_events we
+   where we.provider_event_id = 'phase4b-verified-failed-event-0001'),
+  'processed', 'failed-payment event reaches a durable terminal state'
+);
+select is(
+  (select public.process_payment_webhook_event(we.id)
+   from public.payment_webhook_events we
+   where we.provider_event_id = 'phase4b-verified-failed-event-0001'),
+  true, 'replaying a processed failure event is safe'
 );
 
 select * from finish();
