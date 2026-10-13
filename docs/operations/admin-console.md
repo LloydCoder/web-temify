@@ -39,4 +39,4 @@ The restricted `/admin/audit` page provides cursor-based pagination and exact-ma
 
 ## Known limits
 
-This is not a complete operations centre. Moderation decisions, support cases, financial reconciliation, dispute/chargeback handling, backup restoration, incident-response automation, alert delivery, and break-glass procedures remain separate gates. A dashboard count is operational visibility, not proof of settlement or production readiness.
+This is not a complete operations centre. Product-publication moderation beyond rights review, support cases, financial reconciliation, dispute/chargeback handling, backup restoration, incident-response automation, alert delivery, and break-glass procedures remain separate gates. A dashboard count is operational visibility, not proof of settlement or production readiness.
