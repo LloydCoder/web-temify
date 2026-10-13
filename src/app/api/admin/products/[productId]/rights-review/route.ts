@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getAdminContext } from "@/server/admin/authorization";
+import { readBoundedRequestBody } from "@/server/commerce/read-bounded-body";
 
 const reviewSchema = z.object({
   attestationId: z.string().uuid(),
@@ -22,13 +23,27 @@ export async function POST(
     return NextResponse.json({ error: "same_origin_required", requestId }, { status: 403 });
   }
 
+  const contentType = request.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase();
+  if (contentType !== "application/json") {
+    return NextResponse.json({ error: "json_content_type_required", requestId }, { status: 415 });
+  }
+
   const { productId } = await context.params;
   const productIdResult = z.string().uuid().safeParse(productId);
   if (!productIdResult.success) return NextResponse.json({ error: "invalid_product_id", requestId }, { status: 400 });
 
+  const boundedBody = await readBoundedRequestBody(request, 8 * 1024);
+  if (!boundedBody.ok) {
+    const tooLarge = boundedBody.reason === "too_large";
+    return NextResponse.json(
+      { error: tooLarge ? "request_body_too_large" : "invalid_request_body", requestId },
+      { status: tooLarge ? 413 : 400 }
+    );
+  }
+
   let body: unknown;
   try {
-    body = await request.json();
+    body = JSON.parse(boundedBody.body);
   } catch {
     return NextResponse.json({ error: "invalid_json", requestId }, { status: 400 });
   }
@@ -47,5 +62,5 @@ export async function POST(
     const status = error.code === "P0002" ? 409 : error.code === "42501" ? 403 : error.code === "22023" ? 400 : 503;
     return NextResponse.json({ error: "review_not_applied", requestId }, { status });
   }
-  return NextResponse.json({ ok: true, requestId, result: data }, { status: 200 });
+  return NextResponse.json({ ok: true, requestId, result: data }, { status: 200, headers: { "Cache-Control": "no-store" } });
 }
