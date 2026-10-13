@@ -465,6 +465,7 @@ select ok(
   'customers cannot invoke privileged grant issuance directly'
 );
 create temporary table phase4b_download_grant_ids(grant_id uuid primary key, expires_at timestamptz) on commit drop;
+grant select on phase4b_download_grant_ids to authenticated;
 select lives_ok(
   $sql$insert into phase4b_download_grant_ids
     select grant_id, expires_at from public.issue_download_grant(
