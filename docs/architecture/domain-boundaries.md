@@ -3,7 +3,7 @@
 | Context | Owns | Must not own |
 |---|---|---|
 | Identity/access | profile mapping, roles, permissions, session integration | payment truth, provider credentials |
-| Catalogue | products, versions, categories, asset metadata, publication state | orders, settlement |
+| Catalogue | products, versions, categories, compatibility, rights-review linkage, release evidence, publication state | orders, settlement, creator self-approval |
 | Cart/checkout | customer intent, price snapshot, checkout session | final payment truth |
 | Orders | purchase intent, lifecycle, item snapshots | processor-side transaction status |
 | Payments/ledger | verified events, provider references, fees, ledger, reconciliation | client payment claims |
