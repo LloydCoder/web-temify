@@ -33,9 +33,9 @@ values
 on conflict (id) do nothing;
 
 set local role service_role;
-select lives_ok($$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000089', '89100000-0000-4000-8000-000000000089', '88000000-0000-4000-8000-000000000088', 'verified', 'Reviewed the declared rights and evidence reference.', '89200000-0000-4000-8000-000000000089')$$, 'verified decision applies transactionally');
-select lives_ok($$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000090', '89100000-0000-4000-8000-000000000090', '88000000-0000-4000-8000-000000000088', 'under_review', 'Requesting additional evidence before final review.', '89200000-0000-4000-8000-000000000090')$$, 'under-review decision remains unresolved');
-select lives_ok($$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000091', '89100000-0000-4000-8000-000000000091', '88000000-0000-4000-8000-000000000088', 'rejected', 'The submitted rights evidence is insufficient for approval.', '89200000-0000-4000-8000-000000000091')$$, 'rejected decision applies transactionally');
+select lives_ok($$$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000089', '89100000-0000-4000-8000-000000000089', '88000000-0000-4000-8000-000000000088', 'verified', 'Reviewed the declared rights and evidence reference.', '89200000-0000-4000-8000-000000000089')$$, 'verified decision applies transactionally');
+select lives_ok($$$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000090', '89100000-0000-4000-8000-000000000090', '88000000-0000-4000-8000-000000000088', 'under_review', 'Requesting additional evidence before final review.', '89200000-0000-4000-8000-000000000090')$$, 'under-review decision remains unresolved');
+select lives_ok($$$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000091', '89100000-0000-4000-8000-000000000091', '88000000-0000-4000-8000-000000000088', 'rejected', 'The submitted rights evidence is insufficient for approval.', '89200000-0000-4000-8000-000000000091')$$, 'rejected decision applies transactionally');
 reset role;
 
 select is((select review_status from public.product_rights_attestations where id = '89100000-0000-4000-8000-000000000089'), 'verified', 'verified attestation state persists');
@@ -57,21 +57,21 @@ select is((select rights_status from public.products where id = '89000000-0000-4
 select is((select rights_verified_at from public.products where id = '89000000-0000-4000-8000-000000000091'), null::timestamptz, 'rejected product has no verification timestamp');
 
 select throws_ok(
-  $$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000092', '89100000-0000-4000-8000-000000000092', '88000000-0000-4000-8000-000000000088', 'verified', 'Attempt to review my own evidence.', '89200000-0000-4000-8000-000000000092')$$,
+  $$$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000092', '89100000-0000-4000-8000-000000000092', '88000000-0000-4000-8000-000000000088', 'verified', 'Attempt to review my own evidence.', '89200000-0000-4000-8000-000000000092')$$,
   '42501',
   'Reviewers cannot review their own rights evidence.',
   'creator cannot review their own rights evidence'
 );
 
 select throws_ok(
-  $select public.admin_review_product_rights('89000000-0000-4000-8000-000000000092', '89100000-0000-4000-8000-000000000092', '87000000-0000-4000-8000-000000000087', 'verified', 'Non-admin must not review this evidence.', '89200000-0000-4000-8000-000000000093')$,
+  $$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000092', '89100000-0000-4000-8000-000000000092', '87000000-0000-4000-8000-000000000087', 'verified', 'Non-admin must not review this evidence.', '89200000-0000-4000-8000-000000000093')$$,
   '42501',
   'Reviewer must have the admin role.',
   'non-admin identity cannot submit a review'
 );
 
 select throws_ok(
-  $select public.admin_review_product_rights('89000000-0000-4000-8000-000000000089', '89100000-0000-4000-8000-000000000089', '88000000-0000-4000-8000-000000000088', 'verified', 'Attempt to change an already resolved decision.', '89200000-0000-4000-8000-000000000094')$,
+  $$select public.admin_review_product_rights('89000000-0000-4000-8000-000000000089', '89100000-0000-4000-8000-000000000089', '88000000-0000-4000-8000-000000000088', 'verified', 'Attempt to change an already resolved decision.', '89200000-0000-4000-8000-000000000094')$$,
   'P0002',
   'Rights attestation is already resolved.',
   'resolved evidence cannot be silently re-reviewed'
