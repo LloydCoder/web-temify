@@ -36,6 +36,7 @@ jobs:
       - name: Lint
         run: pnpm lint
       - name: Install Supabase CLI
+        id: supabase-cli
         uses: supabase/setup-cli@v1
         with:
           version: 2.107.0
@@ -54,5 +55,5 @@ jobs:
         env:
           NEXT_PUBLIC_SITE_URL: https://example.invalid
       - name: Stop local Supabase services
-        if: always()
+        if: always() && steps.supabase-cli.outcome == 'success'
         run: supabase stop
