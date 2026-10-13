@@ -73,7 +73,7 @@ Phase 4A — database invariants:
 - [ ] Orders and item snapshots are immutable and price/currency/release evidence is revalidated at insertion.
 - [ ] Payment attempts cannot alter order amount/currency and cannot become successful without a verified provider event.
 - [ ] Orders cannot become paid without a processed verified success event and matching append-only ledger entry.
-- [ ] Provider events are signature-verified, hash-only (no raw payload persistence), unique by provider event ID, and retryable without duplicate effects.
+- [ ] The event inbox requires an explicit `signature_verified` assertion, stores only a SHA-256 payload digest (no raw payload), and deduplicates provider event IDs. Provider-specific cryptographic raw-body verification and durable retry processing are Phase 4B requirements, not implemented by this schema migration.
 - [ ] Ledger rows are append-only balanced debit/credit transfers with unique idempotency references.
 - [ ] Refund amounts are reserved under order locking, cannot exceed the remaining balance, and require verified refund evidence and ledger entries.
 - [ ] Entitlements require a paid order and matching release snapshot.
@@ -81,6 +81,8 @@ Phase 4A — database invariants:
 - [ ] Customer RLS isolates orders, line items, payment attempts, refunds, and entitlements; financial internals are not client-readable.
 - [ ] Empty-database migration reset, adversarial SQL tests, unit/domain tests, typecheck, lint, Playwright and production build pass on one head SHA.
 - [ ] Phase 4 forensic audit records exact code, migration, test and CI evidence plus remaining launch risks.
+
+Phase 4B — server-side order creation/checkout, provider adapters with raw-body signature verification, durable webhook processing, refund orchestration, and private-storage signed URL issuance — remains unimplemented.
 
 No live payment processing, vendor payouts, or production downloads may be represented as available until a provider-specific adapter and end-to-end sandbox validation pass.
 
