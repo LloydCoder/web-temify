@@ -48,7 +48,11 @@ export default async function AdminOperationsPage() {
         <Link className="wordmark" href="/" aria-label="Web-Temify home">
           Web-Temify<span className="wordmark-dot" aria-hidden="true">.</span>
         </Link>
-        <Link className="button button-secondary" href="/">Public site</Link>
+        <nav className="admin-audit-nav" aria-label="Admin navigation">
+          <Link className="button button-secondary" href="/admin/reviews">Rights review</Link>
+          <Link className="button button-secondary" href="/admin/audit">Audit explorer</Link>
+          <Link className="button button-secondary" href="/">Public site</Link>
+        </nav>
       </header>
       <section className="catalog-heading" aria-labelledby="admin-title">
         <p className="eyebrow">Restricted operations</p>

@@ -156,6 +156,21 @@ Phase 4B — server-side commerce workflows (implementation in progress):
 - **Residual risks / explicit non-claims:** product publication remains a separate gate requiring a verified rights attestation and independently released content-addressed artifact. The admin console still lacks full support-case operations, financial settlement reconciliation, dispute/chargeback handling, alert delivery, backup restoration drills, incident response, and break-glass governance. Formal penetration testing, full WCAG 2.2 AA assessment, production provider onboarding, legal/tax review, and deployment verification remain open.
 - **Gate decision:** Phase 5B is complete for its stated scope. Phase 5 overall remains in progress; do not treat this subphase as production readiness.
 
+
+### Phase 5C — Admin audit explorer (implementation in progress)
+
+Scope: restricted audit-stream discovery with exact-match filters, stable cursor pagination, bounded queries, safe fields only, and query-performance indexes. Audit events remain append-only and are never mutated through the explorer.
+
+Exit criteria:
+- [ ] Authenticated admin authorization and access-audit logging happen before privileged event queries.
+- [ ] Exact action/entity filters and cursor input are validated; repeated, oversized, unknown, or malformed query parameters fail closed.
+- [ ] The page queries at most 51 rows per request and displays at most 50; cursor pagination is stable and filter-preserving.
+- [ ] Only approved audit columns are selected; arbitrary metadata and raw database errors are not exposed.
+- [ ] Supporting indexes are applied by a reviewed SQL migration; pgTAP confirms indexes and unchanged least-privilege/append-only controls.
+- [ ] Playwright proves unauthenticated users cannot access the audit explorer or rights-review queue.
+- [ ] Unit tests, database reset/lint/pgTAP, E2E, typecheck, lint, production build, and cleanup pass on the exact implementation head.
+- [ ] Phase-specific forensic audit and residual limits are recorded before the next phase begins.
+
 Least-privilege admin controls, moderation queues, support, audit review, financial reconciliation, observability, backup/restore rehearsal, incident response and safe break-glass access.
 
 ## Phase 6 — Seller system and product factory
