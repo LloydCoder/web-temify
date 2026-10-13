@@ -1,7 +1,7 @@
 > **Canonical status (2026-10-13): historical proposal, not executable schema authority.** This file contains a legacy Prisma-shaped 85-table proposal and is retained for requirements reconciliation only. The accepted decision in docs/architecture/decisions/0003-database-migration-authority.md makes supabase/migrations/*.sql the sole schema history. Do not generate Prisma migrations from this document. Every proposed field/table must be reconciled against current domain boundaries, data minimization, RLS, and phase gates before implementation.
 
-# WEB-TEMIFY — COMPLETE DATABASE SCHEMA
-## Supabase Postgres + Prisma ORM
+# WEB-TEMIFY — LEGACY DATABASE SCHEMA PROPOSAL (HISTORICAL RECONCILIATION ONLY)
+## Historical Prisma-shaped model (not executable)
 ### 85 Tables | Version 5.0 | May 2026
 
 ---
