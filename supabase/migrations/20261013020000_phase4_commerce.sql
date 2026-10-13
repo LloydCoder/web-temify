@@ -68,6 +68,7 @@ create table public.payment_webhook_events (
     check (processing_status in ('received', 'processing', 'processed', 'ignored', 'failed')),
   order_id uuid references public.orders(id) on delete restrict,
   payment_attempt_id uuid references public.payment_attempts(id) on delete restrict,
+  refund_id uuid references public.refunds(id) on delete restrict,
   retry_count integer not null default 0 check (retry_count between 0 and 100),
   failure_code text check (failure_code is null or char_length(failure_code) <= 120),
   received_at timestamptz not null default now(),
@@ -191,6 +192,52 @@ begin
   ) then
     raise exception using errcode = '23514', message = 'invalid order status transition';
   end if;
+  if new.status = 'paid' and not exists (
+    select 1
+    from public.payment_attempts pa
+    join public.payment_webhook_events we
+      on we.payment_attempt_id = pa.id
+      and we.order_id = new.id
+      and we.provider = pa.provider
+      and we.event_type = 'payment.succeeded'
+      and we.processing_status = 'processed'
+      and we.signature_verified
+    join public.ledger_transactions lt
+      on lt.payment_attempt_id = pa.id
+      and lt.order_id = new.id
+      and lt.source_type = 'payment'
+      and lt.amount_minor = new.total_minor
+      and lt.currency = new.currency
+    where pa.order_id = new.id
+      and pa.status = 'succeeded'
+      and pa.amount_minor = new.total_minor
+      and pa.currency = new.currency
+  ) then
+    raise exception using errcode = '23514', message = 'order cannot be paid without a processed verified payment and ledger entry';
+  end if;
+  if new.status = 'payment_failed' and not exists (
+    select 1 from public.payment_attempts pa
+    join public.payment_webhook_events we
+      on we.payment_attempt_id = pa.id and we.order_id = new.id
+      and we.event_type = 'payment.failed' and we.processing_status = 'processed'
+      and we.signature_verified
+    where pa.order_id = new.id and pa.status = 'failed'
+  ) then
+    raise exception using errcode = '23514', message = 'order payment_failed requires a processed verified failure event';
+  end if;
+  if new.status in ('partially_refunded', 'refunded') then
+    declare
+      refunded_minor bigint;
+    begin
+      select coalesce(sum(r.amount_minor), 0) into refunded_minor
+      from public.refunds r
+      where r.order_id = new.id and r.status = 'succeeded';
+      if (new.status = 'partially_refunded' and (refunded_minor <= 0 or refunded_minor >= new.total_minor))
+        or (new.status = 'refunded' and refunded_minor <> new.total_minor) then
+        raise exception using errcode = '23514', message = 'refund order state must match settled refund total';
+      end if;
+    end;
+  end if;
   return new;
 end;
 $function$;
@@ -236,6 +283,14 @@ begin
   ) then
     raise exception using errcode = '23514', message = 'invalid payment attempt status transition';
   end if;
+  if new.status = 'succeeded' and old.status <> 'succeeded' and not exists (
+    select 1 from public.payment_webhook_events we
+    where we.payment_attempt_id = new.id and we.order_id = new.order_id
+      and we.provider = new.provider and we.event_type = 'payment.succeeded'
+      and we.signature_verified and we.processing_status in ('processing', 'processed')
+  ) then
+    raise exception using errcode = '23514', message = 'successful payment requires a verified provider event';
+  end if;
   return new;
 end;
 $function$;
@@ -258,7 +313,10 @@ begin
   if new.provider is distinct from old.provider
     or new.provider_event_id is distinct from old.provider_event_id
     or new.payload_sha256 is distinct from old.payload_sha256
-    or new.event_type is distinct from old.event_type then
+    or new.event_type is distinct from old.event_type
+    or new.order_id is distinct from old.order_id
+    or new.payment_attempt_id is distinct from old.payment_attempt_id
+    or new.refund_id is distinct from old.refund_id then
     raise exception using errcode = '23514', message = 'webhook event identity is immutable';
   end if;
   if new.processing_status <> old.processing_status and not (
@@ -270,6 +328,32 @@ begin
   end if;
   if new.processing_status = 'processed' and new.processed_at is null then
     raise exception using errcode = '23514', message = 'processed webhook event requires processed_at';
+  end if;
+  if new.processing_status = 'processed' and new.event_type = 'payment.succeeded' and not exists (
+    select 1 from public.payment_attempts pa
+    join public.ledger_transactions lt on lt.payment_attempt_id = pa.id
+      and lt.order_id = new.order_id and lt.source_type = 'payment'
+    where pa.id = new.payment_attempt_id and pa.status = 'succeeded'
+      and pa.order_id = new.order_id and pa.amount_minor = lt.amount_minor
+      and pa.currency = lt.currency
+  ) then
+    raise exception using errcode = '23514', message = 'successful payment event requires matching attempt and ledger';
+  end if;
+  if new.processing_status = 'processed' and new.event_type = 'payment.failed' and not exists (
+    select 1 from public.payment_attempts pa
+    where pa.id = new.payment_attempt_id and pa.order_id = new.order_id and pa.status = 'failed'
+  ) then
+    raise exception using errcode = '23514', message = 'failed payment event requires a failed payment attempt';
+  end if;
+  if new.processing_status = 'processed' and new.event_type = 'refund.succeeded' and not exists (
+    select 1 from public.refunds r
+    join public.ledger_transactions lt on lt.refund_id = r.id
+      and lt.order_id = new.order_id and lt.source_type = 'refund'
+    where r.id = new.refund_id and r.order_id = new.order_id
+      and r.payment_attempt_id = new.payment_attempt_id and r.status = 'succeeded'
+      and r.amount_minor = lt.amount_minor and r.currency = lt.currency
+  ) then
+    raise exception using errcode = '23514', message = 'successful refund event requires matching refund and ledger';
   end if;
   if new.processing_status <> 'processed' and new.processed_at is not null then
     raise exception using errcode = '23514', message = 'unprocessed webhook event cannot have processed_at';
@@ -309,6 +393,18 @@ begin
   ) then
     raise exception using errcode = '23514', message = 'invalid refund status transition';
   end if;
+  if new.status = 'succeeded' and old.status <> 'succeeded' and not exists (
+    select 1 from public.payment_webhook_events we
+    join public.ledger_transactions lt on lt.refund_id = new.id
+      and lt.order_id = new.order_id and lt.source_type = 'refund'
+    where we.refund_id = new.id and we.order_id = new.order_id
+      and we.payment_attempt_id = new.payment_attempt_id and we.provider_event_id is not null
+      and we.event_type = 'refund.succeeded' and we.signature_verified
+      and we.processing_status in ('processing', 'processed')
+      and lt.amount_minor = new.amount_minor and lt.currency = new.currency
+  ) then
+    raise exception using errcode = '23514', message = 'successful refund requires a verified event and ledger entry';
+  end if;
   return new;
 end;
 $function$;
@@ -345,6 +441,7 @@ begin
     or product_row.creator_id <> new.seller_id
     or product_row.name <> new.product_name
     or product_row.slug <> new.product_slug
+    or product_row.release_version <> new.release_version
     or version_row.version <> new.release_version
     or product_row.license_type <> new.license_type
     or product_row.price_minor <> new.unit_amount_minor
