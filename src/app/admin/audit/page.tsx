@@ -31,7 +31,7 @@ export default async function AdminAuditExplorerPage({ searchParams }: PageProps
 
   const filters = parseAuditFilters(await searchParams);
   let events: Array<{
-    id: number;
+    id: string;
     action: string;
     entity_type: string;
     entity_id: string | null;
@@ -45,7 +45,7 @@ export default async function AdminAuditExplorerPage({ searchParams }: PageProps
     try {
       let query = context.admin
         .from("audit_events")
-        .select("id,action,entity_type,entity_id,request_id,created_at")
+        .select("id:id_text,action,entity_type,entity_id,request_id,created_at")
         .order("id", { ascending: false })
         .limit(51);
       if (filters.action) query = query.eq("action", filters.action);
@@ -64,7 +64,7 @@ export default async function AdminAuditExplorerPage({ searchParams }: PageProps
   }
 
   const lastEvent = events.at(-1);
-  const nextHref = hasMore && lastEvent ? buildNextHref(filters, String(lastEvent.id)) : null;
+  const nextHref = hasMore && lastEvent ? buildNextHref(filters, lastEvent.id) : null;
 
   return (
     <main className="page-shell catalog-shell">
