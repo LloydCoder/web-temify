@@ -147,6 +147,7 @@ create policy rights_attestations_insert_own_draft on public.product_rights_atte
     and review_status = 'declared'
     and reviewed_by is null
     and reviewed_at is null
+    and review_notes is null
     and exists (
       select 1 from public.products p
       where p.id = product_id and p.creator_id = (select auth.uid()) and p.status = 'draft'
