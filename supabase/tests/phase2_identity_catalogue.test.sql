@@ -1,5 +1,5 @@
 begin;
-select plan(13);
+select plan(19);
 select has_table('public', 'profiles', 'profiles table exists');
 select has_table('public', 'categories', 'categories table exists');
 select has_table('public', 'products', 'products table exists');
@@ -32,11 +32,24 @@ set local role anon;
 select is((select count(*) from public.categories), 1::bigint, 'anonymous users see only active categories');
 select is((select count(*) from public.products), 1::bigint, 'anonymous users see only published products');
 reset role;
+
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '20000000-0000-4000-8000-000000000002', true);
 select is((select count(*) from public.profiles), 1::bigint, 'authenticated user sees only own profile');
 select is((select count(*) from public.products), 1::bigint, 'non-owner sees published product but not another creator draft');
-select is((with changed as (update public.profiles set display_name = 'Not allowed' where id = '10000000-0000-4000-8000-000000000001' returning id) select count(*) from changed), 0::bigint, 'non-owner cannot update another profile');
+update public.profiles set display_name = 'Not allowed' where id = '10000000-0000-4000-8000-000000000001';
 reset role;
+select is((select display_name from public.profiles where id = '10000000-0000-4000-8000-000000000001'), 'User One', 'non-owner cannot update another profile');
+
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);
+select is((select count(*) from public.products), 2::bigint, 'creator can see own draft as well as published products');
+update public.profiles set display_name = 'User One Updated' where id = '10000000-0000-4000-8000-000000000001';
+reset role;
+select is((select display_name from public.profiles where id = '10000000-0000-4000-8000-000000000001'), 'User One Updated', 'owner can update own profile');
+
+select ok(not has_table_privilege('anon', 'public.audit_events', 'SELECT'), 'anonymous clients cannot read audit events');
+select ok(not has_table_privilege('authenticated', 'public.audit_events', 'INSERT'), 'authenticated clients cannot forge audit events');
+select ok(has_table_privilege('service_role', 'public.audit_events', 'INSERT'), 'trusted service role can append audit events');
 select * from finish();
 rollback;
