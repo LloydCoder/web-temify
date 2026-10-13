@@ -1,5 +1,5 @@
 begin;
-select plan(15);
+select plan(18);
 
 select has_column('public', 'products', 'summary', 'products have a bounded summary field');
 select has_column('public', 'products', 'compatibility', 'products carry structured compatibility metadata');
@@ -12,6 +12,9 @@ select ok((select relrowsecurity from pg_class where oid = 'public.product_versi
 select ok(not has_table_privilege('anon', 'public.product_rights_attestations', 'SELECT'), 'anonymous users cannot read rights evidence');
 select ok(not has_table_privilege('authenticated', 'public.product_rights_attestations', 'UPDATE'), 'creators cannot self-approve rights evidence');
 select ok(not has_table_privilege('authenticated', 'public.product_versions', 'UPDATE'), 'creators cannot promote a release to released');
+select ok(not has_column_privilege('authenticated', 'public.products', 'rights_status', 'UPDATE'), 'creators cannot edit rights review state directly');
+select ok(not has_column_privilege('authenticated', 'public.products', 'artifact_sha256', 'UPDATE'), 'creators cannot set release artifact evidence directly');
+select ok(has_column_privilege('authenticated', 'public.products', 'name', 'UPDATE'), 'creators retain permission to edit draft product content');
 select ok(not has_table_privilege('anon', 'public.product_versions', 'SELECT'), 'anonymous users cannot read private artifact storage paths');
 select ok(has_table_privilege('service_role', 'public.product_versions', 'UPDATE'), 'trusted release path can manage release state');
 select ok(has_table_privilege('service_role', 'public.product_rights_attestations', 'UPDATE'), 'trusted review path can manage rights state');
