@@ -21,8 +21,8 @@ Exit criteria:
 - [x] Clean checkout installs reproducibly with committed pnpm-lock.yaml and CI enforces --frozen-lockfile.
 - [x] Lint, typecheck, foundation tests, and production build pass in CI on the current foundation commit.
 - [x] No secrets or local env files are present in the tracked tree.
-- [ ] CI results are visible on PR and required checks are configured in repository rules.
-- [ ] App shell is tested for accessibility at mobile and desktop sizes.
+- [ ] CI results are visible on PR; required checks are not yet enforced by repository rules (manual settings gate).
+- [x] Playwright validates semantic landmarks and horizontal overflow at 320px and 1440px; full WCAG 2.2 AA audit remains a launch gate.
 - [x] Unbuilt payment, AI, vendor, and agent capabilities are not shown as live.
 - [ ] Legacy and current architecture documents are fully reconciled.
 
@@ -30,11 +30,11 @@ Exit criteria:
 Scope: establish Supabase Auth profile linkage, server-managed application roles, base catalogue primitives, RLS, least-privilege grants, audit event storage, and adversarial authorization tests.
 
 Exit criteria:
-- [ ] Reviewed migration applies from an empty local Supabase database.
-- [ ] RLS enabled on every exposed table; client grants and policies are least-privilege.
-- [ ] Anonymous, owner, non-owner, and server-only paths have positive and negative tests.
-- [ ] No client-controlled role or privilege escalation path.
-- [ ] Migration and RLS tests run in CI and pass.
+- [x] Reviewed migration applies from an empty local Supabase database.
+- [x] RLS enabled on every exposed table; client grants and policies are least-privilege.
+- [x] Anonymous, owner, non-owner, and server-only paths have positive and negative tests.
+- [x] No client-controlled role or privilege escalation path.
+- [x] Migration and RLS tests run in CI and pass (CI run 38364828400).
 
 ## Phase 3 — Marketplace vertical slice
 Catalogue, categories, product detail/search, moderation state, compatibility metadata, verified rights/licensing, and real product fixtures.
