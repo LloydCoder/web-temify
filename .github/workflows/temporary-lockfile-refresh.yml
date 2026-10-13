@@ -1,0 +1,43 @@
+name: Temporary dependency lockfile refresh
+
+on:
+  push:
+    branches: [phase1-security-baseline]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: temporary-lockfile-refresh-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  refresh-lockfile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout trusted dependency-upgrade branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 10.18.0
+          run_install: false
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 22
+      - name: Resolve and write the dependency graph
+        run: pnpm install --lockfile-only --no-frozen-lockfile
+      - name: Commit generated lockfile
+        shell: bash
+        run: |
+          if git diff --quiet -- pnpm-lock.yaml; then
+            echo "Lockfile already matches package.json."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pnpm-lock.yaml
+          git commit -m "build: refresh lockfile for patched security dependencies"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
