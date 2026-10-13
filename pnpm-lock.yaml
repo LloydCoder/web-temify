@@ -9,6 +9,11 @@ overrides:
   sharp: 0.35.5
   tinypool: 2.1.2
 
+patchedDependencies:
+  braces@3.0.3:
+    hash: 106f6a69ba5178c77b8a0ea5f6214d986afadf14a8354bad38100bf4bc6748e9
+    path: patches/braces@3.0.3.patch
+
 importers:
 
   .:
@@ -73,7 +78,7 @@ importers:
         version: 19.1.9(@types/react@19.1.13)
       braces:
         specifier: 3.0.3
-        version: 3.0.3(patch_hash=2b1e0a11f8ea56f367196192ddb546207c31f8feace0e139ea8be285e635a12e)
+        version: 3.0.3(patch_hash=106f6a69ba5178c77b8a0ea5f6214d986afadf14a8354bad38100bf4bc6748e9)
       eslint:
         specifier: 9.35.0
         version: 9.35.0(jiti@2.7.0)
@@ -3383,7 +3388,7 @@ snapshots:
     dependencies:
       balanced-match: 4.0.4
 
-  braces@3.0.3(patch_hash=2b1e0a11f8ea56f367196192ddb546207c31f8feace0e139ea8be285e635a12e):
+  braces@3.0.3(patch_hash=106f6a69ba5178c77b8a0ea5f6214d986afadf14a8354bad38100bf4bc6748e9):
     dependencies:
       fill-range: 7.1.1
 
@@ -4248,7 +4253,7 @@ snapshots:
 
   micromatch@4.0.8:
     dependencies:
-      braces: 3.0.3(patch_hash=2b1e0a11f8ea56f367196192ddb546207c31f8feace0e139ea8be285e635a12e)
+      braces: 3.0.3(patch_hash=106f6a69ba5178c77b8a0ea5f6214d986afadf14a8354bad38100bf4bc6748e9)
       picomatch: 2.3.2
 
   minimatch@10.2.6:
