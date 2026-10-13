@@ -36,7 +36,7 @@ jobs:
         run: |
           PATCH_DIR="$(find node_modules/.pnpm_patches -mindepth 1 -maxdepth 1 -type d -name 'braces@3.0.3*' -print -quit)"
           test -n "$PATCH_DIR"
-          node -- "$PATCH_DIR/lib/parse.js" <<'NODE'
+          node - "$PATCH_DIR/lib/parse.js" <<'NODE'
           const fs = require("node:fs");
           const file = process.argv[2];
           const source = fs.readFileSync(file, "utf8");
