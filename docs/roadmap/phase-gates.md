@@ -93,9 +93,17 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - **Residual risks and explicit non-claims:** `signature_verified` is a trusted-ingress assertion, not cryptographic proof by this migration; no raw-body provider signature verifier, checkout/order-creation API, durable webhook worker, provider sandbox integration, signed-URL issuer, seller payout/commission/tax/settlement accounting, chargeback workflow, production Supabase/Vercel configuration, formal penetration test, or full WCAG 2.2 AA audit is delivered here. The ledger is gross payment/refund transfer evidence only. These are later gates and must remain disabled/unclaimed until separately implemented and verified.
 - **Gate decision:** Phase 4A may merge after the final CI re-run on the documentation-updated head and repeat review. Phase 4 as a whole remains in progress.
 
-Phase 4B — server-side order creation/checkout, provider adapters with raw-body signature verification, durable webhook processing, refund orchestration, and private-storage signed URL issuance — remains unimplemented.
+Phase 4B — server-side commerce workflows (implementation in progress):
+- [ ] Atomic server-only order creation derives price, currency, seller, rights, release version and artifact digest from the canonical database; basket and idempotency replay are validated.
+- [ ] Checkout and sandbox completion are authenticated, idempotent, non-production only, and fail closed when the provider is disabled or the environment is production.
+- [ ] Raw-body HMAC verification enforces event identity, timestamp tolerance, constant-time signature comparison, payload limits and strict event contracts.
+- [ ] Verified webhook events are stored without raw payloads, deduplicated by provider/event ID, conflict-checked by payload digest, and processed with retryable durable state transitions.
+- [ ] Successful payment processing atomically posts a ledger transfer, marks the order paid, and creates entitlements; refund events require matching refund/attempt/order/amount/currency evidence.
+- [ ] Customer refund requests are idempotent and explicitly do not imply that money moved; provider execution and approval remain disabled.
+- [ ] Private downloads authorize the customer, verify the released artifact digest, atomically consume the bounded grant, and return a 60-second signed URL with no-store headers.
+- [ ] Unit tests, pgTAP checkout/processor tests, migration reset, schema lint, RLS tests, Playwright, typecheck, lint, production build and forensic audit pass on the same head SHA.
 
-No live payment processing, vendor payouts, or production downloads may be represented as available until a provider-specific adapter and end-to-end sandbox validation pass.
+**Phase 4B limitations:** the only adapter is a non-production sandbox; there is no live payment provider, tax calculation, zero-value/free checkout, seller payout, commission accounting, refund execution, or production download enablement. Provider selection must follow jurisdiction/payout eligibility and sandbox verification. Production launch remains blocked until these gaps and the Phase 5–8 gates are completed.
 
 ## Phase 5 — Admin and operations
 Least-privilege admin controls, moderation queues, support, audit review, financial reconciliation, observability, backup/restore rehearsal, incident response and safe break-glass access.
