@@ -29,12 +29,12 @@ values ('72000000-0000-4000-8000-000000000072', 'phase3-category', 'Phase 3 Cate
 on conflict (id) do nothing;
 insert into public.products (id, creator_id, category_id, slug, name, summary, description, product_type, status, rights_status, rights_verified_at, rights_verified_by, artifact_sha256)
 values
- ('73000000-0000-4000-8000-000000000073', '71000000-0000-4000-8000-000000000071', '72000000-0000-4000-8000-000000000072', 'phase3-verified-product', 'Phase 3 Verified Product', 'Approved fixture', 'Synthetic fixture used only by database tests.', 'template', 'published', 'verified', now(), '75000000-0000-4000-8000-000000000075', repeat('a', 64)),
+ ('73000000-0000-4000-8000-000000000073', '71000000-0000-4000-8000-000000000071', '72000000-0000-4000-8000-000000000072', 'phase3-verified-product', 'Phase 3 Verified Product', 'Approved fixture', 'Synthetic fixture used only by database tests.', 'template', 'published', 'verified', '2026-10-13T12:00:00Z'::timestamptz, '75000000-0000-4000-8000-000000000075', repeat('a', 64)),
  ('74000000-0000-4000-8000-000000000074', '71000000-0000-4000-8000-000000000071', '72000000-0000-4000-8000-000000000072', 'phase3-unverified-product', 'Phase 3 Unverified Product', 'Unapproved fixture', 'Synthetic fixture used only by database tests.', 'template', 'published', 'declared', null, null, repeat('b', 64))
 on conflict (id) do nothing;
 
 insert into public.product_rights_attestations (product_id, attested_by, rights_basis, statement, evidence_reference, review_status, reviewed_by, reviewed_at)
-values ('73000000-0000-4000-8000-000000000073', '71000000-0000-4000-8000-000000000071', 'original_work', 'Synthetic test-only rights declaration with separate reviewer evidence.', 'test-fixture://phase3/rights', 'verified', '75000000-0000-4000-8000-000000000075', now())
+values ('73000000-0000-4000-8000-000000000073', '71000000-0000-4000-8000-000000000071', 'original_work', 'Synthetic test-only rights declaration with separate reviewer evidence.', 'test-fixture://phase3/rights', 'verified', '75000000-0000-4000-8000-000000000075', '2026-10-13T12:00:00Z'::timestamptz)
 on conflict do nothing;
 
 insert into public.product_versions (product_id, version, release_state, release_notes, artifact_sha256, artifact_storage_path, manifest, compatibility, created_by, released_at)
