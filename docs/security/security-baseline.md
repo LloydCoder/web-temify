@@ -19,6 +19,13 @@ This is a minimum engineering baseline, not proof that the application is secure
 - Do not log authorization headers, tokens, signed URLs, secrets, or unnecessary personal/payment data.
 - Public env variables must be intentionally public.
 
+## Catalogue publication and release integrity
+- Creator rights statements are declarations, not independent verification.
+- Only trusted review/release paths may set rights-review state, reviewer metadata, artifact digests, or release state.
+- Public catalogue rows require publication, an independently reviewed rights attestation, and a matching released artifact digest.
+- Rights evidence, release manifests, and private artifact storage paths are not anonymously selectable.
+- Product documentation/demo links are constrained to HTTPS URLs.
+
 ## Commerce and delivery
 - Verify webhook signatures against the provider-required raw body.
 - Enforce idempotency, concurrency control, amount/currency/order matching, and replay resistance.
