@@ -55,6 +55,9 @@ create unique index payment_attempt_provider_reference_uq
   on public.payment_attempts (provider, provider_reference)
   where provider_reference is not null;
 create index payment_attempts_order_idx on public.payment_attempts (order_id, created_at desc);
+create unique index payment_attempts_single_active_or_successful_order_uq
+  on public.payment_attempts (order_id)
+  where status in ('created', 'pending', 'succeeded', 'partially_refunded', 'refunded');
 create unique index payment_attempts_one_settled_per_order_uq
   on public.payment_attempts (order_id)
   where status in ('succeeded', 'partially_refunded', 'refunded');
@@ -131,6 +134,8 @@ create table public.ledger_transactions (
   )
 );
 create index ledger_transactions_order_idx on public.ledger_transactions (order_id, created_at);
+create unique index ledger_payment_attempt_once_uq on public.ledger_transactions (payment_attempt_id) where source_type = 'payment';
+create unique index ledger_refund_once_uq on public.ledger_transactions (refund_id) where source_type = 'refund';
 create unique index ledger_one_payment_per_attempt_uq
   on public.ledger_transactions (payment_attempt_id)
   where source_type = 'payment' and payment_attempt_id is not null;
@@ -225,6 +230,7 @@ create table public.download_grants (
   downloads_used integer not null default 0 check (downloads_used between 0 and 10),
   revoked_at timestamptz,
   constraint download_grant_expiry check (expires_at > issued_at),
+  constraint download_grant_short_lived check (expires_at <= issued_at + interval '15 minutes'),
   constraint download_grant_count check (downloads_used <= max_downloads)
 );
 create index download_grants_customer_idx on public.download_grants (customer_id, expires_at desc);
@@ -252,7 +258,7 @@ begin
   if new.status = old.status then return new; end if;
   if not (
     (old.status = 'pending_payment' and new.status in ('paid', 'payment_failed', 'cancelled'))
-    or (old.status = 'payment_failed' and new.status in ('pending_payment', 'cancelled'))
+    or (old.status = 'payment_failed' and new.status in ('pending_payment', 'paid', 'cancelled'))
     or (old.status = 'paid' and new.status in ('partially_refunded', 'refunded'))
     or (old.status = 'partially_refunded' and new.status = 'refunded')
   ) then
@@ -285,11 +291,18 @@ begin
     select 1 from public.payment_attempts pa
     join public.payment_webhook_events we
       on we.payment_attempt_id = pa.id and we.order_id = new.id
-      and we.event_type = 'payment.failed' and we.processing_status = 'processed'
-      and we.signature_verified
+      and we.provider = pa.provider and we.event_type = 'payment.failed'
+      and we.processing_status = 'processed' and we.signature_verified
     where pa.order_id = new.id and pa.status = 'failed'
   ) then
     raise exception using errcode = '23514', message = 'order payment_failed requires a processed verified failure event';
+  end if;
+  if new.status = 'cancelled' and exists (
+    select 1 from public.payment_attempts pa
+    where pa.order_id = new.id
+      and pa.status in ('created', 'pending', 'succeeded', 'partially_refunded', 'refunded')
+  ) then
+    raise exception using errcode = '23514', message = 'order cannot be cancelled while a payment is active or settled';
   end if;
   if new.status in ('partially_refunded', 'refunded') then
     declare
@@ -393,6 +406,20 @@ begin
     if new.processing_status <> 'received' or not new.signature_verified then
       raise exception using errcode = '23514', message = 'only verified webhook events may enter the inbox';
     end if;
+    if new.event_type in ('payment.succeeded', 'payment.failed') and not exists (
+      select 1 from public.payment_attempts pa
+      where pa.id = new.payment_attempt_id and pa.order_id = new.order_id and pa.provider = new.provider
+    ) then
+      raise exception using errcode = '23514', message = 'payment event must reference a matching provider attempt and order';
+    end if;
+    if new.event_type = 'refund.succeeded' and not exists (
+      select 1 from public.refunds r
+      join public.payment_attempts pa on pa.id = r.payment_attempt_id
+      where r.id = new.refund_id and r.order_id = new.order_id
+        and r.payment_attempt_id = new.payment_attempt_id and pa.provider = new.provider
+    ) then
+      raise exception using errcode = '23514', message = 'refund event must reference a matching provider refund, attempt and order';
+    end if;
     return new;
   end if;
   if new.provider is distinct from old.provider
@@ -401,8 +428,12 @@ begin
     or new.event_type is distinct from old.event_type
     or new.order_id is distinct from old.order_id
     or new.payment_attempt_id is distinct from old.payment_attempt_id
-    or new.refund_id is distinct from old.refund_id then
-    raise exception using errcode = '23514', message = 'webhook event identity is immutable';
+    or new.refund_id is distinct from old.refund_id
+    or (old.processed_at is not null and new.processed_at is distinct from old.processed_at)
+    or (new.retry_count is distinct from old.retry_count
+      and not (old.processing_status = 'failed' and new.processing_status = 'processing'
+        and new.retry_count = old.retry_count + 1)) then
+    raise exception using errcode = '23514', message = 'webhook event identity and processing evidence are immutable';
   end if;
   if new.processing_status <> old.processing_status and not (
     (old.processing_status = 'received' and new.processing_status in ('processing', 'ignored', 'failed'))
@@ -499,6 +530,15 @@ begin
     or (old.status = 'pending' and new.status in ('succeeded', 'failed'))
   ) then
     raise exception using errcode = '23514', message = 'invalid refund status transition';
+  end if;
+  if new.reason is distinct from old.reason
+    or new.requested_by is distinct from old.requested_by
+    or new.created_at is distinct from old.created_at then
+    raise exception using errcode = '23514', message = 'refund request audit fields are immutable';
+  end if;
+  if old.provider_refund_reference is not null
+    and new.provider_refund_reference is distinct from old.provider_refund_reference then
+    raise exception using errcode = '23514', message = 'provider refund reference is immutable once assigned';
   end if;
   if new.status = 'succeeded' and old.status <> 'succeeded' and not exists (
     select 1 from public.payment_webhook_events we
@@ -651,7 +691,8 @@ begin
   if old.status = 'active' and new.status = 'revoked' and old.revoked_at is null and new.revoked_at is not null then
     return new;
   end if;
-  if old.status = 'active' and new.status = 'expired' and old.revoked_at is null and new.revoked_at is null then
+  if old.status = 'active' and new.status = 'expired' and old.revoked_at is null
+    and new.revoked_at is null and old.expires_at is not null and old.expires_at <= now() then
     return new;
   end if;
   raise exception using errcode = '23514', message = 'entitlement status may only transition once from active to revoked or expired';
@@ -669,15 +710,21 @@ set search_path = ''
 as $function$
 begin
   if new.downloads_used <> 0 or new.revoked_at is not null
+    or new.issued_at > now()
+    or new.expires_at > now() + interval '15 minutes'
     or not exists (
       select 1
       from public.entitlements e
+      join public.order_items oi on oi.id = e.order_item_id
+      join public.orders o on o.id = oi.order_id
       join public.product_versions pv on pv.id = e.product_version_id
       where e.id = new.entitlement_id
         and e.customer_id = new.customer_id
         and e.product_version_id = new.product_version_id
         and e.status = 'active'
         and (e.expires_at is null or e.expires_at > now())
+        and o.customer_id = new.customer_id
+        and o.status = 'paid'
         and pv.release_state = 'released'
         and pv.artifact_sha256 = new.artifact_sha256
         and pv.artifact_storage_path is not null
