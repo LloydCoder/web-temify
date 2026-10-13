@@ -1,3 +1,5 @@
+> **DEPRECATED LEGACY ARCHITECTURE — reviewed 2026-10-13.** This Laravel/PHP/MySQL structure is retained for historical context only and is superseded by the accepted Next.js App Router, strict TypeScript, pnpm/Turborepo, Supabase SQL-migration architecture. Do not implement this folder tree. See `docs/architecture/overview.md`, accepted ADRs, and `docs/architecture/repository-structure.md`.
+
 # WEB-TEMIFY — COMPLETE LARAVEL FOLDER STRUCTURE
 ## Laravel 11 + MySQL + Redis + Supabase Storage
 ### Version 4.0 | May 2026
