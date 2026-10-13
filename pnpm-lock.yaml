@@ -9,11 +9,6 @@ overrides:
   sharp: 0.35.5
   tinypool: 2.1.2
 
-patchedDependencies:
-  braces@3.0.3:
-    hash: 2b1e0a11f8ea56f367196192ddb546207c31f8feace0e139ea8be285e635a12e
-    path: patches/braces@3.0.3.patch
-
 importers:
 
   .:
