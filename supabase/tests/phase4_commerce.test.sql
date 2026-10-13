@@ -1,5 +1,5 @@
 begin;
-select plan(109);
+select plan(130);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -459,6 +459,28 @@ select is(
    join phase4b_checkout_order_ids t on t.order_id = oi.order_id),
   1::bigint, 'processor grants entitlement only after the order is paid'
 );
+select has_function('public', 'issue_download_grant', array['uuid','uuid'], 'server-only download grant issuance exists');
+select ok(
+  not has_function_privilege('authenticated', 'public.issue_download_grant(uuid,uuid)', 'EXECUTE'),
+  'customers cannot invoke privileged grant issuance directly'
+);
+create temporary table phase4b_download_grant_ids(grant_id uuid primary key, expires_at timestamptz) on commit drop;
+select lives_ok(
+  $sql$insert into phase4b_download_grant_ids
+    select grant_id, expires_at from public.issue_download_grant(
+      '82000000-0000-4000-8000-000000000082',
+      (select e.id from public.entitlements e
+       join public.order_items oi on oi.id = e.order_item_id
+       join phase4b_checkout_order_ids t on t.order_id = oi.order_id)
+    )$sql$,
+  'paid entitlement receives a short-lived private download grant'
+);
+select is((select count(*) from phase4b_download_grant_ids), 1::bigint, 'one reusable download grant is issued');
+select is(
+  (select dg.max_downloads from public.download_grants dg
+   join phase4b_download_grant_ids t on t.grant_id = dg.id),
+  3, 'download grant has a bounded use count'
+);
 select is(
   (select we.processing_status from public.payment_webhook_events we
    where we.provider_event_id = 'phase4b-verified-payment-event-0001'),
@@ -529,6 +551,103 @@ select is(
   (select count(*) from public.ledger_transactions lt
    join phase4b_checkout_order_ids t on t.order_id = lt.order_id),
   2::bigint, 'payment and refund replays do not duplicate ledger postings'
+);
+select lives_ok(
+  $sql$insert into phase4b_download_grant_ids
+    select grant_id, expires_at from public.issue_download_grant(
+      '82000000-0000-4000-8000-000000000082',
+      (select e.id from public.entitlements e
+       join public.order_items oi on oi.id = e.order_item_id
+       join phase4b_checkout_order_ids t on t.order_id = oi.order_id)
+    ) on conflict (grant_id) do nothing$sql$,
+  'partial refund keeps an active entitlement grant reusable'
+);
+select is((select count(*) from phase4b_download_grant_ids), 1::bigint, 'partial-refund grant reuse does not create duplicate grants');
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '82000000-0000-4000-8000-000000000082', true);
+select is(
+  public.consume_download_grant((select grant_id from phase4b_download_grant_ids)),
+  true, 'active entitlement remains downloadable after a partial refund'
+);
+reset role;
+
+-- A full refund revokes entitlements and grants and prevents any new download consumption.
+select lives_ok(
+  $sql$insert into public.refunds (order_id, payment_attempt_id, amount_minor, currency, reason, idempotency_key, requested_by)
+    select o.id, pa.id, 799, o.currency, 'Final Phase 4B test refund', 'phase4b-final-refund-idempotency-0001', o.customer_id
+    from public.orders o
+    join phase4b_checkout_order_ids t on t.order_id = o.id
+    join public.payment_attempts pa on pa.order_id = o.id$sql$,
+  'final refund request reserves the remaining refundable amount'
+);
+select lives_ok(
+  $sql$insert into public.payment_webhook_events (
+    provider, provider_event_id, event_type, payload_sha256, signature_verified,
+    order_id, payment_attempt_id, refund_id, amount_minor, currency, provider_reference
+  )
+  select 'sandbox', 'phase4b-verified-final-refund-event-0001', 'refund.succeeded', repeat('e',64), true,
+    r.order_id, r.payment_attempt_id, r.id, r.amount_minor, r.currency, 'phase4b-provider-final-refund-0001'
+  from public.refunds r
+  where r.idempotency_key = 'phase4b-final-refund-idempotency-0001'$sql$,
+  'final refund event is recorded with matching provider evidence'
+);
+select is(
+  (select public.process_payment_webhook_event(we.id)
+   from public.payment_webhook_events we
+   where we.provider_event_id = 'phase4b-verified-final-refund-event-0001'),
+  true, 'final refund event processes'
+);
+select is(
+  (select r.status from public.refunds r where r.idempotency_key = 'phase4b-final-refund-idempotency-0001'),
+  'succeeded', 'final refund is settled in the ledger-backed state machine'
+);
+select is(
+  (select pa.status from public.payment_attempts pa
+   join phase4b_checkout_order_ids t on t.order_id = pa.order_id),
+  'refunded', 'fully refunded payment attempt reaches refunded state'
+);
+select is(
+  (select o.status from public.orders o join phase4b_checkout_order_ids t on t.order_id = o.id),
+  'refunded', 'fully refunded order reaches refunded state'
+);
+select is(
+  (select e.status from public.entitlements e
+   join public.order_items oi on oi.id = e.order_item_id
+   join phase4b_checkout_order_ids t on t.order_id = oi.order_id),
+  'revoked', 'full refund revokes purchased entitlements'
+);
+select ok(
+  (select dg.revoked_at is not null from public.download_grants dg
+   join phase4b_download_grant_ids t on t.grant_id = dg.id),
+  'full refund revokes outstanding download grants'
+);
+select is(
+  (select r.provider_refund_reference from public.refunds r
+   where r.idempotency_key = 'phase4b-final-refund-idempotency-0001'),
+  'phase4b-provider-final-refund-0001', 'provider refund reference is retained for reconciliation'
+);
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '82000000-0000-4000-8000-000000000082', true);
+select is(
+  public.consume_download_grant((select grant_id from phase4b_download_grant_ids)),
+  false, 'revoked entitlement cannot consume a download grant'
+);
+reset role;
+select is(
+  (select we.processing_status from public.payment_webhook_events we
+   where we.provider_event_id = 'phase4b-verified-final-refund-event-0001'),
+  'processed', 'final refund event reaches a durable terminal state'
+);
+select is(
+  (select public.process_payment_webhook_event(we.id)
+   from public.payment_webhook_events we
+   where we.provider_event_id = 'phase4b-verified-final-refund-event-0001'),
+  true, 'replaying final refund event is safe'
+);
+select is(
+  (select count(*) from public.ledger_transactions lt
+   join phase4b_checkout_order_ids t on t.order_id = lt.order_id),
+  3::bigint, 'full refund replay does not duplicate ledger postings'
 );
 
 -- Exercise the failed-payment path and prove that it never grants an entitlement.
