@@ -466,29 +466,29 @@ security definer
 set search_path = ''
 as $function$
 declare
-  customer_id uuid := (select auth.uid());
+  v_customer_id uuid := (select auth.uid());
   grant_hint public.download_grants%rowtype;
   grant_row public.download_grants%rowtype;
   entitlement_row public.entitlements%rowtype;
-  order_id uuid;
+  v_order_id uuid;
   order_row public.orders%rowtype;
   release_row public.product_versions%rowtype;
 begin
-  if customer_id is null then return false; end if;
+  if v_customer_id is null then return false; end if;
 
   select * into grant_hint
   from public.download_grants
-  where id = target_grant_id and customer_id = customer_id;
+  where id = target_grant_id and customer_id = v_customer_id;
   if not found then return false; end if;
 
-  select oi.order_id into order_id
+  select oi.order_id into v_order_id
   from public.entitlements e
   join public.order_items oi on oi.id = e.order_item_id
-  where e.id = grant_hint.entitlement_id and e.customer_id = customer_id;
+  where e.id = grant_hint.entitlement_id and e.customer_id = v_customer_id;
   if not found then return false; end if;
 
-  select * into order_row from public.orders where id = order_id for update;
-  if not found or order_row.customer_id <> customer_id
+  select * into order_row from public.orders where id = v_order_id for update;
+  if not found or order_row.customer_id <> v_customer_id
     or order_row.status not in ('paid', 'partially_refunded') then
     return false;
   end if;
@@ -497,7 +497,7 @@ begin
   from public.entitlements
   where id = grant_hint.entitlement_id
   for update;
-  if not found or entitlement_row.customer_id <> customer_id
+  if not found or entitlement_row.customer_id <> v_customer_id
     or entitlement_row.status <> 'active'
     or (entitlement_row.expires_at is not null and entitlement_row.expires_at <= now()) then
     return false;
@@ -507,7 +507,7 @@ begin
   from public.download_grants
   where id = target_grant_id
   for update;
-  if not found or grant_row.customer_id <> customer_id
+  if not found or grant_row.customer_id <> v_customer_id
     or grant_row.revoked_at is not null or grant_row.expires_at <= now()
     or grant_row.downloads_used >= grant_row.max_downloads
     or grant_row.entitlement_id <> entitlement_row.id
