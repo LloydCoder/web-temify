@@ -3,6 +3,7 @@ import { getServerEnv } from "@/lib/env";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { SandboxPaymentEventSchema, ingestVerifiedSandboxEvent } from "@/server/commerce/webhook";
 import { verifySandboxWebhookSignature } from "@/server/commerce/webhook-signature";
+import { readBoundedRequestBody } from "@/server/commerce/read-bounded-body";
 
 export const runtime = "nodejs";
 const MAX_WEBHOOK_BYTES = 64 * 1024;
@@ -16,15 +17,15 @@ export async function POST(request: Request) {
   if (secret.length < 32) {
     return NextResponse.json({ error: "Webhook verification is not configured." }, { status: 503 });
   }
-  const contentLength = Number(request.headers.get("content-length") ?? "0");
-  if (contentLength > MAX_WEBHOOK_BYTES) {
-    return NextResponse.json({ error: "Webhook payload is too large." }, { status: 413 });
+  // Enforce the limit during streaming, before creating the full body string.
+  const boundedBody = await readBoundedRequestBody(request, MAX_WEBHOOK_BYTES);
+  if (!boundedBody.ok) {
+    if (boundedBody.reason === "too_large") {
+      return NextResponse.json({ error: "Webhook payload is too large." }, { status: 413 });
+    }
+    return NextResponse.json({ error: "Invalid webhook request body." }, { status: 400 });
   }
-
-  const rawBody = await request.text();
-  if (Buffer.byteLength(rawBody, "utf8") > MAX_WEBHOOK_BYTES) {
-    return NextResponse.json({ error: "Webhook payload is too large." }, { status: 413 });
-  }
+  const rawBody = boundedBody.body;
   const eventId = request.headers.get("x-web-temify-event-id") ?? "";
   const timestamp = request.headers.get("x-web-temify-timestamp") ?? "";
   const signature = request.headers.get("x-web-temify-signature") ?? "";
