@@ -1,5 +1,5 @@
 begin;
-select plan(70);
+select plan(85);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -136,26 +136,26 @@ select throws_ok(
   '23505', null, 'an order cannot have two active or settled payment attempts'
 );
 select throws_ok(
-  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id)
-  values ('stripe', 'phase4-mismatched-provider-event-001', 'payment.succeeded', repeat('b', 64), true, '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090')$sql$,
+  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id, amount_minor, currency, provider_reference)
+  values ('stripe', 'phase4-mismatched-provider-event-001', 'payment.succeeded', repeat('b', 64), true, '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090', 1299, 'USD', 'stripe-invalid-ref')$sql$,
   '23514', null, 'provider event must match the referenced payment attempt'
 );
 select throws_ok(
-  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id)
-  values ('sandbox', 'phase4-invalid-signature-event-001', 'payment.succeeded', repeat('b', 64), false, '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090')$sql$,
+  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id, amount_minor, currency, provider_reference)
+  values ('sandbox', 'phase4-invalid-signature-event-001', 'payment.succeeded', repeat('b', 64), false, '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090', 1299, 'USD', 'sandbox-invalid-ref')$sql$,
   '23514', null, 'unverified provider events cannot enter the inbox'
 );
 select throws_ok(
-  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, order_id, payment_attempt_id)
-  values ('sandbox', 'phase4-missing-signature-event-001', 'payment.succeeded', repeat('b', 64), '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090')$sql$,
+  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, order_id, payment_attempt_id, amount_minor, currency, provider_reference)
+  values ('sandbox', 'phase4-missing-signature-event-001', 'payment.succeeded', repeat('b', 64), '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090', 1299, 'USD', 'sandbox-missing-signature-ref')$sql$,
   '23502', null, 'signature verification must be explicitly asserted by the trusted ingress'
 );
 insert into public.payment_webhook_events (
-  id, provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id
+  id, provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id, amount_minor, currency, provider_reference
 ) values (
   '91000000-0000-4000-8000-000000000091', 'sandbox', 'phase4-payment-event-0001',
   'payment.succeeded', repeat('d', 64), true, '88000000-0000-4000-8000-000000000088',
-  '90000000-0000-4000-8000-000000000090'
+  '90000000-0000-4000-8000-000000000090', 1299, 'USD', 'sandbox-charge-0001'
 );
 update public.payment_webhook_events set processing_status = 'processing'
 where id = '91000000-0000-4000-8000-000000000091';
@@ -196,8 +196,8 @@ select throws_ok(
 select is((select count(*) from public.ledger_transactions where order_id = '88000000-0000-4000-8000-000000000088'), 1::bigint, 'successful payment is journaled exactly once');
 
 select throws_ok(
-  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id)
-  values ('sandbox', 'phase4-payment-event-0001', 'payment.succeeded', repeat('e', 64), true, '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090')$sql$,
+  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id, amount_minor, currency, provider_reference)
+  values ('sandbox', 'phase4-payment-event-0001', 'payment.succeeded', repeat('e', 64), true, '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090', 1299, 'USD', 'sandbox-charge-0001')$sql$,
   '23505', null, 'duplicate provider event identifiers are rejected'
 );
 
@@ -270,11 +270,11 @@ values (
 );
 update public.refunds set status = 'pending' where id = '94000000-0000-4000-8000-000000000094';
 insert into public.payment_webhook_events (
-  id, provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id, refund_id
+  id, provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id, refund_id, amount_minor, currency, provider_reference
 ) values (
   '95000000-0000-4000-8000-000000000095', 'sandbox', 'phase4-refund-event-0001',
   'refund.succeeded', repeat('f', 64), true, '88000000-0000-4000-8000-000000000088',
-  '90000000-0000-4000-8000-000000000090', '94000000-0000-4000-8000-000000000094'
+  '90000000-0000-4000-8000-000000000090', '94000000-0000-4000-8000-000000000094', 500, 'USD', 'sandbox-refund-0001'
 );
 update public.payment_webhook_events set processing_status = 'processing'
 where id = '95000000-0000-4000-8000-000000000095';
@@ -307,11 +307,11 @@ values (
 );
 update public.refunds set status = 'pending' where id = '96000000-0000-4000-8000-000000000096';
 insert into public.payment_webhook_events (
-  id, provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id, refund_id
+  id, provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id, refund_id, amount_minor, currency, provider_reference
 ) values (
   '97000000-0000-4000-8000-000000000097', 'sandbox', 'phase4-refund-event-0002',
   'refund.succeeded', repeat('a', 64), true, '88000000-0000-4000-8000-000000000088',
-  '90000000-0000-4000-8000-000000000090', '96000000-0000-4000-8000-000000000096'
+  '90000000-0000-4000-8000-000000000090', '96000000-0000-4000-8000-000000000096', 799, 'USD', 'sandbox-refund-0002'
 );
 update public.payment_webhook_events set processing_status = 'processing'
 where id = '97000000-0000-4000-8000-000000000097';
@@ -360,5 +360,98 @@ select throws_ok(
   $sql$update public.entitlements set status = 'active', revoked_at = null where id = '92000000-0000-4000-8000-000000000092'$sql$,
   '23514', null, 'revoked entitlements cannot be reactivated'
 );
+-- Phase 4B: exercise the atomic server-only checkout RPC and durable payment-event processor.
+select has_function('public', 'create_order_for_checkout', array['uuid','jsonb','text'], 'server-only checkout RPC exists');
+select ok(
+  not has_function_privilege('authenticated', 'public.create_order_for_checkout(uuid,jsonb,text)', 'EXECUTE'),
+  'customers cannot invoke privileged checkout creation directly'
+);
+create temporary table phase4b_checkout_order_ids(order_id uuid primary key) on commit drop;
+set constraints orders_totals_guard, order_items_totals_guard deferred;
+select lives_ok(
+  $sql$insert into phase4b_checkout_order_ids
+    select order_id from public.create_order_for_checkout(
+      '82000000-0000-4000-8000-000000000082',
+      '[{"product_version_id":"87000000-0000-4000-8000-000000000087","quantity":1}]'::jsonb,
+      'phase4b-checkout-idempotency-0001'
+    )$sql$,
+  'checkout RPC creates a server-priced order and immutable item snapshot'
+);
+select lives_ok(
+  $sql$insert into phase4b_checkout_order_ids
+    select order_id from public.create_order_for_checkout(
+      '82000000-0000-4000-8000-000000000082',
+      '[{"product_version_id":"87000000-0000-4000-8000-000000000087","quantity":1}]'::jsonb,
+      'phase4b-checkout-idempotency-0001'
+    ) on conflict do nothing$sql$,
+  'repeated checkout request with the same idempotency key is safe'
+);
+select is((select count(*) from phase4b_checkout_order_ids), 1::bigint, 'checkout replay returns the original order');
+select throws_ok(
+  $sql$select * from public.create_order_for_checkout(
+    '82000000-0000-4000-8000-000000000082',
+    '[{"product_version_id":"87000000-0000-4000-8000-000000000087","quantity":2}]'::jsonb,
+    'phase4b-checkout-idempotency-0001'
+  )$sql$,
+  '23505', null, 'idempotency key cannot be reused with a different basket'
+);
+select is(
+  (select o.total_minor from public.orders o join phase4b_checkout_order_ids t on t.order_id = o.id),
+  1299::bigint, 'checkout total is derived from canonical product pricing'
+);
+select lives_ok(
+  $sql$insert into public.payment_attempts (order_id, provider, amount_minor, currency, idempotency_key)
+    select o.id, 'sandbox', o.total_minor, o.currency, 'phase4b-payment-attempt-key-0001'
+    from public.orders o join phase4b_checkout_order_ids t on t.order_id = o.id$sql$,
+  'checkout can create a provider-neutral payment attempt'
+);
+select lives_ok(
+  $sql$update public.payment_attempts set status = 'pending'
+    where order_id = (select order_id from phase4b_checkout_order_ids)$sql$,
+  'payment attempt can enter pending state'
+);
+select lives_ok(
+  $sql$insert into public.payment_webhook_events (
+    provider, provider_event_id, event_type, payload_sha256, signature_verified,
+    order_id, payment_attempt_id, amount_minor, currency, provider_reference
+  )
+  select 'sandbox', 'phase4b-verified-payment-event-0001', 'payment.succeeded', repeat('b',64), true,
+    o.id, pa.id, o.total_minor, o.currency, 'phase4b-provider-charge-0001'
+  from public.orders o
+  join phase4b_checkout_order_ids t on t.order_id = o.id
+  join public.payment_attempts pa on pa.order_id = o.id$sql$,
+  'verified event is durably inserted without retaining the raw payload'
+);
+select is(
+  (select public.process_payment_webhook_event(we.id)
+   from public.payment_webhook_events we
+   where we.provider_event_id = 'phase4b-verified-payment-event-0001'),
+  true, 'verified payment event processes idempotently'
+);
+select is(
+  (select o.status from public.orders o join phase4b_checkout_order_ids t on t.order_id = o.id),
+  'paid', 'processor marks order paid only after verified event and ledger evidence'
+);
+select is(
+  (select count(*) from public.ledger_transactions lt
+   join phase4b_checkout_order_ids t on t.order_id = lt.order_id),
+  1::bigint, 'processor posts exactly one immutable payment ledger entry'
+);
+select is(
+  (select count(*) from public.entitlements e
+   join public.order_items oi on oi.id = e.order_item_id
+   join phase4b_checkout_order_ids t on t.order_id = oi.order_id),
+  1::bigint, 'processor grants entitlement only after the order is paid'
+);
+select is(
+  (select we.processing_status from public.payment_webhook_events we
+   where we.provider_event_id = 'phase4b-verified-payment-event-0001'),
+  'processed', 'verified payment event reaches a durable terminal state'
+);
+select lives_ok(
+  $sql$set constraints orders_totals_guard, order_items_totals_guard immediate$sql$,
+  'deferred order/item total constraints pass after atomic checkout'
+);
+
 select * from finish();
 rollback;
