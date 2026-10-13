@@ -1,6 +1,6 @@
 # Phase gates and completion criteria
 
-This roadmap is a sequence of evidence gates, not a percentage-complete estimate. A phase is complete only when implementation, automated tests, documentation, forensic review, and CI evidence agree at the same commit SHA. A green CI run over a scaffold does not prove production readiness. Keep every incomplete exit criterion unchecked; never infer completion from a plan or a passing subset of checks.
+This roadmap is a sequence of evidence gates, not a percentage-complete estimate. A phase is complete only when implementation, automated tests, documentation, forensic review, and CI evidence agree at the same commit SHA. A green CI run over a scaffold does not prove production readiness. Keep every incomplete exit criterion unchecked; never infer completion from a plan or a passing subset of checks. The canonical forward sequence and all marketplace verticals are defined in [master-enterprise-roadmap.md](master-enterprise-roadmap.md); this file remains the implementation evidence register and records legacy subphase labels for traceability.
 
 ## Phase 0 — Product and engineering foundation
 Scope: confirm product boundaries and launch scope; reconcile existing docs and flag conflicts; define architecture, data ownership, security, integration boundaries, test strategy, delivery gates, and repository map.
