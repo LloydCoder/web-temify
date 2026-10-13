@@ -1,5 +1,5 @@
 begin;
-select plan(88);
+select plan(89);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -144,6 +144,11 @@ select throws_ok(
   $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id, amount_minor, currency, provider_reference)
   values ('sandbox', 'phase4-mismatched-amount-event-001', 'payment.succeeded', repeat('b', 64), true, '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090', 1298, 'USD', 'sandbox-wrong-amount')$sql$,
   '23514', null, 'verified event amount must match the canonical payment attempt'
+);
+select throws_ok(
+  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id, amount_minor, currency)
+  values ('sandbox', 'phase4-missing-provider-ref-event-001', 'payment.succeeded', repeat('b', 64), true, '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090', 1299, 'USD')$sql$,
+  '23514', null, 'financial events require a provider reference'
 );
 select throws_ok(
   $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id, amount_minor, currency, provider_reference)
