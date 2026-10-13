@@ -33,6 +33,10 @@ values
  ('74000000-0000-4000-8000-000000000074', '71000000-0000-4000-8000-000000000071', '72000000-0000-4000-8000-000000000072', 'phase3-unverified-product', 'Phase 3 Unverified Product', 'Unapproved fixture', 'Synthetic fixture used only by database tests.', 'template', 'published', 'declared', null, null, repeat('b', 64))
 on conflict (id) do nothing;
 
+insert into public.product_rights_attestations (product_id, attested_by, rights_basis, statement, evidence_reference, review_status, reviewed_by, reviewed_at)
+values ('73000000-0000-4000-8000-000000000073', '71000000-0000-4000-8000-000000000071', 'original_work', 'Synthetic test-only rights declaration with separate reviewer evidence.', 'test-fixture://phase3/rights', 'verified', '75000000-0000-4000-8000-000000000075', now())
+on conflict do nothing;
+
 insert into public.product_versions (product_id, version, release_state, release_notes, artifact_sha256, artifact_storage_path, manifest, compatibility, created_by, released_at)
 values ('73000000-0000-4000-8000-000000000073', '1.0.0', 'released', 'Synthetic release fixture', repeat('a', 64), 'private/phase3/verified-product-1.0.0.zip', '{}'::jsonb, '{}'::jsonb, '71000000-0000-4000-8000-000000000071', now())
 on conflict (product_id, version) do nothing;
