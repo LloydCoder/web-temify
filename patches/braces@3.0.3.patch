@@ -1,7 +1,7 @@
 diff --git a/lib/parse.js b/lib/parse.js
 --- a/lib/parse.js
 +++ b/lib/parse.js
-@@ -197,5 +197,8 @@
+@@ -197,4 +197,7 @@
      if (value === CHAR_LEFT_CURLY_BRACE) {
        depth++;
 +      if (depth > 100) {
