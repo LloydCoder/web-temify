@@ -38,7 +38,7 @@ jobs:
       - name: Install dependencies reproducibly
         run: pnpm install --frozen-lockfile
       - name: Audit dependency graph
-        run: pnpm audit --audit-level high
+        run: node scripts/audit-dependencies.mjs
 
   license-audit:
     name: Production dependency license policy
