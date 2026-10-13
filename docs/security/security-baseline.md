@@ -37,3 +37,7 @@ This is a minimum engineering baseline, not proof that the application is secure
 ## Catalogue data minimization
 - `products` uses column-level `SELECT` grants for anonymous and authenticated API roles; do not restore table-wide `SELECT`.
 - Creator account IDs, rights declarations, reviewer IDs/timestamps, rights review state, and artifact digests are not client-readable. Row-level security controls which product rows are visible; UI filters are not authorization.
+
+## RLS helper-function discipline
+- When table-wide `SELECT` is intentionally denied, policy subqueries must not depend on callers having that table privilege. Use narrowly scoped `SECURITY DEFINER` boolean predicates only where necessary, with an empty/fixed `search_path`, explicit execute grants, and no returned row data.
+- Keep ownership helpers non-disclosing: return only whether the current authenticated principal owns the target object, never whether another principal owns it or any internal metadata.
