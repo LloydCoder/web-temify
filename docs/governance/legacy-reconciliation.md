@@ -1,16 +1,45 @@
 # Legacy documentation reconciliation register
 
-**Status:** In progress. The full audit of uploaded legacy files begins only after the user confirms upload completion.
+**Status:** Audited for the repository snapshot on 2026-10-13. The listed legacy specifications and mockups have been labelled historical/non-canonical or visual-reference-only. Future uploads and newly discovered documents must be added to this register before they drive implementation.
 
-| Area | Known issue | Resolution |
+## Canonical authority and precedence
+
+1. Current source code, passing tests, and `supabase/migrations/` define implemented behavior and schema.
+2. `docs/architecture/overview.md` and accepted ADRs define architecture and ownership boundaries.
+3. `docs/roadmap/phase-gates.md` defines phase order, acceptance criteria, and evidence gates.
+4. `docs/security/` and `docs/quality/testing-strategy.md` define the current security and verification baseline.
+5. `LloydCoder/web-temify-products/catalog/products.json` is the canonical planned product inventory. Its 43 entries are not a claim that 43 products are built or released.
+6. `docs/web-temify-v3.html` is the canonical visual reference only. Its product listings, testimonials, metrics, prices, and service/gateway claims are illustrative.
+
+If a legacy file conflicts with these authorities, the canonical source wins. No framework, schema, payment provider, price, payout, feature, product count, or completion claim is approved merely because it appears in a historical prompt or mockup.
+
+## Audited legacy documents
+
+| File(s) | Conflict or risk found | Resolution |
 |---|---|---|
-| Framework | Canonical overview says Next.js App Router; older Laravel/PHP prompts remain | Mark old prompts historical/non-canonical |
-| Feature counts | Different totals and built counts appear | One canonical inventory with stable IDs, phase, owner, evidence, status |
-| Data schema | 85-table model and two migration directories | Accept ADR-0003 before schema generation; validate model |
-| Payment gateways | Providers span launch and later phases | Gate each by eligibility, sandbox evidence, idempotency, legal/security review |
-| Product catalogue | Counts/duplicates and unsupported claims | Deduplicate, stable IDs, verify rights, review regulated categories |
-| Homepage | Placeholder links/inert controls/unverified metrics | Keep visual direction; remove unsupported proof and implement interactions |
-| Tinlance | Integration needs runtime/permission verification | Disabled until contract, controls, tests, and evidence exist |
+| `docs/01-project-overview.md`, `docs/02-folder-structure.md` | May 2026 instructions contain Prisma, Zustand, a Prisma migration tree, and legacy folder plans. | Historical requirements only; use strict TypeScript, Next.js App Router, pnpm/Turborepo, Zod contracts, and Supabase SQL migrations per accepted ADRs. |
+| `docs/03-database-schema.md` | Historical Prisma-shaped 85-table proposal and ORM migration instructions. | Already labelled non-executable; no second migration authority. Build schema only from reviewed Supabase SQL migrations and database tests. |
+| `docs/04-env-and-config.md`, `docs/05-api-and-payments.md` | Legacy provider-specific environment variables and webhook snippets could be mistaken for configured integrations. | Examples are not live configuration or provider approval. Current commerce is sandbox-only; no live provider or payouts are enabled. Use validated environment schemas and implemented server routes. |
+| `docs/06-features-master-list.md`, `docs/web-temify-complete-master-list.html`, `docs/web-temify-master-features.html` | Conflicting feature totals and unsupported “built”, “production ready”, or “113/113 checks passing” claims. | Backlog/mockup only. Completion requires code, tests, forensic audit, and CI evidence at the relevant phase gate. |
+| `docs/07-email-templates.md` | Templates could imply email sending, sender-domain configuration, or deliverability already exists. | Draft content only; provider, domain verification, delivery, bounce, and abuse controls require separate implementation and evidence. |
+| `docs/08-security-and-rules.md` | ORM-specific examples and old security guidance conflict with current authorization, RLS, and migration design. | Current security baseline, threat model, database policies, server-only adapters, and adversarial tests take precedence; snippets are not production controls. |
+| `docs/09-products-catalogue.md`, `docs/web-temify-products.html` | The legacy catalogue says 44 products and mixes product ideas, PHP/Laravel stacks, prices, and feature claims. | Canonical inventory is the 43-entry product-source manifest (39 standalone products plus 4 launch kits, subject to manifest validation); all entries remain planned unless release evidence proves otherwise. Preserve the agreed tier sequence Tier 1 → Tier 4 → Tier 5 → Tier 2 → Tier 3. The separate 18 candidates remain deferred. |
+| `docs/web-temify-claude-code-prompt.md` | Long prompt combines mixed historical implementation assumptions and feature/payment plans. | Historical prompt only; do not execute wholesale. Use phase gates, accepted ADRs, current tests, and the canonical product manifest. |
+| `docs/web-temify-laravel-prompt.md`, `docs/web-temify-laravel-structure.md`, `docs/web-temify-folder-structure.html` | Explicit Laravel/PHP/MySQL architecture conflicts with the selected stack. | Deprecated and retained for historical context only. Do not copy this architecture into the current repository. |
+| `docs/web-temify-v3.html` | Visual mockup includes fictional testimonials, placeholder listings, old gateway references, and unsupported service claims. | Preserve its visual identity as the design baseline; treat all content claims and controls as mockup-only until implemented and evidenced. |
+| `docs/web-temify-v2.html`, `docs/web-temify-homepage.html` | Older visual variants duplicate and sometimes contradict the latest design baseline. | Historical visual references; v3 is the canonical visual baseline. |
+| `docs/web-temify-complete-master-list.html`, `docs/web-temify-master-features.html` | Feature totals, “complete” banners, payout/yield ideas, and readiness labels are not verified evidence. | Historical backlogs only; use source-backed phase status and CI evidence. |
 
-## After upload completion
-Inventory supplied files and versions; identify duplicates and conflicts; trace requirements to domain, routes, data, tests and evidence; produce canonical decisions and seek approval for material choices.
+## Resolved architectural conflicts
+
+- **Schema ownership:** Supabase SQL migrations are the sole schema history; no Prisma migration directory.
+- **Application stack:** Next.js App Router, strict TypeScript, Tailwind/shadcn conventions, pnpm workspaces/Turborepo, Zod, Supabase PostgreSQL/Auth/Storage.
+- **Payments:** provider-neutral commerce primitives and non-production sandbox only. Live provider selection waits for country/payout eligibility, fees, tax/refund behavior, webhook validation, and reconciliation evidence.
+- **Crypto and regulated categories:** legacy references do not authorize launch. Regulated/high-risk products and payment methods require explicit legal, safety, provider, and operational review.
+- **Products:** the product-source monorepo owns source workspaces and manifests; Web-Temify owns listing state and commerce. Planned inventory does not mean built, scanned, released, or sellable.
+- **Trust claims:** mockup testimonials, star ratings, conversion metrics, “production-ready” labels, and check counts are not real evidence and must not be exposed as factual UI.
+- **Tinlance:** integration remains disabled by default and cannot bypass Web-Temify publication, payment, refund, entitlement, license, or download authorization.
+
+## Ongoing reconciliation protocol
+
+For every new file or user-uploaded document: identify its provenance/version; classify it as canonical, historical, visual, or untrusted input; record material conflicts; update the relevant ADR or canonical document before implementation; and add tests where a conflict could affect behavior. This audit closes the current repository snapshot only, not future uploads.

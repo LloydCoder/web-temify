@@ -1,3 +1,5 @@
+> **DEPRECATED LEGACY BUILD PROMPT — reviewed 2026-10-13.** This Laravel/PHP/MySQL build prompt is historical only and conflicts with the accepted Next.js App Router, strict TypeScript, pnpm/Turborepo, and Supabase SQL-migration architecture. Do not execute it wholesale or treat its payment, security, product, or readiness claims as current. See `docs/architecture/overview.md`, accepted ADRs, and `docs/roadmap/phase-gates.md`.
+
 # WEB-TEMIFY — LARAVEL MASTER BUILD PROMPT
 ## Complete Laravel 11 Platform Build Brief
 ### Version 4.0 | May 2026 | Laravel 11 + MySQL + Supabase Storage
