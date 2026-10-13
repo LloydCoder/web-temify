@@ -94,14 +94,25 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - **Gate decision:** Phase 4A may merge after the final CI re-run on the documentation-updated head and repeat review. Phase 4 as a whole remains in progress.
 
 Phase 4B — server-side commerce workflows (implementation in progress):
-- [ ] Atomic server-only order creation derives price, currency, seller, rights, release version and artifact digest from the canonical database; basket and idempotency replay are validated.
-- [ ] Checkout and sandbox completion are authenticated, idempotent, non-production only, and fail closed when the provider is disabled or the environment is production.
-- [ ] Raw-body HMAC verification enforces event identity, timestamp tolerance, constant-time signature comparison, payload limits and strict event contracts.
-- [ ] Verified webhook events are stored without raw payloads, deduplicated by provider/event ID, conflict-checked by payload digest, and processed with retryable durable state transitions.
-- [ ] Successful payment processing atomically posts a ledger transfer, marks the order paid, and creates entitlements; refund events require matching refund/attempt/order/amount/currency evidence.
-- [ ] Customer refund requests are idempotent and explicitly do not imply that money moved; provider execution and approval remain disabled.
-- [ ] Private downloads issue/reuse bounded grants only for active entitlements on paid or partially refunded orders; consumption locks the order and entitlement, verifies the released artifact digest, and returns a 60-second signed URL with no-store headers. Full refunds revoke entitlements and outstanding grants.
-- [ ] Unit tests, pgTAP checkout/processor tests, migration reset, schema lint, RLS tests, Playwright, typecheck, lint, production build and forensic audit pass on the same head SHA.
+- [x] Atomic server-only order creation derives price, currency, seller, rights, release version and artifact digest from the canonical database; basket and idempotency replay are validated.
+- [x] Checkout and sandbox completion are authenticated, idempotent, non-production only, and fail closed when the provider is disabled or the environment is production.
+- [x] Raw-body HMAC verification enforces event identity, timestamp tolerance, constant-time signature comparison, streaming payload limits and strict event contracts.
+- [x] Verified webhook events are stored without raw payloads, deduplicated by provider/event ID, conflict-checked by payload digest, and processed with retryable durable state transitions.
+- [x] Successful payment processing atomically posts a ledger transfer, marks the order paid, and creates entitlements; refund events require matching refund/attempt/order/amount/currency evidence.
+- [x] Customer refund requests are idempotent and explicitly do not imply that money moved; provider execution and approval remain disabled.
+- [x] Private downloads issue/reuse bounded grants only for active entitlements on paid or partially refunded orders; consumption locks the order and entitlement, verifies the released artifact digest, and returns a 60-second signed URL with no-store headers. Full refunds revoke entitlements and outstanding grants.
+- [x] Unit tests, pgTAP checkout/processor tests, migration reset, schema lint, RLS tests, Playwright, typecheck, lint, production build and phase-specific forensic audit pass on the implementation head SHA.
+
+### Phase 4B forensic audit record
+
+- **Disposition:** PASS for the implemented non-production workflow scope only; NOT a live commerce, payment-provider, seller-payout, or production-launch approval.
+- **Implementation head reviewed:** `8c506f3dccd6fec57b72077af1cafefb2b397510`.
+- **CI evidence:** [Foundation CI run 38436486905](https://github.com/LloydCoder/web-temify/actions/runs/38436486905) completed successfully on that exact implementation head. Frozen install, foundation/domain tests, TypeScript, lint, empty-database migration reset, Supabase schema lint, pgTAP/RLS tests, Playwright, production build, and service cleanup passed.
+- **Files reviewed:** the Phase 4B migration and pgTAP suite; checkout, sandbox-completion, webhook, refund, grant-issuance and download routes; webhook signature/processing modules; bounded-body reader and tests; environment validation; Phase 4B commerce documentation; CI workflow; and phase-gate criteria.
+- **Key invariants reviewed:** server-derived prices and immutable order snapshots; authenticated ownership; non-production-only sandbox behavior; raw-body HMAC validation and replay/digest conflict handling; retryable event processing; payment/refund/ledger amount and currency matching; idempotent entitlements; order-locked grant consumption; private-storage delivery with a short-lived URL; and explicit non-claims around real money movement.
+- **Audit defect fixed before PASS:** the first implementation checked webhook size only after buffering the full body. The bounded reader now enforces byte limits while streaming and rejects invalid UTF-8. It is used by the webhook endpoint (64 KiB maximum) and checkout, sandbox completion, refund, download-grant and download endpoints (32 KiB maximum). Unit tests cover in-limit, oversized, invalid-length and invalid-UTF-8 inputs.
+- **Residual risks:** no live provider adapter or provider-account verification; no tax/VAT calculation; no free checkout; no seller payout/commission/provider-settlement accounting; refund requests do not execute transfers; no chargeback/dispute workflow; partial refunds are order-level rather than item-specific; actual production bucket configuration, secrets, legal/tax review, penetration testing, full WCAG 2.2 AA assessment, and hosting/deployment readiness remain release gates.
+- **Gate decision:** Phase 4B workflow primitives are complete for sandbox-only scope. Phase 4 and overall launch readiness remain incomplete until later operational, seller, provider, legal, security and deployment gates pass.
 
 **Phase 4B limitations:** the only adapter is a non-production sandbox; there is no live payment provider, tax calculation, zero-value/free checkout, seller payout, commission accounting, refund execution, or production download enablement. Provider selection must follow jurisdiction/payout eligibility and sandbox verification. Production launch remains blocked until these gaps and the Phase 5–8 gates are completed.
 
