@@ -54,12 +54,5 @@
     "turbo": "2.5.8",
     "typescript": "5.9.2",
     "vitest": "5.0.3"
-  },
-  "pnpm": {
-    "overrides": {
-      "postcss": "8.5.30",
-      "sharp": "0.35.5",
-      "tinypool": "2.1.2"
-    }
   }
 }
