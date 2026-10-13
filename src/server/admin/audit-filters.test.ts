@@ -33,6 +33,7 @@ describe("parseAuditFilters", () => {
     expect(parseAuditFilters({ cursor: "0" }).invalid).toBe(true);
     expect(parseAuditFilters({ cursor: "-1" }).invalid).toBe(true);
     expect(parseAuditFilters({ cursor: "1".repeat(20) }).invalid).toBe(true);
+    expect(parseAuditFilters({ cursor: "9999999999999999999" }).invalid).toBe(true);
   });
 
   it("rejects unknown query parameters instead of silently broadening the query", () => {
