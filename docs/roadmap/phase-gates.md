@@ -1,6 +1,6 @@
 # Phase gates and completion criteria
 
-This roadmap is a sequence of evidence gates, not a percentage-complete estimate. A phase is complete only when implementation, automated tests, documentation, forensic review, and CI evidence agree at the same commit SHA. A green CI run over a scaffold does not prove production readiness. Keep every incomplete exit criterion unchecked; never infer completion from a plan or a passing subset of checks. The canonical forward sequence and all marketplace verticals are defined in [master-enterprise-roadmap.md](master-enterprise-roadmap.md); this file remains the implementation evidence register and records legacy subphase labels for traceability.
+This roadmap is a sequence of evidence gates, not a percentage-complete estimate. A phase is complete only when implementation, automated tests, documentation, forensic review, and CI evidence agree at the same commit SHA. A green CI run over a scaffold does not prove production readiness. Keep every incomplete exit criterion unchecked; never infer completion from a plan or a passing subset of checks. The canonical forward roadmap and cross-phase architecture are defined in [master-enterprise-roadmap.md](master-enterprise-roadmap.md); this file is the implementation evidence register, including legacy subphase records.
 
 ## Phase 0 — Product and engineering foundation
 Scope: confirm product boundaries and launch scope; reconcile existing docs and flag conflicts; define architecture, data ownership, security, integration boundaries, test strategy, delivery gates, and repository map.
@@ -157,7 +157,7 @@ Phase 4B — server-side commerce workflows (implementation in progress):
 - **Gate decision:** Phase 5B is complete for its stated scope. Phase 5 overall remains in progress; do not treat this subphase as production readiness.
 
 
-### Phase 5C — Admin audit explorer (complete for this scope)
+### Phase 5C — Admin audit explorer (complete for its reviewed scope)
 
 Scope: restricted audit-stream discovery with exact-match filters, stable cursor pagination, bounded queries, safe fields only, and query-performance indexes. Audit events remain append-only and are never mutated through the explorer.
 
@@ -171,31 +171,175 @@ Exit criteria:
 - [x] Unit tests, database reset/lint/pgTAP, E2E, typecheck, lint, production build, and cleanup pass on the exact implementation head.
 - [x] Phase-specific forensic audit and residual limits are recorded before the next phase begins.
 
-
-### Phase 5C forensic audit record
-
-- **Disposition:** PASS for the bounded, read-only audit-explorer scope only. This is not a complete operations centre or production-launch approval.
-- **PR:** [#16 — feat: add bounded admin audit explorer](https://github.com/LloydCoder/web-temify/pull/16), merged after exact-head CI passed.
-- **Validated implementation head:** `62a16f41f5e9689d6ef0f7203f566084af594d3b`.
-- **Merge commit:** `50041f25d95aa5f3e16cd22504b7b5c2ee982ad6`.
-- **CI evidence:** [Foundation CI run 38461536339](https://github.com/LloydCoder/web-temify/actions/runs/38461536339) completed successfully on the exact PR head. Frozen install, foundation/domain tests, TypeScript, lint, Supabase CLI setup, local services, empty-database migration reset, schema lint, pgTAP/RLS, Playwright, production build, and cleanup all passed.
-- **Files reviewed:** `src/app/admin/audit/page.tsx`; `src/server/admin/audit-filters.ts` and tests; `src/server/admin/authorization.ts`; `supabase/migrations/20261013060000_phase5c_admin_audit_explorer.sql`; `supabase/tests/phase5c_admin_audit_explorer.test.sql`; `tests/e2e/admin-access.spec.ts`; `docs/operations/admin-console.md`; and `.github/workflows/ci.yml`.
-- **Security invariants:** the shared admin helper validates the Supabase Auth principal and database-owned admin role before constructing the privileged client; access is audit-recorded before the query; only approved audit columns are selected; metadata is not returned; filters are bounded and fail closed; each query fetches at most 51 rows and displays 50; pagination preserves exact filters; audit records remain append-only; anonymous and ordinary authenticated roles cannot read the stream.
-- **Forensic defects corrected before PASS:** the pagination href was converted to a typed URL object after TypeScript rejected the prior string; PostgreSQL BIGINT IDs now cross the JavaScript boundary as exact text via a generated `id_text` projection, preventing precision loss above `Number.MAX_SAFE_INTEGER`; a pgTAP assertion verifies that projection; Next.js `typedRoutes` uses the stable top-level config option.
-- **Residual risks / explicit non-claims:** cursor pagination is descending ID order, not a tamper-evident audit export; no audit retention/archival policy or external immutable log sink is implemented. Support cases, financial reconciliation, dispute/chargeback handling, alert delivery, backup restoration, incident response, and break-glass governance remain later gates. Full WCAG 2.2 AA, formal penetration testing, production environment configuration, and legal/tax review remain open.
-- **Gate decision:** Phase 5C is complete for its stated scope. Phase 5 overall remains in progress. Proceed to the next phase only after the post-merge main workflow passes and the next phase has its own explicit implementation/test gate.
-
-
 Least-privilege admin controls, moderation queues, support, audit review, financial reconciliation, observability, backup/restore rehearsal, incident response and safe break-glass access.
 
+
+#### Phase 5C forensic audit record
+
+- **Disposition:** PASS for the bounded, read-only audit-explorer scope only; this is not overall operations-centre or production-readiness approval.
+- **PR:** [#16 — feat: add bounded admin audit explorer](https://github.com/LloydCoder/web-temify/pull/16), merged.
+- **Reviewed implementation head:** `62a16f41f5e9689d6ef0f7203f566084af594d3b`.
+- **Merge commit:** `50041f25d95aa5f3e16cd22504b7b5c2ee982ad6`.
+- **CI evidence:** [Foundation CI run 38461536339](https://github.com/LloydCoder/web-temify/actions/runs/38461536339) completed successfully on the exact reviewed head. Frozen install, foundation/domain tests, TypeScript, lint, local Supabase startup, empty-database migration reset, schema lint, pgTAP/RLS tests, Playwright, production build, and cleanup all succeeded.
+- **Files reviewed:** `src/app/admin/audit/page.tsx`; `src/server/admin/audit-filters.ts` and its tests; `supabase/migrations/20261013060000_phase5c_admin_audit_explorer.sql`; `supabase/tests/phase5c_admin_audit_explorer.test.sql`; `next.config.ts`; admin operations documentation; and CI workflow.
+- **Controls:** authentication and database-owned admin authorization precede privileged reads; the access event is written before querying; action/entity filters are exact-match and bounded; cursor parameters are validated; queries fetch at most 51 rows and render at most 50; only approved audit columns are selected; arbitrary metadata and raw errors are excluded; audit IDs cross the PostgreSQL/JavaScript boundary as exact text to avoid BIGINT precision loss; pagination preserves active filters; SQL tests cover supporting indexes, exact cursor projection, and unchanged least-privilege/append-only controls.
+- **Residual limits:** this is an administrative visibility surface, not a complete support, incident-response, finance-reconciliation, moderation, backup/restore, alerting, or break-glass system. Passing CI does not prove production secrets, provider configuration, legal/tax readiness, penetration-test completion, or full WCAG 2.2 AA conformance.
+- **Gate decision:** Phase 5C passes its implementation and CI gate. Proceed to Phase 6 only after the roadmap and dependency gates below are reconciled; Phase 5 overall remains limited by the explicitly listed operational gaps.
+
 ## Phase 6 — Seller system and product factory
-Vendor rights verification, quality gates, payout eligibility, disputes, artifact scanning, isolated builds/previews, product manifests, immutable artifacts, SBOM/provenance, product-specific CI and release evidence. The dedicated source monorepo is [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products); bootstrap PR #1 was merged after its frozen-install and catalogue-validation CI passed. Its 43-entry inventory is authoritative for planning only; no product-specific source builds or releases are implied. Do not copy independent products into the marketplace app repository without an explicit migration decision.
 
-## Phase 7 — Tinlance integration
-Versioned authenticated APIs/events, capability scopes, tenant context, approvals, idempotency, audit, budgets, timeouts, kill switch and isolated execution. Start read-only/sandbox. Web-Temify remains the authority for publication, pricing, payments, refunds, entitlements, licenses and downloads.
+**Status: NOT COMPLETE.** This phase builds the trusted supply side and a repeatable, evidence-backed product release pipeline. The dedicated source monorepo is [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products); its inventory is planning input, not evidence that products have been built or released. Keep product source code, manifests, build/test contracts and immutable release evidence in that repository; keep commercial listing state and marketplace transactions in this repository.
 
-## Phase 8 — Launch readiness
-Security/performance/accessibility checks, legal and tax review, monitoring, alerting, rollback, customer support, disaster recovery, SLOs, staged launch checklist and verified production deployment. No production launch until each gate has owner, evidence, and explicit disposition.
+Exit gates (all required):
+- [ ] Seller onboarding captures legal/business identity, beneficial ownership where required, payout jurisdiction, tax status, support/contact and policy acceptance without presenting unverified claims as verified.
+- [ ] Verification is evidence-based, independently reviewable, timestamped, revocable and appealable; creator self-review is prohibited; badges/ranking reflect current evidence and never imply a government endorsement.
+- [ ] Seller status, listing publication, product rights, artifact release and payout eligibility are distinct state machines with server/database enforcement.
+- [ ] Product manifests are schema-validated and versioned; builds run in isolated least-privilege environments with resource/time limits, network egress controls, secret isolation and cleanup.
+- [ ] Released artifacts are immutable/content-addressed; digest, source revision, toolchain, build logs, test evidence, license/rights evidence and SBOM/provenance are linked to a release.
+- [ ] Malware/secrets/dependency/license scans fail closed on policy violations; scan exceptions require a documented, time-bounded approval and audit evidence.
+- [ ] Product-specific CI validates lint, typecheck, unit/integration tests, security checks, reproducible manifest shape and build output before a release is eligible for listing.
+- [ ] Seller contracts, prohibited-content rules, IP takedown, refunds, dispute handling, payout holds, reserves and audit obligations have reviewed operational/legal policies before real sellers or money are enabled.
+- [ ] Admin actions are permission-scoped, reason-coded, auditable, idempotent and protected against self-approval.
+- [ ] Automated tests cover seller tenancy isolation, privilege escalation, artifact substitution, malicious build scripts, replay, stale/revoked evidence, payout eligibility and moderation races.
+- [ ] Exact-head CI, migration reset/lint/pgTAP, browser E2E, production build and a phase-specific forensic review pass before merging.
 
-## Later growth
-Directory, AI generation, community, affiliate, automation, mobile API, white-label, and regulated/high-risk categories only after core launch evidence and validated demand. The separate 18 proposed product candidates remain deferred until the core 39 standalone products and 4 launch kits have been implemented and validated in the agreed tier order.
+Deferred until explicitly gated: live seller payouts, escrow claims, tax calculation, regulated/high-risk categories and arbitrary third-party executable code. Never label funds as escrow unless the legal and payment architecture genuinely supports that service.
+
+### Phase 6 marketplace vertical requirements
+
+- **Verified Automation Marketplace:** list workflows, AI agents, integrations and reusable digital solutions only with supported compatibility claims, setup documentation, versioned artifacts, test/security evidence and clear permission/data requirements.
+- **Verified Specialist Supplier Marketplace:** represent firms and specialists using evidence-backed capabilities, service regions, certifications, references and measured performance. Use status labels that distinguish identity verification from skill certification, reference checks and outcome history.
+- **Outcome-Based AI Implementation Marketplace:** each offer defines scope, exclusions, customer prerequisites, baseline methodology, measurable outcome metrics, acceptance criteria, milestones, change control, dispute process and responsibility boundaries. Do not promise outcomes or use escrow terminology without enforceable terms and operational capability.
+- Tinlance Limited may be a seller under the same eligibility, verification, ranking and dispute rules as other vendors. No privileged placement, self-verification or hidden policy exceptions.
+
+## Phase 7 — Governed Tinlance Agent System integration
+
+**Status: NOT COMPLETE.** Begin with read-only/sandbox assistance. Web-Temify remains the authority for listings, pricing, checkout, payment state, refunds, entitlements, licenses, downloads, moderation and seller payouts.
+
+- [ ] Define versioned integration contracts, tenant context, capability scopes, authenticated APIs/events, schema compatibility and deprecation rules.
+- [ ] Enforce explicit human approvals for publishing, changing prices, issuing refunds, modifying entitlements, seller verification, payout actions and external communications.
+- [ ] Apply least privilege, per-task budgets, timeouts, idempotency, rate limits, kill switch, trace IDs, audit evidence, secret isolation and isolated execution.
+- [ ] Treat all user/product/vendor content and tool outputs as untrusted; test prompt injection, data exfiltration, cross-tenant access and confused-deputy paths.
+- [ ] Prohibit agents from treating untrusted instructions as policy or from directly mutating commercial truth outside narrow server-enforced workflows.
+- [ ] Test retries, duplicate events, partial failures, cancellation, approvals, policy denials and rollback/compensation behavior.
+- [ ] Demonstrate integration against staging fixtures and a documented threat model before any production scope is enabled.
+
+## Phase 8 — Production readiness and controlled launch
+
+**Status: NOT COMPLETE.** No public production launch until every release gate has named ownership and auditable evidence.
+
+- [ ] Provider eligibility and sandbox verification; live payments, refunds, seller payouts, taxes and settlement reconciliation validated for the target jurisdictions.
+- [ ] Independent security review and penetration test; dependency/supply-chain controls; secret rotation; vulnerability disclosure and incident response.
+- [ ] Full WCAG 2.2 AA assessment, keyboard/screen-reader checks, responsive QA and localization/currency/date handling.
+- [ ] SLOs, error budgets, service dashboards, actionable alerts, structured logs, trace correlation, privacy-safe analytics and abuse monitoring.
+- [ ] Backup/restore rehearsal with measured RPO/RTO; tested disaster recovery, migration rollback and deployment rollback.
+- [ ] Legal review for consumer rights, seller terms, privacy/data protection, IP/takedown, tax/VAT, payment services, sanctions and marketplace obligations in launch jurisdictions.
+- [ ] Support operations, escalation rota, refund/dispute procedures, data-subject request process and status communications are staffed and rehearsed.
+- [ ] Staged rollout with explicit go/no-go owner, rollback trigger, canary monitoring and customer-impact review.
+- [ ] Production environment evidence, smoke tests and deployment provenance are attached to the release; no claim of production readiness from CI alone.
+
+## Phase 9 — Product factory execution and release evidence
+
+- [ ] Reconcile the canonical product inventory against source repositories; assign each entry a unique ID, owner, tier, target buyer, differentiation evidence and acceptance criteria.
+- [ ] Resolve duplicate/ambiguous catalogue entries before product implementation; inventory counts must be generated from canonical data rather than copied into docs.
+- [ ] Establish a product lifecycle: proposed → validated → specified → building → security review → released → listed → maintained/retired.
+- [ ] Each product has a versioned manifest, license/rights evidence, threat model, tests, deployment instructions, support policy, changelog and immutable release record.
+- [ ] Build and publish through CI with signed provenance/SBOM where supported, dependency/license/security scans and reproducible artifact checks.
+- [ ] Do not show planned, unbuilt, unverified products as available for purchase; feature flags do not substitute for authorization or release evidence.
+
+## Phase 10 — Verified Automation Marketplace
+
+- [ ] Model automation listings with inputs/outputs, required scopes, data categories, supported versions, execution location, external side effects, cost bounds, rollback behavior and maintainer identity.
+- [ ] Provide sandbox evaluation fixtures, deterministic contract tests where feasible, permission review and explicit buyer consent for sensitive scopes.
+- [ ] Distinguish static template downloads from hosted execution and managed automation; pricing, SLAs and security claims must match the delivered service.
+- [ ] Enforce version pinning, revocation, dependency updates, vulnerability advisories and buyer notification for material changes.
+- [ ] Validate isolation, secrets handling, SSRF/egress, malicious package and prompt-injection defenses before any hosted execution is enabled.
+
+## Phase 11 — Verified specialist supplier marketplace
+
+- [ ] Define supplier profiles, service taxonomies, service regions, capacity, evidence expiry, insurance/licensing where relevant and accessible dispute/contact workflows.
+- [ ] Separate identity checks, business registration checks, certification validation, references, skills assessments and observed delivery outcomes.
+- [ ] Record evidence source, reviewer, timestamp, expiry and revocation; support correction/appeal and audit history.
+- [ ] Ranking is transparent, relevance-based and protected against paid-placement conflicts, review manipulation, retaliation and self-preferencing.
+- [ ] Collect only necessary personal data, define retention/access controls and complete privacy/legal review before external onboarding.
+
+## Phase 12 — Outcome-based AI implementation marketplace
+
+- [ ] Require scoped statements of work with baseline, measurement method, success metric, exclusions, dependencies, acceptance window, deliverables and change-control rules.
+- [ ] Define outcome attribution and dispute review before payment milestones; protect both parties from metrics that either side can unilaterally manipulate.
+- [ ] Use staged milestones and evidence-backed acceptance; no outcome guarantee without substantiation and enforceable contractual terms.
+- [ ] Keep funds flow, refunds, chargebacks, seller payout and tax accounting within reviewed provider/legal constraints; do not market an escrow service unless licensed and actually implemented.
+- [ ] Test scope changes, failed acceptance, partial delivery, buyer/supplier disputes, cancellation and data access termination.
+
+## Phase 13 — Trust, safety, compliance and legal operations
+
+- [ ] Maintain policy taxonomy, prohibited/restricted categories, content moderation, abuse reporting, sanctions/fraud controls where applicable and documented escalation.
+- [ ] Operationalize IP complaints/takedowns, counter-notices where applicable, evidence preservation and repeat-infringer handling with legal review.
+- [ ] Maintain data inventory, processing purposes, retention/deletion, access requests, incident notification and vendor/subprocessor registers.
+- [ ] Review obligations per launch jurisdiction before marketing availability; avoid claims of certification or compliance without independent evidence.
+- [ ] Track policy exceptions with owner, reason, expiry, compensating controls and an auditable renewal/revocation path.
+
+## Phase 14 — Finance, support and marketplace operations
+
+- [ ] Reconcile provider transactions, orders, refunds, fees, taxes, reserves, payouts and bank/provider settlement with immutable ledger evidence.
+- [ ] Implement support cases, escalation, SLA tracking, evidence access controls and secure customer communications.
+- [ ] Add dispute/chargeback workflows, payout holds, negative balances, fraud review and controlled manual adjustments with dual control.
+- [ ] Monitor seller concentration, refunds, disputes, abuse, support load and contribution margin without exposing sensitive cross-tenant data.
+- [ ] Exercise incident, payment-provider outage, delayed webhook, duplicate event and financial reconciliation playbooks.
+
+## Phase 15 — Quality engineering and assurance
+
+- [ ] Establish a risk-based test pyramid with unit, contract, integration, database/RLS, browser E2E, accessibility, load, chaos and security regression tests.
+- [ ] Add property/invariant tests for order totals, ledger balancing, entitlement transitions, artifact integrity, seller isolation and idempotency.
+- [ ] Run concurrency/race tests and failure injection for checkout, webhook processing, refunds, downloads, moderation and payout state.
+- [ ] Maintain coverage by critical business invariant and risk; code-coverage percentages alone are not acceptance evidence.
+- [ ] Verify test isolation, deterministic fixtures, migration-from-empty behavior and rollback compatibility on every relevant change.
+
+## Phase 16 — Production infrastructure, resilience and observability
+
+- [ ] Define environments, network boundaries, identity, secret management, least-privilege deployment roles and immutable release promotion.
+- [ ] Establish SLOs/SLIs, trace propagation, privacy-safe telemetry, alert ownership, on-call escalation and service runbooks.
+- [ ] Test queue backpressure, retry limits, dead-letter handling, replay safety, graceful degradation and dependency outages.
+- [ ] Validate capacity, database indexes, connection pooling, caching invalidation, CDN behavior and cost ceilings under representative load.
+- [ ] Complete backup restoration, disaster recovery, regional outage, key rotation and compromised credential drills with evidence.
+
+## Phase 17 — Customer validation and controlled launch
+
+- [ ] Validate demand and willingness to pay separately for digital products, automations, specialist suppliers and outcome-based implementation.
+- [ ] Launch by controlled cohort and jurisdiction; define activation, conversion, refund, dispute, reliability and support guardrails before ramping.
+- [ ] Confirm supply quality, buyer trust, catalogue depth and support capacity before opening each vertical.
+- [ ] Record experiment hypotheses, cohorts, metrics, stop conditions and decision outcomes; do not infer product-market fit from traffic alone.
+- [ ] Maintain rollback, customer communication and data export/deletion procedures during staged launch.
+
+## Phase 18 — Catalogue expansion and product intelligence
+
+- [ ] Prioritize product additions using evidence of demand, competitive alternatives, implementation/support cost, gross margin and strategic differentiation.
+- [ ] Maintain search relevance, structured metadata, compatibility facets, version/deprecation state, recommendation explanations and abuse resistance.
+- [ ] Build catalogue analytics with privacy-safe aggregation and seller/buyer access boundaries.
+- [ ] Expand only when product release gates and maintenance ownership are sustainable; avoid quantity targets that dilute quality.
+- [ ] Reassess low-performing, vulnerable, unsupported or legally risky products for remediation, delisting or retirement.
+
+## Phase 19 — Marketplace growth and ecosystem
+
+- [ ] Build consent-based lifecycle messaging, referral/affiliate attribution, partner onboarding and seller enablement with fraud controls.
+- [ ] Ensure paid placements and affiliate relationships are clearly disclosed and do not override trust/safety or evidence requirements.
+- [ ] Provide versioned APIs/webhooks with scoped tokens, rate limits, replay protection, audit logs and compatibility commitments.
+- [ ] Enable white-label/mobile/community extensions only after tenant isolation, support, privacy and upgrade paths are proven.
+- [ ] Track sustainable unit economics, retention, quality and customer outcomes—not vanity metrics alone.
+
+## Phase 20 — Global scale and enterprise operations
+
+- [ ] Validate multi-currency pricing, locale/timezone behavior, regional tax/payment support, data residency and localization before each market launch.
+- [ ] Establish enterprise tenant controls, SSO/SCIM where justified, delegated administration, audit export, retention policies and contractual SLAs.
+- [ ] Prove horizontal scale, disaster recovery, regional failover, migration safety, performance and cost governance against explicit targets.
+- [ ] Maintain independent security/compliance evidence, supplier risk management, incident communications and annual control reviews.
+- [ ] Operate a formal product lifecycle review for launch, expansion, suspension and retirement in each jurisdiction.
+
+## Cross-phase serial execution protocol
+
+1. Work only on the earliest phase whose dependencies are satisfied; later-phase work remains blocked until the current phase is audited and merged.
+2. For each phase: inspect current code and schema; research relevant standards and vendor docs; define acceptance criteria; implement the smallest complete vertical slice; add adversarial tests; run exact-head CI; inspect the diff and test evidence; update the phase audit record.
+3. A phase is complete only when all required checks pass on the exact commit, its security/business invariants are tested, docs agree with code, and known limits are explicit.
+4. A green workflow is necessary but not sufficient for production readiness. Production, legal, provider, security and human operational gates require their own evidence.
+5. If a blocker cannot be fixed safely within the available permissions or environment, record the exact blocker and stop at that gate; never fabricate a green result or silently skip phases.
+6. Security assurance should use a pinned, stable verification baseline (for example, OWASP ASVS 5.0.0); accessibility targets WCAG 2.2 AA; artifact build provenance should follow an appropriate SLSA provenance format where applicable; Supabase exposed tables require explicit grants, RLS policies, and positive/negative database tests. Revalidate standards versions at implementation time.
