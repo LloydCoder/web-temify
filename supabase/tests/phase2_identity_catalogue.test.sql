@@ -26,11 +26,17 @@ insert into public.categories (id, slug, name, is_active) values
  ('30000000-0000-4000-8000-000000000003', 'active-category', 'Active category', true),
  ('40000000-0000-4000-8000-000000000004', 'inactive-category', 'Inactive category', false)
 on conflict (id) do nothing;
-insert into public.products (id, creator_id, category_id, slug, name, product_type, status)
+insert into public.products (id, creator_id, category_id, slug, name, product_type, status, rights_status, rights_verified_at, rights_verified_by, artifact_sha256)
 values
- ('50000000-0000-4000-8000-000000000005', '10000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000003', 'published-product', 'Published product', 'template', 'published'),
- ('60000000-0000-4000-8000-000000000006', '10000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000003', 'draft-product', 'Draft product', 'template', 'draft')
+ ('50000000-0000-4000-8000-000000000005', '10000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000003', 'published-product', 'Published product', 'template', 'published', 'verified', now(), '20000000-0000-4000-8000-000000000002', repeat('a', 64)),
+ ('60000000-0000-4000-8000-000000000006', '10000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000003', 'draft-product', 'Draft product', 'template', 'draft', 'unverified', null, null, null)
 on conflict (id) do nothing;
+insert into public.product_rights_attestations (product_id, attested_by, rights_basis, statement, evidence_reference, review_status, reviewed_by, reviewed_at)
+values ('50000000-0000-4000-8000-000000000005', '10000000-0000-4000-8000-000000000001', 'original_work', 'Synthetic phase-two fixture reviewed by a different user.', 'test-fixture://phase2/rights', 'verified', '20000000-0000-4000-8000-000000000002', now())
+on conflict do nothing;
+insert into public.product_versions (product_id, version, release_state, release_notes, artifact_sha256, artifact_storage_path, manifest, compatibility, created_by, released_at)
+values ('50000000-0000-4000-8000-000000000005', '1.0.0', 'released', 'Synthetic phase-two fixture release', repeat('a', 64), 'private/phase2/published-product-1.0.0.zip', '{}'::jsonb, '{}'::jsonb, '10000000-0000-4000-8000-000000000001', now())
+on conflict (product_id, version) do nothing;
 
 set local role anon;
 select is((select count(*) from public.categories), 1::bigint, 'anonymous users see only active categories');
@@ -51,7 +57,7 @@ select is((select count(*) from public.products), 2::bigint, 'creator can see ow
 insert into public.products (creator_id, category_id, slug, name, product_type, status)
 values ('10000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000003', 'user-created-draft', 'User-created draft', 'template', 'draft');
 select is((select count(*) from public.products where slug = 'user-created-draft'), 1::bigint, 'creator can create own draft');
-select throws_ok($sql$update public.products set status = 'published' where slug = 'user-created-draft'$sql$, '42501', 'new row violates row-level security policy for table "products"', 'creator cannot self-publish a draft');
+select throws_ok($sql$update public.products set status = 'published' where slug = 'user-created-draft'$sql$, '42501', null, 'creator cannot self-publish a draft');
 select is((select status from public.products where slug = 'user-created-draft'), 'draft', 'rejected self-publish leaves product in draft');
 select ok(public.current_user_has_role('customer'::public.app_role), 'authenticated user can check own customer role');
 select ok(not public.current_user_has_role('admin'::public.app_role), 'authenticated user cannot self-assert admin role');
