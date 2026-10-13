@@ -18,3 +18,8 @@ Supabase SQL migrations are the sole authoritative schema history for Web-Temify
 
 ## Important maturity boundary
 The Phase 4 migration is a database invariant layer, not a live commerce integration. There is no production payment provider, cryptographic webhook ingress, checkout API, payout workflow, signed-download URL issuer, or live storage policy enabled by this migration. The current ledger records gross payment/refund transfer evidence only; commission, seller payable allocation, taxes, provider settlement, chargebacks, and manual adjustments need their own evidence-backed accounting model before a live provider can be enabled. Do not represent checkout, payment, payout, or downloads as live until those later gates pass.
+
+
+## Phase 4B — checkout and verified-event processing
+
+Migration 20261013030000_phase4b_checkout_webhooks.sql adds server-only atomic order creation and an idempotent webhook event processor. It depends on the Phase 2–4A schema. Checkout creation and event processing RPCs are granted only to service_role; public, anonymous, and authenticated clients cannot call them. Raw webhook bodies are never stored. The application must verify a provider's raw-body signature before setting signature_verified=true and calling the processor. The implemented adapter is non-production sandbox only; see ../commerce/phase4b-checkout-webhooks-downloads.md.
