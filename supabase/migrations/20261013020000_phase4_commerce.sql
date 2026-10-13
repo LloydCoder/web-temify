@@ -285,13 +285,20 @@ begin
   if new.status in ('partially_refunded', 'refunded') then
     declare
       refunded_minor bigint;
+      required_attempt_status text;
     begin
       select coalesce(sum(r.amount_minor), 0) into refunded_minor
       from public.refunds r
       where r.order_id = new.id and r.status = 'succeeded';
+      required_attempt_status := case when new.status = 'partially_refunded' then 'partially_refunded' else 'refunded' end;
       if (new.status = 'partially_refunded' and (refunded_minor <= 0 or refunded_minor >= new.total_minor))
-        or (new.status = 'refunded' and refunded_minor <> new.total_minor) then
-        raise exception using errcode = '23514', message = 'refund order state must match settled refund total';
+        or (new.status = 'refunded' and refunded_minor <> new.total_minor)
+        or not exists (
+          select 1 from public.payment_attempts pa
+          where pa.order_id = new.id and pa.status = required_attempt_status
+            and pa.amount_minor = new.total_minor and pa.currency = new.currency
+        ) then
+        raise exception using errcode = '23514', message = 'refund order state must match settled refund and payment totals';
       end if;
     end;
   end if;
@@ -347,6 +354,18 @@ begin
       and we.signature_verified and we.processing_status in ('processing', 'processed')
   ) then
     raise exception using errcode = '23514', message = 'successful payment requires a verified provider event';
+  end if;
+  if new.status in ('partially_refunded', 'refunded') and new.status <> old.status then
+    declare
+      refunded_minor bigint;
+    begin
+      select coalesce(sum(r.amount_minor), 0) into refunded_minor
+      from public.refunds r where r.payment_attempt_id = new.id and r.status = 'succeeded';
+      if (new.status = 'partially_refunded' and (refunded_minor <= 0 or refunded_minor >= new.amount_minor))
+        or (new.status = 'refunded' and refunded_minor <> new.amount_minor) then
+        raise exception using errcode = '23514', message = 'payment attempt refund state must match settled refund total';
+      end if;
+    end;
   end if;
   return new;
 end;
@@ -632,6 +651,73 @@ $function$;
 revoke all on function public.enforce_download_grant_insert() from public, anon, authenticated, service_role;
 create trigger download_grants_insert_guard before insert on public.download_grants
 for each row execute function public.enforce_download_grant_insert();
+
+create function public.enforce_download_grant_update()
+returns trigger
+language plpgsql
+set search_path = ''
+as $function$
+begin
+  if new.entitlement_id is distinct from old.entitlement_id
+    or new.customer_id is distinct from old.customer_id
+    or new.product_version_id is distinct from old.product_version_id
+    or new.artifact_sha256 is distinct from old.artifact_sha256
+    or new.issued_at is distinct from old.issued_at
+    or new.expires_at is distinct from old.expires_at
+    or new.max_downloads is distinct from old.max_downloads
+    or new.downloads_used < old.downloads_used
+    or new.downloads_used > old.downloads_used + 1
+    or (old.revoked_at is not null and new.revoked_at is distinct from old.revoked_at) then
+    raise exception using errcode = '23514', message = 'download grant identity is immutable and usage is monotonic';
+  end if;
+  return new;
+end;
+$function$;
+revoke all on function public.enforce_download_grant_update() from public, anon, authenticated, service_role;
+create trigger download_grants_update_guard before update on public.download_grants
+for each row execute function public.enforce_download_grant_update();
+
+create function public.consume_download_grant(target_grant_id uuid)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  consumed boolean;
+begin
+  if (select auth.uid()) is null then return false; end if;
+  update public.download_grants dg
+  set downloads_used = downloads_used + 1
+  where dg.id = target_grant_id
+    and dg.customer_id = (select auth.uid())
+    and dg.revoked_at is null
+    and dg.expires_at > now()
+    and dg.downloads_used < dg.max_downloads
+    and exists (
+      select 1
+      from public.entitlements e
+      join public.order_items oi on oi.id = e.order_item_id
+      join public.orders o on o.id = oi.order_id
+      join public.product_versions pv on pv.id = dg.product_version_id
+      where e.id = dg.entitlement_id
+        and e.customer_id = dg.customer_id
+        and e.product_version_id = dg.product_version_id
+        and e.status = 'active'
+        and (e.expires_at is null or e.expires_at > now())
+        and o.customer_id = dg.customer_id
+        and o.status = 'paid'
+        and pv.release_state = 'released'
+        and pv.artifact_sha256 = dg.artifact_sha256
+        and pv.artifact_storage_path is not null
+        and pv.released_at is not null
+    )
+  returning true into consumed;
+  return coalesce(consumed, false);
+end;
+$function$;
+revoke all on function public.consume_download_grant(uuid) from public, anon, service_role;
+grant execute on function public.consume_download_grant(uuid) to authenticated;
 
 create function public.current_user_owns_order(target_order_id uuid)
 returns boolean
