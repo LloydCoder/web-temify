@@ -42,6 +42,7 @@ Scope: public catalogue/search/detail routes, compatibility metadata, rights att
 Exit criteria:
 - [ ] Phase 3 migration applies from an empty local Supabase database and can be replayed deterministically.
 - [ ] RLS and least-privilege grants cover every new table; rights evidence is not public.
+- [ ] Product table reads use column-level grants; creator identifiers and review internals are not exposed through PostgREST.
 - [ ] Creators can submit a rights declaration for their own draft but cannot verify it or promote a release.
 - [ ] Public catalogue exposes only published products with independently verified rights and a content-addressed artifact.
 - [ ] Public product versions require a released state, artifact digest, and release timestamp.
