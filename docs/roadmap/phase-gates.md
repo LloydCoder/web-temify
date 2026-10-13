@@ -42,6 +42,7 @@ Scope: public catalogue/search/detail routes, compatibility metadata, rights att
 Exit criteria:
 - [ ] Phase 3 migration applies from an empty local Supabase database and can be replayed deterministically.
 - [ ] RLS and least-privilege grants cover every new table; rights evidence is not public.
+- [ ] Product table reads use column-level grants; creator identifiers and review internals are not exposed through PostgREST.
 - [ ] Creators can submit a rights declaration for their own draft but cannot verify it or promote a release.
 - [ ] Public catalogue exposes only published products with independently verified rights and a content-addressed artifact.
 - [ ] Public product versions require a released state, artifact digest, and release timestamp.
@@ -50,6 +51,8 @@ Exit criteria:
 - [ ] Playwright covers catalogue empty state, unknown/unreleased product denial, semantic landmarks, and responsive widths.
 - [ ] CI passes migration reset, database/RLS tests, foundation tests, domain tests, typecheck, lint, E2E and production build on the same head SHA.
 - [ ] A phase-specific forensic audit records files reviewed, policy invariants, test evidence, remaining risk and explicit pass/fail.
+
+Fixture invariant: `products.rights_verified_at` must exactly equal the independently reviewed attestation's `reviewed_at`; tests use a fixed timestamp to avoid nondeterministic `now()` differences. Never weaken the evidence-gated publication policy to make fixtures pass.
 
 ## Phase 4 — Commerce and secure delivery
 Provider adapters; signature verification against raw webhook bodies, idempotency, concurrency, amount/currency/order matching, double-entry or equivalent auditable ledger, refunds/chargebacks, licenses/entitlements, private storage, authorized download issuance, failure/retry/reconciliation tests. No live provider is selected until payout eligibility, sandbox behavior, jurisdiction coverage and fees are verified.

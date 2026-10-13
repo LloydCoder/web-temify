@@ -214,6 +214,16 @@ create policy products_update_own_draft on public.products
     and artifact_sha256 is null
   );
 
+-- Public and authenticated clients get column-level access only. RLS controls rows;
+-- column grants prevent accidental disclosure of creator IDs and review internals via PostgREST.
+revoke select on public.products from anon, authenticated;
+revoke select (creator_id, rights_statement, rights_verified_at, rights_verified_by,
+  rights_status, artifact_sha256) on public.products from anon, authenticated;
+grant select (id, category_id, slug, name, description, product_type, status,
+  price_minor, currency, created_at, summary, tech_stack, compatibility, license_type,
+  release_version, docs_url, demo_url, tags, search_document)
+  on public.products to anon, authenticated;
+
 -- Public visibility requires publication, independent rights review, and a released artifact.
 drop policy products_select_published_or_owner on public.products;
 create policy products_select_published_or_owner on public.products

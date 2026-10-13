@@ -33,3 +33,7 @@ This is a minimum engineering baseline, not proof that the application is secure
 - Separate development, preview/staging, and production credentials.
 - Maintain incident response, key rotation, backup/restore, and vulnerability disclosure procedures before launch.
 - Do not claim SOC 2, PCI DSS, GDPR compliance, or certification without evidence-backed assessment.
+
+## Catalogue data minimization
+- `products` uses column-level `SELECT` grants for anonymous and authenticated API roles; do not restore table-wide `SELECT`.
+- Creator account IDs, rights declarations, reviewer IDs/timestamps, rights review state, and artifact digests are not client-readable. Row-level security controls which product rows are visible; UI filters are not authorization.

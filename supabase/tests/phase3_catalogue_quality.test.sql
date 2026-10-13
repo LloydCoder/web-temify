@@ -1,5 +1,5 @@
 begin;
-select plan(18);
+select plan(26);
 
 select has_column('public', 'products', 'summary', 'products have a bounded summary field');
 select has_column('public', 'products', 'compatibility', 'products carry structured compatibility metadata');
@@ -15,6 +15,14 @@ select ok(not has_table_privilege('authenticated', 'public.product_versions', 'U
 select ok(not has_column_privilege('authenticated', 'public.products', 'rights_status', 'UPDATE'), 'creators cannot edit rights review state directly');
 select ok(not has_column_privilege('authenticated', 'public.products', 'artifact_sha256', 'UPDATE'), 'creators cannot set release artifact evidence directly');
 select ok(has_column_privilege('authenticated', 'public.products', 'name', 'UPDATE'), 'creators retain permission to edit draft product content');
+select ok(not has_table_privilege('anon', 'public.products', 'SELECT'), 'anonymous clients do not have table-wide product column access');
+select ok(not has_table_privilege('authenticated', 'public.products', 'SELECT'), 'authenticated clients do not have table-wide product column access');
+select ok(not has_column_privilege('anon', 'public.products', 'creator_id', 'SELECT'), 'public clients cannot read creator account identifiers');
+select ok(not has_column_privilege('anon', 'public.products', 'rights_statement', 'SELECT'), 'public clients cannot read rights declarations');
+select ok(not has_column_privilege('anon', 'public.products', 'rights_verified_by', 'SELECT'), 'public clients cannot read reviewer identity');
+select ok(not has_column_privilege('anon', 'public.products', 'rights_verified_at', 'SELECT'), 'public clients cannot read internal review timestamps');
+select ok(not has_column_privilege('anon', 'public.products', 'artifact_sha256', 'SELECT'), 'public clients cannot read internal artifact digests');
+select ok(has_column_privilege('anon', 'public.products', 'name', 'SELECT'), 'public clients can read approved listing fields');
 select ok(not has_table_privilege('anon', 'public.product_versions', 'SELECT'), 'anonymous users cannot read private artifact storage paths');
 select ok(has_table_privilege('service_role', 'public.product_versions', 'UPDATE'), 'trusted release path can manage release state');
 select ok(has_table_privilege('service_role', 'public.product_rights_attestations', 'UPDATE'), 'trusted review path can manage rights state');
@@ -29,12 +37,12 @@ values ('72000000-0000-4000-8000-000000000072', 'phase3-category', 'Phase 3 Cate
 on conflict (id) do nothing;
 insert into public.products (id, creator_id, category_id, slug, name, summary, description, product_type, status, rights_status, rights_verified_at, rights_verified_by, artifact_sha256)
 values
- ('73000000-0000-4000-8000-000000000073', '71000000-0000-4000-8000-000000000071', '72000000-0000-4000-8000-000000000072', 'phase3-verified-product', 'Phase 3 Verified Product', 'Approved fixture', 'Synthetic fixture used only by database tests.', 'template', 'published', 'verified', now(), '75000000-0000-4000-8000-000000000075', repeat('a', 64)),
+ ('73000000-0000-4000-8000-000000000073', '71000000-0000-4000-8000-000000000071', '72000000-0000-4000-8000-000000000072', 'phase3-verified-product', 'Phase 3 Verified Product', 'Approved fixture', 'Synthetic fixture used only by database tests.', 'template', 'published', 'verified', '2026-10-13T12:00:00Z'::timestamptz, '75000000-0000-4000-8000-000000000075', repeat('a', 64)),
  ('74000000-0000-4000-8000-000000000074', '71000000-0000-4000-8000-000000000071', '72000000-0000-4000-8000-000000000072', 'phase3-unverified-product', 'Phase 3 Unverified Product', 'Unapproved fixture', 'Synthetic fixture used only by database tests.', 'template', 'published', 'declared', null, null, repeat('b', 64))
 on conflict (id) do nothing;
 
 insert into public.product_rights_attestations (product_id, attested_by, rights_basis, statement, evidence_reference, review_status, reviewed_by, reviewed_at)
-values ('73000000-0000-4000-8000-000000000073', '71000000-0000-4000-8000-000000000071', 'original_work', 'Synthetic test-only rights declaration with separate reviewer evidence.', 'test-fixture://phase3/rights', 'verified', '75000000-0000-4000-8000-000000000075', now())
+values ('73000000-0000-4000-8000-000000000073', '71000000-0000-4000-8000-000000000071', 'original_work', 'Synthetic test-only rights declaration with separate reviewer evidence.', 'test-fixture://phase3/rights', 'verified', '75000000-0000-4000-8000-000000000075', '2026-10-13T12:00:00Z'::timestamptz)
 on conflict do nothing;
 
 insert into public.product_versions (product_id, version, release_state, release_notes, artifact_sha256, artifact_storage_path, manifest, compatibility, created_by, released_at)

@@ -39,8 +39,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       .select("id,slug,name,summary,description,product_type,price_minor,currency,license_type,release_version,compatibility,tech_stack,docs_url,demo_url")
       .eq("slug", slug)
       .eq("status", "published")
-      .eq("rights_status", "verified")
-      .not("artifact_sha256", "is", null)
       .maybeSingle();
     if (!error && data) product = data as Product;
   } catch {
