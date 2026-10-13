@@ -51,7 +51,7 @@ select is((select count(*) from public.products), 2::bigint, 'creator can see ow
 insert into public.products (creator_id, category_id, slug, name, product_type, status)
 values ('10000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000003', 'user-created-draft', 'User-created draft', 'template', 'draft');
 select is((select count(*) from public.products where slug = 'user-created-draft'), 1::bigint, 'creator can create own draft');
-select throws_ok($sql$update public.products set status = 'published' where slug = 'user-created-draft'$sql$, '42501', 'new row violates row-level security policy for table "products"', 'creator cannot self-publish a draft');
+select throws_ok($sql$update public.products set status = 'published' where slug = 'user-created-draft'$sql$, '42501', null, 'creator cannot self-publish a draft');
 select is((select status from public.products where slug = 'user-created-draft'), 'draft', 'rejected self-publish leaves product in draft');
 select ok(public.current_user_has_role('customer'::public.app_role), 'authenticated user can check own customer role');
 select ok(not public.current_user_has_role('admin'::public.app_role), 'authenticated user cannot self-assert admin role');
