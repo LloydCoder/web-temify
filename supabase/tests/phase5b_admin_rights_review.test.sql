@@ -1,5 +1,5 @@
 begin;
-select plan(26);
+select plan(29);
 
 select ok((select n.nspname = 'public' from pg_proc f join pg_namespace n on n.oid = f.pronamespace where f.oid = 'public.admin_review_product_rights(uuid,uuid,uuid,text,text,uuid)'::regprocedure), 'RPC is in the exposed schema for server-side PostgREST access');
 select has_function('public', 'admin_review_product_rights', array['uuid','uuid','uuid','text','text','uuid'], 'admin rights-review RPC exists');
@@ -76,6 +76,20 @@ select throws_ok(
   'Rights attestation is already resolved.',
   'resolved evidence cannot be silently re-reviewed'
 );
+
+-- Simulate audit persistence failure. The rights decision must roll back with it.
+revoke insert on public.audit_events from service_role;
+set local role service_role;
+select throws_ok(
+  $select public.admin_review_product_rights('89000000-0000-4000-8000-000000000090', '89100000-0000-4000-8000-000000000090', '88000000-0000-4000-8000-000000000088', 'verified', 'Attempt must roll back when audit persistence is unavailable.', '89200000-0000-4000-8000-000000000095')$,
+  '42501',
+  'permission denied for table audit_events',
+  'review decision fails when append-only audit persistence is unavailable'
+);
+reset role;
+grant insert on public.audit_events to service_role;
+select is((select review_status from public.product_rights_attestations where id = '89100000-0000-4000-8000-000000000090'), 'under_review', 'failed audit insert rolls back the attestation transition');
+select is((select rights_status from public.products where id = '89000000-0000-4000-8000-000000000090'), 'under_review', 'failed audit insert rolls back the product rights transition');
 
 select * from finish();
 rollback;
