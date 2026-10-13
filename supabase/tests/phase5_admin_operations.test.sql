@@ -1,11 +1,12 @@
 begin;
-select plan(14);
+select plan(15);
 
 select has_table('public', 'audit_events', 'administrative audit events use the canonical audit table');
 select ok((select relrowsecurity from pg_class where oid = 'public.audit_events'::regclass), 'audit events have RLS enabled');
 select ok(not has_table_privilege('anon', 'public.audit_events', 'SELECT'), 'anonymous users cannot read audit events');
 select ok(not has_table_privilege('authenticated', 'public.audit_events', 'SELECT'), 'authenticated users cannot read audit events');
 select ok(has_table_privilege('service_role', 'public.audit_events', 'INSERT'), 'trusted server workflows can append audit events');
+select ok(has_table_privilege('service_role', 'public.audit_events', 'SELECT'), 'trusted server workflows can review audit events after authorization');
 select ok(not has_table_privilege('service_role', 'public.audit_events', 'UPDATE'), 'audit events cannot be updated by the service role');
 select ok(not has_table_privilege('service_role', 'public.audit_events', 'DELETE'), 'audit events cannot be deleted by the service role');
 select ok(not has_table_privilege('authenticated', 'public.audit_events', 'INSERT'), 'ordinary users cannot forge audit events');
