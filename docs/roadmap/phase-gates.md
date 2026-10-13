@@ -65,8 +65,23 @@ Exit criteria:
 - **Residual risks / explicit non-claims:** no real product release is yet published; the trusted moderation/release service, checkout, payments, entitlements, and downloads are not live; production Supabase/Vercel configuration, formal security review, and full WCAG 2.2 AA assessment remain later gates. Phase 3 completion does not mean production launch readiness.
 - **Fixture invariant:** `products.rights_verified_at` must exactly equal the independently reviewed attestation's `reviewed_at`; tests use a fixed timestamp to avoid nondeterministic `now()` differences. Never weaken evidence-gated publication policy to make fixtures pass.
 
-## Phase 4 — Commerce and secure delivery
-Provider adapters; signature verification against raw webhook bodies, idempotency, concurrency, amount/currency/order matching, double-entry or equivalent auditable ledger, refunds/chargebacks, licenses/entitlements, private storage, authorized download issuance, failure/retry/reconciliation tests. No live provider is selected until payout eligibility, sandbox behavior, jurisdiction coverage and fees are verified.
+## Phase 4 — Commerce and secure delivery (in progress)
+Scope: server-owned orders and item snapshots, provider-neutral payment attempts, verified-event inbox, idempotent financial ledger, refunds, paid-order entitlements, and private-download authorization. Provider integrations remain disabled until business eligibility, jurisdiction coverage, fees, webhook semantics, and payout settlement are verified.
+
+Phase 4A — database invariants:
+- [ ] Orders and item snapshots are immutable and price/currency/release evidence is revalidated at insertion.
+- [ ] Payment attempts cannot alter order amount/currency and cannot become successful without a verified provider event.
+- [ ] Orders cannot become paid without a processed verified success event and matching append-only ledger entry.
+- [ ] Provider events are signature-verified, hash-only (no raw payload persistence), unique by provider event ID, and retryable without duplicate effects.
+- [ ] Ledger rows are append-only balanced debit/credit transfers with unique idempotency references.
+- [ ] Refund amounts are reserved under order locking, cannot exceed the remaining balance, and require verified refund evidence and ledger entries.
+- [ ] Entitlements require a paid order and matching release snapshot.
+- [ ] Download grants contain no storage path or signed URL; access consumption is atomic, bounded, time-limited, and checks entitlement/order/release state.
+- [ ] Customer RLS isolates orders, line items, payment attempts, refunds, and entitlements; financial internals are not client-readable.
+- [ ] Empty-database migration reset, adversarial SQL tests, unit/domain tests, typecheck, lint, Playwright and production build pass on one head SHA.
+- [ ] Phase 4 forensic audit records exact code, migration, test and CI evidence plus remaining launch risks.
+
+No live payment processing, vendor payouts, or production downloads may be represented as available until a provider-specific adapter and end-to-end sandbox validation pass.
 
 ## Phase 5 — Admin and operations
 Least-privilege admin controls, moderation queues, support, audit review, financial reconciliation, observability, backup/restore rehearsal, incident response and safe break-glass access.
