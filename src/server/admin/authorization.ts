@@ -1,4 +1,5 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -18,11 +19,19 @@ export async function getAdminContext() {
     );
     if (roleError || isAdmin !== true) return null;
 
-    return {
-      userId: authData.user.id,
-      session,
-      admin: createSupabaseAdminClient()
-    };
+    const admin = createSupabaseAdminClient();
+    const { error: auditError } = await admin.from("audit_events").insert({
+      actor_id: authData.user.id,
+      action: "admin.console.viewed",
+      entity_type: "admin_console",
+      entity_id: "operations",
+      request_id: randomUUID(),
+      metadata: { surface: "operations_dashboard" }
+    });
+    // Administrative access is denied if the access audit cannot be persisted.
+    if (auditError) return null;
+
+    return { userId: authData.user.id, session, admin };
   } catch {
     return null;
   }
