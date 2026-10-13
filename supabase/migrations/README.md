@@ -13,5 +13,6 @@ Supabase SQL migrations are the sole authoritative schema history for Web-Temify
 ## Current migration set
 - `20261013000000_phase2_identity_catalogue.sql` — identity, role baseline, catalogue primitives, and RLS.
 - `20261013010000_phase3_catalogue_quality.sql` — product compatibility, independent rights attestations, content-addressed release evidence, and evidence-gated public visibility.
+- `20261013015000_phase3_creator_policy_privileges.sql` — security-definer ownership predicates so creator RLS policies work with intentionally restricted column-level product grants.
 
 The catalogue currently contains no approved production releases. A passing migration suite proves schema/test behavior only; it does not establish live checkout, payment processing, vendor payouts, entitlements, signed downloads, or production readiness.
