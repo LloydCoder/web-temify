@@ -14,8 +14,8 @@ alter table public.products
   add column release_version text not null default '0.1.0'
     check (release_version ~ '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$'),
   add column artifact_sha256 text check (artifact_sha256 is null or artifact_sha256 ~ '^[a-f0-9]{64}$'),
-  add column docs_url text check (docs_url is null or (char_length(docs_url) <= 2048 and docs_url ~ '^https://[^[:space:]]+
-  add column demo_url text check (demo_url is null or (char_length(demo_url) <= 2048 and demo_url ~ '^https://[^[:space:]]+
+  add column docs_url text check (docs_url is null or (char_length(docs_url) <= 2048 and left(docs_url, 8) = 'https://' and position(chr(10) in docs_url) = 0 and position(chr(13) in docs_url) = 0)),
+  add column demo_url text check (demo_url is null or (char_length(demo_url) <= 2048 and left(demo_url, 8) = 'https://' and position(chr(10) in demo_url) = 0 and position(chr(13) in demo_url) = 0)),
   add column tags text[] not null default '{}',
   add column search_document tsvector generated always as (
     to_tsvector('english', coalesce(name, '') || ' ' || coalesce(summary, '') || ' ' || coalesce(description, ''))
@@ -229,7 +229,7 @@ create policy products_select_published_or_owner on public.products
     or creator_id = (select auth.uid())
   );
 )),
-  add column demo_url text check (demo_url is null or char_length(demo_url) <= 2048),
+  add column demo_url text check (demo_url is null or (char_length(demo_url) <= 2048 and left(demo_url, 8) = 'https://' and position(chr(10) in demo_url) = 0 and position(chr(13) in demo_url) = 0)),
   add column tags text[] not null default '{}',
   add column search_document tsvector generated always as (
     to_tsvector('english', coalesce(name, '') || ' ' || coalesce(summary, '') || ' ' || coalesce(description, ''))
@@ -538,7 +538,7 @@ create policy products_select_published_or_owner on public.products
     or creator_id = (select auth.uid())
   );
 )),
-  add column demo_url text check (demo_url is null or char_length(demo_url) <= 2048),
+  add column demo_url text check (demo_url is null or (char_length(demo_url) <= 2048 and left(demo_url, 8) = 'https://' and position(chr(10) in demo_url) = 0 and position(chr(13) in demo_url) = 0)),
   add column tags text[] not null default '{}',
   add column search_document tsvector generated always as (
     to_tsvector('english', coalesce(name, '') || ' ' || coalesce(summary, '') || ' ' || coalesce(description, ''))
