@@ -363,7 +363,9 @@ begin
         event_row.amount_minor, event_row.currency, 'refund-event:' || event_row.id::text
       );
 
-      update public.refunds set status = 'succeeded'
+      update public.refunds
+      set status = 'succeeded',
+          provider_refund_reference = coalesce(provider_refund_reference, event_row.provider_reference)
       where id = refund_row.id;
 
       select coalesce(sum(r.amount_minor), 0) into refunded_minor
