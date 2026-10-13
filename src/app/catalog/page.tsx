@@ -35,7 +35,7 @@ async function loadProducts(query: string): Promise<{ products: Product[]; confi
       .order("name", { ascending: true })
       .limit(48);
 
-    if (query) request = request.ilike("name", `%${query.replace(/[%_]/g, "\\$&")}%`);
+    if (query) request = request.textSearch("search_document", query, { type: "websearch", config: "english" });
     const { data, error } = await request;
     if (error) return { products: [], configured: true };
     return { products: (data ?? []) as Product[], configured: true };
