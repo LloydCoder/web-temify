@@ -49,6 +49,17 @@ create table public.product_rights_attestations (
 create index product_rights_attestations_product_idx
   on public.product_rights_attestations (product_id, created_at desc);
 
+alter table public.products
+  add constraint products_rights_verification_consistency check (
+    rights_status <> 'verified'
+    or (rights_verified_at is not null and rights_verified_by is not null and rights_verified_by <> creator_id)
+  );
+
+alter table public.product_rights_attestations
+  add constraint product_rights_attestations_independent_review check (
+    review_status not in ('verified', 'rejected') or reviewed_by <> attested_by
+  );
+
 -- Release records are immutable from ordinary creator sessions. A creator may submit a
 -- draft release record, but only trusted release automation can promote it to released.
 create table public.product_versions (
@@ -80,8 +91,29 @@ alter table public.product_versions enable row level security;
 revoke all on public.product_rights_attestations, public.product_versions from anon, authenticated;
 grant select, insert on public.product_rights_attestations to authenticated;
 grant select, insert on public.product_versions to authenticated;
-grant select on public.product_versions to anon;
 grant all on public.product_rights_attestations, public.product_versions to service_role;
+
+-- Expose only a boolean release check to anonymous catalogue policy evaluation;
+-- never grant public table access to artifact storage paths or release manifests.
+create function public.product_has_verified_release(target_product_id uuid, target_artifact_sha256 text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select exists (
+    select 1
+    from public.product_versions pv
+    where pv.product_id = target_product_id
+      and pv.release_state = 'released'
+      and pv.artifact_sha256 = target_artifact_sha256
+      and pv.artifact_storage_path is not null
+      and pv.released_at is not null
+  );
+$function$;
+revoke all on function public.product_has_verified_release(uuid, text) from public, anon, authenticated, service_role;
+grant execute on function public.product_has_verified_release(uuid, text) to anon, authenticated;
 
 create policy rights_attestations_select_own on public.product_rights_attestations
   for select to authenticated
@@ -102,20 +134,12 @@ create policy rights_attestations_insert_own_draft on public.product_rights_atte
     )
   );
 
-create policy product_versions_select_published_or_owner on public.product_versions
-  for select to anon, authenticated
-  using (
-    (release_state = 'released' and artifact_sha256 is not null and released_at is not null
-      and exists (
-        select 1 from public.products p
-        where p.id = product_id and p.status = 'published'
-          and p.rights_status = 'verified' and p.artifact_sha256 is not null
-      ))
-    or exists (
-      select 1 from public.products p
-      where p.id = product_id and p.creator_id = (select auth.uid())
-    )
-  );
+create policy product_versions_select_owner on public.product_versions
+  for select to authenticated
+  using (exists (
+    select 1 from public.products p
+    where p.id = product_id and p.creator_id = (select auth.uid())
+  ));
 create policy product_versions_insert_own_draft on public.product_versions
   for insert to authenticated
   with check (
@@ -138,7 +162,10 @@ create policy products_select_published_or_owner on public.products
     (
       status = 'published'
       and rights_status = 'verified'
+      and rights_verified_at is not null
+      and rights_verified_by is not null
       and artifact_sha256 is not null
+      and public.product_has_verified_release(id, artifact_sha256)
     )
     or creator_id = (select auth.uid())
   );
