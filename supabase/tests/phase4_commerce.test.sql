@@ -1,5 +1,5 @@
 begin;
-select plan(52);
+select plan(60);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -110,6 +110,10 @@ select throws_ok(
   '23514', null, 'order cannot be marked paid without verified event and ledger evidence'
 );
 select throws_ok(
+  $sql$update public.orders set status = 'cancelled' where id = '88000000-0000-4000-8000-000000000088'$sql$,
+  '23514', null, 'order cannot be cancelled after a payment is settled'
+);
+select throws_ok(
   $sql$insert into public.entitlements (order_item_id, customer_id, product_id, product_version_id)
   values ('89000000-0000-4000-8000-000000000089', '82000000-0000-4000-8000-000000000082', '86000000-0000-4000-8000-000000000086', '87000000-0000-4000-8000-000000000087')$sql$,
   '23514', null, 'entitlement cannot be granted before order payment'
@@ -122,6 +126,21 @@ values (
   'phase4-payment-idempotency-0001'
 );
 update public.payment_attempts set status = 'pending' where id = '90000000-0000-4000-8000-000000000090';
+select throws_ok(
+  $sql$insert into public.payment_attempts (order_id, provider, amount_minor, currency, idempotency_key)
+  values ('88000000-0000-4000-8000-000000000088', 'stripe', 1299, 'USD', 'phase4-second-active-attempt-001')$sql$,
+  '23505', null, 'an order cannot have two active or settled payment attempts'
+);
+select throws_ok(
+  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, order_id, payment_attempt_id)
+  values ('stripe', 'phase4-mismatched-provider-event-001', 'payment.succeeded', repeat('b', 64), '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090')$sql$,
+  '23514', null, 'provider event must match the referenced payment attempt'
+);
+select throws_ok(
+  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id)
+  values ('sandbox', 'phase4-invalid-signature-event-001', 'payment.succeeded', repeat('b', 64), false, '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090')$sql$,
+  '23514', null, 'unverified provider events cannot enter the inbox'
+);
 insert into public.payment_webhook_events (
   id, provider, provider_event_id, event_type, payload_sha256, order_id, payment_attempt_id
 ) values (
@@ -133,6 +152,12 @@ update public.payment_webhook_events set processing_status = 'processing'
 where id = '91000000-0000-4000-8000-000000000091';
 update public.payment_attempts set status = 'succeeded'
 where id = '90000000-0000-4000-8000-000000000090';
+update public.payment_attempts set provider_reference = 'sandbox-charge-0001'
+where id = '90000000-0000-4000-8000-000000000090';
+select throws_ok(
+  $sql$update public.payment_attempts set provider_reference = 'sandbox-charge-0002' where id = '90000000-0000-4000-8000-000000000090'$sql$,
+  '23514', null, 'provider references cannot be rewritten after assignment'
+);
 insert into public.ledger_transactions (
   order_id, payment_attempt_id, source_type, debit_account, credit_account,
   amount_minor, currency, reference_key
@@ -143,6 +168,11 @@ insert into public.ledger_transactions (
 );
 update public.payment_webhook_events set processing_status = 'processed', processed_at = now()
 where id = '91000000-0000-4000-8000-000000000091';
+select throws_ok(
+  $sql$insert into public.ledger_transactions (order_id, payment_attempt_id, source_type, debit_account, credit_account, amount_minor, currency, reference_key)
+  values ('88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090', 'payment', 'provider_clearing', 'platform_cash', 1299, 'USD', 'phase4-payment-ledger-duplicate-0001')$sql$,
+  '23505', null, 'a payment attempt cannot be posted to the ledger twice'
+);
 update public.orders set status = 'paid' where id = '88000000-0000-4000-8000-000000000088';
 select is((select status from public.orders where id = '88000000-0000-4000-8000-000000000088'), 'paid', 'verified payment and ledger evidence permit the order to become paid');
 select is((select count(*) from public.ledger_transactions where order_id = '88000000-0000-4000-8000-000000000088'), 1::bigint, 'successful payment is journaled exactly once');
@@ -161,6 +191,10 @@ values (
 );
 select is((select count(*) from public.entitlements where customer_id = '82000000-0000-4000-8000-000000000082' and status = 'active'), 1::bigint, 'paid order can grant an active entitlement');
 select throws_ok(
+  $sql$update public.entitlements set status = 'expired' where id = '92000000-0000-4000-8000-000000000092'$sql$,
+  '23514', null, 'entitlement cannot expire before its expiry time'
+);
+select throws_ok(
   $sql$update public.entitlements set customer_id = '84000000-0000-4000-8000-000000000084' where id = '92000000-0000-4000-8000-000000000092'$sql$,
   '23514', null, 'entitlement ownership cannot be reassigned after purchase'
 );
@@ -171,6 +205,11 @@ insert into public.download_grants (
   '93000000-0000-4000-8000-000000000093', '92000000-0000-4000-8000-000000000092',
   '82000000-0000-4000-8000-000000000082', '87000000-0000-4000-8000-000000000087',
   repeat('c', 64), now() + interval '5 minutes', 1
+);
+select throws_ok(
+  $sql$insert into public.download_grants (entitlement_id, customer_id, product_version_id, artifact_sha256, expires_at, max_downloads)
+  values ('92000000-0000-4000-8000-000000000092', '82000000-0000-4000-8000-000000000082', '87000000-0000-4000-8000-000000000087', repeat('c', 64), now() + interval '1 hour', 1)$sql$,
+  '23514', null, 'download grants must be short-lived'
 );
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '82000000-0000-4000-8000-000000000082', true);
