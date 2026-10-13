@@ -1,5 +1,5 @@
 begin;
-select plan(18);
+select plan(19);
 select has_table('public', 'profiles', 'profiles table exists');
 select has_table('public', 'categories', 'categories table exists');
 select has_table('public', 'products', 'products table exists');
@@ -11,13 +11,14 @@ select ok((select relrowsecurity from pg_class where oid = 'public.audit_events'
 
 insert into auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, created_at, updated_at, raw_app_meta_data, raw_user_meta_data)
 values
- ('10000000-0000-4000-8000-000000000001', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'phase2-user-one@example.test', '', now(), now(), now(), '{}'::jsonb, '{}'::jsonb),
- ('20000000-0000-4000-8000-000000000002', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'phase2-user-two@example.test', '', now(), now(), now(), '{}'::jsonb, '{}'::jsonb)
+ ('10000000-0000-4000-8000-000000000001', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'phase2-user-one@example.test', '', now(), now(), now(), '{}'::jsonb, '{"name":"User One"}'::jsonb),
+ ('20000000-0000-4000-8000-000000000002', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'phase2-user-two@example.test', '', now(), now(), now(), '{}'::jsonb, '{"name":"User Two"}'::jsonb)
 on conflict (id) do nothing;
 insert into public.profiles (id, display_name) values
  ('10000000-0000-4000-8000-000000000001', 'User One'),
  ('20000000-0000-4000-8000-000000000002', 'User Two')
 on conflict (id) do nothing;
+select is((select display_name from public.profiles where id = '10000000-0000-4000-8000-000000000001'), 'User One', 'auth signup creates profile from bounded display-name metadata');
 insert into public.categories (id, slug, name, is_active) values
  ('30000000-0000-4000-8000-000000000003', 'active-category', 'Active category', true),
  ('40000000-0000-4000-8000-000000000004', 'inactive-category', 'Inactive category', false)
