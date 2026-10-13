@@ -1,0 +1,31 @@
+name: Temporary lockfile bootstrap
+
+on:
+  push:
+    branches: [lockfile-bootstrap]
+
+permissions:
+  contents: read
+
+jobs:
+  generate-lockfile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Generate pnpm lockfile without installing packages
+        run: pnpm install --lockfile-only --no-frozen-lockfile
+      - name: Upload generated lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-temify-pnpm-lockfile
+          path: pnpm-lock.yaml
+          if-no-files-found: error
+          retention-days: 1
