@@ -18,7 +18,7 @@ Exit criteria:
 Scope: branch-based delivery, root configuration, accessible App Router shell, strict TypeScript, lint/test/foundation commands, safe environment boundaries, CI checks.
 
 Exit criteria:
-- [ ] Clean checkout installs reproducibly with committed lockfile. OPEN BLOCKER: pnpm-lock.yaml is absent and CI currently uses --no-frozen-lockfile.
+- [x] Clean checkout installs reproducibly with committed pnpm-lock.yaml and CI enforces --frozen-lockfile.
 - [x] Lint, typecheck, foundation tests, and production build pass in CI on the current foundation commit.
 - [x] No secrets or local env files are present in the tracked tree.
 - [ ] CI results are visible on PR and required checks are configured in repository rules.
@@ -27,7 +27,7 @@ Exit criteria:
 - [ ] Legacy and current architecture documents are fully reconciled.
 
 ## Phase 2 — Identity, data, authorization
-Scope: establish Supabase Auth profile linkage, base catalogue primitives, RLS, least-privilege grants, audit event storage, and adversarial authorization tests.
+Scope: establish Supabase Auth profile linkage, server-managed application roles, base catalogue primitives, RLS, least-privilege grants, audit event storage, and adversarial authorization tests.
 
 Exit criteria:
 - [ ] Reviewed migration applies from an empty local Supabase database.
