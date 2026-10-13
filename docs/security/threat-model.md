@@ -18,7 +18,7 @@ Browser/application; application/PostgreSQL; application/payment/email/AI provid
 | Agent token overreach | Cross-domain writes | Scoped capability, tenant binding, policy gateway, kill switch |
 | Secret committed | Account/financial loss | Secret scanning and rotation playbook |
 | Supply-chain compromise | Build/runtime compromise | Lockfile, review, CI isolation, dependency updates |
-| False marketing claims | Trust/legal exposure | Evidence-backed metrics/testimonials |
+| Forged product rights/publication | IP claims, unsafe or unauthorized releases | Separate attestation/reviewer identities, column-scoped creator writes, RLS, release digest gate, negative tests |\n| False marketing claims | Trust/legal exposure | Evidence-backed metrics/testimonials |
 | Regulated product risk | Legal/customer harm | Product category and jurisdiction review |
 
 ## Open questions
