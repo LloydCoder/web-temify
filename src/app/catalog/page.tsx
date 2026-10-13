@@ -30,8 +30,6 @@ async function loadProducts(query: string): Promise<{ products: Product[]; confi
       .from("products")
       .select("id,slug,name,summary,product_type,price_minor,currency,license_type,tags")
       .eq("status", "published")
-      .eq("rights_status", "verified")
-      .not("artifact_sha256", "is", null)
       .order("name", { ascending: true })
       .limit(48);
 
