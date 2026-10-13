@@ -41,6 +41,33 @@ create table public.audit_events (
   metadata jsonb not null default '{}'::jsonb check (jsonb_typeof(metadata) = 'object'),
   created_at timestamptz not null default now()
 );
+create type public.app_role as enum ('customer', 'creator', 'moderator', 'admin');
+
+create table public.user_roles (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  role public.app_role not null,
+  granted_by uuid references auth.users(id) on delete set null,
+  granted_at timestamptz not null default now(),
+  primary key (user_id, role)
+);
+
+create function public.current_user_has_role(required_role public.app_role)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $role$
+  select exists (
+    select 1
+    from public.user_roles ur
+    where ur.user_id = (select auth.uid())
+      and ur.role = required_role
+  );
+$role$;
+revoke all on function public.current_user_has_role(public.app_role) from public, anon, service_role;
+grant execute on function public.current_user_has_role(public.app_role) to authenticated;
+
 create function public.set_updated_at()
 returns trigger
 language plpgsql
@@ -68,6 +95,9 @@ begin
     left(coalesce(new.raw_user_meta_data ->> 'name', new.raw_user_meta_data ->> 'full_name', ''), 120)
   )
   on conflict (id) do nothing;
+  insert into public.user_roles (user_id, role)
+  values (new.id, 'customer'::public.app_role)
+  on conflict (user_id, role) do nothing;
   return new;
 end;
 $function$;
@@ -84,8 +114,9 @@ alter table public.profiles enable row level security;
 alter table public.categories enable row level security;
 alter table public.products enable row level security;
 alter table public.audit_events enable row level security;
+alter table public.user_roles enable row level security;
 
-revoke all on public.profiles, public.categories, public.products, public.audit_events from anon, authenticated;
+revoke all on public.profiles, public.categories, public.products, public.audit_events, public.user_roles from anon, authenticated;
 grant select, insert, update on public.profiles to authenticated;
 grant select on public.categories to anon, authenticated;
 grant select, insert, update, delete on public.products to authenticated;
@@ -103,4 +134,5 @@ create policy products_delete_own_draft on public.products for delete to authent
 -- Audit events are written by trusted server-side paths only. No client grants/policies.
 revoke all on sequence public.audit_events_id_seq from anon, authenticated;
 grant insert on public.audit_events to service_role;
+grant select, insert, update, delete on public.user_roles to service_role;
 grant usage, select on sequence public.audit_events_id_seq to service_role;
