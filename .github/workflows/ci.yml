@@ -44,6 +44,8 @@ jobs:
         run: supabase start -x studio,imgproxy,inbucket
       - name: Apply migrations from an empty database
         run: supabase db reset
+      - name: Lint database schema and policies
+        run: supabase db lint --local
       - name: Run database and RLS tests
         run: supabase test db
       - name: Install Chromium for browser tests
