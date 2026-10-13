@@ -18,7 +18,9 @@ test("catalogue preserves semantic landmarks and avoids horizontal overflow", as
   }
 });
 
-test("unreleased product slugs are not exposed through the public detail route", async ({ page }) => {
-  const response = await page.goto("/catalog/not-a-real-release");
-  expect(response?.status()).toBe(404);
+test("unreleased product slugs render a not-found state without product details", async ({ page }) => {
+  await page.goto("/catalog/not-a-real-release");
+  await expect(page.getByRole("heading", { name: /product not found/i })).toBeVisible();
+  await expect(page.getByText(/not available as a verified release/i)).toBeVisible();
+  await expect(page.getByRole("link", { name: /return to catalogue/i })).toBeVisible();
 });
