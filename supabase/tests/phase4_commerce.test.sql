@@ -1,5 +1,5 @@
 begin;
-select plan(64);
+select plan(65);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -122,6 +122,10 @@ values (
   'phase4-payment-idempotency-0001'
 );
 update public.payment_attempts set status = 'pending' where id = '90000000-0000-4000-8000-000000000090';
+select throws_ok(
+  $sql$update public.payment_attempts set status = 'succeeded' where id = '90000000-0000-4000-8000-000000000090'$sql$,
+  '23514', null, 'payment attempt cannot succeed without a verified provider event'
+);
 select throws_ok(
   $sql$update public.orders set status = 'cancelled' where id = '88000000-0000-4000-8000-000000000088'$sql$,
   '23514', null, 'order cannot be cancelled while a payment attempt is active'
