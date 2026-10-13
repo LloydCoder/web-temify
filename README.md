@@ -7,7 +7,8 @@ Web-Temify is a planned global-first digital-product marketplace and product fac
 > Foundation in progress. Documented features are not proof of implementation. Production commerce, payment processing, vendor payouts, license enforcement, and live Tinlance Agent System execution are not yet demonstrated.
 
 ## Canonical documentation
-- Phase gates: [docs/roadmap/phase-gates.md](docs/roadmap/phase-gates.md)
+- Canonical 20-phase enterprise roadmap: [docs/roadmap/master-enterprise-roadmap.md](docs/roadmap/master-enterprise-roadmap.md)
+- Phase evidence register: [docs/roadmap/phase-gates.md](docs/roadmap/phase-gates.md)
 - Architecture overview: [docs/architecture/overview.md](docs/architecture/overview.md)
 - Repository structure: [docs/architecture/repository-structure.md](docs/architecture/repository-structure.md)
 - Domain boundaries: [docs/architecture/domain-boundaries.md](docs/architecture/domain-boundaries.md)
