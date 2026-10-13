@@ -157,19 +157,34 @@ Phase 4B — server-side commerce workflows (implementation in progress):
 - **Gate decision:** Phase 5B is complete for its stated scope. Phase 5 overall remains in progress; do not treat this subphase as production readiness.
 
 
-### Phase 5C — Admin audit explorer (implementation in progress)
+### Phase 5C — Admin audit explorer (complete for this scope)
 
 Scope: restricted audit-stream discovery with exact-match filters, stable cursor pagination, bounded queries, safe fields only, and query-performance indexes. Audit events remain append-only and are never mutated through the explorer.
 
 Exit criteria:
-- [ ] Authenticated admin authorization and access-audit logging happen before privileged event queries.
-- [ ] Exact action/entity filters and cursor input are validated; repeated, oversized, unknown, or malformed query parameters fail closed.
-- [ ] The page queries at most 51 rows per request and displays at most 50; cursor pagination is stable and filter-preserving.
-- [ ] Only approved audit columns are selected; arbitrary metadata and raw database errors are not exposed.
-- [ ] Supporting indexes are applied by a reviewed SQL migration; pgTAP confirms indexes and unchanged least-privilege/append-only controls.
-- [ ] Playwright proves unauthenticated users cannot access the audit explorer or rights-review queue.
-- [ ] Unit tests, database reset/lint/pgTAP, E2E, typecheck, lint, production build, and cleanup pass on the exact implementation head.
-- [ ] Phase-specific forensic audit and residual limits are recorded before the next phase begins.
+- [x] Authenticated admin authorization and access-audit logging happen before privileged event queries.
+- [x] Exact action/entity filters and cursor input are validated; repeated, oversized, unknown, or malformed query parameters fail closed.
+- [x] The page queries at most 51 rows per request and displays at most 50; cursor pagination is stable and filter-preserving.
+- [x] Only approved audit columns are selected; arbitrary metadata and raw database errors are not exposed.
+- [x] Supporting indexes are applied by a reviewed SQL migration; pgTAP confirms indexes and unchanged least-privilege/append-only controls.
+- [x] Playwright proves unauthenticated users cannot access the audit explorer or rights-review queue.
+- [x] Unit tests, database reset/lint/pgTAP, E2E, typecheck, lint, production build, and cleanup pass on the exact implementation head.
+- [x] Phase-specific forensic audit and residual limits are recorded before the next phase begins.
+
+
+### Phase 5C forensic audit record
+
+- **Disposition:** PASS for the bounded, read-only audit-explorer scope only. This is not a complete operations centre or production-launch approval.
+- **PR:** [#16 — feat: add bounded admin audit explorer](https://github.com/LloydCoder/web-temify/pull/16), merged after exact-head CI passed.
+- **Validated implementation head:** `62a16f41f5e9689d6ef0f7203f566084af594d3b`.
+- **Merge commit:** `50041f25d95aa5f3e16cd22504b7b5c2ee982ad6`.
+- **CI evidence:** [Foundation CI run 38461536339](https://github.com/LloydCoder/web-temify/actions/runs/38461536339) completed successfully on the exact PR head. Frozen install, foundation/domain tests, TypeScript, lint, Supabase CLI setup, local services, empty-database migration reset, schema lint, pgTAP/RLS, Playwright, production build, and cleanup all passed.
+- **Files reviewed:** `src/app/admin/audit/page.tsx`; `src/server/admin/audit-filters.ts` and tests; `src/server/admin/authorization.ts`; `supabase/migrations/20261013060000_phase5c_admin_audit_explorer.sql`; `supabase/tests/phase5c_admin_audit_explorer.test.sql`; `tests/e2e/admin-access.spec.ts`; `docs/operations/admin-console.md`; and `.github/workflows/ci.yml`.
+- **Security invariants:** the shared admin helper validates the Supabase Auth principal and database-owned admin role before constructing the privileged client; access is audit-recorded before the query; only approved audit columns are selected; metadata is not returned; filters are bounded and fail closed; each query fetches at most 51 rows and displays 50; pagination preserves exact filters; audit records remain append-only; anonymous and ordinary authenticated roles cannot read the stream.
+- **Forensic defects corrected before PASS:** the pagination href was converted to a typed URL object after TypeScript rejected the prior string; PostgreSQL BIGINT IDs now cross the JavaScript boundary as exact text via a generated `id_text` projection, preventing precision loss above `Number.MAX_SAFE_INTEGER`; a pgTAP assertion verifies that projection; Next.js `typedRoutes` uses the stable top-level config option.
+- **Residual risks / explicit non-claims:** cursor pagination is descending ID order, not a tamper-evident audit export; no audit retention/archival policy or external immutable log sink is implemented. Support cases, financial reconciliation, dispute/chargeback handling, alert delivery, backup restoration, incident response, and break-glass governance remain later gates. Full WCAG 2.2 AA, formal penetration testing, production environment configuration, and legal/tax review remain open.
+- **Gate decision:** Phase 5C is complete for its stated scope. Phase 5 overall remains in progress. Proceed to the next phase only after the post-merge main workflow passes and the next phase has its own explicit implementation/test gate.
+
 
 Least-privilege admin controls, moderation queues, support, audit review, financial reconciliation, observability, backup/restore rehearsal, incident response and safe break-glass access.
 
