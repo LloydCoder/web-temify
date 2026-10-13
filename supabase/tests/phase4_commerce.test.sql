@@ -1,5 +1,5 @@
 begin;
-select plan(62);
+select plan(64);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -123,6 +123,10 @@ values (
 );
 update public.payment_attempts set status = 'pending' where id = '90000000-0000-4000-8000-000000000090';
 select throws_ok(
+  $sql$update public.orders set status = 'cancelled' where id = '88000000-0000-4000-8000-000000000088'$sql$,
+  '23514', null, 'order cannot be cancelled while a payment attempt is active'
+);
+select throws_ok(
   $sql$insert into public.payment_attempts (order_id, provider, amount_minor, currency, idempotency_key)
   values ('88000000-0000-4000-8000-000000000088', 'stripe', 1299, 'USD', 'phase4-second-active-attempt-001')$sql$,
   '23505', null, 'an order cannot have two active or settled payment attempts'
@@ -220,6 +224,11 @@ select throws_ok(
   $sql$insert into public.download_grants (entitlement_id, customer_id, product_version_id, artifact_sha256, expires_at, max_downloads)
   values ('92000000-0000-4000-8000-000000000092', '82000000-0000-4000-8000-000000000082', '87000000-0000-4000-8000-000000000087', repeat('c', 64), now() + interval '1 hour', 1)$sql$,
   '23514', null, 'download grants must be short-lived'
+);
+select throws_ok(
+  $sql$insert into public.download_grants (entitlement_id, customer_id, product_version_id, artifact_sha256, issued_at, expires_at, max_downloads)
+  values ('92000000-0000-4000-8000-000000000092', '82000000-0000-4000-8000-000000000082', '87000000-0000-4000-8000-000000000087', repeat('c', 64), now() - interval '10 minutes', now() - interval '1 minute', 1)$sql$,
+  '23514', null, 'expired download grants are rejected at creation'
 );
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '82000000-0000-4000-8000-000000000082', true);
