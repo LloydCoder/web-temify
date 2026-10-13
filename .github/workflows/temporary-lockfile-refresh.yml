@@ -1,4 +1,4 @@
-name: Temporary dependency lockfile refresh
+name: Temporary dependency patch regeneration
 
 on:
   push:
@@ -8,11 +8,11 @@ permissions:
   contents: write
 
 concurrency:
-  group: temporary-lockfile-refresh-${{ github.ref }}
+  group: temporary-patch-regeneration-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  refresh-lockfile:
+  regenerate-patch:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -27,17 +27,36 @@ jobs:
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 22
-      - name: Install dependencies and apply workspace patches
+      - name: Install the unpatched graph before generating the canonical patch
         run: pnpm install --no-frozen-lockfile
-      - name: Commit generated lockfile
+      - name: Create pnpm patch workspace
+        run: pnpm patch braces@3.0.3
+      - name: Apply nesting limit to patched source
         shell: bash
         run: |
-          if git diff --quiet -- pnpm-lock.yaml; then
-            echo "Lockfile already matches package.json, workspace config, and patches."
-            exit 0
-          fi
+          PATCH_DIR="$(find node_modules/.pnpm_patches -mindepth 1 -maxdepth 1 -type d -name 'braces@3.0.3*' -print -quit)"
+          test -n "$PATCH_DIR"
+          node -- "$PATCH_DIR/lib/parse.js" <<'NODE'
+          const fs = require("node:fs");
+          const file = process.argv[2];
+          const source = fs.readFileSync(file, "utf8");
+          const needle = "if (value === CHAR_LEFT_CURLY_BRACE) {\n      depth++;";
+          if (!source.includes(needle)) {
+            throw new Error("Could not locate braces parser nesting counter");
+          }
+          const replacement = needle + "\n      if (depth > 100) {\n        throw new SyntaxError('Brace nesting exceeds maximum depth');\n      }";
+          fs.writeFileSync(file, source.replace(needle, replacement));
+          NODE
+          echo "PATCH_DIR=$PATCH_DIR" >> "$GITHUB_ENV"
+      - name: Generate canonical patch metadata with pnpm
+        run: pnpm patch-commit "$PATCH_DIR"
+      - name: Refresh lockfile and verify patched installation
+        run: pnpm install --no-frozen-lockfile
+      - name: Commit patch and lockfile
+        shell: bash
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add pnpm-lock.yaml
-          git commit -m "build: refresh lockfile for applied security patch"
+          git add pnpm-workspace.yaml pnpm-lock.yaml patches/braces@3.0.3.patch
+          git commit -m "security: generate canonical braces patch metadata"
           git push origin "HEAD:${GITHUB_REF_NAME}"
