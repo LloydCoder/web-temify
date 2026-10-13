@@ -17,6 +17,16 @@ The initial operations console is deliberately read-only. It presents counts for
 
 The canonical Phase 2 migration restricts audit-event insertion to the trusted service role and does not grant update/delete privileges. The Phase 5A pgTAP suite asserts those privileges, RLS, and the role-check function behavior for customer and administrator identities.
 
+## Independent product-rights review (Phase 5B)
+
+The restricted `/admin/reviews` queue lists up to 50 pending rights attestations. It is available only after the same server-side identity and admin-role check as the operations console. Review decisions are submitted to a server route with strict input validation and same-origin protection, then executed by a narrow database function in one transaction.
+
+- The creator who submitted an attestation cannot review it.
+- Review decisions require a bounded reviewer note; the route accepts JSON only and enforces an 8 KiB streaming request-body limit before parsing.
+- `under_review`, `verified`, and `rejected` are explicit transitions; a resolved attestation cannot be silently re-reviewed.
+- Product rights state and reviewer evidence update atomically with an append-only audit event. If the audit insert fails, the transaction rolls back.
+- Rights verification does not publish a product, approve its artifact, grant customer entitlements, or imply legal certainty. Publication still requires a verified release and immutable artifact evidence.
+
 ## Known limits
 
 This is not a complete operations centre. Moderation decisions, support cases, financial reconciliation, dispute/chargeback handling, backup restoration, incident-response automation, alert delivery, and break-glass procedures remain separate gates. A dashboard count is operational visibility, not proof of settlement or production readiness.

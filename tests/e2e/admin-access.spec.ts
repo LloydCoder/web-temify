@@ -13,3 +13,16 @@ test("admin operations console denies unauthenticated visitors", async ({ page }
   await expect(page.getByText("Catalogue records", { exact: true })).toHaveCount(0);
   await expect(page.getByText("Recent audit activity", { exact: true })).toHaveCount(0);
 });
+
+
+test("admin rights-review mutation endpoint denies unauthenticated visitors", async ({ page }) => {
+  const response = await page.request.post("/api/admin/products/89000000-0000-4000-8000-000000000089/rights-review", {
+    data: {
+      attestationId: "89100000-0000-4000-8000-000000000089",
+      decision: "verified",
+      notes: "Attempted unauthenticated review."
+    }
+  });
+  expect(response.status()).toBe(404);
+  await expect(response.json()).resolves.toEqual({ error: "not_found" });
+});

@@ -14,3 +14,22 @@
 .admin-audit-item { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 16px; border: 1.5px solid var(--border); background: var(--card); }
 .admin-audit-item p { margin: .35rem 0 0; color: var(--muted); overflow-wrap: anywhere; }
 .admin-audit-item time { color: var(--muted); font-size: .875rem; }
+
+.admin-review-list { display:grid; gap:16px; padding-block:1rem 4rem; }
+.admin-review-card { min-width:0; padding:clamp(18px,3vw,28px); border:1.5px solid var(--border); background:var(--card); box-shadow:4px 4px 0 var(--border); }
+.admin-review-card header { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; }
+.admin-review-card h2 { margin:0; font-size:1.35rem; letter-spacing:-.04em; overflow-wrap:anywhere; }
+.admin-review-card p { line-height:1.7; overflow-wrap:anywhere; }
+.admin-review-meta { display:flex; flex-wrap:wrap; gap:8px; margin-block:12px; }
+.admin-review-meta span { padding:4px 9px; border:1px solid var(--border); border-radius:999px; font-size:.75rem; font-weight:750; }
+.admin-review-evidence { padding:14px; background:var(--background); border:1px solid var(--border); overflow-wrap:anywhere; }
+.admin-review-form { display:grid; gap:12px; margin-top:20px; padding-top:18px; border-top:1px solid var(--border); }
+.admin-review-form label { display:grid; gap:6px; font-weight:800; font-size:.85rem; }
+.admin-review-form select,.admin-review-form textarea { width:100%; min-height:44px; padding:10px 12px; border:1.5px solid var(--border); background:var(--background); color:var(--foreground); font:inherit; border-radius:0; }
+.admin-review-form textarea { min-height:110px; resize:vertical; }
+.admin-review-form button { justify-self:start; min-height:44px; padding:10px 16px; border:2px solid var(--foreground); background:var(--foreground); color:var(--background); font:inherit; font-weight:850; cursor:pointer; }
+.admin-review-form button:disabled { opacity:.6; cursor:wait; }
+.admin-review-form :is(select,textarea,button):focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.admin-review-feedback { margin:0; font-size:.875rem; }
+.admin-review-feedback[data-kind="error"] { color:#a32d1b; }
+.admin-review-feedback[data-kind="success"] { color:#17623a; }

@@ -7,7 +7,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
  * Resolves the current principal and verifies the authoritative database role
  * before a privileged client is constructed. Callers must fail closed on null.
  */
-export async function getAdminContext() {
+export async function getAdminContext(surface = "operations_dashboard") {
   try {
     const session = await createSupabaseServerClient();
     const { data: authData, error: authError } = await session.auth.getUser();
@@ -26,7 +26,7 @@ export async function getAdminContext() {
       entity_type: "admin_console",
       entity_id: "operations",
       request_id: randomUUID(),
-      metadata: { surface: "operations_dashboard" }
+      metadata: { surface }
     });
     // Administrative access is denied if the access audit cannot be persisted.
     if (auditError) return null;
