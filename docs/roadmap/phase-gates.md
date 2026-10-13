@@ -14,7 +14,7 @@ Exit criteria:
 - [x] Product areas have phase and maturity status in the canonical planned inventory, merged and validated in the product-source repository (43 entries; all still planned).
 - [x] No unresolved critical architectural contradiction in the canonical ADRs.
 
-## Phase 1 — Repository and application skeleton
+## Phase 1 — Reproducible engineering foundation and application skeleton
 Scope: branch-based delivery, root configuration, accessible App Router shell, strict TypeScript, lint/test/foundation commands, safe environment boundaries, CI checks.
 
 Exit criteria:
@@ -238,24 +238,101 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Staged rollout with explicit go/no-go owner, rollback trigger, canary monitoring and customer-impact review.
 - [ ] Production environment evidence, smoke tests and deployment provenance are attached to the release; no claim of production readiness from CI alone.
 
-## Phase 9 — Product factory execution and release evidence
+## Phase 6 — Seller system and product factory
+
+**Status: NOT COMPLETE.** This phase builds the trusted supply side and a repeatable, evidence-backed product release pipeline. The dedicated source monorepo is [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products); its inventory is planning input, not evidence that products have been built or released. Keep product source code, manifests, build/test contracts and immutable release evidence in that repository; keep commercial listing state and marketplace transactions in this repository.
+
+Exit gates (all required):
+- [ ] Seller onboarding captures legal/business identity, beneficial ownership where required, payout jurisdiction, tax status, support/contact and policy acceptance without presenting unverified claims as verified.
+- [ ] Verification is evidence-based, independently reviewable, timestamped, revocable and appealable; creator self-review is prohibited; badges/ranking reflect current evidence and never imply a government endorsement.
+- [ ] Seller status, listing publication, product rights, artifact release and payout eligibility are distinct state machines with server/database enforcement.
+- [ ] Product manifests are schema-validated and versioned; builds run in isolated least-privilege environments with resource/time limits, network egress controls, secret isolation and cleanup.
+- [ ] Released artifacts are immutable/content-addressed; digest, source revision, toolchain, build logs, test evidence, license/rights evidence and SBOM/provenance are linked to a release.
+- [ ] Malware/secrets/dependency/license scans fail closed on policy violations; scan exceptions require a documented, time-bounded approval and audit evidence.
+- [ ] Product-specific CI validates lint, typecheck, unit/integration tests, security checks, reproducible manifest shape and build output before a release is eligible for listing.
+- [ ] Seller contracts, prohibited-content rules, IP takedown, refunds, dispute handling, payout holds, reserves and audit obligations have reviewed operational/legal policies before real sellers or money are enabled.
+- [ ] Admin actions are permission-scoped, reason-coded, auditable, idempotent and protected against self-approval.
+- [ ] Automated tests cover seller tenancy isolation, privilege escalation, artifact substitution, malicious build scripts, replay, stale/revoked evidence, payout eligibility and moderation races.
+- [ ] Exact-head CI, migration reset/lint/pgTAP, browser E2E, production build and a phase-specific forensic review pass before merging.
+
+Deferred until explicitly gated: live seller payouts, escrow claims, tax calculation, regulated/high-risk categories and arbitrary third-party executable code. Never label funds as escrow unless the legal and payment architecture genuinely supports that service.
+
+### Phase 6 marketplace vertical requirements
+
+- **Verified Automation Marketplace:** list workflows, AI agents, integrations and reusable digital solutions only with supported compatibility claims, setup documentation, versioned artifacts, test/security evidence and clear permission/data requirements.
+- **Verified Specialist Supplier Marketplace:** represent firms and specialists using evidence-backed capabilities, service regions, certifications, references and measured performance. Use status labels that distinguish identity verification from skill certification, reference checks and outcome history.
+- **Outcome-Based AI Implementation Marketplace:** each offer defines scope, exclusions, customer prerequisites, baseline methodology, measurable outcome metrics, acceptance criteria, milestones, change control, dispute process and responsibility boundaries. Do not promise outcomes or use escrow terminology without enforceable terms and operational capability.
+- Tinlance Limited may be a seller under the same eligibility, verification, ranking and dispute rules as other vendors. No privileged placement, self-verification or hidden policy exceptions.
+
+### Product factory and inventory gates (also required for Phase 18 expansion)
 
 - [ ] Reconcile the canonical product inventory against source repositories; assign each entry a unique ID, owner, tier, target buyer, differentiation evidence and acceptance criteria.
-- [ ] Resolve duplicate/ambiguous catalogue entries before product implementation; inventory counts must be generated from canonical data rather than copied into docs.
-- [ ] Establish a product lifecycle: proposed → validated → specified → building → security review → released → listed → maintained/retired.
-- [ ] Each product has a versioned manifest, license/rights evidence, threat model, tests, deployment instructions, support policy, changelog and immutable release record.
-- [ ] Build and publish through CI with signed provenance/SBOM where supported, dependency/license/security scans and reproducible artifact checks.
-- [ ] Do not show planned, unbuilt, unverified products as available for purchase; feature flags do not substitute for authorization or release evidence.
+- [ ] Resolve duplicate/ambiguous catalogue entries before product implementation; generate counts from canonical data rather than copying them into docs.
+- [ ] Establish lifecycle states: proposed → validated → specified → building → security review → released → listed → maintained/retired.
+- [ ] Each product has a versioned manifest, rights/license evidence, threat model, tests, deployment instructions, support policy, changelog and immutable release record.
+- [ ] Build/publish through CI with signed provenance/SBOM where supported, dependency/license/security scans and reproducible artifact checks.
+- [ ] Planned, unbuilt, unverified products are never represented as available for purchase.
 
-## Phase 10 — Verified Automation Marketplace
+### Finance, support and operations gates (required before completing Phase 5)
 
-- [ ] Model automation listings with inputs/outputs, required scopes, data categories, supported versions, execution location, external side effects, cost bounds, rollback behavior and maintainer identity.
-- [ ] Provide sandbox evaluation fixtures, deterministic contract tests where feasible, permission review and explicit buyer consent for sensitive scopes.
-- [ ] Distinguish static template downloads from hosted execution and managed automation; pricing, SLAs and security claims must match the delivered service.
+- [ ] Reconcile provider transactions, orders, refunds, fees, taxes, reserves, payouts and bank/provider settlement with immutable ledger evidence.
+- [ ] Implement support cases, escalation, SLA tracking, evidence access controls and secure customer communications.
+- [ ] Add dispute/chargeback workflows, payout holds, negative balances, fraud review and controlled manual adjustments with dual control.
+- [ ] Monitor seller concentration, refunds, disputes, abuse, support load and contribution margin without exposing sensitive cross-tenant data.
+
+
+## Phase 7 — Governed Tinlance Agent System integration
+
+**Status: NOT COMPLETE.** Begin with read-only/sandbox assistance. Web-Temify remains the authority for listings, pricing, checkout, payment state, refunds, entitlements, licenses, downloads, moderation and seller payouts.
+
+- [ ] Define versioned integration contracts, tenant context, capability scopes, authenticated APIs/events, schema compatibility and deprecation rules.
+- [ ] Enforce explicit human approvals for publishing, changing prices, issuing refunds, modifying entitlements, seller verification, payout actions and external communications.
+- [ ] Apply least privilege, per-task budgets, timeouts, idempotency, rate limits, kill switch, trace IDs, audit evidence, secret isolation and isolated execution.
+- [ ] Treat all user/product/vendor content and tool outputs as untrusted; test prompt injection, data exfiltration, cross-tenant access and confused-deputy paths.
+- [ ] Prohibit agents from treating untrusted instructions as policy or from directly mutating commercial truth outside narrow server-enforced workflows.
+- [ ] Test retries, duplicate events, partial failures, cancellation, approvals, policy denials and rollback/compensation behavior.
+- [ ] Demonstrate integration against staging fixtures and a documented threat model before any production scope is enabled.
+
+## Phase 8 — Production readiness and controlled launch
+
+**Status: NOT COMPLETE.** No public production launch until every release gate has named ownership and auditable evidence.
+
+- [ ] Provider eligibility and sandbox verification; live payments, refunds, seller payouts, taxes and settlement reconciliation validated for the target jurisdictions.
+- [ ] Independent security review and penetration test; dependency/supply-chain controls; secret rotation; vulnerability disclosure and incident response.
+- [ ] Full WCAG 2.2 AA assessment, keyboard/screen-reader checks, responsive QA and localization/currency/date handling.
+- [ ] SLOs, error budgets, service dashboards, actionable alerts, structured logs, trace correlation, privacy-safe analytics and abuse monitoring.
+- [ ] Backup/restore rehearsal with measured RPO/RTO; tested disaster recovery, migration rollback and deployment rollback.
+- [ ] Legal review for consumer rights, seller terms, privacy/data protection, IP/takedown, tax/VAT, payment services, sanctions and marketplace obligations in launch jurisdictions.
+- [ ] Support operations, escalation rota, refund/dispute procedures, data-subject request process and status communications are staffed and rehearsed.
+- [ ] Staged rollout with explicit go/no-go owner, rollback trigger, canary monitoring and customer-impact review.
+- [ ] Production environment evidence, smoke tests and deployment provenance are attached to the release; no claim of production readiness from CI alone.
+
+## Phase 9 — Automation Marketplace domain and quality model
+
+**Status: NOT COMPLETE.** Add automation/workflow/AI-agent/integration listings on shared identity, catalogue, seller, rights and commerce primitives. Directory metadata does not prove that an automation is safe or executable.
+
+- [ ] Model automation listings with inputs/outputs, supported systems and versions, prerequisites, required scopes, data categories, execution location, external side effects, cost bounds, rollback behavior and maintainer identity.
+- [ ] Require setup, permission, security, compatibility, maintenance and support documentation with immutable version references.
+- [ ] Distinguish static downloadable artifacts from hosted execution and managed automation; pricing, SLAs and security claims must match the delivered service.
+- [ ] Require deterministic contract tests or representative fixtures where feasible, permission review and explicit buyer consent for sensitive scopes.
 - [ ] Enforce version pinning, revocation, dependency updates, vulnerability advisories and buyer notification for material changes.
-- [ ] Validate isolation, secrets handling, SSRF/egress, malicious package and prompt-injection defenses before any hosted execution is enabled.
+- [ ] Keep Tinlance products/providers under the same publication, verification, ranking and dispute rules as every other seller.
 
-## Phase 11 — Verified specialist supplier marketplace
+
+## Phase 10 — Automation sandbox, verification and delivery
+
+**Status: NOT COMPLETE.** Submitted automations must be validated outside the marketplace control plane before any hosted execution is enabled.
+
+- [ ] Build isolated, resource-bounded validation environments with timeouts, quotas, filesystem/network controls, cleanup and auditable execution evidence.
+- [ ] Scan dependencies, secrets, licenses and artifacts; produce content-addressed packages and signed release evidence where supported.
+- [ ] Validate permission manifests, compatibility, test fixtures, setup/rollback behavior and declared external side effects.
+- [ ] Reject packages requiring uncontrolled credentials, unrestricted egress, unsafe privilege or undeclared sensitive-data access.
+- [ ] Define version pinning, revocation, rollback, vulnerability disclosure and customer notification for compromised or materially changed packages.
+- [ ] Make execution an explicit customer-side or separately governed runtime action; never execute untrusted submissions inside the marketplace control plane.
+- [ ] Test prompt injection, malicious packages, SSRF/egress abuse, secret exfiltration, resource exhaustion and cross-tenant isolation.
+
+
+## Phase 11 — Specialist Supplier Directory
 
 - [ ] Define supplier profiles, service taxonomies, service regions, capacity, evidence expiry, insurance/licensing where relevant and accessible dispute/contact workflows.
 - [ ] Separate identity checks, business registration checks, certification validation, references, skills assessments and observed delivery outcomes.
@@ -263,7 +340,19 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Ranking is transparent, relevance-based and protected against paid-placement conflicts, review manipulation, retaliation and self-preferencing.
 - [ ] Collect only necessary personal data, define retention/access controls and complete privacy/legal review before external onboarding.
 
-## Phase 12 — Outcome-based AI implementation marketplace
+## Phase 12 — Lead qualification and supplier trust operations
+
+**Status: NOT COMPLETE.** Start with consent-aware discovery and qualified leads; lead monetization must remain distinct from product GMV and implementation revenue.
+
+- [ ] Collect explicit buyer requirements and lawful/transparent consent before sharing contact or business data with suppliers.
+- [ ] Define lead ownership, attribution, deduplication, qualification evidence, expiry, dispute/refund rules for lead credits and auditable delivery records.
+- [ ] Add fraud, spam, resale and duplicate-lead controls plus supplier response-SLA tracking and buyer feedback moderation.
+- [ ] Restrict access to buyer data by purpose, tenant and retention policy; log access and support deletion/objection workflows where applicable.
+- [ ] Disclose paid placement and lead-credit commercial terms; payment or subscription must never imply supplier verification.
+- [ ] Test unauthorized disclosure, repeated lead delivery, fraudulent leads, supplier conflicts and refund/dispute outcomes.
+
+
+## Phase 13 — Outcome-Based AI Implementation Marketplace
 
 - [ ] Require scoped statements of work with baseline, measurement method, success metric, exclusions, dependencies, acceptance window, deliverables and change-control rules.
 - [ ] Define outcome attribution and dispute review before payment milestones; protect both parties from metrics that either side can unilaterally manipulate.
@@ -271,7 +360,20 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Keep funds flow, refunds, chargebacks, seller payout and tax accounting within reviewed provider/legal constraints; do not market an escrow service unless licensed and actually implemented.
 - [ ] Test scope changes, failed acceptance, partial delivery, buyer/supplier disputes, cancellation and data access termination.
 
-## Phase 13 — Trust, safety, compliance and legal operations
+## Phase 14 — Project delivery, milestones and disputes
+
+**Status: NOT COMPLETE.** This phase requires structured contracts and auditable delivery/acceptance before enabling any milestone fund movement.
+
+- [ ] Model proposals, versioned statements of work, deliverables, milestones, acceptance windows, dependencies, customer prerequisites and change requests.
+- [ ] Define measurable acceptance criteria, baseline/measurement method, evidence requirements, exclusions, service boundaries and support obligations per package.
+- [ ] Implement milestone submission, buyer acceptance/rejection, reminders, partial delivery, cancellation, change control and escalation with immutable audit evidence.
+- [ ] Separate objective technical acceptance from subjective business-outcome attribution; no party may unilaterally rewrite the agreed measurement.
+- [ ] Define dispute intake, evidence access, independent review, reason-coded decisions, appeals and refund/chargeback coordination.
+- [ ] Keep provider execution and fund movement disabled until payment, ledger, refunds, chargebacks and seller eligibility cover every supported transition.
+- [ ] Test acceptance timeout, scope changes, failed delivery, partial completion, disputes, cancellation, replay and concurrent decisions.
+
+
+## Phase 15 — Trust, safety, legal and compliance
 
 - [ ] Maintain policy taxonomy, prohibited/restricted categories, content moderation, abuse reporting, sanctions/fraud controls where applicable and documented escalation.
 - [ ] Operationalize IP complaints/takedowns, counter-notices where applicable, evidence preservation and repeat-infringer handling with legal review.
@@ -279,23 +381,7 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Review obligations per launch jurisdiction before marketing availability; avoid claims of certification or compliance without independent evidence.
 - [ ] Track policy exceptions with owner, reason, expiry, compensating controls and an auditable renewal/revocation path.
 
-## Phase 14 — Finance, support and marketplace operations
-
-- [ ] Reconcile provider transactions, orders, refunds, fees, taxes, reserves, payouts and bank/provider settlement with immutable ledger evidence.
-- [ ] Implement support cases, escalation, SLA tracking, evidence access controls and secure customer communications.
-- [ ] Add dispute/chargeback workflows, payout holds, negative balances, fraud review and controlled manual adjustments with dual control.
-- [ ] Monitor seller concentration, refunds, disputes, abuse, support load and contribution margin without exposing sensitive cross-tenant data.
-- [ ] Exercise incident, payment-provider outage, delayed webhook, duplicate event and financial reconciliation playbooks.
-
-## Phase 15 — Quality engineering and assurance
-
-- [ ] Establish a risk-based test pyramid with unit, contract, integration, database/RLS, browser E2E, accessibility, load, chaos and security regression tests.
-- [ ] Add property/invariant tests for order totals, ledger balancing, entitlement transitions, artifact integrity, seller isolation and idempotency.
-- [ ] Run concurrency/race tests and failure injection for checkout, webhook processing, refunds, downloads, moderation and payout state.
-- [ ] Maintain coverage by critical business invariant and risk; code-coverage percentages alone are not acceptance evidence.
-- [ ] Verify test isolation, deterministic fixtures, migration-from-empty behavior and rollback compatibility on every relevant change.
-
-## Phase 16 — Production infrastructure, resilience and observability
+## Phase 16 — Durable jobs, events and operational resilience
 
 - [ ] Define environments, network boundaries, identity, secret management, least-privilege deployment roles and immutable release promotion.
 - [ ] Establish SLOs/SLIs, trace propagation, privacy-safe telemetry, alert ownership, on-call escalation and service runbooks.
@@ -303,7 +389,33 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Validate capacity, database indexes, connection pooling, caching invalidation, CDN behavior and cost ceilings under representative load.
 - [ ] Complete backup restoration, disaster recovery, regional outage, key rotation and compromised credential drills with evidence.
 
-## Phase 17 — Customer validation and controlled launch
+### Durable workflow requirements
+
+- [ ] Implement transactional outbox/inbox patterns where cross-system delivery must not be lost between database commit and event publication.
+- [ ] Use durable queues and idempotent handlers with bounded retries/backoff, dead-letter queues, safe replay, cancellation and concurrency controls.
+- [ ] Cover artifact scanning/builds, listing revalidation, supplier evidence expiry, lead workflows, project reminders, webhook reconciliation, notifications and reporting.
+- [ ] Test delayed/duplicate events, worker crashes, queue backpressure, poison messages, partial outages and replay without duplicate financial effects.
+
+
+## Phase 17 — Security engineering and comprehensive verification
+
+- [ ] Establish a risk-based test pyramid with unit, contract, integration, database/RLS, browser E2E, accessibility, load, chaos and security regression tests.
+- [ ] Add property/invariant tests for order totals, ledger balancing, entitlement transitions, artifact integrity, seller isolation and idempotency.
+- [ ] Run concurrency/race tests and failure injection for checkout, webhook processing, refunds, downloads, moderation and payout state.
+- [ ] Maintain coverage by critical business invariant and risk; code-coverage percentages alone are not acceptance evidence.
+- [ ] Verify test isolation, deterministic fixtures, migration-from-empty behavior and rollback compatibility on every relevant change.
+
+### Security baseline requirements
+
+- [ ] Map application security controls to a pinned, reviewed version of OWASP ASVS (currently stable v5.0.0) and the applicable OWASP Top 10 edition; record scope and exceptions.
+- [ ] Run SAST, software-composition/dependency, license and secret scans; add DAST/container checks where applicable and produce SBOM/provenance for release artifacts.
+- [ ] Harden CI supply chain: least-privilege workflow permissions, protected environments, and third-party Actions pinned to verified full commit SHAs or an approved immutable dependency-lock mechanism.
+- [ ] Test SSRF and egress controls, CSP/security headers, session/cookie hardening, rate limits/bot abuse, log redaction, artifact integrity and tenant isolation.
+- [ ] Complete independent penetration testing and vulnerability-disclosure handling before launch; no unresolved critical/high finding without an approved, time-bounded exception.
+- [ ] Complete manual keyboard/screen-reader accessibility review against WCAG 2.2 AA; automated accessibility scans alone are insufficient.
+
+
+## Phase 18 — Controlled vertical pilots and product-factory expansion
 
 - [ ] Validate demand and willingness to pay separately for digital products, automations, specialist suppliers and outcome-based implementation.
 - [ ] Launch by controlled cohort and jurisdiction; define activation, conversion, refund, dispute, reliability and support guardrails before ramping.
@@ -311,7 +423,15 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Record experiment hypotheses, cohorts, metrics, stop conditions and decision outcomes; do not infer product-market fit from traffic alone.
 - [ ] Maintain rollback, customer communication and data export/deletion procedures during staged launch.
 
-## Phase 18 — Catalogue expansion and product intelligence
+### Staged pilot and release gates
+
+- [ ] Pilot the core product marketplace first, then a small reviewed automation cohort, then a non-transactional supplier/qualified-lead cohort, then outcome-based implementation packages only after milestone/dispute/payment controls pass.
+- [ ] For each cohort define jurisdiction, target segment, activation/conversion/refund/dispute/reliability/support guardrails, stop conditions, owner and rollback plan.
+- [ ] Expand the canonical product inventory only in the approved tier order and only when each release has rights, tests, compatibility, security evidence, documentation, support ownership and an immutable artifact.
+- [ ] Record hypotheses, cohort metrics and decisions; do not infer product-market fit from traffic or waitlist counts alone.
+
+
+## Phase 19 — Marketplace intelligence and growth
 
 - [ ] Prioritize product additions using evidence of demand, competitive alternatives, implementation/support cost, gross margin and strategic differentiation.
 - [ ] Maintain search relevance, structured metadata, compatibility facets, version/deprecation state, recommendation explanations and abuse resistance.
@@ -319,13 +439,20 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Expand only when product release gates and maintenance ownership are sustainable; avoid quantity targets that dilute quality.
 - [ ] Reassess low-performing, vulnerable, unsupported or legally risky products for remediation, delisting or retirement.
 
-## Phase 19 — Marketplace growth and ecosystem
+### Growth, ecosystem and API requirements
 
 - [ ] Build consent-based lifecycle messaging, referral/affiliate attribution, partner onboarding and seller enablement with fraud controls.
 - [ ] Ensure paid placements and affiliate relationships are clearly disclosed and do not override trust/safety or evidence requirements.
 - [ ] Provide versioned APIs/webhooks with scoped tokens, rate limits, replay protection, audit logs and compatibility commitments.
 - [ ] Enable white-label/mobile/community extensions only after tenant isolation, support, privacy and upgrade paths are proven.
 - [ ] Track sustainable unit economics, retention, quality and customer outcomes—not vanity metrics alone.
+
+### Intelligence safeguards
+
+- [ ] Use privacy-safe aggregation and enforce seller/buyer access boundaries for catalogue analytics and recommendations.
+- [ ] Explain material ranking/recommendation signals, protect against abuse and manipulation, and keep paid placements/affiliate relationships clearly disclosed.
+- [ ] AI-assisted metadata, documentation and support drafts require source evidence checks, human review, evaluation, cost/privacy controls, consent/opt-outs and kill switches.
+
 
 ## Phase 20 — Global scale and enterprise operations
 
