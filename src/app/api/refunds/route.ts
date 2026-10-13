@@ -35,12 +35,12 @@ export async function POST(request: Request) {
     const admin = createSupabaseAdminClient();
     const { data: existing, error: existingError } = await admin
       .from("refunds")
-      .select("id,order_id,amount_minor,currency,status,idempotency_key")
+      .select("id,order_id,amount_minor,currency,status,idempotency_key,reason")
       .eq("idempotency_key", parsed.data.idempotencyKey)
       .maybeSingle();
     if (existingError) return NextResponse.json({ error: "Refund request could not be checked." }, { status: 503 });
     if (existing) {
-      if (existing.order_id !== order.id || existing.amount_minor !== parsed.data.amountMinor || existing.currency !== order.currency) {
+      if (existing.order_id !== order.id || existing.amount_minor !== parsed.data.amountMinor || existing.currency !== order.currency || existing.reason !== parsed.data.reason) {
         return NextResponse.json({ error: "Idempotency key was reused with different refund details." }, { status: 409 });
       }
       return NextResponse.json({ refundId: existing.id, status: existing.status }, { status: 200, headers: { "Cache-Control": "no-store" } });
