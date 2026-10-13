@@ -1,5 +1,5 @@
 begin;
-select plan(19);
+select plan(18);
 select has_table('public', 'profiles', 'profiles table exists');
 select has_table('public', 'categories', 'categories table exists');
 select has_table('public', 'products', 'products table exists');
