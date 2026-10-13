@@ -8,7 +8,8 @@ const allowedAdvisories = new Map([
       expiresAt: "2026-11-12T00:00:00.000Z",
       patchFile: "patches/braces@3.0.3.patch",
       regressionTest: "tests/security/braces-depth.test.ts",
-      rationale: "The upstream package has no patched release; Web-Temify patches the parser depth and regression-tests the attack shape.",
+      rationale:
+        "The upstream package has no patched release; Web-Temify patches the parser depth and regression-tests the attack shape.",
     },
   ],
 ]);
@@ -64,10 +65,15 @@ if (report.advisories && typeof report.advisories === "object") {
       url: advisory.url ?? "",
     });
   }
-} else if (report.vulnerabilities && typeof report.vulnerabilities === "object") {
+} else if (
+  report.vulnerabilities &&
+  typeof report.vulnerabilities === "object"
+) {
   for (const [name, vulnerability] of Object.entries(report.vulnerabilities)) {
     const via = Array.isArray(vulnerability.via) ? vulnerability.via : [];
-    const advisoryObjects = via.filter((item) => item && typeof item === "object");
+    const advisoryObjects = via.filter(
+      (item) => item && typeof item === "object",
+    );
     if (advisoryObjects.length) {
       for (const advisory of advisoryObjects) {
         findings.push({
@@ -89,7 +95,9 @@ if (report.advisories && typeof report.advisories === "object") {
     }
   }
 } else {
-  fail("unrecognized pnpm audit JSON schema; refusing to pass without reviewing it.");
+  fail(
+    "unrecognized pnpm audit JSON schema; refusing to pass without reviewing it.",
+  );
 }
 
 const blocking = [];
@@ -103,7 +111,10 @@ for (const finding of findings) {
   }
 
   if (Date.now() >= Date.parse(exception.expiresAt)) {
-    blocking.push({ ...finding, title: `${finding.title} (exception expired)` });
+    blocking.push({
+      ...finding,
+      title: `${finding.title} (exception expired)`,
+    });
     continue;
   }
 
@@ -118,7 +129,10 @@ for (const finding of findings) {
     !test.includes("maximum depth") ||
     !workspace.includes("braces@3.0.3: patches/braces@3.0.3.patch")
   ) {
-    blocking.push({ ...finding, title: `${finding.title} (required local patch/test missing)` });
+    blocking.push({
+      ...finding,
+      title: `${finding.title} (required local patch/test missing)`,
+    });
     continue;
   }
   allowed.add(finding.id);
@@ -127,7 +141,9 @@ for (const finding of findings) {
 if (blocking.length) {
   console.error("Blocking high/critical advisories:");
   for (const item of blocking) {
-    console.error(`- [${item.severity}] ${item.package}: ${item.title} (${item.id ?? "no advisory ID"}) ${item.url}`);
+    console.error(
+      `- [${item.severity}] ${item.package}: ${item.title} (${item.id ?? "no advisory ID"}) ${item.url}`,
+    );
   }
   process.exit(1);
 }
@@ -135,8 +151,12 @@ if (blocking.length) {
 if (allowed.size) {
   for (const id of allowed) {
     const exception = allowedAdvisories.get(id);
-    console.warn(`TIME-BOUNDED LOCAL PATCH: ${id}; expires ${exception.expiresAt}; ${exception.rationale}`);
+    console.warn(
+      `TIME-BOUNDED LOCAL PATCH: ${id}; expires ${exception.expiresAt}; ${exception.rationale}`,
+    );
   }
 }
 
-console.log("Dependency audit passed: no unmitigated high/critical advisories remain.");
+console.log(
+  "Dependency audit passed: no unmitigated high/critical advisories remain.",
+);
