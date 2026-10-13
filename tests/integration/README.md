@@ -1,0 +1,1 @@
+Integration tests for PostgreSQL, RLS, auth, storage and provider adapters; use isolated test services and synthetic data.

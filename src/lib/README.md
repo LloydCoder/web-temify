@@ -1,0 +1,1 @@
+Shared utilities only: environment validation, flags, logging, observability and security helpers. Avoid business logic here; keep secrets server-only.

@@ -1,0 +1,1 @@
+Checkout and return/status routes. Provider redirects are informational only; confirmed order state comes from verified server-side provider events and internal state transitions.

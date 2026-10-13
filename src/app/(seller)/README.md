@@ -1,0 +1,1 @@
+Seller routes: onboarding, rights declarations, product submissions, review status, analytics and payout eligibility. Payout actions require reconciliation and explicit operational controls.

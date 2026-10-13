@@ -1,0 +1,1 @@
+Marketing routes: about, pricing, contact, changelog, roadmap, status, developer hub. Do not publish unsupported metrics or pricing promises. Add routes only when implemented and reviewed.

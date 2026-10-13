@@ -1,0 +1,3 @@
+# Canonical SQL migration history
+
+This directory is intentionally awaiting the first migration. Create every migration using the Supabase CLI (`supabase migration new descriptive_name`), then review and test it against local Supabase/PostgreSQL before committing. Supabase SQL migrations are the sole schema authority. Do not add Prisma Migrate or hand-maintained competing migration directories. No production schema has been changed by the foundation scaffold.

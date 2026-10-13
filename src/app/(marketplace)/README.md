@@ -1,0 +1,1 @@
+Marketplace routes: catalogue, categories, product detail, search, previews, comparisons, launch kits. Only show approved products with verified rights, licensing, compatibility and truthful availability.

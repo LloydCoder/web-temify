@@ -1,0 +1,1 @@
+Administrative routes: moderation, user/product/order support, audit. Enforce least privilege and record actor, reason, target, time and outcome.

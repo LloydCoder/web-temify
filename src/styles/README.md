@@ -1,0 +1,1 @@
+Global design tokens and shared styles. Preserve the cream/coral brutalist direction, responsive layouts, keyboard focus, reduced-motion behavior, RTL planning, and contrast requirements.

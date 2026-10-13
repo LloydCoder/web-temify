@@ -1,0 +1,1 @@
+Identity and access feature boundary. Map Supabase Auth identity to application profiles/roles; implement server-side authorization and tenant isolation.
