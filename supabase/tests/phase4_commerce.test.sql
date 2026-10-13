@@ -1,5 +1,5 @@
 begin;
-select plan(60);
+select plan(62);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -132,8 +132,8 @@ select throws_ok(
   '23505', null, 'an order cannot have two active or settled payment attempts'
 );
 select throws_ok(
-  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, order_id, payment_attempt_id)
-  values ('stripe', 'phase4-mismatched-provider-event-001', 'payment.succeeded', repeat('b', 64), '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090')$sql$,
+  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id)
+  values ('stripe', 'phase4-mismatched-provider-event-001', 'payment.succeeded', repeat('b', 64), true, '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090')$sql$,
   '23514', null, 'provider event must match the referenced payment attempt'
 );
 select throws_ok(
@@ -141,11 +141,16 @@ select throws_ok(
   values ('sandbox', 'phase4-invalid-signature-event-001', 'payment.succeeded', repeat('b', 64), false, '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090')$sql$,
   '23514', null, 'unverified provider events cannot enter the inbox'
 );
+select throws_ok(
+  $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, order_id, payment_attempt_id)
+  values ('sandbox', 'phase4-missing-signature-event-001', 'payment.succeeded', repeat('b', 64), '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090')$sql$,
+  '23502', null, 'signature verification must be explicitly asserted by the trusted ingress'
+);
 insert into public.payment_webhook_events (
   id, provider, provider_event_id, event_type, payload_sha256, order_id, payment_attempt_id
 ) values (
   '91000000-0000-4000-8000-000000000091', 'sandbox', 'phase4-payment-event-0001',
-  'payment.succeeded', repeat('d', 64), '88000000-0000-4000-8000-000000000088',
+  'payment.succeeded', repeat('d', 64), true, '88000000-0000-4000-8000-000000000088',
   '90000000-0000-4000-8000-000000000090'
 );
 update public.payment_webhook_events set processing_status = 'processing'
@@ -173,13 +178,18 @@ select throws_ok(
   values ('88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090', 'payment', 'provider_clearing', 'platform_cash', 1299, 'USD', 'phase4-payment-ledger-duplicate-0001')$sql$,
   '23505', null, 'a payment attempt cannot be posted to the ledger twice'
 );
+select throws_ok(
+  $sql$insert into public.ledger_transactions (order_id, source_type, debit_account, credit_account, amount_minor, currency, reference_key)
+  values ('88000000-0000-4000-8000-000000000088', 'chargeback', 'chargeback_expense', 'provider_clearing', 1299, 'USD', 'phase4-unmodeled-chargeback-0001')$sql$,
+  '23514', null, 'chargeback ledger entries remain rejected until their evidence-backed workflow is implemented'
+);
 update public.orders set status = 'paid' where id = '88000000-0000-4000-8000-000000000088';
 select is((select status from public.orders where id = '88000000-0000-4000-8000-000000000088'), 'paid', 'verified payment and ledger evidence permit the order to become paid');
 select is((select count(*) from public.ledger_transactions where order_id = '88000000-0000-4000-8000-000000000088'), 1::bigint, 'successful payment is journaled exactly once');
 
 select throws_ok(
   $sql$insert into public.payment_webhook_events (provider, provider_event_id, event_type, payload_sha256, order_id, payment_attempt_id)
-  values ('sandbox', 'phase4-payment-event-0001', 'payment.succeeded', repeat('e', 64), '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090')$sql$,
+  values ('sandbox', 'phase4-payment-event-0001', 'payment.succeeded', repeat('e', 64), true, '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090')$sql$,
   '23505', null, 'duplicate provider event identifiers are rejected'
 );
 
@@ -247,10 +257,10 @@ values (
 );
 update public.refunds set status = 'pending' where id = '94000000-0000-4000-8000-000000000094';
 insert into public.payment_webhook_events (
-  id, provider, provider_event_id, event_type, payload_sha256, order_id, payment_attempt_id, refund_id
+  id, provider, provider_event_id, event_type, payload_sha256, signature_verified, order_id, payment_attempt_id, refund_id
 ) values (
   '95000000-0000-4000-8000-000000000095', 'sandbox', 'phase4-refund-event-0001',
-  'refund.succeeded', repeat('f', 64), '88000000-0000-4000-8000-000000000088',
+  'refund.succeeded', repeat('f', 64), true, '88000000-0000-4000-8000-000000000088',
   '90000000-0000-4000-8000-000000000090', '94000000-0000-4000-8000-000000000094'
 );
 update public.payment_webhook_events set processing_status = 'processing'
@@ -287,7 +297,7 @@ insert into public.payment_webhook_events (
   id, provider, provider_event_id, event_type, payload_sha256, order_id, payment_attempt_id, refund_id
 ) values (
   '97000000-0000-4000-8000-000000000097', 'sandbox', 'phase4-refund-event-0002',
-  'refund.succeeded', repeat('a', 64), '88000000-0000-4000-8000-000000000088',
+  'refund.succeeded', repeat('a', 64), true, '88000000-0000-4000-8000-000000000088',
   '90000000-0000-4000-8000-000000000090', '96000000-0000-4000-8000-000000000096'
 );
 update public.payment_webhook_events set processing_status = 'processing'

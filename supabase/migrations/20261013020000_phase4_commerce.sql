@@ -58,9 +58,6 @@ create index payment_attempts_order_idx on public.payment_attempts (order_id, cr
 create unique index payment_attempts_single_active_or_successful_order_uq
   on public.payment_attempts (order_id)
   where status in ('created', 'pending', 'succeeded', 'partially_refunded', 'refunded');
-create unique index payment_attempts_one_settled_per_order_uq
-  on public.payment_attempts (order_id)
-  where status in ('succeeded', 'partially_refunded', 'refunded');
 
 -- Only verified webhook bodies are represented here. Raw payloads and secrets are never persisted.
 create table public.payment_webhook_events (
@@ -69,7 +66,7 @@ create table public.payment_webhook_events (
   provider_event_id text not null check (char_length(provider_event_id) between 1 and 240),
   event_type text not null check (char_length(event_type) between 1 and 160),
   payload_sha256 text not null check (payload_sha256 ~ '^[a-f0-9]{64}$'),
-  signature_verified boolean not null default true check (signature_verified),
+  signature_verified boolean not null check (signature_verified),
   processing_status text not null default 'received'
     check (processing_status in ('received', 'processing', 'processed', 'ignored', 'failed')),
   order_id uuid references public.orders(id) on delete restrict,
@@ -118,7 +115,7 @@ create table public.ledger_transactions (
   order_id uuid not null references public.orders(id) on delete restrict,
   payment_attempt_id uuid references public.payment_attempts(id) on delete restrict,
   refund_id uuid references public.refunds(id) on delete restrict,
-  source_type text not null check (source_type in ('payment', 'refund', 'chargeback', 'adjustment')),
+  source_type text not null check (source_type in ('payment', 'refund')),
   debit_account text not null check (debit_account in ('provider_clearing', 'platform_cash', 'seller_payable', 'platform_revenue', 'tax_payable', 'customer_refund', 'chargeback_expense')),
   credit_account text not null check (credit_account in ('provider_clearing', 'platform_cash', 'seller_payable', 'platform_revenue', 'tax_payable', 'customer_refund', 'chargeback_expense')),
   amount_minor bigint not null check (amount_minor > 0),
@@ -130,7 +127,7 @@ create table public.ledger_transactions (
   constraint ledger_source_reference check (
     (source_type = 'payment' and payment_attempt_id is not null and refund_id is null)
     or (source_type = 'refund' and payment_attempt_id is not null and refund_id is not null)
-    or source_type in ('chargeback', 'adjustment')
+    
   )
 );
 create index ledger_transactions_order_idx on public.ledger_transactions (order_id, created_at);

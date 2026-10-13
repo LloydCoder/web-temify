@@ -66,7 +66,7 @@ Exit criteria:
 - **Fixture invariant:** `products.rights_verified_at` must exactly equal the independently reviewed attestation's `reviewed_at`; tests use a fixed timestamp to avoid nondeterministic `now()` differences. Never weaken evidence-gated publication policy to make fixtures pass.
 
 ## Phase 4 — Commerce and secure delivery (in progress)
-Scope: server-owned orders and item snapshots, provider-neutral payment attempts, verified-event inbox, idempotent financial ledger, refunds, paid-order entitlements, and private-download authorization. Provider integrations remain disabled until business eligibility, jurisdiction coverage, fees, webhook semantics, and payout settlement are verified.
+Scope: server-owned orders and item snapshots, provider-neutral payment attempts, verified-event inbox, idempotent financial ledger, refunds, paid-order entitlements, and private-download authorization. Provider integrations remain disabled until business eligibility, jurisdiction coverage, fees, webhook semantics, and payout settlement are verified. Chargeback and manual-adjustment ledger sources are explicitly rejected until a dedicated evidence-backed state machine and accounting policy are implemented; unsupported financial states must fail closed.
 
 Phase 4A — database invariants:
 - [ ] Orders and item snapshots are immutable and price/currency/release evidence is revalidated at insertion.
