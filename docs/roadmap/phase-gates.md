@@ -100,7 +100,7 @@ Phase 4B — server-side commerce workflows (implementation in progress):
 - [ ] Verified webhook events are stored without raw payloads, deduplicated by provider/event ID, conflict-checked by payload digest, and processed with retryable durable state transitions.
 - [ ] Successful payment processing atomically posts a ledger transfer, marks the order paid, and creates entitlements; refund events require matching refund/attempt/order/amount/currency evidence.
 - [ ] Customer refund requests are idempotent and explicitly do not imply that money moved; provider execution and approval remain disabled.
-- [ ] Private downloads authorize the customer, verify the released artifact digest, atomically consume the bounded grant, and return a 60-second signed URL with no-store headers.
+- [ ] Private downloads issue/reuse bounded grants only for active entitlements on paid or partially refunded orders; consumption locks the order and entitlement, verifies the released artifact digest, and returns a 60-second signed URL with no-store headers. Full refunds revoke entitlements and outstanding grants.
 - [ ] Unit tests, pgTAP checkout/processor tests, migration reset, schema lint, RLS tests, Playwright, typecheck, lint, production build and forensic audit pass on the same head SHA.
 
 **Phase 4B limitations:** the only adapter is a non-production sandbox; there is no live payment provider, tax calculation, zero-value/free checkout, seller payout, commission accounting, refund execution, or production download enablement. Provider selection must follow jurisdiction/payout eligibility and sandbox verification. Production launch remains blocked until these gaps and the Phase 5–8 gates are completed.
