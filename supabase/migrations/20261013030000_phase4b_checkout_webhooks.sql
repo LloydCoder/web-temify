@@ -383,6 +383,21 @@ begin
       update public.orders set status = next_refund_state
       where id = order_row.id and status is distinct from next_refund_state;
 
+      if next_refund_state = 'refunded' then
+        update public.entitlements
+        set status = 'revoked', revoked_at = now()
+        where order_item_id in (
+          select oi.id from public.order_items oi where oi.order_id = order_row.id
+        ) and status = 'active';
+        update public.download_grants
+        set revoked_at = now()
+        where entitlement_id in (
+          select e.id from public.entitlements e
+          join public.order_items oi on oi.id = e.order_item_id
+          where oi.order_id = order_row.id
+        ) and revoked_at is null;
+      end if;
+
     else
       update public.payment_webhook_events
       set processing_status = 'ignored', failure_code = 'unsupported_event_type'
@@ -405,3 +420,202 @@ comment on function public.create_order_for_checkout(uuid, jsonb, text) is
   'Server-only atomic order creation. Prices, currency, rights and release evidence are read from the canonical database; zero-value checkout and tax calculation are intentionally unsupported.';
 comment on function public.process_payment_webhook_event(uuid) is
   'Server-only idempotent processor for cryptographically verified inbox events. Never call before provider-specific raw-body verification.';
+
+-- Permit downloads for still-active entitlements after a partial order refund.
+create or replace function public.enforce_download_grant_insert()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+begin
+  if new.downloads_used <> 0 or new.revoked_at is not null
+    or new.issued_at > now()
+    or new.expires_at <= now()
+    or new.expires_at > now() + interval '15 minutes'
+    or not exists (
+      select 1
+      from public.entitlements e
+      join public.order_items oi on oi.id = e.order_item_id
+      join public.orders o on o.id = oi.order_id
+      join public.product_versions pv on pv.id = e.product_version_id
+      where e.id = new.entitlement_id
+        and e.customer_id = new.customer_id
+        and e.product_version_id = new.product_version_id
+        and e.status = 'active'
+        and (e.expires_at is null or e.expires_at > now())
+        and o.customer_id = new.customer_id
+        and o.status in ('paid', 'partially_refunded')
+        and pv.release_state = 'released'
+        and pv.artifact_sha256 = new.artifact_sha256
+        and pv.artifact_storage_path is not null
+        and pv.released_at is not null
+    ) then
+    raise exception using errcode = '23514', message = 'download grant requires an active entitlement for the released artifact';
+  end if;
+  return new;
+end;
+$function$;
+revoke all on function public.enforce_download_grant_insert() from public, anon, authenticated, service_role;
+
+-- Lock the order before the entitlement and grant so full refunds serialize with download consumption.
+create or replace function public.consume_download_grant(target_grant_id uuid)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  customer_id uuid := (select auth.uid());
+  grant_hint public.download_grants%rowtype;
+  grant_row public.download_grants%rowtype;
+  entitlement_row public.entitlements%rowtype;
+  order_id uuid;
+  order_row public.orders%rowtype;
+  release_row public.product_versions%rowtype;
+begin
+  if customer_id is null then return false; end if;
+
+  select * into grant_hint
+  from public.download_grants
+  where id = target_grant_id and customer_id = customer_id;
+  if not found then return false; end if;
+
+  select oi.order_id into order_id
+  from public.entitlements e
+  join public.order_items oi on oi.id = e.order_item_id
+  where e.id = grant_hint.entitlement_id and e.customer_id = customer_id;
+  if not found then return false; end if;
+
+  select * into order_row from public.orders where id = order_id for update;
+  if not found or order_row.customer_id <> customer_id
+    or order_row.status not in ('paid', 'partially_refunded') then
+    return false;
+  end if;
+
+  select * into entitlement_row
+  from public.entitlements
+  where id = grant_hint.entitlement_id
+  for update;
+  if not found or entitlement_row.customer_id <> customer_id
+    or entitlement_row.status <> 'active'
+    or (entitlement_row.expires_at is not null and entitlement_row.expires_at <= now()) then
+    return false;
+  end if;
+
+  select * into grant_row
+  from public.download_grants
+  where id = target_grant_id
+  for update;
+  if not found or grant_row.customer_id <> customer_id
+    or grant_row.revoked_at is not null or grant_row.expires_at <= now()
+    or grant_row.downloads_used >= grant_row.max_downloads
+    or grant_row.entitlement_id <> entitlement_row.id
+    or grant_row.product_version_id <> entitlement_row.product_version_id then
+    return false;
+  end if;
+
+  select * into release_row
+  from public.product_versions
+  where id = grant_row.product_version_id;
+  if not found or release_row.release_state <> 'released'
+    or release_row.artifact_sha256 <> grant_row.artifact_sha256
+    or release_row.artifact_storage_path is null
+    or release_row.released_at is null then
+    return false;
+  end if;
+
+  update public.download_grants
+  set downloads_used = downloads_used + 1
+  where id = grant_row.id;
+  return true;
+end;
+$function$;
+revoke all on function public.consume_download_grant(uuid) from public, anon, service_role;
+grant execute on function public.consume_download_grant(uuid) to authenticated;
+
+create function public.issue_download_grant(target_customer_id uuid, target_entitlement_id uuid)
+returns table(grant_id uuid, expires_at timestamptz)
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  order_id uuid;
+  order_row public.orders%rowtype;
+  entitlement_row public.entitlements%rowtype;
+  release_row public.product_versions%rowtype;
+  product_row public.products%rowtype;
+  existing_grant public.download_grants%rowtype;
+  created_grant public.download_grants%rowtype;
+begin
+  if target_customer_id is null or target_entitlement_id is null then
+    raise exception using errcode = '22023', message = 'customer and entitlement are required';
+  end if;
+
+  select oi.order_id into order_id
+  from public.entitlements e
+  join public.order_items oi on oi.id = e.order_item_id
+  where e.id = target_entitlement_id and e.customer_id = target_customer_id;
+  if not found then
+    raise exception using errcode = '42501', message = 'entitlement is not available to this customer';
+  end if;
+
+  select * into order_row from public.orders where id = order_id for update;
+  select * into entitlement_row from public.entitlements where id = target_entitlement_id for update;
+  if order_row.id is null or entitlement_row.id is null
+    or order_row.customer_id <> target_customer_id
+    or order_row.status not in ('paid', 'partially_refunded')
+    or entitlement_row.customer_id <> target_customer_id
+    or entitlement_row.status <> 'active'
+    or (entitlement_row.expires_at is not null and entitlement_row.expires_at <= now()) then
+    raise exception using errcode = '42501', message = 'active entitlement for a paid order is required';
+  end if;
+
+  select * into release_row from public.product_versions
+  where id = entitlement_row.product_version_id;
+  select * into product_row from public.products
+  where id = entitlement_row.product_id;
+  if release_row.id is null or release_row.release_state <> 'released'
+    or release_row.artifact_storage_path is null or release_row.released_at is null
+    or release_row.artifact_sha256 is null
+    or product_row.id is null or product_row.status <> 'published'
+    or product_row.rights_status <> 'verified' or product_row.rights_verified_at is null
+    or product_row.rights_verified_by is null
+    or release_row.artifact_sha256 <> product_row.artifact_sha256
+    or not public.product_has_verified_rights(product_row.id, product_row.rights_verified_by, product_row.rights_verified_at) then
+    raise exception using errcode = '23514', message = 'released artifact or verified product rights are unavailable';
+  end if;
+
+  perform pg_advisory_xact_lock(hashtextextended(target_entitlement_id::text, 0));
+  select * into existing_grant
+  from public.download_grants dg
+  where dg.entitlement_id = target_entitlement_id
+    and dg.customer_id = target_customer_id
+    and dg.revoked_at is null
+    and dg.expires_at > now()
+    and dg.downloads_used < dg.max_downloads
+    and dg.artifact_sha256 = release_row.artifact_sha256
+  order by dg.issued_at desc
+  limit 1
+  for update;
+  if found then
+    return query select existing_grant.id, existing_grant.expires_at;
+    return;
+  end if;
+
+  insert into public.download_grants (
+    entitlement_id, customer_id, product_version_id, artifact_sha256, expires_at, max_downloads
+  ) values (
+    target_entitlement_id, target_customer_id, release_row.id, release_row.artifact_sha256,
+    now() + interval '14 minutes', 3
+  )
+  returning * into created_grant;
+  return query select created_grant.id, created_grant.expires_at;
+end;
+$function$;
+revoke all on function public.issue_download_grant(uuid, uuid) from public, anon, authenticated;
+grant execute on function public.issue_download_grant(uuid, uuid) to service_role;
+
+comment on function public.issue_download_grant(uuid, uuid) is
+  'Server-only, order-locked, bounded grant issuance. Reuses a still-valid grant and never returns an artifact path or signed URL.';
