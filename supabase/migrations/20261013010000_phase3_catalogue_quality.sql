@@ -173,6 +173,9 @@ create policy product_versions_insert_own_draft on public.product_versions
     )
   );
 
+-- Trusted server-side moderation/release paths need explicit grants as well as RLS bypass.
+grant select, insert, update, delete on public.products, public.categories to service_role;
+
 -- Prevent creator sessions from editing lifecycle, reviewer, or artifact evidence.
 revoke update on public.products from authenticated;
 grant update (category_id, slug, name, description, product_type, price_minor, currency,
