@@ -1,5 +1,5 @@
 begin;
-select plan(65);
+select plan(70);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -332,6 +332,29 @@ update public.orders set status = 'refunded'
 where id = '88000000-0000-4000-8000-000000000088';
 select is((select status from public.orders where id = '88000000-0000-4000-8000-000000000088'), 'refunded', 'full refund requires the complete verified refund total');
 select is((select count(*) from public.ledger_transactions where order_id = '88000000-0000-4000-8000-000000000088'), 3::bigint, 'payment and both refunds are preserved as immutable ledger entries');
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '82000000-0000-4000-8000-000000000082', true);
+select is((select count(*) from public.refunds), 2::bigint, 'customer can read only their own refund records');
+reset role;
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '84000000-0000-4000-8000-000000000084', true);
+select is((select count(*) from public.refunds), 0::bigint, 'other customer cannot read refund records');
+reset role;
+select ok(
+  not has_table_privilege('authenticated', 'public.ledger_transactions', 'SELECT')
+  and not has_table_privilege('authenticated', 'public.payment_webhook_events', 'SELECT'),
+  'financial ledger and webhook evidence are not client-readable'
+);
+select ok(
+  not has_table_privilege('service_role', 'public.order_items', 'UPDATE')
+  and not has_table_privilege('service_role', 'public.order_items', 'DELETE'),
+  'order item snapshots cannot be mutated or deleted by application service role'
+);
+select ok(
+  not has_table_privilege('service_role', 'public.ledger_transactions', 'UPDATE')
+  and not has_table_privilege('service_role', 'public.ledger_transactions', 'DELETE'),
+  'ledger entries are append-only for the application service role'
+);
 update public.entitlements set status = 'revoked', revoked_at = now() where id = '92000000-0000-4000-8000-000000000092';
 select throws_ok(
   $sql$update public.entitlements set status = 'active', revoked_at = null where id = '92000000-0000-4000-8000-000000000092'$sql$,
