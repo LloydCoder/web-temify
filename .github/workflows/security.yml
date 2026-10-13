@@ -40,17 +40,33 @@ jobs:
       - name: Audit dependency graph
         run: pnpm audit --audit-level high
 
-  dependency-review:
-    name: Pull request vulnerability and license review
-    if: github.event_name == 'pull_request'
+  license-audit:
+    name: Production dependency license policy
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Review dependency and license changes
-        uses: actions/dependency-review-action@3c4e3dcb1aa7874d2c16be7d79418e9b7efd6261 # v4.8.2
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          fail-on-severity: high
-          deny-licenses: GPL-3.0,GPL-3.0-only,GPL-3.0-or-later,AGPL-3.0,AGPL-3.0-only,AGPL-3.0-or-later
+          persist-credentials: false
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 10.18.0
+          run_install: false
+      - name: Set up Node.js for the license scanner
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24
+      - name: Install dependencies reproducibly
+        run: pnpm install --frozen-lockfile
+      - name: Reject disallowed production licenses
+        run: >-
+          pnpm dlx license-checker-rseidelsohn@5.0.1
+          --production
+          --excludePrivatePackages
+          --summary
+          --failOn "GPL-3.0-only;GPL-3.0-or-later;AGPL-3.0-only;AGPL-3.0-or-later;SSPL-1.0;BUSL-1.1;PolyForm-Noncommercial-1.0.0"
 
   secret-scan:
     name: Full-history secret scan
