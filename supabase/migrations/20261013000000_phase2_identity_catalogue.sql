@@ -51,6 +51,8 @@ begin
   return new;
 end;
 $$;
+revoke all on function public.set_updated_at() from public, anon, authenticated;
+
 create trigger profiles_set_updated_at before update on public.profiles for each row execute function public.set_updated_at();
 create trigger categories_set_updated_at before update on public.categories for each row execute function public.set_updated_at();
 create trigger products_set_updated_at before update on public.products for each row execute function public.set_updated_at();
@@ -77,3 +79,5 @@ create policy products_delete_own_draft on public.products for delete to authent
 
 -- Audit events are written by trusted server-side paths only. No client grants/policies.
 revoke all on sequence public.audit_events_id_seq from anon, authenticated;
+grant insert on public.audit_events to service_role;
+grant usage, select on sequence public.audit_events_id_seq to service_role;
