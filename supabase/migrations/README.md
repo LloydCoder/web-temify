@@ -7,7 +7,7 @@ Supabase SQL migrations are the sole authoritative schema history for Web-Temify
 - Never introduce Prisma Migrate or a second hand-maintained schema history.
 - Review SQL for least privilege, explicit grants, RLS, safe `search_path` on privileged functions, and a documented forward-fix strategy.
 - Add pgTAP coverage for schema constraints, grants, RLS, allowed actions, denied actions, and concurrency-sensitive invariants.
-- Validate with `supabase db reset` and `supabase test db` before merge; CI repeats both against an empty local database.
+- Validate with `supabase db reset`, `supabase db lint --local`, and `supabase test db` before merge; CI repeats these checks against an empty local database.
 - Never use production credentials or production personal data in migration tests.
 
 ## Current migration set
