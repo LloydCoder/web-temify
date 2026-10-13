@@ -22,7 +22,7 @@ Requires the authenticated owner of the order and a sandbox payment attempt. It 
 
 ### POST /api/webhooks/payments
 
-Accepts only the sandbox protocol while non-production PAYMENT_PROVIDER=sandbox. It reads the raw request body before parsing, caps the body at 64 KiB, and verifies the event ID, Unix timestamp within 300 seconds, and v1 HMAC-SHA256 signature over eventId.timestamp.rawBody. The event ID must match the payload ID. Strict schemas reject unsupported fields. The inbox stores only a SHA-256 payload digest, never the raw payload. Identical replays are idempotent; reusing an event ID with a different digest returns 409. Failed processing returns 503 so the sender can retry.
+Accepts only the sandbox protocol while non-production PAYMENT_PROVIDER=sandbox. It reads the raw request body through a streaming byte-limited reader (64 KiB maximum) before parsing, and verifies the event ID, Unix timestamp within 300 seconds, and v1 HMAC-SHA256 signature over eventId.timestamp.rawBody. The checkout, sandbox-completion, refund, download-grant and download JSON endpoints also use a 32 KiB streaming request-body limit; body size is checked while reading rather than after unbounded buffering. The event ID must match the payload ID. Strict schemas reject unsupported fields. The inbox stores only a SHA-256 payload digest, never the raw payload. Identical replays are idempotent; reusing an event ID with a different digest returns 409. Failed processing returns 503 so the sender can retry.
 
 Production provider adapters must implement that provider's official signature scheme against the unmodified raw body. This sandbox protocol is not compatible with Paystack, Stripe, or other providers.
 
