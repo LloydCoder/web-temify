@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web-Temify — Complete Folder Structure</title>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fffbf4;--ink:#0f0d0a;--coral:#ff5733;--yellow:#ffd60a;--mint:#00c48c;--sky:#4f8ef7;--lilac:#c084fc;--muted:#6b6559;--surface:#fff8ed}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Cabinet Grotesk',sans-serif;padding:2rem;max-width:1100px;margin:0 auto}
+h1{font-size:2.5rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.5rem}
+.subtitle{color:var(--muted);font-size:.95rem;font-weight:500;margin-bottom:2rem}
+.stats-row{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:2.5rem}
+.stat{background:var(--surface);border:2px solid var(--ink);border-radius:4px;padding:.6rem 1.2rem;font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.stat span{color:var(--coral);font-size:1.1rem;display:block;letter-spacing:-.02em;margin-bottom:2px}
+.tree{font-family:'DM Mono',monospace;font-size:.82rem;line-height:1.9;background:#0f0d0a;color:#f0efe8;padding:2rem;border-radius:8px;overflow-x:auto;border:2px solid var(--ink)}
+.tree .folder{color:var(--yellow);font-weight:500}
+.tree .file{color:#f0efe8}
+.tree .comment{color:#6b6559}
+.tree .section{color:var(--coral);font-weight:700}
+.tree .new{color:var(--mint)}
+.legend{display:flex;gap:1.5rem;margin-top:1.5rem;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:.5rem;font-size:.75rem;font-weight:700}
+.leg-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink)}
+</style>
+</head>
+<body>
+<h1>Web-Temify <span style="color:var(--coral)">●</span></h1>
+<p class="subtitle">Complete PHP Platform — Full Folder Structure · All 152 planned features · Pure PHP/MySQL</p>
+
+<div class="stats-row">
+  <div class="stat"><span>250+</span>PHP Files</div>
+  <div class="stat"><span>70</span>DB Tables</div>
+  <div class="stat"><span>16</span>Cron Jobs</div>
+  <div class="stat"><span>3</span>Payment Gateways</div>
+  <div class="stat"><span>25+</span>Email Templates</div>
+  <div class="stat"><span>8</span>API Endpoints</div>
+  <div class="stat"><span>4</span>Languages</div>
+  <div class="stat"><span>152</span>Features</div>
+</div>
+
+<div class="tree"><pre>
+web-temify/
+│
+├── .htaccess                          <span class="comment"># URL rewriting, CSP headers, security</span>
+├── index.php                          <span class="comment"># Homepage</span>
+├── robots.txt                         <span class="comment"># SEO crawl rules</span>
+├── sitemap.xml                        <span class="comment"># XML sitemap (auto-generated)</span>
+├── sitemap-html.php                   <span class="comment"># HTML sitemap page</span>
+├── manifest.json                      <span class="comment"># PWA manifest</span>
+├── sw.js                              <span class="comment"># Service worker (push + offline)</span>
+└── offline.html                       <span class="comment"># PWA offline fallback</span>
+│
+<span class="folder">├── /assets/</span>
+│   ├── /css/
+│   │   ├── main.css                   <span class="comment"># Global styles (light + dark mode)</span>
+│   │   ├── dark.css                   <span class="comment"># Dark mode overrides</span>
+│   │   └── rtl.css                    <span class="comment"># RTL language support</span>
+│   ├── /js/
+│   │   ├── main.js                    <span class="comment"># Global JS (nav, modals, toasts)</span>
+│   │   ├── checkout.js                <span class="comment"># Checkout flow logic</span>
+│   │   ├── search.js                  <span class="comment"># Autocomplete + semantic search</span>
+│   │   ├── compare.js                 <span class="comment"># Template comparison logic</span>
+│   │   ├── sandbox.js                 <span class="comment"># Editable template sandbox</span>
+│   │   ├── ai-generator.js            <span class="comment"># AI page generator (Claude API)</span>
+│   │   └── analytics.js               <span class="comment"># GTM, GA4, pixels loader</span>
+│   ├── /images/
+│   │   ├── /icons/                    <span class="comment"># Favicon, PWA icons</span>
+│   │   └── /og/                       <span class="comment"># Open Graph images</span>
+│   └── /fonts/                        <span class="comment"># Self-hosted font fallbacks</span>
+│
+<span class="folder">├── /includes/</span>                         <span class="comment"># Core backend logic — no direct access</span>
+│   ├── db.php                         <span class="comment"># PDO DB connection, SQL hardening</span>
+│   ├── auth.php                       <span class="comment"># Session, login, 2FA checks</span>
+│   ├── functions.php                  <span class="comment"># Global helper functions</span>
+│   ├── security.php                   <span class="comment"># CSRF, rate limiting, honeypot</span>
+│   ├── payments.php                   <span class="comment"># Paystack + Stripe + LemonSqueezy router</span>
+│   ├── paystack.php                   <span class="comment"># Paystack class (HMAC verify, webhooks)</span>
+│   ├── stripe.php                     <span class="comment"># Stripe class (HMAC verify, webhooks)</span>
+│   ├── lemonsqueezy.php               <span class="comment"># LemonSqueezy class (HMAC verify)</span>
+│   ├── mobilemoney.php                <span class="new"># NEW: MTN MoMo, Airtel Money, M-Pesa</span>
+│   ├── bnpl.php                       <span class="new"># NEW: Buy Now Pay Later (Carbon, FairMoney)</span>
+│   ├── email.php                      <span class="comment"># PHPMailer wrapper, template loader</span>
+│   ├── upload.php                     <span class="comment"># File upload, MIME validation, VirusTotal</span>
+│   ├── supabase.php                   <span class="new"># NEW: Supabase Storage PHP helper class</span>
+│   ├── seo.php                        <span class="comment"># Meta tags, OG, JSON-LD schema builder</span>
+│   ├── ppp.php                        <span class="comment"># PPP pricing by country</span>
+│   ├── vat.php                        <span class="comment"># VAT/tax calculation (EU + global)</span>
+│   ├── i18n.php                       <span class="comment"># Internationalisation / language loader</span>
+│   ├── search.php                     <span class="comment"># Full-text search + zero-result logging</span>
+│   ├── recommendations.php            <span class="new"># NEW: AI-powered template recommendations</span>
+│   ├── gamification.php               <span class="new"># NEW: Points, badges, leaderboard logic</span>
+│   ├── affiliate.php                  <span class="comment"># Affiliate tracking, commissions, tiers</span>
+│   ├── notifications.php              <span class="new"># NEW: Bell notifications, push, email alerts</span>
+│   ├── activity.php                   <span class="comment"># Activity log writer</span>
+│   └── header.php / footer.php        <span class="comment"># Shared layout partials</span>
+│
+<span class="folder">├── /public/</span>                           <span class="comment"># All visitor-facing pages</span>
+│   │
+│   ├── <span class="section">── MARKETPLACE ──</span>
+│   ├── templates.php                  <span class="comment"># Template marketplace listing + filters</span>
+│   ├── preview.php                    <span class="comment"># Template detail + device switcher</span>
+│   ├── compare.php                    <span class="comment"># Side-by-side template comparison</span>
+│   ├── collections.php                <span class="comment"># User-curated collections</span>
+│   ├── wishlist.php                   <span class="comment"># Saved wishlist</span>
+│   ├── search-results.php             <span class="comment"># Search results page</span>
+│   ├── free.php                       <span class="new"># NEW: Free templates (no card required)</span>
+│   ├── new-arrivals.php               <span class="new"># NEW: Newest products</span>
+│   ├── trending.php                   <span class="comment"># Trending / hot templates</span>
+│   └── sandbox.php                    <span class="new"># NEW: Editable in-browser template sandbox</span>
+│   │
+│   ├── <span class="section">── LAUNCH KITS ──</span>
+│   ├── launch-kits.php                <span class="new"># NEW: Launch Kits listing page</span>
+│   └── kit-detail.php                 <span class="new"># NEW: Individual kit detail + bundle contents</span>
+│   │
+│   ├── <span class="section">── WEB3 HUB ──</span>
+│   ├── web3.php                       <span class="new"># NEW: Web3 hub landing page</span>
+│   └── web3-category.php              <span class="new"># NEW: Web3 sub-category (NFT, DeFi, DAO)</span>
+│   │
+│   ├── <span class="section">── TECH DIRECTORY ──</span>
+│   ├── directory.php                  <span class="new"># NEW: Directory homepage (all 10 categories)</span>
+│   ├── directory-category.php         <span class="new"># NEW: Single category page</span>
+│   ├── directory-listing.php          <span class="new"># NEW: Individual tool page (SEO indexed)</span>
+│   ├── directory-compare.php          <span class="new"># NEW: Side-by-side tool comparison</span>
+│   └── directory-submit.php           <span class="new"># NEW: Community tool submission form</span>
+│   │
+│   ├── <span class="section">── SERVICES ──</span>
+│   ├── services.php                   <span class="new"># NEW: Services page (Tinlance capabilities)</span>
+│   ├── service-request.php            <span class="new"># NEW: Service request form + brief</span>
+│   └── service-confirmation.php       <span class="new"># NEW: Request received confirmation</span>
+│   │
+│   ├── <span class="section">── AI FEATURES ──</span>
+│   └── ai-generator.php               <span class="new"># NEW: AI page generator ("60 seconds" tool)</span>
+│   │
+│   ├── <span class="section">── CHECKOUT & PAYMENTS ──</span>
+│   ├── pricing.php                    <span class="comment"># Pricing plans page (4 tiers)</span>
+│   ├── checkout.php                   <span class="comment"># Checkout (plans + one-time + bundles)</span>
+│   ├── checkout-guest.php             <span class="comment"># Guest checkout flow</span>
+│   ├── order-summary.php              <span class="comment"># Order summary sidebar</span>
+│   ├── order-bump.php                 <span class="comment"># Upsell / order bump at checkout</span>
+│   ├── payment-success.php            <span class="comment"># Post-payment success page</span>
+│   ├── payment-failed.php             <span class="comment"># Failed payment page</span>
+│   ├── invoice.php                    <span class="comment"># Printable invoice (HTML + PDF-ready)</span>
+│   ├── gift-card.php                  <span class="comment"># Gift card redemption at checkout</span>
+│   ├── coupon.php                     <span class="comment"># Coupon code AJAX handler</span>
+│   └── download.php                   <span class="comment"># Secure token-based file download</span>
+│   │
+│   ├── <span class="section">── AUTH ──</span>
+│   ├── login.php                      <span class="comment"># Login page</span>
+│   ├── register.php                   <span class="comment"># Registration + honeypot + age verify</span>
+│   ├── logout.php                     <span class="comment"># Logout handler</span>
+│   ├── forgot-password.php            <span class="comment"># Password reset request</span>
+│   ├── reset-password.php             <span class="comment"># Password reset with token</span>
+│   ├── verify-email.php               <span class="comment"># Email verification</span>
+│   ├── 2fa-setup.php                  <span class="comment"># 2FA setup (QR code + TOTP)</span>
+│   ├── 2fa-verify.php                 <span class="comment"># 2FA code verification</span>
+│   ├── social-login.php               <span class="new"># NEW: Google + GitHub + Twitter OAuth</span>
+│   └── oauth-callback.php             <span class="new"># NEW: OAuth callback processor</span>
+│   │
+│   ├── <span class="section">── USER DASHBOARD ──</span>
+│   ├── dashboard.php                  <span class="comment"># User dashboard home</span>
+│   ├── my-downloads.php               <span class="comment"># Download history + re-download button</span>
+│   ├── my-purchases.php               <span class="comment"># Purchased templates library</span>
+│   ├── my-collections.php             <span class="comment"># Collections management</span>
+│   ├── my-wishlist.php                <span class="comment"># Wishlist management</span>
+│   ├── my-subscription.php            <span class="comment"># Subscription + self-service pause</span>
+│   ├── my-invoices.php                <span class="comment"># Invoice list + download</span>
+│   ├── refund-request.php             <span class="comment"># Refund request form</span>
+│   ├── profile.php                    <span class="comment"># Public profile page</span>
+│   ├── profile-edit.php               <span class="comment"># Edit profile</span>
+│   ├── account-settings.php           <span class="comment"># Email, password, 2FA settings</span>
+│   ├── notifications.php              <span class="comment"># Notification bell + history</span>
+│   ├── points-rewards.php             <span class="new"># NEW: Points balance + redemption</span>
+│   ├── badges.php                     <span class="new"># NEW: Earned badges + achievements</span>
+│   ├── referrals.php                  <span class="comment"># Referral links + earnings</span>
+│   ├── data-export.php                <span class="comment"># GDPR data export</span>
+│   └── delete-account.php             <span class="comment"># GDPR account deletion</span>
+│   │
+│   ├── <span class="section">── VENDOR / SELLER ──</span>
+│   ├── vendor-register.php            <span class="new"># NEW: Vendor registration + onboarding wizard</span>
+│   ├── vendor-dashboard.php           <span class="new"># NEW: Vendor earnings + products</span>
+│   ├── vendor-products.php            <span class="new"># NEW: Vendor product list</span>
+│   ├── vendor-upload.php              <span class="new"># NEW: Upload new template/script</span>
+│   ├── vendor-edit-product.php        <span class="new"># NEW: Edit existing product</span>
+│   ├── vendor-analytics.php           <span class="new"># NEW: Vendor analytics dashboard</span>
+│   ├── vendor-payouts.php             <span class="new"># NEW: Payout requests + history</span>
+│   ├── vendor-profile.php             <span class="new"># NEW: Public vendor storefront page</span>
+│   ├── vendor-import.php              <span class="new"># NEW: Bulk CSV/JSON product import</span>
+│   ├── vendor-webhooks.php            <span class="new"># NEW: Vendor webhook config</span>
+│   ├── vendor-api-usage.php           <span class="new"># NEW: API rate limit dashboard</span>
+│   └── become-designer.php            <span class="comment"># Designer application / submission</span>
+│   │
+│   ├── <span class="section">── AFFILIATE ──</span>
+│   ├── affiliate.php                  <span class="comment"># Affiliate programme page</span>
+│   ├── affiliate-dashboard.php        <span class="comment"># Affiliate earnings + links</span>
+│   └── affiliate-leaderboard.php      <span class="new"># NEW: Top affiliates leaderboard</span>
+│   │
+│   ├── <span class="section">── BLOG ──</span>
+│   ├── blog.php                       <span class="comment"># Blog listing</span>
+│   ├── blog-post.php                  <span class="comment"># Single blog post</span>
+│   └── blog-category.php              <span class="comment"># Blog category archive</span>
+│   │
+│   ├── <span class="section">── COMMUNITY ──</span>
+│   ├── forum.php                      <span class="new"># NEW: Community forum index</span>
+│   ├── forum-category.php             <span class="new"># NEW: Forum category</span>
+│   ├── forum-thread.php               <span class="new"># NEW: Single forum thread</span>
+│   ├── forum-new-thread.php           <span class="new"># NEW: Create new thread</span>
+│   ├── showcase.php                   <span class="new"># NEW: Template showcase gallery</span>
+│   ├── showcase-submit.php            <span class="new"># NEW: Submit a showcase entry</span>
+│   └── leaderboard.php                <span class="new"># NEW: Platform-wide leaderboard</span>
+│   │
+│   ├── <span class="section">── DEVELOPER HUB ──</span>
+│   ├── developer-hub.php              <span class="new"># NEW: Developer hub landing</span>
+│   ├── api-docs.php                   <span class="comment"># API documentation page</span>
+│   ├── code-snippets.php              <span class="new"># NEW: Code snippets library</span>
+│   ├── component-library.php          <span class="new"># NEW: Component browser</span>
+│   └── advertise.php                  <span class="comment"># Advertise / Zapier / Make.com page</span>
+│   │
+│   ├── <span class="section">── PROGRAMMATIC SEO ──</span>
+│   └── /niche/                        <span class="new"># NEW: Auto-generated niche landing pages</span>
+│       ├── courier-template-nigeria.php
+│       ├── loan-company-website-template.php
+│       ├── nft-marketplace-template.php
+│       ├── saas-starter-kit.php
+│       ├── web3-landing-page-template.php
+│       └── [generated from DB — unlimited]
+│   │
+│   ├── <span class="section">── COMPANY PAGES ──</span>
+│   ├── about.php                      <span class="new"># NEW: Founder story / our story page</span>
+│   ├── roadmap.php                    <span class="comment"># Public product roadmap</span>
+│   ├── changelog.php                  <span class="comment"># Changelog</span>
+│   ├── status.php                     <span class="comment"># System status page</span>
+│   ├── press.php                      <span class="comment"># Press kit page</span>
+│   └── contact.php                    <span class="comment"># Contact page</span>
+│   │
+│   ├── <span class="section">── LEGAL ──</span>
+│   ├── privacy.php                    <span class="comment"># Privacy Policy</span>
+│   ├── terms.php                      <span class="comment"># Terms of Service</span>
+│   ├── cookie-policy.php              <span class="comment"># Cookie Policy</span>
+│   ├── cookie-preferences.php         <span class="comment"># Cookie preference centre (GDPR)</span>
+│   ├── dmca.php                       <span class="comment"># DMCA takedown page</span>
+│   ├── licenses.php                   <span class="new"># NEW: Understanding licenses page</span>
+│   └── refund-policy.php              <span class="comment"># Refund policy page</span>
+│   │
+│   └── <span class="section">── MISC ──</span>
+│       ├── unsubscribe.php            <span class="comment"># Email unsubscribe</span>
+│       ├── nps.php                    <span class="comment"># NPS survey handler</span>
+│       └── 404.php                    <span class="comment"># Custom 404 page</span>
+│
+<span class="folder">├── /admin/</span>                            <span class="comment"># Admin panel — protected, 2FA enforced</span>
+│   ├── index.php                      <span class="comment"># Dashboard (revenue, MRR, charts)</span>
+│   │
+│   ├── <span class="section">── TEMPLATES ──</span>
+│   ├── templates.php                  <span class="comment"># Template list + bulk actions</span>
+│   ├── template-add.php               <span class="comment"># Add new template</span>
+│   ├── template-edit.php              <span class="comment"># Edit template</span>
+│   ├── template-versions.php          <span class="comment"># Version history + changelog</span>
+│   └── template-scan.php              <span class="comment"># VirusTotal malware scan trigger</span>
+│   │
+│   ├── <span class="section">── USERS ──</span>
+│   ├── users.php                      <span class="comment"># User list + search + segments</span>
+│   ├── user-detail.php                <span class="comment"># Single user detail</span>
+│   ├── user-impersonate.php           <span class="comment"># Admin impersonation handler</span>
+│   └── user-import.php                <span class="comment"># CSV user import</span>
+│   │
+│   ├── <span class="section">── VENDORS ──</span>
+│   ├── vendors.php                    <span class="new"># NEW: Vendor list + approval queue</span>
+│   ├── vendor-detail.php              <span class="new"># NEW: Single vendor detail</span>
+│   ├── vendor-payouts.php             <span class="new"># NEW: Process payout requests</span>
+│   └── vendor-disputes.php            <span class="new"># NEW: Dispute resolution queue</span>
+│   │
+│   ├── <span class="section">── DIRECTORY ──</span>
+│   ├── directory.php                  <span class="new"># NEW: Directory listings management</span>
+│   ├── directory-add.php              <span class="new"># NEW: Add new directory listing</span>
+│   ├── directory-edit.php             <span class="new"># NEW: Edit listing</span>
+│   ├── directory-submissions.php      <span class="new"># NEW: Community submission approval</span>
+│   └── directory-featured.php         <span class="new"># NEW: Featured listing management</span>
+│   │
+│   ├── <span class="section">── ORDERS & PAYMENTS ──</span>
+│   ├── orders.php                     <span class="comment"># All orders list</span>
+│   ├── order-detail.php               <span class="comment"># Single order detail</span>
+│   ├── subscriptions.php              <span class="comment"># All subscriptions</span>
+│   ├── refunds.php                    <span class="comment"># Refund request queue</span>
+│   ├── coupons.php                    <span class="comment"># Coupon CRUD</span>
+│   ├── gift-cards.php                 <span class="comment"># Gift card CRUD</span>
+│   ├── credits.php                    <span class="comment"># Credits / wallet management</span>
+│   ├── abandoned-checkouts.php        <span class="comment"># Abandoned checkout tracker</span>
+│   └── revenue-attribution.php        <span class="new"># NEW: Revenue by source dashboard</span>
+│   │
+│   ├── <span class="section">── SERVICES / LEADS ──</span>
+│   ├── service-requests.php           <span class="new"># NEW: Service request leads list</span>
+│   └── service-request-detail.php     <span class="new"># NEW: Lead detail + respond</span>
+│   │
+│   ├── <span class="section">── ANALYTICS ──</span>
+│   ├── analytics.php                  <span class="comment"># Advanced analytics (MRR, LTV, churn)</span>
+│   ├── analytics-geo.php              <span class="new"># NEW: Geographic sales heatmap</span>
+│   ├── analytics-templates.php        <span class="comment"># Per-template performance report</span>
+│   ├── analytics-search.php           <span class="comment"># Zero-result / opportunity report</span>
+│   ├── analytics-attribution.php      <span class="new"># NEW: Revenue attribution by channel</span>
+│   └── analytics-cohort.php           <span class="comment"># Cohort analysis</span>
+│   │
+│   ├── <span class="section">── EMAIL & CAMPAIGNS ──</span>
+│   ├── email-campaigns.php            <span class="comment"># Campaign list + composer</span>
+│   ├── email-campaign-new.php         <span class="comment"># New campaign (draft, A/B test)</span>
+│   ├── email-templates.php            <span class="comment"># Transactional email WYSIWYG editor</span>
+│   ├── email-drip.php                 <span class="comment"># Drip sequence management</span>
+│   ├── email-bounces.php              <span class="comment"># Bounce suppression list</span>
+│   └── mailchimp-sync.php             <span class="comment"># Mailchimp sync settings</span>
+│   │
+│   ├── <span class="section">── BLOG ──</span>
+│   ├── blog.php                       <span class="comment"># Blog post list</span>
+│   ├── blog-new.php                   <span class="comment"># New post (TinyMCE editor)</span>
+│   ├── blog-edit.php                  <span class="comment"># Edit post</span>
+│   └── blog-categories.php            <span class="comment"># Blog category management</span>
+│   │
+│   ├── <span class="section">── COMMUNITY ──</span>
+│   ├── forum-moderation.php           <span class="new"># NEW: Forum moderation queue</span>
+│   ├── showcase-moderation.php        <span class="new"># NEW: Showcase approval queue</span>
+│   └── reviews-moderation.php         <span class="comment"># Template review moderation</span>
+│   │
+│   ├── <span class="section">── GAMIFICATION ──</span>
+│   ├── points.php                     <span class="new"># NEW: Points management + manual award</span>
+│   ├── badges.php                     <span class="new"># NEW: Badge CRUD</span>
+│   ├── challenges.php                 <span class="new"># NEW: Seasonal challenge management</span>
+│   └── leaderboard.php                <span class="new"># NEW: Leaderboard management</span>
+│   │
+│   ├── <span class="section">── AFFILIATE ──</span>
+│   ├── affiliates.php                 <span class="comment"># Affiliate list + tiers</span>
+│   └── affiliate-commissions.php      <span class="comment"># Commission payouts</span>
+│   │
+│   ├── <span class="section">── CONTENT ──</span>
+│   ├── announcements.php              <span class="comment"># Sitewide announcement banner</span>
+│   ├── faqs.php                       <span class="comment"># FAQ CRUD</span>
+│   ├── testimonials.php               <span class="new"># NEW: Testimonial management</span>
+│   ├── roadmap-admin.php              <span class="comment"># Roadmap item management</span>
+│   ├── changelog-admin.php            <span class="comment"># Changelog entry management</span>
+│   └── niche-pages.php                <span class="new"># NEW: Programmatic SEO page generator</span>
+│   │
+│   └── <span class="section">── SYSTEM ──</span>
+│       ├── settings.php               <span class="comment"># Global settings (pricing, keys, switches)</span>
+│       ├── integrations.php           <span class="comment"># Third-party keys (GTM, Clarity, etc.)</span>
+│       ├── ad-zones.php               <span class="comment"># Ad zone manager (AdSense + direct)</span>
+│       ├── webhooks-outgoing.php       <span class="comment"># Outgoing webhook config</span>
+│       ├── activity-log.php           <span class="comment"># Activity log (searchable, paginated)</span>
+│       ├── error-log.php              <span class="comment"># PHP error log viewer</span>
+│       ├── export-reports.php         <span class="comment"># CSV export (users, orders, revenue)</span>
+│       ├── image-optimiser.php        <span class="comment"># Image optimisation tools</span>
+│       ├── update-checker.php         <span class="comment"># System update checker</span>
+│       ├── roles.php                  <span class="comment"># RBAC role management</span>
+│       └── admin-2fa.php              <span class="comment"># Admin 2FA enforcement settings</span>
+│
+<span class="folder">├── /api/</span>                              <span class="comment"># REST API + webhook receivers</span>
+│   ├── v1.php                         <span class="comment"># REST API (Bearer token auth)</span>
+│   ├── webhooks-paystack.php          <span class="comment"># Paystack webhook receiver</span>
+│   ├── webhooks-stripe.php            <span class="comment"># Stripe webhook receiver</span>
+│   ├── webhooks-lemonsqueezy.php      <span class="comment"># LemonSqueezy webhook receiver</span>
+│   ├── webhooks-mobilemoney.php       <span class="new"># NEW: Mobile Money callback handler</span>
+│   ├── ai-generate.php                <span class="new"># NEW: AI page generator endpoint</span>
+│   ├── ai-search.php                  <span class="new"># NEW: Semantic search endpoint</span>
+│   ├── ai-recommendations.php         <span class="new"># NEW: AI recommendation engine</span>
+│   ├── publish-post.php               <span class="new"># NEW: Blog post from automation engine</span>
+│   ├── publish-directory.php          <span class="new"># NEW: Directory listing from automation</span>
+│   ├── social-share.php               <span class="new"># NEW: WhatsApp + social share tracker</span>
+│   └── /oauth/
+│       ├── google.php                 <span class="new"># NEW: Google OAuth flow</span>
+│       ├── github.php                 <span class="new"># NEW: GitHub OAuth flow</span>
+│       └── twitter.php                <span class="new"># NEW: Twitter/X OAuth flow</span>
+│
+<span class="folder">├── /webhooks/</span>
+│   └── zapier.php                     <span class="comment"># Zapier / Make.com trigger endpoint</span>
+│
+<span class="folder">├── /cron/</span>                             <span class="comment"># 16 scheduled jobs</span>
+│   ├── expiry-reminders.php           <span class="comment"># 3-day expiry reminder emails</span>
+│   ├── auto-downgrade.php             <span class="comment"># Downgrade expired subscriptions</span>
+│   ├── abandoned-checkout.php         <span class="comment"># Abandoned checkout recovery emails</span>
+│   ├── drip-emails.php                <span class="comment"># Drip email sequence trigger</span>
+│   ├── weekly-reset.php               <span class="comment"># Weekly download counter reset</span>
+│   ├── token-cleanup.php              <span class="comment"># Old download token cleanup</span>
+│   ├── profile-scores.php             <span class="comment"># Profile completeness score</span>
+│   ├── mrr-calculation.php            <span class="comment"># MRR / ARR calculation</span>
+│   ├── free-trial-charge.php          <span class="comment"># 7-day free trial charge trigger</span>
+│   ├── dunning.php                    <span class="comment"># Failed payment retry (4-touch)</span>
+│   ├── bounce-handler.php             <span class="comment"># Bounced email suppression</span>
+│   ├── directory-autofill.php         <span class="new"># NEW: AI auto-populate directory listings</span>
+│   ├── blog-autogenerate.php          <span class="new"># NEW: AI auto-generate blog drafts</span>
+│   ├── nps-trigger.php                <span class="comment"># NPS survey trigger</span>
+│   ├── points-expiry.php              <span class="new"># NEW: Points expiry check</span>
+│   └── weekly-newsletter.php          <span class="new"># NEW: Auto-generate weekly newsletter</span>
+│
+<span class="folder">├── /automation/</span>                       <span class="new"># NEW: Python content automation engine</span>
+│   ├── content_engine.py              <span class="new"># Main Python + Claude API orchestrator</span>
+│   ├── blog_generator.py              <span class="new"># SEO blog post generator</span>
+│   ├── directory_populator.py         <span class="new"># Directory listing auto-populator</span>
+│   ├── requirements.txt               <span class="new"># Python dependencies</span>
+│   └── config.example.env             <span class="new"># Config template</span>
+│
+<span class="folder">├── /languages/</span>                        <span class="comment"># 4 languages</span>
+│   ├── en.php
+│   ├── fr.php
+│   ├── es.php
+│   └── pt.php
+│
+<span class="folder">├── /email-templates/</span>                  <span class="comment"># 25 HTML email templates</span>
+│   ├── welcome.html
+│   ├── verify-email.html
+│   ├── password-reset.html
+│   ├── purchase-receipt.html
+│   ├── subscription-receipt.html
+│   ├── expiry-reminder.html
+│   ├── download-ready.html
+│   ├── product-updated.html           <span class="new"># NEW: Buyer notified of new version</span>
+│   ├── vendor-approved.html           <span class="new"># NEW: Vendor product approved</span>
+│   ├── vendor-sale.html               <span class="new"># NEW: Vendor new sale notification</span>
+│   ├── vendor-payout.html             <span class="new"># NEW: Vendor payout processed</span>
+│   ├── affiliate-commission.html
+│   ├── abandoned-checkout.html
+│   ├── drip-1.html / drip-3.html / drip-7.html / drip-14.html
+│   ├── dunning-1.html / dunning-2.html / dunning-3.html / dunning-final.html
+│   ├── suspicious-login.html
+│   ├── service-request-confirm.html   <span class="new"># NEW: Service request confirmation</span>
+│   ├── service-request-admin.html     <span class="new"># NEW: New lead to admin</span>
+│   ├── newsletter-weekly.html         <span class="new"># NEW: Weekly newsletter</span>
+│   └── nps-survey.html
+│
+<span class="folder">├── /uploads/</span>                          <span class="comment"># File storage (heavy files → Supabase CDN)</span>
+│   ├── /templates/                    <span class="comment"># Template ZIP files (token-gated)</span>
+│   ├── /previews/                     <span class="comment"># Preview images → Supabase</span>
+│   ├── /screenshots/                  <span class="comment"># Screenshot gallery → Supabase</span>
+│   ├── /videos/                       <span class="comment"># Demo videos → Supabase</span>
+│   ├── /avatars/                      <span class="comment"># User + vendor avatars → Supabase</span>
+│   ├── /vendor-docs/                  <span class="comment"># KYC documents (private, encrypted)</span>
+│   └── /press/                        <span class="comment"># Press kit assets</span>
+│
+<span class="folder">├── /database/</span>
+│   ├── schema.sql                     <span class="comment"># Full DB schema (70 tables)</span>
+│   ├── seed.sql                       <span class="comment"># Seed data (plans, languages, drips)</span>
+│   └── /migrations/
+│       ├── 001_initial.sql
+│       ├── 002_vendor_system.sql      <span class="new"># NEW</span>
+│       ├── 003_directory.sql          <span class="new"># NEW</span>
+│       ├── 004_gamification.sql       <span class="new"># NEW</span>
+│       ├── 005_community.sql          <span class="new"># NEW</span>
+│       ├── 006_mobile_money.sql       <span class="new"># NEW</span>
+│       ├── 007_services_leads.sql     <span class="new"># NEW</span>
+│       └── 008_ai_features.sql        <span class="new"># NEW</span>
+│
+<span class="folder">├── /plugins/</span>
+│   └── /wordpress/
+│       ├── web-temify.php             <span class="comment"># WordPress plugin</span>
+│       └── README.md                  <span class="comment"># Shortcode docs + Zapier guide</span>
+│
+<span class="folder">├── /docs/</span>
+│   ├── API.md                         <span class="comment"># API documentation</span>
+│   ├── DEPLOYMENT.md                  <span class="comment"># Deployment checklist</span>
+│   ├── CRON-SETUP.md                  <span class="comment"># Cron job configuration</span>
+│   └── SUPABASE-SETUP.md              <span class="comment"># Supabase storage setup guide</span>
+│
+<span class="folder">└── /config/</span>
+    ├── config.php                     <span class="comment"># Main config (DB, keys, environment)</span>
+    ├── config.example.php             <span class="comment"># Config template (safe to commit)</span>
+    └── .env.example                   <span class="comment"># Environment variables template</span>
+</pre></div>
+
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot" style="background:#ffd60a"></div> Folder</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#6b6559"></div> Already built (134-file base)</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#00c48c"></div> New — to be built</div>
+</div>
+
+<div style="margin-top:2rem;padding:1.5rem;background:var(--surface);border:2px solid var(--ink);border-radius:8px">
+  <p style="font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;color:var(--coral)">Build Order</p>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem">
+    <div style="font-size:.78rem;font-weight:700"><strong style="color:var(--coral)">Phase 1</strong><br>Deploy existing 134-file base. URL rewriting. Supabase storage. Go live.</div>
+    <div style="font-size:.78rem;font-weight:700"><strong style="color:var(--coral)">Phase 2</strong><br>Vendor system. Directory (10 categories). Services + leads. Mobile money.</div>
+    <div style="font-size:.78rem;font-weight:700"><strong style="color:var(--coral)">Phase 3</strong><br>Gamification. Community forum. AI generator. Social login. Launch kits.</div>
+    <div style="font-size:.78rem;font-weight:700"><strong style="color:var(--coral)">Phase 4</strong><br>Automation engine (Python + Claude). Programmatic SEO. Newsletter. Web3 hub.</div>
+  </div>
+</div>
+
+</body>
+</html>

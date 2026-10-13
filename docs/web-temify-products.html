@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web-Temify — Complete Product Catalogue</title>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fffbf4;--ink:#0f0d0a;--coral:#ff5733;--yellow:#ffd60a;--mint:#00c48c;--sky:#4f8ef7;--lilac:#c084fc;--surface:#fff8ed;--muted:#6b6559}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Cabinet Grotesk',sans-serif;padding:2rem;max-width:1200px;margin:0 auto}
+h1{font-size:2.8rem;font-weight:900;letter-spacing:-.04em;margin-bottom:.3rem}
+.sub{color:var(--muted);font-size:.95rem;font-weight:500;margin-bottom:2rem}
+.stats{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:2px solid var(--ink)}
+.stat{background:var(--surface);border:2px solid var(--ink);border-radius:4px;padding:.5rem 1rem;text-align:center}
+.stat-n{font-size:1.6rem;font-weight:900;letter-spacing:-.04em;color:var(--coral);display:block;line-height:1}
+.stat-l{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:.2rem;display:block}
+.tier{margin-bottom:3rem}
+.tier-head{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:2px solid var(--ink)}
+.tier-badge{padding:.35rem .9rem;border:2px solid var(--ink);border-radius:2px;font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.t1{background:var(--coral);color:#fff;border-color:var(--coral)}
+.t2{background:var(--sky);color:#fff;border-color:var(--sky)}
+.t3{background:var(--lilac);color:#fff;border-color:var(--lilac)}
+.t4{background:var(--yellow);color:var(--ink)}
+.t5{background:var(--mint);color:#fff;border-color:var(--mint)}
+.tier-title{font-size:1.4rem;font-weight:900;letter-spacing:-.02em;flex:1}
+.tier-desc{font-size:.82rem;color:var(--muted);font-weight:500}
+.tier-count{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--surface);border:2px solid var(--ink);border-radius:6px;overflow:hidden;transition:transform .15s,box-shadow .15s;cursor:default}
+.card:hover{transform:translate(-3px,-3px);box-shadow:5px 5px 0 var(--ink)}
+.card-top{padding:1.25rem 1.25rem .75rem}
+.card-icon{font-size:2rem;margin-bottom:.6rem;display:block}
+.card-name{font-size:1rem;font-weight:900;letter-spacing:-.02em;margin-bottom:.3rem}
+.card-type{font-size:.7rem;color:var(--muted);font-weight:700;font-family:'DM Mono',monospace;margin-bottom:.6rem}
+.card-desc{font-size:.78rem;color:var(--muted);line-height:1.6;font-weight:500}
+.card-tags{display:flex;gap:.4rem;flex-wrap:wrap;padding:.75rem 1.25rem;border-top:1.5px solid rgba(15,13,10,.1)}
+.tag{padding:2px 7px;background:var(--bg);border:1.5px solid var(--ink);border-radius:2px;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.card-footer{display:flex;justify-content:space-between;align-items:center;padding:.75rem 1.25rem;border-top:1.5px solid rgba(15,13,10,.1);background:var(--bg)}
+.price{font-weight:900;font-size:.95rem;font-family:'DM Mono',monospace;color:var(--coral)}
+.stack{font-size:.68rem;color:var(--muted);font-weight:700}
+.priority-dot{width:8px;height:8px;border-radius:50%;border:2px solid var(--ink);flex-shrink:0}
+.p-hot{background:var(--coral)}
+.p-med{background:var(--yellow)}
+.p-low{background:var(--mint)}
+.legend{display:flex;gap:1.5rem;margin-bottom:2rem;flex-wrap:wrap;padding:.75rem 1rem;background:var(--surface);border:2px solid var(--ink);border-radius:4px}
+.leg{display:flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:700}
+@media(max-width:768px){.grid,.grid-2{grid-template-columns:1fr}.stats{gap:.5rem}}
+</style>
+</head>
+<body>
+
+<h1>Web-Temify <span style="color:var(--coral)">●</span> Product Catalogue</h1>
+<p class="sub">Complete list of all products to launch on the marketplace · May 2026</p>
+
+<div class="stats">
+  <div class="stat"><span class="stat-n">56</span><span class="stat-l">Total Products</span></div>
+  <div class="stat"><span class="stat-n">28</span><span class="stat-l">Templates</span></div>
+  <div class="stat"><span class="stat-n">18</span><span class="stat-l">Scripts</span></div>
+  <div class="stat"><span class="stat-n">4</span><span class="stat-l">Launch Kits</span></div>
+  <div class="stat"><span class="stat-n">6</span><span class="stat-l">Web3 Products</span></div>
+  <div class="stat"><span class="stat-n">$29</span><span class="stat-l">Starting Price</span></div>
+  <div class="stat"><span class="stat-n">$999</span><span class="stat-l">Top Price</span></div>
+  <div class="stat"><span class="stat-n">5</span><span class="stat-l">Build Tiers</span></div>
+</div>
+
+<div class="legend">
+  <div class="leg"><div class="priority-dot p-hot"></div> Build First (Tier 1)</div>
+  <div class="leg"><div class="priority-dot p-med"></div> Medium Term (Tier 2)</div>
+  <div class="leg"><div class="priority-dot p-low"></div> Later (Tier 3+)</div>
+</div>
+
+<!-- TIER 1 -->
+<div class="tier">
+  <div class="tier-head">
+    <span class="tier-badge t1">Tier 1 — Build First</span>
+    <div>
+      <div class="tier-title">High Demand · Africa-Relevant · Fastest to Sell</div>
+      <div class="tier-desc">Build these 6 first. Seed the marketplace before opening to vendors. These have the highest purchase intent in Nigeria and across Africa.</div>
+    </div>
+    <span class="tier-count">6 products</span>
+  </div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🚚</span>
+        <div class="card-name">Courier & Logistics Pro</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Professional courier and delivery company website. Live parcel tracking UI, rate calculator, Google Maps integration, fleet gallery, mobile app promo section, driver portal teaser. Dark/light mode.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">Bootstrap</span>
+        <span class="tag">WordPress</span>
+        <span class="tag">10 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$79 – $199</span>
+        <div class="priority-dot p-hot"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">💰</span>
+        <div class="card-name">Loan & Lending Company</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Fintech lending website with interactive loan calculator (amount, tenure, interest), multi-step application form, eligibility checker, compliance section, transparent rates, client portal teaser. Paystack integration-ready.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">WordPress</span>
+        <span class="tag">JS Calculator</span>
+        <span class="tag">12 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$99 – $249</span>
+        <div class="priority-dot p-hot"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🏦</span>
+        <div class="card-name">NeoBank & Digital Banking</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Modern digital banking website for neobanks and fintechs. Account opening CTA, mobile app promo, security trust badges, savings calculator, services for personal/business/corporate, Islamic banking variant included.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">React</span>
+        <span class="tag">HTML5</span>
+        <span class="tag">Next.js</span>
+        <span class="tag">14 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$99 – $299</span>
+        <div class="priority-dot p-hot"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🎨</span>
+        <div class="card-name">Digital Agency Pro</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Bold, conversion-focused creative agency website. Portfolio grid, services pages, team section, case studies layout, contact forms, pricing tables, client logos strip, animated hero. Dark mode included.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">WordPress</span>
+        <span class="tag">Elementor</span>
+        <span class="tag">10 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$49 – $99</span>
+        <div class="priority-dot p-hot"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🚀</span>
+        <div class="card-name">SaaS & Startup Landing Page</div>
+        <div class="card-type">Website Template · Landing page</div>
+        <div class="card-desc">Modern SaaS product landing page. Feature sections, social proof, pricing table, FAQ, testimonials, app screenshots mockup, newsletter capture, waitlist mode. Conversion-optimised layout.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">React</span>
+        <span class="tag">Tailwind</span>
+        <span class="tag">8 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$49 – $99</span>
+        <div class="priority-dot p-hot"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">💼</span>
+        <div class="card-name">Portfolio & Freelancer</div>
+        <div class="card-type">Website Template · Single/multi-page</div>
+        <div class="card-desc">Minimal, striking portfolio for developers, designers, and Web3 creators. Project showcase grid, skills section, work experience timeline, contact form, blog section. Multiple colour schemes.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">React</span>
+        <span class="tag">WordPress</span>
+        <span class="tag">6 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$29 – $79</span>
+        <div class="priority-dot p-hot"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TIER 2 -->
+<div class="tier">
+  <div class="tier-head">
+    <span class="tier-badge t2">Tier 2 — Medium Term</span>
+    <div>
+      <div class="tier-title">Higher Ticket · More Complex · Stronger Revenue</div>
+      <div class="tier-desc">Build after Tier 1 is live and selling. These are full scripts and complex templates — higher price, higher value, stronger differentiation from competitors.</div>
+    </div>
+    <span class="tier-count">12 products</span>
+  </div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">💱</span>
+        <div class="card-name">P2P Crypto Trading Script</div>
+        <div class="card-type">Full Script · PHP + Laravel</div>
+        <div class="card-desc">Complete peer-to-peer crypto exchange. Escrow protection system, dispute management, buyer/seller ratings, chat integration, multiple payment methods (bank transfer, mobile money, USDT), Paystack/Flutterwave gateway, admin dashboard, KYC module.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">PHP</span>
+        <span class="tag">Laravel</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">WebSockets</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$299 – $799</span>
+        <div class="priority-dot p-med"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🏛️</span>
+        <div class="card-name">Online Banking Lite Script</div>
+        <div class="card-type">Full Script · PHP</div>
+        <div class="card-desc">Internet banking system for microfinance and credit unions. User registration, account dashboard, transfers, bill payments, transaction history, notifications, 2FA, admin panel with user management, basic ledger, Naira support.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">PHP</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">Paystack</span>
+        <span class="tag">2FA</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$199 – $499</span>
+        <div class="priority-dot p-med"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">📋</span>
+        <div class="card-name">Loan Management System Script</div>
+        <div class="card-type">Full Script · PHP</div>
+        <div class="card-desc">Complete loan processing system. Application workflow, approval pipeline, repayment tracking, interest calculations, penalty management, borrower profiles, SMS/email notifications, reports, Paystack integration, admin and borrower dashboards.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">PHP</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">Paystack</span>
+        <span class="tag">SMS</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$199 – $499</span>
+        <div class="priority-dot p-med"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🖼️</span>
+        <div class="card-name">NFT Marketplace Template</div>
+        <div class="card-type">Website Template · Web3</div>
+        <div class="card-desc">Full NFT marketplace UI. Collection gallery, individual NFT detail pages, minting interface, wallet connect (MetaMask, WalletConnect), auction countdown, creator profiles, trending section, activity feed. Dark mode.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">Next.js</span>
+        <span class="tag">React</span>
+        <span class="tag">Web3.js</span>
+        <span class="tag">18 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$99 – $249</span>
+        <div class="priority-dot p-med"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🏘️</span>
+        <div class="card-name">Real Estate Listing Platform</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Property listing and agent website. Advanced search with filters (location, price, bedrooms, type), property detail pages with gallery, virtual tour embed, agent profiles, mortgage calculator, neighbourhood map, lead capture forms.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">Next.js</span>
+        <span class="tag">Supabase</span>
+        <span class="tag">Google Maps</span>
+        <span class="tag">14 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$79 – $199</span>
+        <div class="priority-dot p-med"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🧾</span>
+        <div class="card-name">Invoice & Billing System Script</div>
+        <div class="card-type">Full Script · PHP</div>
+        <div class="card-desc">Complete invoicing solution for SMEs and freelancers. Create/send invoices, recurring billing, expense tracking, client management, payment tracking, Paystack/Flutterwave integration, PDF export, multi-currency, tax support, dashboard analytics.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">PHP</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">Paystack</span>
+        <span class="tag">PDF</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$149 – $399</span>
+        <div class="priority-dot p-med"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🛒</span>
+        <div class="card-name">E-commerce Store Template</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Clean, conversion-focused online store template. Product grid, single product page, cart, checkout flow, account dashboard, order tracking, wishlist, Paystack/Stripe ready. WooCommerce version + custom HTML version.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">WordPress</span>
+        <span class="tag">WooCommerce</span>
+        <span class="tag">HTML5</span>
+        <span class="tag">12 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$79 – $199</span>
+        <div class="priority-dot p-med"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🍽️</span>
+        <div class="card-name">Restaurant & Food Delivery</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Restaurant website with online ordering, menu pages, table booking, food category browsing, delivery tracking UI, loyalty programme section, chef profiles, gallery. Delivery app mockup section. WhatsApp order integration.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">WordPress</span>
+        <span class="tag">Paystack</span>
+        <span class="tag">10 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$79 – $199</span>
+        <div class="priority-dot p-med"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🏥</span>
+        <div class="card-name">Hospital & Clinic Management</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Healthcare website template with appointment booking, doctor profiles, department pages, patient testimonials, emergency contact section, health blog, insurance partners strip, online consultation teaser. Trust-first design.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">WordPress</span>
+        <span class="tag">Booking</span>
+        <span class="tag">12 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$79 – $199</span>
+        <div class="priority-dot p-med"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🎓</span>
+        <div class="card-name">School & Education Platform</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">School/university website with course listing, student portal teaser, faculty profiles, events calendar, admissions page, news/blog, gallery. Also works for online academies and bootcamps. LMS lite version included.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">WordPress</span>
+        <span class="tag">LMS</span>
+        <span class="tag">14 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$79 – $199</span>
+        <div class="priority-dot p-med"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">📊</span>
+        <div class="card-name">SaaS Admin Dashboard Template</div>
+        <div class="card-type">UI Template · Dashboard</div>
+        <div class="card-desc">Complete SaaS admin panel UI kit. Analytics charts, user management tables, settings pages, subscription management, billing section, notification centre, team management, dark/light mode, 40+ component pages. Chart.js powered.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">React</span>
+        <span class="tag">Chart.js</span>
+        <span class="tag">40+ pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$99 – $249</span>
+        <div class="priority-dot p-med"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🏪</span>
+        <div class="card-name">POS System Script</div>
+        <div class="card-type">Full Script · PHP</div>
+        <div class="card-desc">Point of sale system for physical stores and restaurants. Product/inventory management, barcode support, receipt printing, sales reports, cash and card payment handling, daily reconciliation, customer management, Paystack integration.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">PHP</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">Barcode</span>
+        <span class="tag">Paystack</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$149 – $399</span>
+        <div class="priority-dot p-med"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TIER 3 -->
+<div class="tier">
+  <div class="tier-head">
+    <span class="tier-badge t3">Tier 3 — Later</span>
+    <div>
+      <div class="tier-title">Complex Builds · Enterprise Pricing · Web3 Heavy</div>
+      <div class="tier-desc">Build after first revenue is coming in. These are high-effort, high-ticket products. Some require significant technical depth — especially the exchange and DeFi products.</div>
+    </div>
+    <span class="tier-count">16 products</span>
+  </div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🔄</span>
+        <div class="card-name">CEX Lite Exchange Script</div>
+        <div class="card-type">Full Script · Node.js / PHP</div>
+        <div class="card-desc">Simplified centralised crypto exchange. Spot trading engine, order book, user wallets, deposits/withdrawals, real-time charts (TradingView), market/limit orders, admin dashboard, KYC/AML module, multi-currency, Naira support.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">Node.js</span>
+        <span class="tag">WebSockets</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">TradingView</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$499 – $999</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">📈</span>
+        <div class="card-name">DeFi Dashboard Template</div>
+        <div class="card-type">Website Template · Web3</div>
+        <div class="card-desc">Complete DeFi application UI. Liquidity pool display, staking interface, yield farming dashboard, portfolio tracker, transaction history, token swap UI, wallet balance display, APY calculations. Ethereum + BSC compatible.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">React</span>
+        <span class="tag">Web3.js</span>
+        <span class="tag">Ethers.js</span>
+        <span class="tag">20 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$199 – $499</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🚛</span>
+        <div class="card-name">Fleet Management Script</div>
+        <div class="card-type">Full Script · PHP</div>
+        <div class="card-desc">Vehicle fleet management system. Real-time GPS tracking, maintenance scheduling, fuel log, driver performance scoring, route optimisation, incident reporting, document management, cost analysis dashboard. Pairs with Courier template.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">PHP</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">Google Maps</span>
+        <span class="tag">GPS API</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$199 – $499</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🤝</span>
+        <div class="card-name">Ajo / Esusu Savings Script</div>
+        <div class="card-type">Full Script · PHP</div>
+        <div class="card-desc">African rotating savings group platform. Group creation, contribution schedules, payout rotation tracking, member management, mobile money integration (MTN MoMo, Paystack), push notifications, dispute resolution, admin panel.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">PHP</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">Mobile Money</span>
+        <span class="tag">Paystack</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$149 – $399</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🎯</span>
+        <div class="card-name">Crowdfunding Platform Script</div>
+        <div class="card-type">Full Script · PHP</div>
+        <div class="card-desc">Full crowdfunding system. Campaign creation with rich editor, pledge management, reward tiers, progress tracking, backer updates, social sharing, payment gateway integration, campaign analytics, admin moderation, email notifications.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">PHP</span>
+        <span class="tag">Paystack</span>
+        <span class="tag">Stripe</span>
+        <span class="tag">LemonSqueezy</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$199 – $499</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">📱</span>
+        <div class="card-name">Crypto Trading Dashboard</div>
+        <div class="card-type">Website Template · Web3</div>
+        <div class="card-desc">Real-time crypto trading interface. Live price charts, portfolio tracker, watchlist, order history, news feed, market overview, coin detail pages. Connects to CoinGecko/Binance API. Dark mode. Mobile responsive.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">React</span>
+        <span class="tag">CoinGecko API</span>
+        <span class="tag">TradingView</span>
+        <span class="tag">Dark mode</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$99 – $249</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">⛓️</span>
+        <div class="card-name">Web3 dApp Landing Page</div>
+        <div class="card-type">Website Template · Web3</div>
+        <div class="card-desc">Conversion-focused landing page for DeFi, DAO, and token projects. Animated hero, tokenomics section, roadmap timeline, team profiles, whitepaper download, newsletter waitlist, wallet connect CTA, FAQ. Multiple colour themes.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">React</span>
+        <span class="tag">GSAP</span>
+        <span class="tag">8 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$79 – $199</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🔗</span>
+        <div class="card-name">Blockchain Agency Template</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Web3 development agency website. Smart contract services, audit offerings, DeFi development, NFT creation, team profiles, case studies, blockchain tech stack showcase, consultation booking. Dark cyberpunk aesthetic.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">React</span>
+        <span class="tag">GSAP</span>
+        <span class="tag">10 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$79 – $199</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🪙</span>
+        <div class="card-name">Token Launch / ICO Script</div>
+        <div class="card-type">Full Script + Template · Web3</div>
+        <div class="card-desc">Complete token presale platform. Whitelist management, presale countdown, contribution tracking, token distribution, referral programme, KYC integration, admin dashboard, smart contract connection, Ethereum/BSC support.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">PHP</span>
+        <span class="tag">Web3.js</span>
+        <span class="tag">Solidity hooks</span>
+        <span class="tag">MySQL</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$149 – $399</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🎟️</span>
+        <div class="card-name">Event Management & Ticketing</div>
+        <div class="card-type">Full Script · PHP</div>
+        <div class="card-desc">Event creation and ticket sales platform. Multi-event management, ticket tiers, QR code generation, attendee check-in, seating plans, virtual event support, organiser dashboard, Paystack/Stripe/LemonSqueezy payments.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">PHP</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">QR Code</span>
+        <span class="tag">Paystack</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$99 – $249</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🏬</span>
+        <div class="card-name">Multi-Vendor Marketplace Script</div>
+        <div class="card-type">Full Script · PHP</div>
+        <div class="card-desc">Build your own marketplace platform. Vendor registration, product listings, commission system, vendor payouts, buyer/seller reviews, dispute resolution, admin panel, Paystack/Stripe integration. Essentially a Web-Temify clone kit.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">PHP</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">Paystack</span>
+        <span class="tag">Stripe</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$299 – $799</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🏛️</span>
+        <div class="card-name">DAO Governance Template</div>
+        <div class="card-type">Website Template · Web3</div>
+        <div class="card-desc">Decentralised organisation website. Proposal creation/voting UI, treasury display, member portal, governance documentation, token holder dashboard, forum integration teaser, roadmap. Snapshot.org integration-ready.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">React</span>
+        <span class="tag">Web3.js</span>
+        <span class="tag">Snapshot</span>
+        <span class="tag">12 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$99 – $249</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">📚</span>
+        <div class="card-name">LMS Lite Script</div>
+        <div class="card-type">Full Script · PHP</div>
+        <div class="card-desc">Learning management system for online academies and bootcamps. Course creation, video lessons, quizzes, student progress tracking, certificates, instructor dashboards, Paystack course payments, student portal, email notifications.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">PHP</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">Video player</span>
+        <span class="tag">Paystack</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$149 – $399</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">💊</span>
+        <div class="card-name">Pharmacy & Health Store</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Online pharmacy and health products store. Product catalogue with categories, prescription upload, delivery tracking, health blog, promotions strip, loyalty programme, WhatsApp order option, Paystack payments. NAFDAC compliance section.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">WordPress</span>
+        <span class="tag">WooCommerce</span>
+        <span class="tag">10 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$79 – $179</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🏗️</span>
+        <div class="card-name">Construction & Architecture</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Professional construction company website. Project portfolio with before/after, services pages, team profiles, client testimonials, cost estimation request form, project timeline showcase, safety certifications section.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">WordPress</span>
+        <span class="tag">8 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$59 – $149</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">✈️</span>
+        <div class="card-name">Travel & Tour Agency</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Travel agency website with tour packages listing, destination pages, booking form, visa info section, customer testimonials, photo gallery, newsletter signup, WhatsApp booking, flight search widget placeholder.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">WordPress</span>
+        <span class="tag">Booking form</span>
+        <span class="tag">10 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$59 – $149</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TIER 4 — LAUNCH KITS -->
+<div class="tier">
+  <div class="tier-head">
+    <span class="tier-badge t4">Tier 4 — Launch Kits</span>
+    <div>
+      <div class="tier-title">Bundled Systems · Premium Pricing · Maximum Value</div>
+      <div class="tier-desc">Multiple templates and components sold as one complete package. Higher price point, higher perceived value. "Complete systems, not just templates."</div>
+    </div>
+    <span class="tier-count">4 kits</span>
+  </div>
+  <div class="grid grid-2">
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🚀</span>
+        <div class="card-name">SaaS Starter Kit</div>
+        <div class="card-type">Launch Kit · Bundle of 6 products</div>
+        <div class="card-desc">Everything to launch a SaaS in a weekend. Landing page template + auth system + dashboard UI + billing integration + email templates + admin panel. All pre-wired to work together. Full documentation included.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">Landing Page</span>
+        <span class="tag">Auth System</span>
+        <span class="tag">Dashboard UI</span>
+        <span class="tag">Stripe Billing</span>
+        <span class="tag">Admin Panel</span>
+        <span class="tag">Email Templates</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$299 <span style="font-size:.7rem;color:var(--muted);text-decoration:line-through;font-weight:400">$490</span></span>
+        <div class="priority-dot p-hot"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">⛓️</span>
+        <div class="card-name">Web3 DApp Starter Kit</div>
+        <div class="card-type">Launch Kit · Bundle of 6 components</div>
+        <div class="card-desc">Complete Web3 product launch kit. Wallet connect component + smart contract UI + token dashboard + NFT gallery + DAO governance UI + mint page. Everything connected, documented, and ready to customise.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">Wallet Connect</span>
+        <span class="tag">Smart Contract UI</span>
+        <span class="tag">NFT Gallery</span>
+        <span class="tag">Token Dashboard</span>
+        <span class="tag">DAO Governance</span>
+        <span class="tag">Mint Page</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$399 <span style="font-size:.7rem;color:var(--muted);text-decoration:line-through;font-weight:400">$620</span></span>
+        <div class="priority-dot p-hot"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🏦</span>
+        <div class="card-name">Fintech Launch Kit</div>
+        <div class="card-type">Launch Kit · Bundle of 6 products</div>
+        <div class="card-desc">Africa-ready fintech product kit. Banking/neobank template + loan calculator + KYC flow pages + Paystack integration guide + compliance pages + admin dashboard. Built specifically for Nigerian and African fintech startups.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">Banking Template</span>
+        <span class="tag">Loan Calculator</span>
+        <span class="tag">KYC Flow</span>
+        <span class="tag">Paystack Ready</span>
+        <span class="tag">Compliance Pages</span>
+        <span class="tag">Admin Dashboard</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$349 <span style="font-size:.7rem;color:var(--muted);text-decoration:line-through;font-weight:400">$560</span></span>
+        <div class="priority-dot p-hot"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🎨</span>
+        <div class="card-name">Agency Starter Kit</div>
+        <div class="card-type">Launch Kit · Bundle of 6 products</div>
+        <div class="card-desc">Everything a creative agency needs to launch online. Portfolio template + services pages + case study layout + lead capture forms + blog engine + pricing tables. Client-ready from day one. Multiple industry colour schemes.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">Portfolio Pages</span>
+        <span class="tag">Services Layout</span>
+        <span class="tag">Case Studies</span>
+        <span class="tag">Lead Forms</span>
+        <span class="tag">Blog Engine</span>
+        <span class="tag">Pricing Tables</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$249 <span style="font-size:.7rem;color:var(--muted);text-decoration:line-through;font-weight:400">$390</span></span>
+        <div class="priority-dot p-hot"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TIER 5 — AFRICA NICHE -->
+<div class="tier">
+  <div class="tier-head">
+    <span class="tier-badge t5">Tier 5 — Africa Niche</span>
+    <div>
+      <div class="tier-title">Uniquely African · Underserved Market · Zero Competition</div>
+      <div class="tier-desc">Products that no other marketplace has. Specifically designed for African businesses, industries, and cultural contexts. These have zero competition on ThemeForest or Creative Market.</div>
+    </div>
+    <span class="tier-count">6 products</span>
+  </div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🤝</span>
+        <div class="card-name">Ajo / Esusu / Thrift Script</div>
+        <div class="card-type">Full Script · PHP — Africa Exclusive</div>
+        <div class="card-desc">Rotating savings platform built specifically for African cooperative savings culture. Group contributions, payout schedules, mobile money integration (MTN MoMo, Airtel, M-Pesa), member management, dispute system. First of its kind on any marketplace.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">PHP</span>
+        <span class="tag">Mobile Money</span>
+        <span class="tag">Nigeria-first</span>
+        <span class="tag">Africa Exclusive</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$149 – $399</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🕌</span>
+        <div class="card-name">Islamic Finance / Halal Banking Template</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Sharia-compliant finance website template. Murabaha, Ijara, and Sukuk product pages, zakat calculator, halal investment showcase, Arabic/English dual language, trust certification section. Built for Northern Nigeria and East Africa markets.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">Arabic RTL</span>
+        <span class="tag">Dual Language</span>
+        <span class="tag">12 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$99 – $249</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🌾</span>
+        <div class="card-name">Agritech & Farm Marketplace</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Agricultural produce marketplace for farmers and buyers. Produce listings with pricing, farm profiles, bulk order system, logistics tracking, weather widget integration, farm-to-table story section, mobile-first, Paystack payments.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">WordPress</span>
+        <span class="tag">Paystack</span>
+        <span class="tag">10 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$79 – $179</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">📡</span>
+        <div class="card-name">ISP & Telecom Company Template</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Internet service provider website. Coverage checker tool, data plan comparison, subscription management UI, support ticket portal, speedtest embed, router setup guides, business/home/enterprise plan pages. Nigeria ISP-specific sections.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">WordPress</span>
+        <span class="tag">Paystack</span>
+        <span class="tag">10 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$79 – $179</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">⚡</span>
+        <div class="card-name">Solar Energy & Power Company</div>
+        <div class="card-type">Website Template · Multi-page</div>
+        <div class="card-desc">Solar installation company website built for Nigeria's power solution market. Solar calculator (savings vs NEPA bills), product catalogue (panels, inverters, batteries), installation portfolio, maintenance plans, financing options, quote request form.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">WordPress</span>
+        <span class="tag">Calculator</span>
+        <span class="tag">8 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$79 – $179</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🛵</span>
+        <div class="card-name">Okada / Ride-Hailing App Landing</div>
+        <div class="card-type">Website Template · Landing page</div>
+        <div class="card-desc">Ride-hailing and dispatch service landing page. Driver/rider split sections, app download CTAs, safety features showcase, coverage area map, pricing calculator, partner application form. Styled for Nigerian urban transport brands.</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">React</span>
+        <span class="tag">Google Maps</span>
+        <span class="tag">6 pages</span>
+      </div>
+      <div class="card-footer">
+        <span class="price">$59 – $149</span>
+        <div class="priority-dot p-low"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div style="background:var(--ink);color:#fff;border-radius:8px;padding:2rem;margin-top:2rem">
+  <div style="font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--yellow);margin-bottom:1.25rem">Complete Summary</div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-bottom:1.5rem">
+    <div style="text-align:center;padding:1rem;background:rgba(255,255,255,.07);border-radius:4px;border:1px solid rgba(255,255,255,.12)">
+      <div style="font-size:1.8rem;font-weight:900;letter-spacing:-.04em;color:var(--coral)">6</div>
+      <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin-top:.2rem">Tier 1 — Build First</div>
+    </div>
+    <div style="text-align:center;padding:1rem;background:rgba(255,255,255,.07);border-radius:4px;border:1px solid rgba(255,255,255,.12)">
+      <div style="font-size:1.8rem;font-weight:900;letter-spacing:-.04em;color:var(--sky)">12</div>
+      <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin-top:.2rem">Tier 2 — Medium Term</div>
+    </div>
+    <div style="text-align:center;padding:1rem;background:rgba(255,255,255,.07);border-radius:4px;border:1px solid rgba(255,255,255,.12)">
+      <div style="font-size:1.8rem;font-weight:900;letter-spacing:-.04em;color:var(--lilac)">16</div>
+      <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin-top:.2rem">Tier 3 — Later</div>
+    </div>
+    <div style="text-align:center;padding:1rem;background:rgba(255,255,255,.07);border-radius:4px;border:1px solid rgba(255,255,255,.12)">
+      <div style="font-size:1.8rem;font-weight:900;letter-spacing:-.04em;color:var(--yellow)">4</div>
+      <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin-top:.2rem">Tier 4 — Launch Kits</div>
+    </div>
+    <div style="text-align:center;padding:1rem;background:rgba(255,255,255,.07);border-radius:4px;border:1px solid rgba(255,255,255,.12)">
+      <div style="font-size:1.8rem;font-weight:900;letter-spacing:-.04em;color:var(--mint)">6</div>
+      <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;opacity:.55;margin-top:.2rem">Tier 5 — Africa Niche</div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.75rem;font-size:.75rem;opacity:.55;font-family:'DM Mono',monospace">
+    <span>Total: 44 products to build yourself</span>
+    <span>Price range: $29 – $999</span>
+    <span>Paystack · Stripe · LemonSqueezy · USDT on all products</span>
+    <span>Web-Temify LTD · RC: 7999659 · Nigeria</span>
+  </div>
+</div>
+
+</body>
+</html>
