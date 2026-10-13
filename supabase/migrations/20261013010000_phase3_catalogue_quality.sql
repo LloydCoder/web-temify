@@ -95,6 +95,25 @@ grant all on public.product_rights_attestations, public.product_versions to serv
 
 -- Expose only a boolean release check to anonymous catalogue policy evaluation;
 -- never grant public table access to artifact storage paths or release manifests.
+create function public.product_has_verified_rights(target_product_id uuid, target_reviewer_id uuid, target_reviewed_at timestamptz)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select exists (
+    select 1
+    from public.product_rights_attestations ra
+    where ra.product_id = target_product_id
+      and ra.review_status = 'verified'
+      and ra.reviewed_by = target_reviewer_id
+      and ra.reviewed_at = target_reviewed_at
+  );
+$function$;
+revoke all on function public.product_has_verified_rights(uuid, uuid, timestamptz) from public, anon, authenticated, service_role;
+grant execute on function public.product_has_verified_rights(uuid, uuid, timestamptz) to anon, authenticated;
+
 create function public.product_has_verified_release(target_product_id uuid, target_artifact_sha256 text)
 returns boolean
 language sql
@@ -114,6 +133,45 @@ as $function$
 $function$;
 revoke all on function public.product_has_verified_release(uuid, text) from public, anon, authenticated, service_role;
 grant execute on function public.product_has_verified_release(uuid, text) to anon, authenticated;
+
+-- Remove table-wide product updates so creators cannot forge lifecycle, rights-review,
+-- verifier, or artifact fields. Draft content remains editable by explicit column grant.
+revoke update on public.products from authenticated;
+grant update (category_id, slug, name, description, product_type, price_minor, currency,
+  summary, tech_stack, compatibility, license_type, rights_statement, release_version,
+  docs_url, demo_url, tags) on public.products to authenticated;
+
+drop policy products_insert_own_draft on public.products;
+create policy products_insert_own_draft on public.products
+  for insert to authenticated
+  with check (
+    creator_id = (select auth.uid())
+    and status = 'draft'
+    and rights_status = 'unverified'
+    and rights_verified_at is null
+    and rights_verified_by is null
+    and artifact_sha256 is null
+  );
+
+drop policy products_update_own_draft on public.products;
+create policy products_update_own_draft on public.products
+  for update to authenticated
+  using (
+    creator_id = (select auth.uid())
+    and status = 'draft'
+    and rights_status = 'unverified'
+    and rights_verified_at is null
+    and rights_verified_by is null
+    and artifact_sha256 is null
+  )
+  with check (
+    creator_id = (select auth.uid())
+    and status = 'draft'
+    and rights_status = 'unverified'
+    and rights_verified_at is null
+    and rights_verified_by is null
+    and artifact_sha256 is null
+  );
 
 create policy rights_attestations_select_own on public.product_rights_attestations
   for select to authenticated
@@ -164,6 +222,7 @@ create policy products_select_published_or_owner on public.products
       and rights_status = 'verified'
       and rights_verified_at is not null
       and rights_verified_by is not null
+      and public.product_has_verified_rights(id, rights_verified_by, rights_verified_at)
       and artifact_sha256 is not null
       and public.product_has_verified_release(id, artifact_sha256)
     )
