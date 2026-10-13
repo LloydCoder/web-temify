@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 
 const allowedAdvisories = new Map([
   [
-    "GHSA-vfj7-8cjw-p6xm",
+    "GHSA-VFJ7-8CJW-P6XM",
     {
       expiresAt: "2026-11-12T00:00:00.000Z",
       patchFile: "patches/braces@3.0.3.patch",
