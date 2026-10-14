@@ -1146,7 +1146,7 @@ select is(
   1::bigint, 'verified reversal-backed refund creates exactly one legacy transfer ledger row'
 );
 
--- Partial refunds must reverse commission using cumulative rounding; the final refund captures residual minor units.
+-- Partial refunds must reverse commission using cumulative rounding rather than isolated per-refund rounding.
 select lives_ok(
   $sql$insert into public.refunds (
     id, order_id, payment_attempt_id, amount_minor, currency, status, reason, idempotency_key, requested_by
@@ -1182,7 +1182,7 @@ select lives_ok(
   from phase4d1_rounding_request_ids ids
   join public.refund_reversal_requests rr on rr.id = ids.request_id
   join public.order_proceeds_allocations opa on opa.order_id = rr.order_id$sql$,
-  'final partial refund reverses the remaining commission minor unit after cumulative rounding'
+  'partial refund commission is calculated from cumulative refunded gross, avoiding isolated-rounding drift'
 );
 select is(
   public.reject_refund_reversal_request(
@@ -1198,7 +1198,7 @@ select lives_ok(
   $sql$insert into public.refunds (
     id, order_id, payment_attempt_id, amount_minor, currency, status, reason, idempotency_key, requested_by
   )
-  select '99100000-0000-4000-8000-000000000099', o.id, pa.id, 900, o.currency, 'pending',
+  select '99100000-0000-4000-8000-000000000099', o.id, pa.id, 1000, o.currency, 'pending',
     'Over-allocation rejection fixture', 'test-refund-reversal-overflow-0001', o.customer_id
   from public.orders o
   join phase4c_allocation_order_ids t on t.order_id = o.id
@@ -1220,7 +1220,7 @@ select throws_ok(
     gross_refund_minor, platform_fee_reversal_minor, seller_payable_reversal_minor, tax_reversal_minor, currency
   )
   select rr.id, rr.refund_id, opa.order_id, opa.order_item_id, opa.seller_id, opa.fee_schedule_id,
-    900, 90, 810, 0, opa.currency
+    1000, 100, 900, 0, opa.currency
   from public.refund_reversal_requests rr
   join public.order_proceeds_allocations opa on opa.order_id = rr.order_id
   where rr.refund_id = '99100000-0000-4000-8000-000000000099'$sql$,
