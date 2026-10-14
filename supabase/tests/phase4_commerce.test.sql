@@ -1133,9 +1133,9 @@ select is(
 );
 select is(
   (select o.status from public.orders o
-   join phase4d1_request_ids ids on ids.refund_id = (
-     select rr.refund_id from public.refund_reversal_requests rr where rr.order_id = o.id
-     order by rr.created_at desc limit 1
+   where o.id = (
+     select rr.order_id from public.refund_reversal_requests rr
+     join phase4d1_request_ids ids on ids.request_id = rr.id
    )),
   'partially_refunded', 'partial refund updates the order state after accounting is posted'
 );
