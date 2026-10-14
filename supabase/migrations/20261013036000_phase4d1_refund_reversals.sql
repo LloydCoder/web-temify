@@ -25,7 +25,7 @@ alter table public.financial_journal_batches
 
 create table public.refund_reversal_requests (
   id uuid primary key default gen_random_uuid(),
-  refund_id uuid not null unique references public.refunds(id) on delete restrict,
+  refund_id uuid not null references public.refunds(id) on delete restrict,
   order_id uuid not null references public.orders(id) on delete restrict,
   amount_minor bigint not null check (amount_minor > 0),
   currency text not null check (currency ~ '^[A-Z]{3}$'),
@@ -45,6 +45,9 @@ create table public.refund_reversal_requests (
   )
 );
 create index refund_reversal_order_idx on public.refund_reversal_requests (order_id, status, created_at desc);
+create unique index refund_reversal_one_active_request_uq
+  on public.refund_reversal_requests (refund_id)
+  where status in ('requested', 'approved', 'posted');
 create unique index financial_journal_one_refund_reversal_uq on public.financial_journal_batches (refund_id) where source_type = 'refund_reversal';
 
 create table public.refund_reversal_lines (
