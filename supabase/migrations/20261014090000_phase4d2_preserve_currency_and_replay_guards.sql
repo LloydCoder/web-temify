@@ -68,7 +68,11 @@ begin
     candidate_count := 0;
     result_code_value := null;
 
-    if row_value.row_type not in ('payment','refund') then
+    if row_value.exception_code is not null then
+      -- Explicit provider/report exception classifications must never be
+      -- overwritten by an otherwise matching internal journal reference.
+      result_code_value := row_value.exception_code;
+    elsif row_value.row_type not in ('payment','refund') then
       result_code_value := 'unsupported_row_type';
     elsif row_value.provider_reference is null then
       result_code_value := 'missing_internal_match';
