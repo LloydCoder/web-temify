@@ -9,7 +9,9 @@ const MAX_BATCH_SIZE = 25;
 const MIN_TOKEN_LENGTH = 32;
 
 function authorized(request: Request, expectedToken: string | undefined) {
-  const supplied = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+  const supplied = request.headers
+    .get("authorization")
+    ?.replace(/^Bearer\s+/i, "");
   if (!expectedToken || expectedToken.length < MIN_TOKEN_LENGTH || !supplied) {
     return false;
   }
@@ -58,7 +60,7 @@ export async function POST(request: Request) {
   const { data, error } = await client.rpc(
     "claim_expired_settlement_evidence",
     {
-    p_limit: MAX_BATCH_SIZE,
+      p_limit: MAX_BATCH_SIZE,
       p_request_id: requestId,
     },
   );
