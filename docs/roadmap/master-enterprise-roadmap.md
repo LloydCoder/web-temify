@@ -1,6 +1,6 @@
 # Web-Temify — Final Enterprise-Grade Build Roadmap (Master Edition)
 
-**Status as of 2026-10-13:** This is the canonical forward roadmap. Phase status must be derived from implementation and evidence at an exact commit, never from this plan alone. The detailed evidence register is `docs/roadmap/phase-gates.md`. This document reconciles the earlier condensed Phase 0–8 gate register with the agreed 20-phase programme and the three additional marketplace verticals.
+**Status as of 2026-10-14:** This is the canonical forward roadmap. Phase status must be derived from implementation and evidence at an exact commit, never from this plan alone. The detailed evidence register is `docs/roadmap/phase-gates.md`. This document reconciles the earlier condensed Phase 0–8 gate register with the agreed 20-phase programme and the three additional marketplace verticals.
 
 ## Operating rules
 
@@ -34,6 +34,12 @@ Stable IDs, categories, search, product versions, compatibility, changelog, depe
 ### Phase 4 — Core commerce and secure delivery
 
 Server-owned order creation and immutable item snapshots; payment-provider abstraction; cryptographically verified webhooks; durable event inbox/outbox and idempotency; financial ledger; refund reservation/evidence; order-linked entitlements/licenses; private artifacts and bounded, short-lived downloads. No redirect or client-side flag may prove payment. Keep live providers disabled until eligibility and production controls are verified.
+
+**Phase 4C implementation update (merged, CI verified):** the platform now has an immutable, evidence-bound accounting journal, verified payment/refund journal posting, independently approved seller fee schedules, and idempotent proceeds allocation. Unsupported settlement, provider-fee, chargeback, reserve, manual-adjustment and post-allocation refund sources fail closed. This is still not a live provider, tax calculator, payout or production financial-readiness approval. See `docs/commerce/phase4c-financial-journal.md` and the exact-head evidence in `docs/roadmap/phase-gates.md`.
+
+### Phase 4D — settlement, chargebacks, refund reversals and financial adjustments (next serial gate)
+
+Build evidence-backed state machines for provider settlement reconciliation, refund reversals after proceeds allocation, chargeback/dispute evidence, reserve holds/releases and independently approved manual adjustments. Keep money movement disabled until those paths have balanced journal postings, adversarial pgTAP tests, idempotency, audit evidence and explicit business-policy approval. This phase cannot be declared complete without a chosen provider, supported jurisdiction/settlement evidence and the required external onboarding.
 
 ### Phase 5 — Admin, seller operations and trust workflows
 
