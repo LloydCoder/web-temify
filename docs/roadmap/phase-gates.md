@@ -173,7 +173,8 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 
 #### Phase 4D2 — provider settlement reconciliation (not started; external provider gate)
 
-- [ ] Select and verify a provider only after supported platform/seller jurisdictions, currencies, fees, settlement reports, refunds, disputes, payout capabilities and operational support are confirmed.
+- [x] Reconcile the previously accepted provider-role strategy and record evidence boundaries in [`docs/commerce/provider-strategy.md`](../commerce/provider-strategy.md). The record distinguishes Polar (MoR candidate), Paystack (Nigeria/local direct-payment candidate), Sellra (unverified candidate), and Grey (treasury/FX only); older exploratory providers are not automatically approved for integration.
+- [ ] Select the first-launch route from the accepted roles only after Web-Temify account/KYB approval, marketplace contractual permission, supported buyer/seller jurisdictions, currencies, fees, refunds/disputes, settlement evidence and operational support are confirmed. Public provider documentation alone is insufficient.
 - [ ] Define a versioned provider-neutral settlement import contract with signed/source-authenticated evidence, content digest, report period, currency, gross, fees, net, provider references and row-level exceptions.
 - [ ] Reconcile settlement rows idempotently to verified payment/refund journal batches; reject duplicate, missing, mismatched, out-of-period, cross-currency and unexplained amounts.
 - [ ] Post provider-fee and settlement journal entries only through source-specific balanced journal guards; no automatic money movement or payout until separately approved.
