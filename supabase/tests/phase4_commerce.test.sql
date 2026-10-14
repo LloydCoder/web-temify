@@ -1,5 +1,5 @@
 begin;
-select plan(131);
+select plan(164);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -721,6 +721,197 @@ select is(
    from public.payment_webhook_events we
    where we.provider_event_id = 'phase4b-verified-failed-event-0001'),
   true, 'replaying a processed failure event is safe'
+);
+
+
+-- Phase 4C: reconcile gross payment postings and allocate proceeds only under independently approved terms.
+select has_table('public', 'financial_journal_batches', 'immutable financial journal batches exist');
+select has_table('public', 'financial_journal_entries', 'financial journal entries exist');
+select has_table('public', 'seller_fee_schedules', 'seller fee schedules require independent approval');
+select has_table('public', 'order_proceeds_allocations', 'seller proceeds allocations are recorded per order item');
+select ok(
+  (select relrowsecurity from pg_class where oid = 'public.financial_journal_batches'::regclass)
+  and (select relrowsecurity from pg_class where oid = 'public.financial_journal_entries'::regclass),
+  'financial journal tables have RLS enabled'
+);
+select ok(
+  not has_table_privilege('anon', 'public.financial_journal_batches', 'SELECT')
+  and not has_table_privilege('authenticated', 'public.financial_journal_batches', 'SELECT')
+  and not has_table_privilege('authenticated', 'public.financial_journal_entries', 'INSERT'),
+  'financial journal data is not exposed to public or customer roles'
+);
+select ok(
+  not has_function_privilege('authenticated', 'public.allocate_order_proceeds(uuid,text,text)', 'EXECUTE')
+  and has_function_privilege('service_role', 'public.allocate_order_proceeds(uuid,text,text)', 'EXECUTE'),
+  'proceeds allocation is restricted to the trusted server role'
+);
+
+create temporary table phase4c_allocation_order_ids(order_id uuid primary key) on commit drop;
+set constraints orders_totals_guard, order_items_totals_guard deferred;
+select lives_ok(
+  $sql$insert into phase4c_allocation_order_ids
+    select order_id from public.create_order_for_checkout(
+      '82000000-0000-4000-8000-000000000082',
+      '[{"product_version_id":"87000000-0000-4000-8000-000000000087","quantity":1}]'::jsonb,
+      'phase4c-allocation-idempotency-0001'
+    )$sql$,
+  'accounting fixture order is created from canonical catalogue pricing'
+);
+select lives_ok(
+  $sql$set constraints orders_totals_guard, order_items_totals_guard immediate$sql$,
+  'accounting fixture order and item totals reconcile'
+);
+select lives_ok(
+  $sql$insert into public.payment_attempts (order_id, provider, amount_minor, currency, idempotency_key)
+    select o.id, 'sandbox', o.total_minor, o.currency, 'phase4c-payment-attempt-key-0001'
+    from public.orders o join phase4c_allocation_order_ids t on t.order_id = o.id$sql$,
+  'accounting fixture payment attempt is created'
+);
+select lives_ok(
+  $sql$update public.payment_attempts set status = 'pending'
+    where order_id = (select order_id from phase4c_allocation_order_ids)$sql$,
+  'accounting fixture payment enters pending state'
+);
+select lives_ok(
+  $sql$insert into public.payment_webhook_events (
+    provider, provider_event_id, event_type, payload_sha256, signature_verified,
+    order_id, payment_attempt_id, amount_minor, currency, provider_reference
+  )
+  select 'sandbox', 'phase4c-verified-payment-event-0001', 'payment.succeeded', repeat('e',64), true,
+    o.id, pa.id, o.total_minor, o.currency, 'phase4c-provider-charge-0001'
+  from public.orders o
+  join phase4c_allocation_order_ids t on t.order_id = o.id
+  join public.payment_attempts pa on pa.order_id = o.id$sql$,
+  'accounting fixture payment event carries verified matching financial evidence'
+);
+select is(
+  (select public.process_payment_webhook_event(we.id)
+   from public.payment_webhook_events we
+   where we.provider_event_id = 'phase4c-verified-payment-event-0001'),
+  true, 'accounting fixture payment processes through the verified event processor'
+);
+select is(
+  (select count(*) from public.financial_journal_batches b
+   join phase4c_allocation_order_ids t on t.order_id = b.order_id
+   where b.source_type = 'payment' and b.status = 'posted'),
+  1::bigint, 'verified payment automatically creates exactly one posted accounting batch'
+);
+select ok(
+  (select sum(e.amount_minor) filter (where e.side = 'debit')
+          = sum(e.amount_minor) filter (where e.side = 'credit')
+   from public.financial_journal_entries e
+   join public.financial_journal_batches b on b.id = e.batch_id
+   join phase4c_allocation_order_ids t on t.order_id = b.order_id
+   where b.source_type = 'payment'),
+  'gross payment accounting batch is balanced'
+);
+
+select lives_ok(
+  $sql$insert into public.seller_fee_schedules (seller_id, platform_fee_bps)
+    values ('81000000-0000-4000-8000-000000000081', 1000)$sql$,
+  'seller fee terms start as pending and are not self-approved'
+);
+select lives_ok(
+  $sql$update public.seller_fee_schedules
+    set status = 'active', approved_by = '83000000-0000-4000-8000-000000000083', approved_at = now()
+    where seller_id = '81000000-0000-4000-8000-000000000081' and status = 'pending' and platform_fee_bps = 1000$sql$,
+  'independent reviewer activates the seller fee schedule'
+);
+create temporary table phase4c_allocation_batch_ids(batch_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$insert into phase4c_allocation_batch_ids
+    select public.allocate_order_proceeds(
+      (select order_id from phase4c_allocation_order_ids),
+      'phase4c-allocation-posting-key-0001',
+      repeat('f',64)
+    )$sql$,
+  'proceeds allocate atomically using independently approved fee terms and evidence'
+);
+select is(
+  (select count(*) from public.order_proceeds_allocations opa
+   join phase4c_allocation_order_ids t on t.order_id = opa.order_id),
+  1::bigint, 'each order item receives exactly one proceeds allocation'
+);
+select is(
+  (select opa.gross_minor from public.order_proceeds_allocations opa
+   join phase4c_allocation_order_ids t on t.order_id = opa.order_id),
+  1299::bigint, 'allocation preserves the immutable gross item amount'
+);
+select is(
+  (select opa.platform_fee_minor from public.order_proceeds_allocations opa
+   join phase4c_allocation_order_ids t on t.order_id = opa.order_id),
+  129::bigint, 'platform commission uses integer basis-point arithmetic'
+);
+select is(
+  (select opa.seller_net_minor from public.order_proceeds_allocations opa
+   join phase4c_allocation_order_ids t on t.order_id = opa.order_id),
+  1170::bigint, 'seller payable equals gross less the approved platform fee'
+);
+select is(
+  (select b.status from public.financial_journal_batches b
+   join phase4c_allocation_batch_ids t on t.batch_id = b.id),
+  'posted', 'proceeds allocation batch is posted only after balanced journal validation'
+);
+select ok(
+  (select sum(e.amount_minor) filter (where e.side = 'debit')
+          = sum(e.amount_minor) filter (where e.side = 'credit')
+   from public.financial_journal_entries e
+   join phase4c_allocation_batch_ids t on t.batch_id = e.batch_id),
+  'proceeds allocation journal balances seller payable and platform revenue'
+);
+select is(
+  public.allocate_order_proceeds(
+    (select order_id from phase4c_allocation_order_ids),
+    'phase4c-allocation-posting-key-0001',
+    repeat('f',64)
+  ),
+  (select batch_id from phase4c_allocation_batch_ids),
+  'same allocation idempotency key and evidence returns the original journal batch'
+);
+select throws_ok(
+  $sql$select public.allocate_order_proceeds(
+    (select order_id from phase4c_allocation_order_ids),
+    'phase4c-allocation-different-key-0001',
+    repeat('f',64)
+  )$sql$,
+  '23514', null, 'an allocated order cannot be reposted with a different idempotency key'
+);
+select throws_ok(
+  $sql$update public.financial_journal_batches set status = 'draft'
+    where id = (select batch_id from phase4c_allocation_batch_ids)$sql$,
+  '23514', null, 'posted financial batches cannot be reopened or rewritten'
+);
+select throws_ok(
+  $sql$delete from public.financial_journal_entries
+    where batch_id = (select batch_id from phase4c_allocation_batch_ids)$sql$,
+  '23514', null, 'financial journal entries cannot be deleted'
+);
+select throws_ok(
+  $sql$update public.order_proceeds_allocations set gross_minor = 1
+    where order_id = (select order_id from phase4c_allocation_order_ids)$sql$,
+  '23514', null, 'proceeds allocation evidence is immutable'
+);
+select lives_ok(
+  $sql$insert into public.seller_fee_schedules (seller_id, platform_fee_bps)
+    values ('81000000-0000-4000-8000-000000000081', 2000)$sql$,
+  'replacement fee terms remain pending until independently approved'
+);
+select throws_ok(
+  $sql$update public.seller_fee_schedules
+    set status = 'active', approved_by = seller_id, approved_at = now()
+    where seller_id = '81000000-0000-4000-8000-000000000081' and status = 'pending' and platform_fee_bps = 2000$sql$,
+  '23514', null, 'seller cannot approve their own commercial fee schedule'
+);
+select lives_ok(
+  $sql$update public.seller_fee_schedules
+    set status = 'revoked', revoked_by = '83000000-0000-4000-8000-000000000083', revoked_at = now()
+    where seller_id = '81000000-0000-4000-8000-000000000081' and status = 'active' and platform_fee_bps = 1000$sql$,
+  'independent reviewer can revoke a fee schedule without rewriting its approval evidence'
+);
+select is(
+  (select status from public.seller_fee_schedules
+   where seller_id = '81000000-0000-4000-8000-000000000081' and platform_fee_bps = 1000),
+  'revoked', 'revoked fee schedule is no longer eligible for future allocations'
 );
 
 select * from finish();
