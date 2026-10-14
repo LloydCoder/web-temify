@@ -904,7 +904,7 @@ select throws_ok(
 );
 select lives_ok(
   $sql$update public.seller_fee_schedules
-    set status = 'revoked', revoked_by = '83000000-0000-4000-8000-000000000083', revoked_at = now()
+    set status = 'revoked', revoked_by = '84000000-0000-4000-8000-000000000084', revoked_at = now()
     where seller_id = '81000000-0000-4000-8000-000000000081' and status = 'active' and platform_fee_bps = 1000$sql$,
   'independent reviewer can revoke a fee schedule without rewriting its approval evidence'
 );
