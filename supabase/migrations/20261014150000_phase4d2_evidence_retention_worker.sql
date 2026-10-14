@@ -225,17 +225,6 @@ begin
   if evidence_row.id is null then
     raise exception using errcode = 'P0002', message = 'settlement evidence was not found';
   end if;
-  if evidence_row.retention_until <= now() then
-    raise exception using errcode = '23514', message = 'expired settlement evidence cannot be linked';
-  end if;
-
-  select * into retention_job
-  from public.settlement_evidence_retention_jobs
-  where evidence_id = p_evidence_id;
-  if retention_job.status in ('processing', 'deleted', 'blocked') then
-    raise exception using errcode = '23514', message = 'settlement evidence is unavailable for linkage due to retention state';
-  end if;
-
   select * into import_row
   from public.settlement_imports
   where id = p_import_id;
@@ -269,6 +258,17 @@ begin
       return existing_link.id;
     end if;
     raise exception using errcode = '23514', message = 'settlement evidence is already linked to another import';
+  end if;
+
+  if evidence_row.retention_until <= now() then
+    raise exception using errcode = '23514', message = 'expired settlement evidence cannot be linked';
+  end if;
+
+  select * into retention_job
+  from public.settlement_evidence_retention_jobs
+  where evidence_id = p_evidence_id;
+  if retention_job.status in ('processing', 'deleted', 'blocked') then
+    raise exception using errcode = '23514', message = 'settlement evidence is unavailable for linkage due to retention state';
   end if;
 
   insert into public.settlement_evidence_links (
