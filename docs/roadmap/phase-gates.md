@@ -25,8 +25,8 @@ Exit criteria:
 - [x] Clean checkout installs reproducibly with committed pnpm-lock.yaml and CI enforces --frozen-lockfile.
 - [x] Lint, typecheck, foundation tests, and production build passed in CI on the Phase 2 baseline commit.
 - [x] No secrets or local env files are present in the tracked tree.
-- [ ] Formatting check (`pnpm format:check`), high/critical dependency audit with verified local-patch exception handling, license policy scan, and full-history secret scanning pass on the exact candidate head.
-- [ ] The patched Next.js/React dependency graph has no unresolved high/critical advisories in the CI audit.
+- [x] Formatting check (`pnpm format:check`), high/critical dependency audit with verified local-patch exception handling, license policy scan, and full-history secret scanning pass on the exact candidate head. Evidence: PR #21 head `5e505bb7bdf926c1a3f34b9b4b23217ba2bc9ebc`; Foundation CI run 38472660193 and Security/dependency governance run 38472660132 passed.
+- [x] The patched Next.js/React dependency graph has no unresolved high/critical advisories in the CI audit.
 - [ ] CI results are visible on PR; required checks are not yet enforced by repository rules (repository settings gate).
 - [x] Playwright validates semantic landmarks and horizontal overflow at 320px and 1440px; full WCAG 2.2 AA audit remains a launch gate.
 - [x] Unbuilt payment, AI, vendor, and agent capabilities are not shown as live.
@@ -78,7 +78,7 @@ Exit criteria:
 
 ## Phase 4 — Commerce and secure delivery (in progress)
 
-Scope: server-owned orders and item snapshots, provider-neutral payment attempts, verified-event inbox, idempotent financial ledger, refunds, paid-order entitlements, and private-download authorization. Provider integrations remain disabled until business eligibility, jurisdiction coverage, fees, webhook semantics, and payout settlement are verified. Chargeback and manual-adjustment ledger sources are explicitly rejected until a dedicated evidence-backed state machine and accounting policy are implemented; unsupported financial states must fail closed. The current ledger only records gross payment/refund transfer evidence and is not a complete commission, seller-payable, tax, or provider-settlement accounting model.
+Scope: server-owned orders and item snapshots, provider-neutral payment attempts, verified-event inbox, idempotent financial ledger, refunds, paid-order entitlements, private-download authorization, and the Phase 4C evidence-backed journal/allocation primitives. Provider integrations remain disabled until business eligibility, jurisdiction coverage, fees, webhook semantics, tax treatment and payout settlement are verified. Settlement, chargeback, reserve and manual-adjustment posting sources remain blocked until dedicated evidence-backed state machines and accounting policy are implemented. The journal supports independently approved seller fee schedules and proceeds allocation, but Phase 4 remains incomplete.
 
 Phase 4A — database invariants (implementation and CI verified; phase-specific audit recorded below):
 
@@ -128,6 +128,23 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - **Gate decision:** Phase 4B workflow primitives are complete for sandbox-only scope. Phase 4 and overall launch readiness remain incomplete until later operational, seller, provider, legal, security and deployment gates pass.
 
 **Phase 4B limitations:** the only adapter is a non-production sandbox; there is no live payment provider, tax calculation, zero-value/free checkout, seller payout, commission accounting, refund execution, or production download enablement. Provider selection must follow jurisdiction/payout eligibility and sandbox verification. Production launch remains blocked until these gaps and the Phase 5–8 gates are completed.
+
+### Phase 4C — immutable financial journal and proceeds allocation (complete for tested sandbox-ledger scope)
+
+- [x] Immutable financial journal batches and append-only entries enforce same-currency debit/credit balancing before posting.
+- [x] Payment/refund journal posting must reconcile to the immutable ledger transaction and verified provider event, including provider reference and payload digest; arbitrary balanced postings are rejected.
+- [x] Seller fee schedules require a database-owned admin role, independent approval/revocation actors, immutable terms, and effective/expiry controls.
+- [x] Idempotent per-order-item proceeds allocation reconciles gross, seller payable, platform commission and any tax amount already present on the order snapshot.
+- [x] Unsupported posting sources (settlement, provider fees, chargebacks, reserves, manual adjustments) fail closed; refunds after allocation remain blocked until a reversal workflow exists.
+- [x] 169 pgTAP assertions, empty-database migration reset, schema lint, typecheck, lint, format check, Playwright, production build and cleanup passed on the exact reviewed head.
+
+### Phase 4C forensic audit record
+
+- **Disposition:** PASS for immutable journal and proceeds-allocation primitives only; NOT live commerce or production financial readiness.
+- **PR/head/merge:** [PR #24](https://github.com/LloydCoder/web-temify/pull/24), reviewed head `3e5e438af23ef6dadb0e54443609507ab14b35dd`, merged commit `ed9f1d461c3f7fab2d47f5624cbbee4483c3baa7`.
+- **CI evidence:** [Foundation CI run 38515752985](https://github.com/LloydCoder/web-temify/actions/runs/38515752985) and [Security/dependency governance run 38515753014](https://github.com/LloydCoder/web-temify/actions/runs/38515753014) both passed on the exact reviewed head.
+- **Files reviewed:** `supabase/migrations/20261013035000_phase4c_financial_journal.sql`, `supabase/tests/phase4_commerce.test.sql`, Phase 4B commerce documentation, migration README, master roadmap and phase-gate register.
+- **Residual gate:** settlement, provider fee posting, payouts, chargebacks, manual adjustments, reserves and refunds after proceeds allocation remain disabled. No live provider, tax calculation, escrow, or production readiness is claimed.
 
 ## Phase 5 — Admin and operations
 

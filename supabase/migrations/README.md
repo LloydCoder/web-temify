@@ -17,11 +17,17 @@ Supabase SQL migrations are the sole authoritative schema history for Web-Temify
 - `20261013010000_phase3_catalogue_quality.sql` — product compatibility, independent rights attestations, content-addressed release evidence, and evidence-gated public visibility.
 - `20261013015000_phase3_creator_policy_privileges.sql` — fixed-search-path, security-definer ownership predicates so creator RLS policies work with restricted column grants.
 - `20261013020000_phase4_commerce.sql` — provider-neutral order/payment/refund state invariants, append-only transfer ledger, entitlements, and atomic private-download authorization grants.
+- `20261013030000_phase4b_checkout_webhooks.sql` — atomic server-side checkout and verified, idempotent sandbox event processing.
+- `20261013035000_phase4c_financial_journal.sql` — immutable evidence-bound accounting journal, source-specific posting validation, independently approved seller fee schedules and idempotent proceeds allocation.
 
 ## Important maturity boundary
 
-The Phase 4 migration is a database invariant layer, not a live commerce integration. There is no production payment provider, cryptographic webhook ingress, checkout API, payout workflow, signed-download URL issuer, or live storage policy enabled by this migration. The current ledger records gross payment/refund transfer evidence only; commission, seller payable allocation, taxes, provider settlement, chargebacks, and manual adjustments need their own evidence-backed accounting model before a live provider can be enabled. Do not represent checkout, payment, payout, or downloads as live until those later gates pass.
+The Phase 4 migrations are a database/workflow invariant layer, not a live commerce integration. The sandbox checkout and verified-event processor are non-production only. Phase 4C adds a balanced immutable journal and seller proceeds allocation under independently approved fee schedules, but does not calculate tax or execute payouts. Provider settlement, provider fees, chargebacks, reserves, manual adjustments, refunds after proceeds allocation, live provider onboarding, production storage configuration and legal/tax review remain blocked until their dedicated state machines and external evidence are complete. Do not represent checkout, payment, payout, escrow or tax quotes as live.
 
 ## Phase 4B — checkout and verified-event processing
 
 Migration 20261013030000_phase4b_checkout_webhooks.sql adds server-only atomic order creation and an idempotent webhook event processor. It depends on the Phase 2–4A schema. Checkout creation and event processing RPCs are granted only to service_role; public, anonymous, and authenticated clients cannot call them. Raw webhook bodies are never stored. The application must verify a provider's raw-body signature before setting signature_verified=true and calling the processor. The implemented adapter is non-production sandbox only; see ../commerce/phase4b-checkout-webhooks-downloads.md.
+
+## Phase 4C — immutable financial journal and proceeds allocation
+
+Migration `20261013035000_phase4c_financial_journal.sql` creates a server-only append-only journal with source-specific posting checks. Payment/refund postings must match verified event evidence and existing ledger transactions; allocation postings must reconcile to a paid order, immutable item totals, independently approved fee schedules, seller payable, platform commission and any tax amount on the order snapshot. The supported posting sources are payment, refund before allocation, and proceeds allocation. Other financial sources fail closed until a dedicated workflow is reviewed and tested. See `docs/commerce/phase4c-financial-journal.md`.
