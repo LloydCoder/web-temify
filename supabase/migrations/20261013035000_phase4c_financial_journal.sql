@@ -104,7 +104,8 @@ begin
     or new.provider_reference is distinct from old.provider_reference
     or new.currency is distinct from old.currency
     or new.evidence_sha256 is distinct from old.evidence_sha256
-    or new.created_at is distinct from old.created_at then
+    or new.created_at is distinct from old.created_at
+    or new.posted_at is distinct from old.posted_at then
     raise exception using errcode = '23514', message = 'only a draft-to-posted transition is permitted for a financial batch';
   end if;
 
@@ -182,7 +183,7 @@ create table public.seller_fee_schedules (
     (status = 'pending' and approved_by is null and approved_at is null and revoked_by is null and revoked_at is null)
     or (status = 'active' and approved_by is not null and approved_by <> seller_id and approved_at is not null and revoked_by is null and revoked_at is null)
     or (status = 'revoked' and revoked_by is not null and revoked_by <> seller_id and revoked_at is not null
-      and ((approved_by is null and approved_at is null) or (approved_by is not null and approved_by <> seller_id and approved_at is not null)))
+      and ((approved_by is null and approved_at is null) or (approved_by is not null and approved_by <> seller_id and approved_at is not null and revoked_by <> approved_by)))
   )
 );
 create unique index seller_fee_schedule_one_active_uq
@@ -236,7 +237,8 @@ begin
   elsif old.status = 'active' and new.status = 'revoked' then
     if new.approved_by is distinct from old.approved_by
       or new.approved_at is distinct from old.approved_at
-      or new.revoked_by is null or new.revoked_by = new.seller_id or new.revoked_at is null then
+      or new.revoked_by is null or new.revoked_by = new.seller_id
+      or new.revoked_by = new.approved_by or new.revoked_at is null then
       raise exception using errcode = '23514', message = 'active schedule revocation requires a separate actor and preserves original approval evidence';
     end if;
   else
