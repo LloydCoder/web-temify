@@ -1,5 +1,5 @@
 begin;
-select plan(73);
+select plan(91);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -770,6 +770,236 @@ select is(
      and rr.row_id = 'duplicate-ref-row-02'),
   'exception',
   'duplicate references remain unresolved exceptions'
+);
+
+
+
+-- Adversarial fixtures: timezone boundaries, invalid timezones, atomic rollback,
+-- unmatched refunds, fee-only rows, and explicitly unexplained adjustments.
+select throws_ok(
+  $sql$select public.import_settlement_report(
+    'sandbox', 'sandbox-account-01', 'invalid-timezone-report',
+    '2026-10-13', '2026-10-13', 'Not/A_Real_Zone', repeat('6',64), true,
+    'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+    jsonb_build_array(jsonb_build_object(
+      'rowId','invalid-timezone-row-01', 'rowType','payment',
+      'providerReference','invalid-timezone-provider-reference',
+      'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+      'grossMinor',100, 'feeMinor',0, 'netMinor',100
+    ))
+  )$sql$,
+  '22023', 'time zone "Not/A_Real_Zone" not recognized',
+  'an unknown report timezone is rejected'
+);
+
+create temporary table phase4d2_timezone_edge_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_timezone_edge_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'timezone-local-boundary-report',
+      '2026-10-13', '2026-10-13', 'America/Los_Angeles', repeat('7',64), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(jsonb_build_object(
+        'rowId','timezone-local-boundary-row-01', 'rowType','payment',
+        'providerReference','timezone-local-boundary-provider-reference',
+        'occurredAt','2026-10-14T06:30:00Z', 'currency','USD',
+        'grossMinor',100, 'feeMinor',0, 'netMinor',100
+      ))
+    )
+  $sql$,
+  'a UTC timestamp on the next day is accepted when it falls on the report date in the declared timezone'
+);
+
+select throws_ok(
+  $sql$select public.import_settlement_report(
+    'sandbox', 'sandbox-account-01', 'out-of-period-row-report',
+    '2026-10-13', '2026-10-13', 'UTC', repeat('8',64), true,
+    'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+    jsonb_build_array(jsonb_build_object(
+      'rowId','out-of-period-row-01', 'rowType','payment',
+      'providerReference','out-of-period-provider-reference',
+      'occurredAt','2026-10-14T00:00:00Z', 'currency','USD',
+      'grossMinor',100, 'feeMinor',0, 'netMinor',100
+    ))
+  )$sql$,
+  '23514', 'settlement row failed period, currency, type, amount, or exception validation',
+  'a row outside the report period is rejected'
+);
+
+select throws_ok(
+  $sql$select public.import_settlement_report(
+    'sandbox', 'sandbox-account-01', 'partial-import-rollback-report',
+    '2026-10-13', '2026-10-13', 'UTC', repeat('0',64), true,
+    'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+    jsonb_build_array(
+      jsonb_build_object(
+        'rowId','partial-rollback-valid-row', 'rowType','payment',
+        'providerReference','partial-rollback-provider-reference',
+        'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+        'grossMinor',100, 'feeMinor',0, 'netMinor',100
+      ),
+      jsonb_build_object(
+        'rowId','partial-rollback-invalid-row', 'rowType','payment',
+        'providerReference','partial-rollback-provider-reference-2',
+        'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+        'grossMinor',-1, 'feeMinor',0, 'netMinor',-1
+      )
+    )
+  )$sql$,
+  '23514', 'settlement row failed period, currency, type, amount, or exception validation',
+  'a bad later row aborts the whole report import'
+);
+select is(
+  (select count(*) from public.settlement_imports
+   where report_reference = 'partial-import-rollback-report'),
+  0::bigint,
+  'failed multi-row import leaves no report metadata behind'
+);
+select is(
+  (select count(*) from public.settlement_import_rows r
+   join public.settlement_imports i on i.id = r.import_id
+   where i.report_reference = 'partial-import-rollback-report'),
+  0::bigint,
+  'failed multi-row import leaves no normalized rows behind'
+);
+
+create temporary table phase4d2_unmatched_refund_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_unmatched_refund_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'unmatched-refund-report',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('0',64), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(jsonb_build_object(
+        'rowId','unmatched-refund-row-01', 'rowType','refund',
+        'providerReference','unmatched-refund-provider-reference',
+        'paymentReference','unmatched-refund-payment-reference',
+        'occurredAt','2026-10-13T11:00:00Z', 'currency','USD',
+        'grossMinor',-100, 'feeMinor',0, 'netMinor',-100
+      ))
+    )
+  $sql$,
+  'a refund row with valid negative minor units imports as evidence'
+);
+select lives_ok(
+  $sql$
+    select public.reconcile_settlement_import(
+      (select import_id from phase4d2_unmatched_refund_import_ids),
+      '89200000-0000-4000-8000-000000000089'
+    )
+  $sql$,
+  'an unmatched refund is classified without posting a refund journal'
+);
+select is(
+  (select rr.result_code
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_unmatched_refund_import_ids)
+     and rr.row_id = 'unmatched-refund-row-01'),
+  'missing_internal_match',
+  'unmatched refund is explicitly classified as missing an internal match'
+);
+select is(
+  (select rr.result_status
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_unmatched_refund_import_ids)
+     and rr.row_id = 'unmatched-refund-row-01'),
+  'exception',
+  'unmatched refund remains an unresolved exception'
+);
+
+create temporary table phase4d2_fee_only_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_fee_only_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'fee-only-report',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('6',64), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(jsonb_build_object(
+        'rowId','fee-only-row-01', 'rowType','fee',
+        'occurredAt','2026-10-13T12:00:00Z', 'currency','USD',
+        'grossMinor',0, 'feeMinor',25, 'netMinor',-25
+      ))
+    )
+  $sql$,
+  'a fee-only row with a negative net amount imports as evidence'
+);
+select lives_ok(
+  $sql$
+    select public.reconcile_settlement_import(
+      (select import_id from phase4d2_fee_only_import_ids),
+      '89200000-0000-4000-8000-000000000089'
+    )
+  $sql$,
+  'a fee-only row is classified without posting provider fees'
+);
+select is(
+  (select rr.result_code
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_fee_only_import_ids)
+     and rr.row_id = 'fee-only-row-01'),
+  'unsupported_row_type',
+  'fee-only row is explicitly classified as unsupported for matching'
+);
+select is(
+  (select rr.result_status
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_fee_only_import_ids)
+     and rr.row_id = 'fee-only-row-01'),
+  'exception',
+  'fee-only row remains unresolved until provider-fee posting policy is approved'
+);
+
+create temporary table phase4d2_adjustment_row_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_adjustment_row_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'unexplained-adjustment-row-report',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('8',64), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(jsonb_build_object(
+        'rowId','unexplained-adjustment-row-02', 'rowType','adjustment',
+        'occurredAt','2026-10-13T13:00:00Z', 'currency','USD',
+        'grossMinor',0, 'feeMinor',0, 'netMinor',0,
+        'exceptionCode','unexplained_adjustment'
+      ))
+    )
+  $sql$,
+  'an adjustment row with an explicit unexplained-adjustment classification imports'
+);
+select lives_ok(
+  $sql$
+    select public.reconcile_settlement_import(
+      (select import_id from phase4d2_adjustment_row_import_ids),
+      '89200000-0000-4000-8000-000000000089'
+    )
+  $sql$,
+  'an adjustment row remains exception-only and does not post a journal'
+);
+select is(
+  (select rr.result_code
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_adjustment_row_import_ids)
+     and rr.row_id = 'unexplained-adjustment-row-02'),
+  'unexplained_adjustment',
+  'an adjustment row preserves the unexplained-adjustment classification'
+);
+select is(
+  (select rr.result_status
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_adjustment_row_import_ids)
+     and rr.row_id = 'unexplained-adjustment-row-02'),
+  'exception',
+  'adjustment rows remain unresolved until an approved posting policy exists'
 );
 
 select * from finish();
