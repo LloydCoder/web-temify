@@ -101,11 +101,14 @@ afterEach(async () => {
 });
 
 describe("settlement scanner service", () => {
-  it("compares bearer tokens without length-dependent timingSafeEqual errors", () => {
+  it(
+    "compares bearer tokens without length-dependent timingSafeEqual errors",
+    () => {
     expect(constantTimeTokenEquals(token, token)).toBe(true);
     expect(constantTimeTokenEquals(token, "wrong")).toBe(false);
     expect(constantTimeTokenEquals(token, undefined)).toBe(false);
-  });
+    },
+  );
 
   it(
     "rejects unauthenticated requests before reading or scanning a payload",
