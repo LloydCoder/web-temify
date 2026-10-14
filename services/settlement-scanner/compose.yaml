@@ -1,0 +1,45 @@
+services:
+  clamav:
+    image: ${CLAMAV_IMAGE:-clamav/clamav:1.5.4-debian13-slim}
+    restart: unless-stopped
+    expose:
+      - "3310"
+    networks:
+      - scanner-backend
+
+  scanner-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      SCANNER_BEARER_TOKEN: ${SCANNER_BEARER_TOKEN:?Set a random SCANNER_BEARER_TOKEN of at least 32 characters}
+      CLAMD_HOST: clamav
+      CLAMD_PORT: "3310"
+      SCANNER_PORT: "8080"
+      MAX_SCAN_BYTES: "5242880"
+      SCANNER_TIMEOUT_MS: "20000"
+      MAX_CONCURRENT_SCANS: "4"
+    ports:
+      - "127.0.0.1:${SCANNER_API_PORT:-8088}:8080"
+    depends_on:
+      - clamav
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:8080/readyz').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 15s
+      timeout: 3s
+      retries: 5
+      start_period: 90s
+    networks:
+      - scanner-backend
+      - scanner-edge
+
+networks:
+  scanner-backend:
+    internal: true
+  scanner-edge:
+    driver: bridge
