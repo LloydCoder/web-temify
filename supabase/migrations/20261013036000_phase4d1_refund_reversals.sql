@@ -73,8 +73,8 @@ create index refund_reversal_lines_refund_idx on public.refund_reversal_lines (r
 
 alter table public.refund_reversal_requests enable row level security;
 alter table public.refund_reversal_lines enable row level security;
-revoke all on public.refund_reversal_requests from public, anon, authenticated;
-revoke all on public.refund_reversal_lines from public, anon, authenticated;
+revoke all on public.refund_reversal_requests from public, anon, authenticated, service_role;
+revoke all on public.refund_reversal_lines from public, anon, authenticated, service_role;
 grant select, insert on public.refund_reversal_requests to service_role;
 grant select, insert on public.refund_reversal_lines to service_role;
 
