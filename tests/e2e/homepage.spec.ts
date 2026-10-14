@@ -20,7 +20,9 @@ test("homepage serves the canonical V3 experience", async ({ page }) => {
   ).toBeVisible();
   await expect(experience.locator('a[href="#"]')).toHaveCount(0);
   await expect(
-    experience.getByText(/2,400\+ businesses|1,200\+ curated tools|[0-9,]+ sales/i),
+    experience.getByText(
+      /2,400\+ businesses|1,200\+ curated tools|[0-9,]+ sales/i,
+    ),
   ).toHaveCount(0);
 
   const frame = page.locator(
