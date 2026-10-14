@@ -580,7 +580,7 @@ declare
   existing_decision public.settlement_exception_decisions%rowtype;
   new_decision_id uuid;
 begin
-  if p_run_id is null or p_row_id is null
+  if p_run_id is null or p_row_id is null or p_decision is null
     or p_decision not in ('reimport_required', 'manual_review_required', 'accepted_with_evidence')
     or p_reason is null or char_length(btrim(p_reason)) not between 12 and 500
     or p_decided_by is null
