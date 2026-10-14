@@ -1,5 +1,5 @@
 begin;
-select plan(20);
+select plan(19);
 
 select has_table('public', 'settlement_evidence_links', 'evidence-to-import links are persisted separately');
 select ok(
