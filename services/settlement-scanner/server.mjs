@@ -274,7 +274,7 @@ export function createScannerServer({
   });
 
   server.requestTimeout = timeoutMs + 5_000;
-  server.headersTimeout = 10_000;
+  server.headersTimeout = Math.min(10_000, timeoutMs + 5_000);
   return server;
 }
 
