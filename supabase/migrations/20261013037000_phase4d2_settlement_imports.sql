@@ -14,7 +14,7 @@ create table public.settlement_imports (
   source_authentication_method text not null check (
     source_authentication_method in ('provider_api_signature', 'authenticated_report_download', 'sandbox_fixture')
   ),
-  source_authenticated_at timestamptz not null,
+  source_authentication_asserted_at timestamptz not null,
   currency text not null check (currency ~ '^[A-Z]{3}$'),
   imported_by uuid not null references auth.users(id) on delete restrict,
   imported_at timestamptz not null default now(),
@@ -182,7 +182,7 @@ begin
   insert into public.settlement_imports (
     provider, provider_account_reference, report_reference,
     report_period_start, report_period_end, report_timezone,
-    source_sha256, source_authentication_method, source_authenticated_at,
+    source_sha256, source_authentication_method, source_authentication_asserted_at,
     currency, imported_by
   ) values (
     p_provider, p_provider_account_reference, p_report_reference,
