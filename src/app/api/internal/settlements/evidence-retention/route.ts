@@ -89,17 +89,30 @@ export async function POST(request: Request) {
       );
     }
 
-    const { error: storageError } = await client.storage
-      .from("settlement-evidence")
-      .remove([claim.storage_path]);
+    const bucket = client.storage.from("settlement-evidence");
+    const { error: storageError } = await bucket.remove([claim.storage_path]);
+    let deletionConfirmed = !storageError;
+
+    if (storageError) {
+      // A previous run may have removed the object but failed before recording
+      // completion. Confirm absence before scheduling another destructive retry.
+      const { data: remainingObjects, error: listError } = await bucket.list(
+        claim.evidence_id,
+        { limit: 10, search: claim.source_sha256 },
+      );
+      deletionConfirmed =
+        !listError &&
+        Array.isArray(remainingObjects) &&
+        !remainingObjects.some((object) => object.name === claim.source_sha256);
+    }
 
     const { data: completionStatus, error: completionError } = await client.rpc(
       "finish_settlement_evidence_retention",
       {
         p_evidence_id: claim.evidence_id,
         p_request_id: requestId,
-        p_deleted: !storageError,
-        p_error_code: storageError ? "storage_delete_failed" : null,
+        p_deleted: deletionConfirmed,
+        p_error_code: deletionConfirmed ? null : "storage_delete_failed",
       },
     );
 
@@ -112,7 +125,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (storageError || completionStatus !== "deleted") {
+    if (!deletionConfirmed || completionStatus !== "deleted") {
       retryable += 1;
     } else {
       deleted += 1;
