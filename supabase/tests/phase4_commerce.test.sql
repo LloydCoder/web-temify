@@ -494,8 +494,8 @@ select lives_ok(
 
 -- Exercise the refund-success processor path, including ledger and state reconciliation.
 select lives_ok(
-  $sql$insert into public.refunds (order_id, payment_attempt_id, amount_minor, currency, reason, idempotency_key, requested_by)
-    select o.id, pa.id, 500, o.currency, 'Phase 4B test refund request', 'phase4b-refund-idempotency-0001', o.customer_id
+  $sql$insert into public.refunds (id, order_id, payment_attempt_id, amount_minor, currency, reason, idempotency_key, requested_by)
+    select '98000000-0000-4000-8000-000000000098', o.id, pa.id, 500, o.currency, 'Phase 4B test refund request', 'phase4b-refund-idem-0001', o.customer_id
     from public.orders o
     join phase4b_checkout_order_ids t on t.order_id = o.id
     join public.payment_attempts pa on pa.order_id = o.id$sql$,
@@ -509,7 +509,7 @@ select lives_ok(
   select 'sandbox', 'phase4b-verified-refund-event-0001', 'refund.succeeded', repeat('c',64), true,
     r.order_id, r.payment_attempt_id, r.id, r.amount_minor, r.currency, 'phase4b-provider-refund-0001'
   from public.refunds r
-  where r.id = (select we.refund_id from public.payment_webhook_events we where we.provider_event_id = 'phase4b-verified-refund-event-0001')$sql$,
+  where r.id = '98000000-0000-4000-8000-000000000098'$sql$,
   'verified refund event is stored with exact refund amount and provider reference'
 );
 select is(
@@ -519,7 +519,7 @@ select is(
   true, 'refund-success event processes'
 );
 select is(
-  (select r.status from public.refunds r where r.id = (select we.refund_id from public.payment_webhook_events we where we.provider_event_id = 'phase4b-verified-refund-event-0001')),
+  (select r.status from public.refunds r where r.id = '98000000-0000-4000-8000-000000000098'),
   'succeeded', 'refund becomes succeeded only after ledger evidence'
 );
 select is(
@@ -534,20 +534,20 @@ select is(
 select is(
   (select count(*) from public.ledger_transactions lt
    join public.refunds r on r.id = lt.refund_id
-   where r.id = (select we.refund_id from public.payment_webhook_events we where we.provider_event_id = 'phase4b-verified-refund-event-0001')),
+   where r.id = '98000000-0000-4000-8000-000000000098'),
   1::bigint, 'refund processor posts exactly one refund ledger entry'
 );
 select is(
   (select count(*) from public.financial_journal_batches b
    join public.refunds r on r.id = b.refund_id
-   where r.id = (select we.refund_id from public.payment_webhook_events we where we.provider_event_id = 'phase4b-verified-refund-event-0001')
+   where r.id = '98000000-0000-4000-8000-000000000098'
      and b.source_type = 'refund' and b.status = 'posted'),
   1::bigint, 'verified refund produces exactly one posted accounting journal batch'
 );
 select is(
   (select b.provider_reference from public.financial_journal_batches b
    join public.refunds r on r.id = b.refund_id
-   where r.id = (select we.refund_id from public.payment_webhook_events we where we.provider_event_id = 'phase4b-verified-refund-event-0001')),
+   where r.id = '98000000-0000-4000-8000-000000000098'),
   'phase4b-provider-refund-0001', 'refund journal preserves the verified provider refund reference'
 );
 select ok(
@@ -556,7 +556,7 @@ select ok(
    from public.financial_journal_entries e
    join public.financial_journal_batches b on b.id = e.batch_id
    join public.refunds r on r.id = b.refund_id
-   where r.id = (select we.refund_id from public.payment_webhook_events we where we.provider_event_id = 'phase4b-verified-refund-event-0001')),
+   where r.id = '98000000-0000-4000-8000-000000000098'),
   'verified refund accounting batch is balanced'
 );
 select is(
