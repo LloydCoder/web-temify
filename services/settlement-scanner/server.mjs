@@ -47,8 +47,14 @@ function clamdRequest({ host, port, command, bytes, timeoutMs }) {
     socket.setTimeout(timeoutMs, () => finish(new Error("clamd socket timed out")));
     socket.on("error", (error) => finish(error));
     socket.on("end", () => {
-      if (response.length > 0) finish(null, response.toString("utf8").replace(/\0.*$/s, "").trim());
-      else finish(new Error("clamd closed without a response"));
+      if (response.length > 0) {
+        finish(
+          null,
+          response.toString("utf8").replace(/\0.*$/s, "").trim(),
+        );
+      } else {
+        finish(new Error("clamd closed without a response"));
+      }
     });
     socket.on("data", (chunk) => {
       response = Buffer.concat([response, chunk]);
@@ -65,9 +71,16 @@ function clamdRequest({ host, port, command, bytes, timeoutMs }) {
       try {
         socket.write(Buffer.from(`z${command}\0`, "utf8"));
         if (bytes !== undefined) {
-          for (let offset = 0; offset < bytes.byteLength; offset += STREAM_CHUNK_BYTES) {
+          for (
+            let offset = 0;
+            offset < bytes.byteLength;
+            offset += STREAM_CHUNK_BYTES
+          ) {
             const chunk = Buffer.from(
-              bytes.subarray(offset, Math.min(offset + STREAM_CHUNK_BYTES, bytes.byteLength)),
+              bytes.subarray(
+                offset,
+                Math.min(offset + STREAM_CHUNK_BYTES, bytes.byteLength),
+              ),
             );
             const length = Buffer.allocUnsafe(4);
             length.writeUInt32BE(chunk.byteLength, 0);
@@ -111,7 +124,10 @@ export async function scanWithClamd(
   if (/\bFOUND$/i.test(scanResponse)) {
     return { verdict: "infected", scannerName: "clamav", scannerVersion };
   }
-  if (/\bERROR$/i.test(scanResponse) || /size limit exceeded/i.test(scanResponse)) {
+  if (
+    /\bERROR$/i.test(scanResponse) ||
+    /size limit exceeded/i.test(scanResponse)
+  ) {
     return { verdict: "error", scannerName: "clamav", scannerVersion };
   }
   throw new Error("clamd returned an unrecognized scan response");
@@ -174,7 +190,11 @@ export function createScannerServer({
   if (!Number.isInteger(maxBytes) || maxBytes < 1 || maxBytes > MAX_SCAN_BYTES) {
     throw new Error("MAX_SCAN_BYTES must be between 1 byte and 5 MiB");
   }
-  if (!Number.isInteger(maxConcurrentScans) || maxConcurrentScans < 1 || maxConcurrentScans > 16) {
+  if (
+    !Number.isInteger(maxConcurrentScans) ||
+    maxConcurrentScans < 1 ||
+    maxConcurrentScans > 16
+  ) {
     throw new Error("MAX_CONCURRENT_SCANS must be between 1 and 16");
   }
 
@@ -213,7 +233,10 @@ export function createScannerServer({
       return;
     }
 
-    if (request.headers["content-type"]?.split(";")[0]?.trim().toLowerCase() !== "application/octet-stream") {
+    if (
+      request.headers["content-type"]?.split(";")[0]?.trim().toLowerCase() !==
+      "application/octet-stream"
+    ) {
       request.resume();
       sendJson(response, 415, { error: "content_type_required" });
       return;
@@ -227,7 +250,11 @@ export function createScannerServer({
     }
 
     const contentLength = request.headers["content-length"];
-    if (typeof contentLength === "string" && /^\d+$/.test(contentLength) && Number(contentLength) > maxBytes) {
+    if (
+      typeof contentLength === "string" &&
+      /^\d+$/.test(contentLength) &&
+      Number(contentLength) > maxBytes
+    ) {
       request.resume();
       sendJson(response, 413, { error: "scan_payload_too_large" });
       return;
@@ -309,8 +336,18 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const clamdHost = process.env.CLAMD_HOST || "clamav";
   const clamdPort = requiredPort(process.env.CLAMD_PORT, 3310, "CLAMD_PORT");
   const port = requiredPort(process.env.SCANNER_PORT, 8080, "SCANNER_PORT");
-  const maxBytes = parseBoundedInteger(process.env.MAX_SCAN_BYTES, MAX_SCAN_BYTES, 1, MAX_SCAN_BYTES);
-  const timeoutMs = parseBoundedInteger(process.env.SCANNER_TIMEOUT_MS, DEFAULT_TIMEOUT_MS, 1000, 60_000);
+  const maxBytes = parseBoundedInteger(
+    process.env.MAX_SCAN_BYTES,
+    MAX_SCAN_BYTES,
+    1,
+    MAX_SCAN_BYTES,
+  );
+  const timeoutMs = parseBoundedInteger(
+    process.env.SCANNER_TIMEOUT_MS,
+    DEFAULT_TIMEOUT_MS,
+    1000,
+    60_000,
+  );
   const maxConcurrentScans = parseBoundedInteger(
     process.env.MAX_CONCURRENT_SCANS,
     DEFAULT_MAX_CONCURRENT_SCANS,
