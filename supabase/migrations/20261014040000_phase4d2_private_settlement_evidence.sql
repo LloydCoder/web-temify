@@ -23,7 +23,11 @@ create table public.settlement_evidence (
   original_filename text not null check (char_length(original_filename) between 1 and 180),
   uploaded_by uuid not null references auth.users(id) on delete restrict,
   uploaded_at timestamptz not null default now(),
-  retention_until timestamptz not null default (now() + interval '365 days')
+  retention_until timestamptz not null default (now() + interval '365 days'),
+  constraint settlement_evidence_path_matches_digest
+    check (storage_path = id::text || '/' || source_sha256),
+  constraint settlement_evidence_retention_after_upload
+    check (retention_until >= uploaded_at)
 );
 
 create index settlement_evidence_import_idx on public.settlement_evidence (import_id, uploaded_at desc);
