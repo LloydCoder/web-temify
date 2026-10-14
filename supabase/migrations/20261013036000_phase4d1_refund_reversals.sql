@@ -383,6 +383,28 @@ begin
       or (select coalesce(sum(e.amount_minor),0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'seller_payable' and e.side = 'debit') <> allocation_net
       or (select coalesce(sum(e.amount_minor),0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'platform_revenue' and e.side = 'debit') <> allocation_fee
       or (select coalesce(sum(e.amount_minor),0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'tax_payable' and e.side = 'debit') <> allocation_tax
+      or exists (
+        select 1
+        from public.refund_reversal_lines rl
+        join public.refund_reversal_requests rr on rr.id = rl.request_id
+        where rr.refund_id = new.refund_id and rr.status = 'approved'
+        group by rl.seller_id
+        having coalesce(sum(rl.seller_payable_reversal_minor),0) <>
+          coalesce((
+            select sum(e.amount_minor) from public.financial_journal_entries e
+            where e.batch_id = new.id and e.account = 'seller_payable'
+              and e.side = 'debit' and e.seller_id = rl.seller_id
+          ),0)
+      )
+      or exists (
+        select 1 from public.financial_journal_entries e
+        where e.batch_id = new.id and e.account = 'seller_payable' and e.side = 'debit'
+          and not exists (
+            select 1 from public.refund_reversal_lines rl
+            join public.refund_reversal_requests rr on rr.id = rl.request_id
+            where rr.refund_id = new.refund_id and rr.status = 'approved' and rl.seller_id = e.seller_id
+          )
+      )
       or (select coalesce(sum(e.amount_minor),0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'unallocated_order_liability' and e.side = 'credit') <> source_amount
       or exists (
         select 1 from public.financial_journal_entries e
@@ -407,6 +429,26 @@ begin
       or allocation_gross <> source_subtotal or allocation_fee + allocation_net <> allocation_gross
       or (select count(*) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'unallocated_order_liability' and e.side = 'debit' and e.amount_minor = source_amount) <> 1
       or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'seller_payable' and e.side = 'credit') <> allocation_net
+      or exists (
+        select 1
+        from public.order_proceeds_allocations opa
+        where opa.journal_batch_id = new.id
+        group by opa.seller_id
+        having coalesce(sum(opa.seller_net_minor),0) <>
+          coalesce((
+            select sum(e.amount_minor) from public.financial_journal_entries e
+            where e.batch_id = new.id and e.account = 'seller_payable'
+              and e.side = 'credit' and e.seller_id = opa.seller_id
+          ),0)
+      )
+      or exists (
+        select 1 from public.financial_journal_entries e
+        where e.batch_id = new.id and e.account = 'seller_payable' and e.side = 'credit'
+          and not exists (
+            select 1 from public.order_proceeds_allocations opa
+            where opa.journal_batch_id = new.id and opa.seller_id = e.seller_id
+          )
+      )
       or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'platform_revenue' and e.side = 'credit') <> allocation_fee
       or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'tax_payable' and e.side = 'credit') <> source_tax
       or exists (select 1 from public.financial_journal_entries e where e.batch_id = new.id and not ((e.account = 'unallocated_order_liability' and e.side = 'debit') or (e.account in ('seller_payable','platform_revenue','tax_payable') and e.side = 'credit'))) then
