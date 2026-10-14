@@ -1,5 +1,5 @@
 begin;
-select plan(1);
+select plan(2);
 
 select ok(
   exists (
@@ -16,6 +16,16 @@ select ok(
       and pg_get_indexdef(i.indexrelid) like '%(journal_batch_id)%'
   ),
   'a unique partial index prevents one journal batch from matching across multiple reconciliation runs'
+);
+
+select ok(
+  position('settlement-journal-match:' in pg_get_functiondef(
+    'public.reconcile_settlement_import(uuid,uuid)'::regprocedure
+  )) > 0
+  and position('duplicate_reference' in pg_get_functiondef(
+    'public.reconcile_settlement_import(uuid,uuid)'::regprocedure
+  )) > 0,
+  'reconciliation serializes journal identity and classifies replay as a duplicate exception'
 );
 
 select * from finish();
