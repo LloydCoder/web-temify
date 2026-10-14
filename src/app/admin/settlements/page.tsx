@@ -3,9 +3,7 @@ import type { UrlObject } from "url";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { getAdminContext } from "@/server/admin/authorization";
-import {
-  SettlementExceptionDecisionForm,
-} from "./SettlementExceptionDecisionForm";
+import { SettlementExceptionDecisionForm } from "./SettlementExceptionDecisionForm";
 
 export const dynamic = "force-dynamic";
 
