@@ -249,6 +249,7 @@ begin
   if evidence_row.id is null then
     raise exception using errcode = 'P0002', message = 'settlement evidence was not found';
   end if;
+
   select * into import_row
   from public.settlement_imports
   where id = p_import_id;
@@ -267,6 +268,23 @@ begin
 
   if evidence_row.source_sha256 <> import_row.source_sha256 then
     raise exception using errcode = '23514', message = 'settlement evidence digest does not match settlement import source digest';
+  end if;
+
+  perform pg_advisory_xact_lock(hashtext('settlement-evidence-scan:' || p_evidence_id::text));
+
+  if not exists (
+    select 1
+    from (
+      select scan.verdict, scan.source_sha256
+      from public.settlement_evidence_scan_results scan
+      where scan.evidence_id = p_evidence_id
+      order by scan.scanned_at desc, scan.id desc
+      limit 1
+    ) latest_scan
+    where latest_scan.verdict = 'clean'
+      and latest_scan.source_sha256 = evidence_row.source_sha256
+  ) then
+    raise exception using errcode = '23514', message = 'settlement evidence requires a current clean malware scan';
   end if;
 
   perform pg_advisory_xact_lock(hashtext('settlement-evidence-link:' || p_evidence_id::text));
