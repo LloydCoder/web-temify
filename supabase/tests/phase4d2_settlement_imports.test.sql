@@ -1,5 +1,5 @@
 begin;
-select plan(55);
+select plan(57);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -510,6 +510,26 @@ select is(
      and q.row_id = 'payment-row-01'),
   'manual_review_required',
   'admin queue shows triage separately without resolving the accounting exception'
+);
+select is(
+  (select q.gross_minor
+   from public.list_settlement_exception_queue(
+     '89000000-0000-4000-8000-000000000089', 51, null, null, null
+   ) q
+   where q.run_id = (select run_id from phase4d2_reconciliation_ids)
+     and q.row_id = 'payment-row-01'),
+  '10000',
+  'queue serializes gross minor units as exact decimal text'
+);
+select is(
+  (select q.net_minor
+   from public.list_settlement_exception_queue(
+     '89000000-0000-4000-8000-000000000089', 51, null, null, null
+   ) q
+   where q.run_id = (select run_id from phase4d2_reconciliation_ids)
+     and q.row_id = 'payment-row-01'),
+  '9700',
+  'queue serializes net minor units as exact decimal text'
 );
 select throws_ok(
   $sql$select count(*) from public.list_settlement_exception_queue(
