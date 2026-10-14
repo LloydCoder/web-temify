@@ -2,7 +2,7 @@
 
 ## Status
 
-**In progress — the import/reconciliation foundation is merged in PR #30, and PR #31 adds tested cross-currency mismatch classification.** Settlement/fee journal posting, cryptographic trusted-source ingress, a bounded operator exception queue, broader adversarial coverage, and external provider evidence remain incomplete. Do not enable live-provider processing or claim Phase 4D2 complete.
+**In progress — the import/reconciliation foundation is merged in PR #30, and PR #31 adds tested cross-currency mismatch classification.** Settlement/fee journal posting, cryptographic trusted-source ingress, queue decision actions and escalation/expiry policy, broader adversarial coverage, and external provider evidence remain incomplete. A read-only queue is being implemented separately and is not yet merged. Do not enable live-provider processing or claim Phase 4D2 complete.
 
 ## Research basis
 
@@ -20,6 +20,7 @@ This is design research, not evidence that Web-Temify has selected, onboarded, o
 - Rows have stable identifiers, an explicit row type, optional provider/internal payment references, an offset-aware timestamp, currency, gross/fee/net minor-unit values, and a bounded exception taxonomy.
 - Validation rejects unknown keys, duplicate row IDs within a report, currency mismatch, rows outside the declared period, inverted periods, invalid source digests, positive-gross refunds, non-positive-gross payments, and positive-net fee rows.
 - Contract tests cover accepted report payloads and the listed schema-validation boundaries. They do not establish complete reconciliation correctness; the missing reconciliation adversarial cases are tracked explicitly below.
+- A draft follow-up adds a server-rendered, read-only admin exception queue backed by a bounded service-only RPC. The RPC rechecks the database-owned admin role, limits page size and cursor shape, exposes normalized row/report fields and immutable triage metadata, and cannot resolve exceptions or post journals. The queue remains subject to exact-head CI and forensic review.
 
 ## Critical trust boundary
 
@@ -33,7 +34,7 @@ Contract validation does not prove that netMinor = grossMinor - feeMinor: settle
 2. Extend the initial payment/refund match snapshot with complete verified-journal linkage and adversarial fixtures for matched payments/refunds, duplicate references, cross-currency and amount mismatches, timezone edges, fee-only rows, and unexplained adjustments. Current reconciliation records missing matches, duplicate references, amount mismatches, currency mismatches and unsupported row types; matched-payment and cross-currency fixtures now exist, but refund matches and broader adversarial cases remain untested. A separate triage decision can require reimport, request manual review, or record an evidence digest for independent review; it does not resolve the accounting exception, change the reconciliation result, or authorize journal posting. Never auto-resolve an exception.
 3. Implement source-specific posting guards for provider settlement and provider fees. Require balanced same-currency entries, evidence linkage, row-level reconciliation, and idempotency; keep money movement and payout execution disabled.
 4. Extend pgTAP and application tests for concurrent duplicate imports/reconciliation, partial-import rollback, matched and missing/mismatched references, period/timezone edges, fee-only rows, refunds, unsupported adjustments, journal imbalance, privilege denial, and retry behavior. Current tests cover import replay, missing-match behavior, an exact matched-payment case, and cross-currency mismatch classification. Duplicate posted references, refund matching, amount mismatch, fee-only rows, unexplained adjustments, concurrency, partial rollback, and source-authentication ingress still require dedicated adversarial tests.
-5. Build a bounded admin exception queue/UI over the immutable triage records, evidence access controls, decision history, escalation/expiry policy, and any required second approval. The current database slice persists triage decisions but provides no admin queue UI and does not resolve/post exceptions.
+5. Complete the bounded admin exception workflow: the draft queue provides read-only visibility over immutable triage records, but authenticated triage decision actions, evidence access controls, escalation/expiry policy, second approval where needed, and audit evidence still require implementation and review. The queue does not resolve/post exceptions.
 6. Run empty-database migration reset, schema lint, full database/RLS tests, foundation/domain tests, typecheck, lint, format, Playwright, production build, security/dependency/license/secret scans, and an exact-head forensic review.
 7. Record provider selection, supported jurisdictions/currencies, fees, dispute/refund behavior, settlement report semantics, and onboarding evidence separately. Until those are verified, all live-provider processing remains disabled.
 
