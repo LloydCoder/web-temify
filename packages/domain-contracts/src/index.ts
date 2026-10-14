@@ -92,7 +92,6 @@ export type ProductRightsAttestationInput = z.infer<
   typeof ProductRightsAttestationInputSchema
 >;
 
-
 // Phase 4D2: provider-neutral settlement import contract.
 // This validates normalized data only; it does not authenticate source files,
 // reconcile transactions, or authorize journal posting.
