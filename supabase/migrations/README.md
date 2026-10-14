@@ -21,6 +21,8 @@ Supabase SQL migrations are the sole authoritative schema history for Web-Temify
 - `20261013035000_phase4c_financial_journal.sql` — immutable evidence-bound accounting journal, source-specific posting validation, independently approved seller fee schedules and idempotent proceeds allocation.
 - `20261013036000_phase4d1_refund_reversals.sql` — item-level refund reversal requests/lines, independent approval/rejection, verified-event-bound reversal journal, cumulative commission/refund guards, and per-seller journal attribution checks.
 
+- `docs/commerce/phase4d2-settlement-reconciliation.md` — versioned provider-neutral settlement import contract and remaining acceptance gates only; no settlement tables, reconciliation processor, or provider integration are implemented by this document.
+
 ## Important maturity boundary
 
 The Phase 4 migrations are a database/workflow invariant layer, not a live commerce integration. The sandbox checkout and verified-event processor are non-production only. Phase 4C adds a balanced immutable journal and seller proceeds allocation under independently approved fee schedules, but does not calculate tax or execute payouts. Phase 4D1 now implements reversal-before-refund posting after proceeds allocation for sandbox/test scope only. Provider settlement, provider fees, chargebacks, reserves, manual adjustments, live provider onboarding, production storage configuration and legal/tax review remain blocked until their dedicated state machines and external evidence are complete. Do not represent checkout, payment, payout, escrow or tax quotes as live.
