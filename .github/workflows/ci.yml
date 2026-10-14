@@ -38,8 +38,8 @@ jobs:
         run: pnpm typecheck
       - name: Lint
         run: pnpm lint
-      - name: Temporary formatting diagnosis
-        run: pnpm exec prettier packages/domain-contracts/src/index.test.ts
+      - name: Formatting check
+        run: pnpm format:check
       - name: Install Supabase CLI
         id: supabase-cli
         uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359 # v3
