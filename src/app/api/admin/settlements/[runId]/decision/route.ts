@@ -34,7 +34,7 @@ const decisionSchema = z
       context.addIssue({
         code: "custom",
         path: ["evidenceSha256"],
-        message: "Evidence digest is only accepted with evidence-backed triage.",
+        message: "Evidence digest is only allowed for evidence-backed triage.",
       });
     }
   });
