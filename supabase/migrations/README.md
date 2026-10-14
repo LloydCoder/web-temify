@@ -20,7 +20,7 @@ Supabase SQL migrations are the sole authoritative schema history for Web-Temify
 - `20261013030000_phase4b_checkout_webhooks.sql` — atomic server-side checkout and verified, idempotent sandbox event processing.
 - `20261013035000_phase4c_financial_journal.sql` — immutable evidence-bound accounting journal, source-specific posting validation, independently approved seller fee schedules and idempotent proceeds allocation.
 - `20261013036000_phase4d1_refund_reversals.sql` — item-level refund reversal requests/lines, independent approval/rejection, verified-event-bound reversal journal, cumulative commission/refund guards, and per-seller journal attribution checks.
-- `20261013037000_phase4d2_settlement_imports.sql` — immutable settlement report metadata and normalized rows, timezone-aware period validation, operations-actor authorization, service-only idempotent import RPC, replay/conflicting-digest guards, and an initial immutable reconciliation snapshot against already-posted payment/refund journal batches.
+- `20261013037000_phase4d2_settlement_imports.sql` — immutable settlement report metadata and normalized rows, timezone-aware period validation, operations-actor authorization, service-only idempotent import RPC, replay/conflicting-digest guards, an immutable reconciliation snapshot against already-posted payment/refund journal batches, and independent-admin immutable exception triage decisions that do not resolve or post financial exceptions.
 
 - `docs/commerce/phase4d2-settlement-reconciliation.md` — versioned provider-neutral settlement import contract and remaining acceptance gates only; no settlement tables, reconciliation processor, or provider integration are implemented by this document.
 
