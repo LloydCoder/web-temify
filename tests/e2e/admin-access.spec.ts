@@ -67,7 +67,7 @@ test("admin audit and rights-review pages deny unauthenticated visitors", async 
   }
 });
 
-test("admin settlement triage mutation denies unauthenticated visitors", async ({
+test("settlement triage mutation denies unauthenticated visitors", async ({
   page,
 }) => {
   const response = await page.request.post(
