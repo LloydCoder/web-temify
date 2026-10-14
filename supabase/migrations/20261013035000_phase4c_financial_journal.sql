@@ -21,9 +21,9 @@ create table public.financial_journal_batches (
   created_at timestamptz not null default now(),
   posted_at timestamptz,
   constraint financial_batch_source_identity check (
-    (source_type = 'payment' and order_id is not null and payment_attempt_id is not null and refund_id is null)
-    or (source_type = 'refund' and order_id is not null and payment_attempt_id is not null and refund_id is not null)
-    or (source_type = 'proceeds_allocation' and order_id is not null and payment_attempt_id is null and refund_id is null)
+    (source_type = 'payment' and order_id is not null and payment_attempt_id is not null and refund_id is null and provider is not null and provider_reference is not null)
+    or (source_type = 'refund' and order_id is not null and payment_attempt_id is not null and refund_id is not null and provider is not null and provider_reference is not null)
+    or (source_type = 'proceeds_allocation' and order_id is not null and payment_attempt_id is null and refund_id is null and provider is null and provider_reference is null)
     or (source_type in ('provider_settlement', 'provider_fee') and provider is not null and provider_reference is not null)
     or (source_type in ('chargeback', 'manual_adjustment', 'reserve_hold', 'reserve_release'))
   ),
