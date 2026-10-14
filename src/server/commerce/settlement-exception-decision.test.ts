@@ -11,7 +11,7 @@ const baseInput = {
 };
 
 describe("SettlementExceptionDecisionSchema", () => {
-  it("accepts a bounded manual-review decision without an evidence digest", () => {
+  it("accepts manual review without an evidence digest", () => {
     expect(SettlementExceptionDecisionSchema.safeParse(baseInput).success).toBe(
       true,
     );
@@ -33,7 +33,7 @@ describe("SettlementExceptionDecisionSchema", () => {
     ).toBe(false);
   });
 
-  it("rejects evidence digests on decisions that do not accept evidence", () => {
+  it("rejects evidence digests for other decisions", () => {
     expect(
       SettlementExceptionDecisionSchema.safeParse({
         ...baseInput,
@@ -42,7 +42,7 @@ describe("SettlementExceptionDecisionSchema", () => {
     ).toBe(false);
   });
 
-  it("rejects extra properties, empty row identifiers, and short reasons", () => {
+  it("rejects extra properties, empty IDs, and short reasons", () => {
     expect(
       SettlementExceptionDecisionSchema.safeParse({
         ...baseInput,
