@@ -195,6 +195,29 @@ describe("Phase 4D2 settlement import contract", () => {
     expect(SettlementImportSchema.safeParse(positiveFee).success).toBe(false);
   });
 
+  it("uses the declared IANA timezone for report-period boundaries", async () => {
+    const { SettlementImportSchema } = await import("./index");
+    const localDateOutsidePeriod = {
+      ...validReport,
+      reportTimezone: "Europe/Berlin",
+      rows: [
+        {
+          ...validReport.rows[0],
+          occurredAt: "2026-10-13T23:30:00Z",
+        },
+      ],
+    };
+    expect(
+      SettlementImportSchema.safeParse(localDateOutsidePeriod).success,
+    ).toBe(false);
+    expect(
+      SettlementImportSchema.safeParse({
+        ...validReport,
+        reportTimezone: "Not/A_Timezone",
+      }).success,
+    ).toBe(false);
+  });
+
   it("rejects inverted report periods and non-SHA-256 source digests", async () => {
     const { SettlementImportSchema } = await import("./index");
     expect(
