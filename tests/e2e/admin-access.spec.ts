@@ -48,6 +48,7 @@ test("admin audit and rights-review pages deny unauthenticated visitors", async 
     "/admin/audit",
     "/admin/reviews",
     "/admin/settlements",
+    "/admin/support",
   ]) {
     await page.goto(route);
     await expect(page.getByText("404 — Not found")).toBeVisible();
@@ -56,7 +57,7 @@ test("admin audit and rights-review pages deny unauthenticated visitors", async 
     ).toBeVisible();
     await expect(
       page.getByRole("heading", {
-        name: /audit explorer|product rights review|settlement exceptions/i,
+        name: /audit explorer|product rights review|settlement exceptions|support case queue/i,
       }),
     ).toHaveCount(0);
     await expect(
@@ -118,4 +119,30 @@ test("settlement evidence linking denies unauthenticated visitors", async ({
   );
   expect(response.status()).toBe(404);
   await expect(response.json()).resolves.toEqual({ error: "not_found" });
+});
+
+test("admin support-case mutation denies unauthenticated visitors", async ({
+  page,
+}) => {
+  const response = await page.request.post(
+    "/api/admin/support-cases/89000000-0000-4000-8000-000000000089/transition",
+    {
+      data: {
+        action: "triage",
+        note: "Attempted unauthenticated support-case transition.",
+      },
+    },
+  );
+  expect(response.status()).toBe(404);
+  await expect(response.json()).resolves.toEqual({ error: "not_found" });
+});
+
+test("customer support-case history requires authentication", async ({
+  page,
+}) => {
+  const response = await page.request.get("/api/support-cases");
+  expect(response.status()).toBe(401);
+  await expect(response.json()).resolves.toEqual({
+    error: "authentication_required",
+  });
 });

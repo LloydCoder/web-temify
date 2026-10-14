@@ -266,6 +266,27 @@ Least-privilege admin controls, moderation queues, support, audit review, financ
 - [ ] Incident alerts, escalation ownership, safe break-glass access, backup/restore exercises and incident response procedures are operationally tested.
 - [ ] Support communications and data access are tenant-scoped, logged, retention-aware and protected against disclosure of secrets or payment data.
 
+### Phase 5D — Audited support-case workflow (complete for tested workflow scope; operations remain incomplete)
+
+- [x] Migration and pgTAP tests pass from an empty database on the exact reviewed head.
+- [x] Authenticated customer intake and ownership-scoped case history are verified; customer history is filtered by the validated authenticated user ID.
+- [x] Admin queue and state transitions enforce server-side role checks, same-origin requests, bounded bodies, explicit transitions, admin-only assignment, append-only events, and transactional audit evidence.
+- [x] E2E verifies unauthenticated admin access denial and customer history authentication.
+- [x] Phase-specific forensic audit records exact-head CI evidence and remaining operational limits.
+
+#### Phase 5D forensic audit record
+
+- **Disposition:** PASS for the audited support-case workflow and CI scope only. Phase 5 overall remains incomplete; this does not certify a staffed support operation or production readiness.
+- **PR:** [#48 — Feat/phase5 support case workflow](https://github.com/LloydCoder/web-temify/pull/48).
+- **Reviewed implementation head before this audit-record commit:** `989969d18d95eb54d2d003800ecb33619b804012`.
+- **Exact-head CI evidence:** [Foundation CI run 38574294521](https://github.com/LloydCoder/web-temify/actions/runs/38574294521) and [Security and dependency governance run 38574294451](https://github.com/LloydCoder/web-temify/actions/runs/38574294451) both succeeded on that head. Foundation checks include frozen install, validation/tests, TypeScript, lint, format, empty-database migration reset, schema lint, pgTAP/RLS, Playwright E2E, production build, and Supabase cleanup; security checks include high/critical dependency audit, production license policy, and full-history secret scanning.
+- **Files reviewed:** `src/app/admin/support/page.tsx`; `src/app/admin/support/SupportCaseActionForm.tsx`; `src/app/api/admin/support-cases/[caseId]/transition/route.ts`; `src/app/api/support-cases/route.ts`; `src/app/support/page.tsx`; `src/app/support/SupportCaseCreateForm.tsx`; `supabase/migrations/20261014110000_phase5_support_cases.sql`; `supabase/tests/phase5d_support_cases.test.sql`; `tests/e2e/admin-access.spec.ts`; `playwright.config.ts`; and admin/support/migration/test documentation.
+- **Authorization and data controls:** customer routes validate the Supabase principal with `auth.getUser()`; history queries are constrained to that user ID; privileged case creation and transitions use narrow service-role-only database RPCs; the transition RPC independently checks the database-owned admin role, locks the case row, enforces legal state transitions, and verifies admin assignment. Request bodies are bounded and schema-validated; mutations require same-origin requests; responses avoid raw database errors. Direct client table writes are revoked, RLS is enabled, case events reject update/delete, and creation/state changes append audit evidence in the same transaction.
+- **Concurrency/idempotency:** creation serializes requester/idempotency-key use with a transaction-scoped advisory lock, returns the original case for identical replay, and rejects conflicting reuse. State transitions lock the target case row before evaluating status.
+- **Test evidence:** the 40-assertion pgTAP suite covers RLS/grants, RPC permissions, create/replay/conflicting-key behavior, role enforcement, assignment, state transitions, terminal timestamps, append-only events, and audit-event counts. Playwright covers unauthenticated admin routes/mutations and unauthenticated customer history.
+- **Residual limits:** the workflow does not deliver outbound support notifications, automated SLA/escalation jobs, or staff an on-call rota. It does not implement the broader takedown/appeal workflow, financial reconciliation, disputes/chargebacks, backup restoration, incident-response automation, alert delivery, or break-glass controls. Retention/deletion policy and a staffed support communications process still require explicit operational/legal decisions. The service-role customer-history query relies on server-side ownership filtering and therefore warrants continued regression coverage; direct database access remains denied. No production provider, legal/tax, penetration-test, full WCAG 2.2 AA, or deployment-readiness claim is made.
+- **Gate decision:** Phase 5D passes for its implemented workflow scope after the exact-head green CI runs above. Phase 5 overall remains in progress and cannot advance to Phase 6 until the remaining Phase 4 and Phase 5 gates are satisfied.
+
 ## Phase 6 — Seller system and product factory
 
 **Status: NOT COMPLETE.** This phase builds the trusted supply side and a repeatable, evidence-backed product release pipeline. The dedicated source monorepo is [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products); its inventory is planning input, not evidence that products have been built or released. Keep product source code, manifests, build/test contracts and immutable release evidence in that repository; keep commercial listing state and marketplace transactions in this repository.
