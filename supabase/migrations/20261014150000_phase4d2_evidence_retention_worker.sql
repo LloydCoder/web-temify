@@ -167,6 +167,9 @@ begin
     end if;
     raise exception using errcode = '55000', message = 'settlement evidence retention job is not processing';
   end if;
+  if job.last_request_id <> p_request_id then
+    raise exception using errcode = '55000', message = 'settlement evidence retention claim is stale';
+  end if;
 
   if p_deleted then
     next_status := 'deleted';
