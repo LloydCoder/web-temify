@@ -66,3 +66,21 @@ test("admin audit and rights-review pages deny unauthenticated visitors", async 
     ).toHaveCount(0);
   }
 });
+
+test("admin settlement triage mutation denies unauthenticated visitors", async ({
+  page,
+}) => {
+  const response = await page.request.post(
+    "/api/admin/settlements/89000000-0000-4000-8000-000000000089/decision",
+    {
+      data: {
+        rowId: "payment-row-01",
+        decision: "manual_review_required",
+        reason: "Attempted unauthenticated settlement triage.",
+        evidenceSha256: null,
+      },
+    },
+  );
+  expect(response.status()).toBe(404);
+  await expect(response.json()).resolves.toEqual({ error: "not_found" });
+});
