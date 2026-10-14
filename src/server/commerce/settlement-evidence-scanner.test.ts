@@ -20,7 +20,13 @@ function scannerResponse(
   );
 }
 
-function configuredEnv(overrides: NodeJS.ProcessEnv = {}): NodeJS.ProcessEnv {
+type TestEnvironment = {
+  NODE_ENV?: string;
+  CLAMAV_SCANNER_URL?: string;
+  CLAMAV_SCANNER_TOKEN?: string;
+};
+
+function configuredEnv(overrides: Partial<TestEnvironment> = {}): TestEnvironment {
   return {
     NODE_ENV: "test",
     CLAMAV_SCANNER_URL: "http://127.0.0.1:8088/v1/scan",
