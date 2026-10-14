@@ -1,5 +1,5 @@
 begin;
-select plan(117);
+select plan(118);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -1268,6 +1268,22 @@ select is(
      and rr.row_id = 'unexplained-adjustment-row-02'),
   'exception',
   'adjustment rows remain unresolved until an approved posting policy exists'
+);
+
+select throws_ok(
+  $sql$select public.import_settlement_report(
+    'paystack', 'provider-account-not-onboarded', 'external-provider-report-blocked',
+    '2026-10-13', '2026-10-13', 'UTC', repeat('a',64), true,
+    'provider_api_signature', 'USD', '89000000-0000-4000-8000-000000000089',
+    jsonb_build_array(jsonb_build_object(
+      'rowId','provider-payment-blocked', 'rowType','payment',
+      'providerReference','provider-payment-blocked', 'paymentReference','internal-payment-blocked',
+      'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+      'grossMinor',10000, 'feeMinor',300, 'netMinor',9700
+    ))
+  )$sql$,
+  '23514', null,
+  'a claimed provider authentication assertion cannot bypass the disabled ingress gate'
 );
 
 select * from finish();
