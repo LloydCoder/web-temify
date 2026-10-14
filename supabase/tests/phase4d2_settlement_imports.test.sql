@@ -1,5 +1,5 @@
 begin;
-select plan(48);
+select plan(55);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -473,6 +473,64 @@ select throws_ok(
     where id = (select decision_id from phase4d2_decision_ids)$sql$,
   '55000', 'settlement reconciliation evidence is immutable',
   'exception decisions cannot be mutated after creation'
+);
+
+select ok(
+  has_function_privilege(
+    'service_role',
+    'public.list_settlement_exception_queue(uuid,integer,timestamp with time zone,uuid,text)',
+    'EXECUTE'
+  ),
+  'trusted service role can read the bounded settlement exception queue'
+);
+select ok(
+  not has_function_privilege(
+    'authenticated',
+    'public.list_settlement_exception_queue(uuid,integer,timestamp with time zone,uuid,text)',
+    'EXECUTE'
+  ),
+  'authenticated clients cannot read the settlement exception queue RPC'
+);
+select is(
+  (select q.result_code
+   from public.list_settlement_exception_queue(
+     '89000000-0000-4000-8000-000000000089', 51, null, null, null
+   ) q
+   where q.run_id = (select run_id from phase4d2_reconciliation_ids)
+     and q.row_id = 'payment-row-01'),
+  'missing_internal_match',
+  'admin queue exposes the immutable exception classification'
+);
+select is(
+  (select q.triage_decision
+   from public.list_settlement_exception_queue(
+     '89000000-0000-4000-8000-000000000089', 51, null, null, null
+   ) q
+   where q.run_id = (select run_id from phase4d2_reconciliation_ids)
+     and q.row_id = 'payment-row-01'),
+  'manual_review_required',
+  'admin queue shows triage separately without resolving the accounting exception'
+);
+select throws_ok(
+  $sql$select count(*) from public.list_settlement_exception_queue(
+    '81000000-0000-4000-8000-000000000081', 51, null, null, null
+  )$sql$,
+  '42501', 'settlement exception queue requires an admin',
+  'non-admin identity cannot read settlement exception details'
+);
+select throws_ok(
+  $sql$select count(*) from public.list_settlement_exception_queue(
+    '89000000-0000-4000-8000-000000000089', 52, null, null, null
+  )$sql$,
+  '23514', 'settlement exception queue limit is outside the allowed range',
+  'queue refuses an unbounded or oversized page request'
+);
+select throws_ok(
+  $sql$select count(*) from public.list_settlement_exception_queue(
+    '89000000-0000-4000-8000-000000000089', 51, now(), null, null
+  )$sql$,
+  '23514', 'settlement exception cursor is incomplete',
+  'queue rejects partially supplied cursor tuples'
 );
 
 select * from finish();
