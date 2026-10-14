@@ -37,6 +37,14 @@ The restricted `/admin/audit` page provides cursor-based pagination and exact-ma
 - Supporting indexes cover exact action and entity-type filters. RLS and grants remain unchanged: anonymous and ordinary authenticated clients cannot read audit events, and history remains append-only.
 - Pagination and filters are operational visibility only; this page cannot alter or delete events, execute refunds, publish products, or trigger provider actions.
 
+## Support case workflow (Phase 5D, in progress)
+
+The authenticated `/support` page submits cases through a bounded same-origin API. Customer case history is filtered by the authenticated user ID on the server; ordinary client roles have no direct table grants. Case creation uses a database RPC with per-requester idempotency locking and rejects reuse of a key with conflicting content.
+
+The restricted `/admin/support` queue requires the shared audited admin context. Admin actions use a narrow database RPC that rechecks the database-owned admin role, locks the case row, enforces explicit state transitions, and atomically appends both a case event and an audit event. Assignment is limited to administrators. Case event history is append-only; terminal timestamps are set and cleared consistently on resolve, close, and reopen.
+
+This slice does not send customer email, run scheduled SLA/escalation jobs, staff an on-call rota, or replace a formal incident-response system. These are still release gates. The workflow remains in progress until its migration, pgTAP, E2E, and exact-head CI evidence pass.
+
 ## Known limits
 
-This is not a complete operations centre. Product-publication moderation beyond rights review, support cases, financial reconciliation, dispute/chargeback handling, backup restoration, incident-response automation, alert delivery, and break-glass procedures remain separate gates. A dashboard count is operational visibility, not proof of settlement or production readiness.
+This is not a complete operations centre. Product-publication moderation beyond rights review, financial reconciliation, dispute/chargeback handling, backup restoration, incident-response automation, alert delivery, and break-glass procedures remain separate gates. A dashboard count is operational visibility, not proof of settlement or production readiness.
