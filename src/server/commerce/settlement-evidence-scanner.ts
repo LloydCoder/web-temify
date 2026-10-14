@@ -9,10 +9,11 @@ export type SettlementEvidenceScanResult =
       sha256: string;
     };
 
-type ScannerEnvironment = Pick<
-  NodeJS.ProcessEnv,
-  "CLAMAV_SCANNER_URL" | "CLAMAV_SCANNER_TOKEN" | "NODE_ENV"
->;
+type ScannerEnvironment = {
+  CLAMAV_SCANNER_URL?: string;
+  CLAMAV_SCANNER_TOKEN?: string;
+  NODE_ENV?: string;
+};
 
 const DIGEST_PATTERN = /^[a-f0-9]{64}$/;
 const MAX_SCANNER_VERSION_LENGTH = 80;
