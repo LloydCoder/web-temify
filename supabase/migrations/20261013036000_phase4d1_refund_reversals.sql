@@ -153,6 +153,7 @@ declare
   previous_net numeric;
   previous_tax numeric;
   order_tax bigint;
+  fee_bps integer;
 begin
   if tg_op <> 'INSERT' then
     raise exception using errcode = '23514', message = 'refund reversal lines are append-only';
