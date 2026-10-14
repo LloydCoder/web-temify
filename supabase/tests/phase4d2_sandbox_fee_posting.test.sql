@@ -84,6 +84,11 @@ select lives_ok(
   'private evidence metadata can be recorded by an admin uploader'
 );
 
+select public.record_settlement_evidence_scan_result(
+  '8b000000-0000-4000-8000-00000000008b',
+  repeat('a',64), 'clean', 'test-scanner', '1.0.0', gen_random_uuid()
+);
+
 select lives_ok(
   $sql$
     select public.link_settlement_evidence(
@@ -275,6 +280,11 @@ select lives_ok(
     )
   $sql$,
   'evidence can be uploaded for the previously blocked fee report'
+);
+
+select public.record_settlement_evidence_scan_result(
+  '8c000000-0000-4000-8000-00000000008c',
+  repeat('b',64), 'clean', 'test-scanner', '1.0.0', gen_random_uuid()
 );
 select lives_ok(
   $sql$
