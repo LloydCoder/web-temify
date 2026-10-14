@@ -1,5 +1,5 @@
 begin;
-select plan(202);
+select plan(203);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -1066,6 +1066,12 @@ select is(
    from public.payment_webhook_events we
    where we.provider_event_id = 'phase4d1-verified-refund-event-0001'),
   true, 'refund webhook posts approved reversal before posting refund outflow'
+);
+select is(
+  (select public.process_payment_webhook_event(we.id)
+   from public.payment_webhook_events we
+   where we.provider_event_id = 'phase4d1-verified-refund-event-0001'),
+  true, 'reprocessing a completed refund event is idempotent'
 );
 select is(
   (select rr.status from public.refund_reversal_requests rr
