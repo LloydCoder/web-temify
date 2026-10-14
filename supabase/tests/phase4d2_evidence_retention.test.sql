@@ -221,7 +221,7 @@ select is(
 
 select is(
   public.finish_settlement_evidence_retention(
-    '81100000-0000-4000-8000-000000000080', gen_random_uuid(), false, 'storage_delete_failed'
+    '81100000-0000-4000-8000-000000000080', '81400000-0000-4000-8000-000000000080', false, 'storage_delete_failed'
   ),
   'retryable',
   'a failed storage removal is eligible for bounded retry'
