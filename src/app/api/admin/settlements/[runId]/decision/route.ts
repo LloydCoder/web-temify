@@ -76,6 +76,26 @@ export async function POST(
     );
   }
 
+  const { error: auditError } = await adminContext.admin
+    .from("audit_events")
+    .insert({
+      actor_id: adminContext.userId,
+      action: "settlement.exception.triage_requested",
+      entity_type: "settlement_exception",
+      entity_id: `${parsedRunId.data}:${parsed.data.rowId}`,
+      request_id: requestId,
+      metadata: {
+        decision: parsed.data.decision,
+        evidence_attached: parsed.data.evidenceSha256 !== null,
+      },
+    });
+  if (auditError) {
+    return NextResponse.json(
+      { error: "settlement_audit_unavailable", requestId },
+      { status: 503 },
+    );
+  }
+
   const { error } = await adminContext.admin.rpc(
     "decide_settlement_exception",
     {
