@@ -1,5 +1,5 @@
 begin;
-select plan(102);
+select plan(117);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -830,6 +830,157 @@ select is(
    where sr.import_id = (select import_id from phase4d2_matched_refund_import_ids)),
   0,
   'valid refund match creates no reconciliation exception'
+);
+
+-- Refund matching must classify amount/currency mismatches before replay checks.
+create temporary table phase4d2_refund_amount_mismatch_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_refund_amount_mismatch_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'settlement-refund-amount-mismatch-2026-10-13',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('fedcba9876543210',4), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(jsonb_build_object(
+        'rowId','refund-amount-mismatch-row-01', 'rowType','refund',
+        'providerReference','phase4d2-provider-refund-match-01',
+        'occurredAt','2026-10-13T12:00:00Z', 'currency','USD',
+        'grossMinor',-299, 'feeMinor',0, 'netMinor',-299
+      ))
+    )
+  $sql$,
+  'refund amount-mismatch report imports as immutable evidence'
+);
+select lives_ok(
+  $sql$select public.reconcile_settlement_import(
+    (select import_id from phase4d2_refund_amount_mismatch_import_ids),
+    '89200000-0000-4000-8000-000000000089'
+  )$sql$,
+  'refund amount mismatch reconciles to an exception'
+);
+select is(
+  (select rr.result_code from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id=rr.run_id
+   where sr.import_id=(select import_id from phase4d2_refund_amount_mismatch_import_ids)
+     and rr.row_id='refund-amount-mismatch-row-01'),
+  'amount_mismatch',
+  'refund gross amount is checked against the exact refund journal'
+);
+select is(
+  (select rr.result_status from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id=rr.run_id
+   where sr.import_id=(select import_id from phase4d2_refund_amount_mismatch_import_ids)
+     and rr.row_id='refund-amount-mismatch-row-01'),
+  'exception',
+  'refund amount mismatch remains unresolved'
+);
+select is(
+  (select rr.journal_batch_id from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id=rr.run_id
+   where sr.import_id=(select import_id from phase4d2_refund_amount_mismatch_import_ids)
+     and rr.row_id='refund-amount-mismatch-row-01'),
+  null::uuid,
+  'refund amount mismatch cannot retain a journal match'
+);
+
+create temporary table phase4d2_refund_currency_mismatch_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_refund_currency_mismatch_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'settlement-refund-currency-mismatch-2026-10-13',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('0123456789abcdef',4), true,
+      'sandbox_fixture', 'EUR', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(jsonb_build_object(
+        'rowId','refund-currency-mismatch-row-01', 'rowType','refund',
+        'providerReference','phase4d2-provider-refund-match-01',
+        'occurredAt','2026-10-13T12:05:00Z', 'currency','EUR',
+        'grossMinor',-300, 'feeMinor',0, 'netMinor',-300
+      ))
+    )
+  $sql$,
+  'refund currency-mismatch report imports as immutable evidence'
+);
+select lives_ok(
+  $sql$select public.reconcile_settlement_import(
+    (select import_id from phase4d2_refund_currency_mismatch_import_ids),
+    '89200000-0000-4000-8000-000000000089'
+  )$sql$,
+  'refund currency mismatch reconciles to an exception'
+);
+select is(
+  (select rr.result_code from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id=rr.run_id
+   where sr.import_id=(select import_id from phase4d2_refund_currency_mismatch_import_ids)
+     and rr.row_id='refund-currency-mismatch-row-01'),
+  'currency_mismatch',
+  'refund currency must match the posted refund journal currency'
+);
+select is(
+  (select rr.result_status from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id=rr.run_id
+   where sr.import_id=(select import_id from phase4d2_refund_currency_mismatch_import_ids)
+     and rr.row_id='refund-currency-mismatch-row-01'),
+  'exception',
+  'refund currency mismatch remains unresolved'
+);
+select is(
+  (select rr.journal_batch_id from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id=rr.run_id
+   where sr.import_id=(select import_id from phase4d2_refund_currency_mismatch_import_ids)
+     and rr.row_id='refund-currency-mismatch-row-01'),
+  null::uuid,
+  'refund currency mismatch cannot retain a journal match'
+);
+
+create temporary table phase4d2_refund_duplicate_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_refund_duplicate_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'settlement-refund-duplicate-replay-2026-10-13',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('9876543210fedcba',4), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(jsonb_build_object(
+        'rowId','refund-duplicate-replay-row-01', 'rowType','refund',
+        'providerReference','phase4d2-provider-refund-match-01',
+        'occurredAt','2026-10-13T12:10:00Z', 'currency','USD',
+        'grossMinor',-300, 'feeMinor',0, 'netMinor',-300
+      ))
+    )
+  $sql$,
+  'refund duplicate-replay report imports as immutable evidence'
+);
+select lives_ok(
+  $sql$select public.reconcile_settlement_import(
+    (select import_id from phase4d2_refund_duplicate_import_ids),
+    '89200000-0000-4000-8000-000000000089'
+  )$sql$,
+  'refund duplicate replay reconciles without linking the journal twice'
+);
+select is(
+  (select rr.result_code from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id=rr.run_id
+   where sr.import_id=(select import_id from phase4d2_refund_duplicate_import_ids)
+     and rr.row_id='refund-duplicate-replay-row-01'),
+  'duplicate_reference',
+  'a posted refund journal cannot be matched by a second settlement import'
+);
+select is(
+  (select rr.result_status from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id=rr.run_id
+   where sr.import_id=(select import_id from phase4d2_refund_duplicate_import_ids)
+     and rr.row_id='refund-duplicate-replay-row-01'),
+  'exception',
+  'refund duplicate replay remains unresolved'
+);
+select is(
+  (select rr.journal_batch_id from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id=rr.run_id
+   where sr.import_id=(select import_id from phase4d2_refund_duplicate_import_ids)
+     and rr.row_id='refund-duplicate-replay-row-01'),
+  null::uuid,
+  'refund duplicate replay cannot retain a journal match'
 );
 
 -- A single posted journal batch must not satisfy two settlement rows.
