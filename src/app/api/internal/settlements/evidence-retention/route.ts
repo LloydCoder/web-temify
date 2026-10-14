@@ -9,9 +9,9 @@ const MAX_BATCH_SIZE = 25;
 const MIN_TOKEN_LENGTH = 32;
 
 function authorized(request: Request, expectedToken: string | undefined) {
-  const supplied = request.headers
-    .get("authorization")
-    ?.replace(/^Bearer\s+/i, "");
+  const authorization = request.headers.get("authorization");
+  const match = authorization?.match(/^Bearer\s+(\S+)$/i);
+  const supplied = match?.[1];
   if (!expectedToken || expectedToken.length < MIN_TOKEN_LENGTH || !supplied) {
     return false;
   }
