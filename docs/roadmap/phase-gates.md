@@ -180,7 +180,6 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - [ ] Add adversarial pgTAP tests, reconciliation fixtures, failure/replay tests, operator exception queues, documentation and exact-head CI/forensic audit.
 - [ ] Record external onboarding and settlement evidence; until then keep live provider processing disabled.
 
-
 ## Phase 5 — Admin and operations
 
 ### Phase 5A forensic audit record

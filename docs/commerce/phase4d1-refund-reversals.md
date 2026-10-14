@@ -39,7 +39,6 @@ When seller proceeds have already been allocated, a verified refund must not be 
 
 This subphase does **not** add a live payment provider, provider settlement reconciliation, seller payout, provider-fee posting, tax/VAT calculation, chargeback/dispute handling, reserve management, manual-adjustment execution or escrow. The provider events in tests are sandbox fixtures. Phase 4 and production launch readiness remain incomplete.
 
-
 ## Forensic audit result
 
 - **Disposition:** PASS for the sandbox/test database workflow only.
