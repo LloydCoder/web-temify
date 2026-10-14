@@ -22,6 +22,18 @@ test("homepage serves the canonical V3 experience", async ({ page }) => {
   await expect(
     experience.getByText(/2,400\+ businesses|1,200\+ curated tools|[0-9,]+ sales/i),
   ).toHaveCount(0);
+
+  const frame = page.locator(
+    'iframe[title="Web-Temify V3 marketplace experience"]',
+  );
+  const unresolvedAnchorTargets = await frame.evaluate((element) => {
+    const document = (element as HTMLIFrameElement).contentDocument;
+    if (!document) return ["iframe document unavailable"];
+    return Array.from(document.querySelectorAll('a[href^="#"]'))
+      .map((anchor) => anchor.getAttribute("href")?.slice(1) ?? "")
+      .filter((target) => target && !document.getElementById(target));
+  });
+  expect(unresolvedAnchorTargets).toEqual([]);
 });
 
 test("homepage has semantic landmarks and no horizontal overflow on mobile or desktop", async ({
