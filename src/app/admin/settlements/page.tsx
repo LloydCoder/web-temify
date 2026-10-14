@@ -251,7 +251,9 @@ export default async function AdminSettlementExceptionsPage({
                   </div>
                   <div>
                     <dt>Triage reason</dt>
-                    <dd>{item.triage_reason ?? "No triage decision recorded"}</dd>
+                    <dd>
+                      {item.triage_reason ?? "No triage decision recorded"}
+                    </dd>
                   </div>
                 </dl>
               </article>
