@@ -18,8 +18,7 @@ export function SettlementExceptionDecisionForm({
   existingDecision: Decision | null;
 }) {
   const router = useRouter();
-  const [decision, setDecision] =
-    useState<Decision>("manual_review_required");
+  const [decision, setDecision] = useState<Decision>("manual_review_required");
   const [reason, setReason] = useState("");
   const [evidenceSha256, setEvidenceSha256] = useState("");
   const [pending, setPending] = useState(false);
@@ -35,23 +34,18 @@ export function SettlementExceptionDecisionForm({
     setPending(true);
     setFeedback(null);
     try {
-      const response = await fetch(
-        `/api/admin/settlements/${runId}/decision`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "same-origin",
-          body: JSON.stringify({
-            rowId,
-            decision,
-            reason,
-            evidenceSha256:
-              decision === "accepted_with_evidence"
-                ? evidenceSha256
-                : null,
-          }),
-        },
-      );
+      const response = await fetch(`/api/admin/settlements/${runId}/decision`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          rowId,
+          decision,
+          reason,
+          evidenceSha256:
+            decision === "accepted_with_evidence" ? evidenceSha256 : null,
+        }),
+      });
 
       if (!response.ok) {
         setFeedback({
