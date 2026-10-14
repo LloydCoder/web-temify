@@ -43,14 +43,16 @@ export async function GET(
     );
   }
 
-  const { error: accessAuditError } = await adminContext.admin.from("audit_events").insert({
-    actor_id: adminContext.userId,
-    action: "settlement.evidence.download_requested",
-    entity_type: "settlement_evidence",
-    entity_id: parsedId.data,
-    request_id: requestId,
-    metadata: {},
-  });
+  const { error: accessAuditError } = await adminContext.admin
+    .from("audit_events")
+    .insert({
+      actor_id: adminContext.userId,
+      action: "settlement.evidence.download_requested",
+      entity_type: "settlement_evidence",
+      entity_id: parsedId.data,
+      request_id: requestId,
+      metadata: {},
+    });
   if (accessAuditError) {
     return NextResponse.json(
       { error: "settlement_audit_unavailable", requestId },
