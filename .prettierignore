@@ -8,3 +8,6 @@ supabase/.temp/
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+
+# Standalone canonical-design-derived runtime asset; validated through Playwright rather than reflowed.
+public/web-temify-v3.html
