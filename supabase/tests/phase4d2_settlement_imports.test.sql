@@ -1,5 +1,5 @@
 begin;
-select plan(59);
+select plan(63);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -579,6 +579,55 @@ select is(
   ),
   0::bigint,
   'pagination cursor excludes the previous page boundary row'
+);
+
+
+-- A matching provider reference with a different gross amount must be an exception.
+create temporary table phase4d2_amount_mismatch_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_amount_mismatch_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'settlement-amount-mismatch-2026-10-13',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('3',64), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(jsonb_build_object(
+        'rowId','amount-mismatch-row-01', 'rowType','payment',
+        'providerReference','phase4d2-provider-payment-match-01',
+        'paymentReference','phase4d2-order-payment-match-01',
+        'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+        'grossMinor',1298, 'feeMinor',39, 'netMinor',1259
+      ))
+    )
+  $sql$,
+  'amount-mismatched settlement row imports as immutable evidence'
+);
+select lives_ok(
+  $sql$
+    select public.reconcile_settlement_import(
+      (select import_id from phase4d2_amount_mismatch_import_ids),
+      '89200000-0000-4000-8000-000000000089'
+    )
+  $sql$,
+  'amount-mismatched settlement row can be classified without posting money'
+);
+select is(
+  (select rr.result_code
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_amount_mismatch_import_ids)
+     and rr.row_id = 'amount-mismatch-row-01'),
+  'amount_mismatch',
+  'a matching provider reference with a different amount is explicitly classified'
+);
+select is(
+  (select rr.result_status
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_amount_mismatch_import_ids)
+     and rr.row_id = 'amount-mismatch-row-01'),
+  'exception',
+  'amount mismatches remain unresolved exceptions rather than being treated as matches'
 );
 
 select * from finish();
