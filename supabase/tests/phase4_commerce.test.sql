@@ -1,5 +1,5 @@
 begin;
-select plan(203);
+select plan(212);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -1268,6 +1268,112 @@ select is(
 select is(
   (select status from public.refund_reversal_requests where refund_id = '99100000-0000-4000-8000-000000000099'),
   'rejected', 'rejected reversal request is retained as immutable audit history'
+);
+
+-- Financial journal source validation must preserve seller attribution, not only aggregate balance.
+select lives_ok(
+  $sql$insert into public.refunds (
+    id, order_id, payment_attempt_id, amount_minor, currency, status, reason, idempotency_key, requested_by
+  )
+  select '99300000-0000-4000-8000-000000000099', o.id, pa.id, 100, o.currency, 'pending',
+    'Misassigned seller journal fixture', 'test-refund-reversal-seller-guard-0001', o.customer_id
+  from public.orders o
+  join phase4c_allocation_order_ids t on t.order_id = o.id
+  join public.payment_attempts pa on pa.order_id = o.id$sql$,
+  'refund fixture is created for seller-attribution guard'
+);
+create temporary table phase4d1_misassigned_request_ids(request_id uuid primary key, refund_id uuid not null) on commit drop;
+select lives_ok(
+  $sql$with request_row as (
+    insert into public.refund_reversal_requests (
+      refund_id, order_id, amount_minor, currency, evidence_sha256, reason, requested_by
+    )
+    select r.id, r.order_id, r.amount_minor, r.currency, repeat('a',64),
+      'Seller attribution must match original allocation', '83000000-0000-4000-8000-000000000083'
+    from public.refunds r where r.id = '99300000-0000-4000-8000-000000000099'
+    returning id, refund_id
+  )
+  insert into phase4d1_misassigned_request_ids select id, refund_id from request_row$sql$,
+  'seller-attribution reversal request is recorded'
+);
+select lives_ok(
+  $sql$insert into public.refund_reversal_lines (
+    request_id, refund_id, order_id, order_item_id, seller_id, fee_schedule_id,
+    gross_refund_minor, platform_fee_reversal_minor, seller_payable_reversal_minor, tax_reversal_minor, currency
+  )
+  select rr.id, rr.refund_id, opa.order_id, opa.order_item_id, opa.seller_id, opa.fee_schedule_id,
+    100, 10, 90, 0, opa.currency
+  from phase4d1_misassigned_request_ids ids
+  join public.refund_reversal_requests rr on rr.id = ids.request_id
+  join public.order_proceeds_allocations opa on opa.order_id = rr.order_id$sql$,
+  'approved reversal line matches the original seller allocation'
+);
+select is(
+  public.approve_refund_reversal_request(
+    (select request_id from phase4d1_misassigned_request_ids),
+    '84000000-0000-4000-8000-000000000084'
+  ),
+  (select request_id from phase4d1_misassigned_request_ids),
+  'distinct admin approves seller-attribution guard fixture'
+);
+select lives_ok(
+  $sql$insert into public.payment_webhook_events (
+    provider, provider_event_id, event_type, payload_sha256, signature_verified,
+    order_id, payment_attempt_id, refund_id, amount_minor, currency, provider_reference
+  )
+  select 'sandbox', 'phase4d1-misassigned-refund-event-0001', 'refund.succeeded', repeat('b',64), true,
+    r.order_id, r.payment_attempt_id, r.id, r.amount_minor, r.currency, 'phase4d1-provider-refund-misassigned'
+  from public.refunds r where r.id = '99300000-0000-4000-8000-000000000099'$sql$,
+  'verified event fixture is stored for seller-attribution guard'
+);
+select lives_ok(
+  $sql$update public.payment_webhook_events set processing_status = 'processing'
+    where provider_event_id = 'phase4d1-misassigned-refund-event-0001'$sql$,
+  'verified event enters the processor state for guarded journal validation'
+);
+create temporary table phase4d1_bad_seller_batch_ids(batch_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$with batch_row as (
+    insert into public.financial_journal_batches (
+      source_type, source_key, idempotency_key, order_id, payment_attempt_id, refund_id,
+      provider, provider_reference, currency, evidence_sha256
+    )
+    select 'refund_reversal', 'phase4d1-misassigned-seller-batch-0001',
+      'phase4d1-misassigned-seller-idem-0001', r.order_id, r.payment_attempt_id, r.id,
+      'sandbox', 'phase4d1-provider-refund-misassigned', r.currency, repeat('b',64)
+    from public.refunds r where r.id = '99300000-0000-4000-8000-000000000099'
+    returning id
+  )
+  insert into phase4d1_bad_seller_batch_ids select id from batch_row$sql$,
+  'balanced draft reversal journal is created with a deliberately wrong seller recipient'
+);
+select lives_ok(
+  $sql$insert into public.financial_journal_entries (
+    batch_id, account, side, amount_minor, currency, seller_id, order_item_id, memo
+  )
+  select ids.batch_id, 'seller_payable', 'debit', 90, 'USD',
+    '84000000-0000-4000-8000-000000000084', opa.order_item_id, 'Deliberately misassigned seller payable'
+  from phase4d1_bad_seller_batch_ids ids
+  join public.order_proceeds_allocations opa on opa.order_id = (
+    select rr.order_id from public.refund_reversal_requests rr
+    join phase4d1_misassigned_request_ids req on req.request_id = rr.id
+  );
+  insert into public.financial_journal_entries (
+    batch_id, account, side, amount_minor, currency, memo
+  )
+  select batch_id, 'platform_revenue', 'debit', 10, 'USD', 'Commission reversal'
+  from phase4d1_bad_seller_batch_ids;
+  insert into public.financial_journal_entries (
+    batch_id, account, side, amount_minor, currency, memo
+  )
+  select batch_id, 'unallocated_order_liability', 'credit', 100, 'USD', 'Gross reversal'
+  from phase4d1_bad_seller_batch_ids$sql$,
+  'balanced reversal entries are inserted before posting validation'
+);
+select throws_ok(
+  $sql$update public.financial_journal_batches set status = 'posted'
+    where id = (select batch_id from phase4d1_bad_seller_batch_ids)$sql$,
+  '23514', null, 'financial journal rejects a balanced reversal assigned to the wrong seller'
 );
 
 select * from finish();
