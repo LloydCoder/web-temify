@@ -76,6 +76,11 @@ insert into public.settlement_evidence (
   '8c000000-0000-4000-8000-00000000008c'
 );
 
+select public.record_settlement_evidence_scan_result(
+  '8b000000-0000-4000-8000-00000000008b',
+  repeat('a',64), 'clean', 'test-scanner', '1.0.0', gen_random_uuid()
+);
+
 create temporary table phase4d2_link_ids(link_id uuid primary key) on commit drop;
 select lives_ok(
   $sql$
