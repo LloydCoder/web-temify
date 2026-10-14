@@ -19,10 +19,13 @@ const evidenceId = "81000000-0000-4000-8000-000000000080";
 const storagePath = `${evidenceId}/${"a".repeat(64)}`;
 
 function request(authorization = `Bearer ${token}`) {
-  return new Request("https://web-temify.example/api/internal/settlements/evidence-retention", {
-    method: "POST",
-    headers: { authorization },
-  });
+  return new Request(
+    "https://web-temify.example/api/internal/settlements/evidence-retention",
+    {
+      method: "POST",
+      headers: { authorization },
+    },
+  );
 }
 
 describe("settlement evidence retention endpoint", () => {
@@ -35,7 +38,10 @@ describe("settlement evidence retention endpoint", () => {
     mocks.remove.mockReset();
     mocks.list.mockReset();
     mocks.storageFrom.mockReset();
-    mocks.storageFrom.mockReturnValue({ remove: mocks.remove, list: mocks.list });
+    mocks.storageFrom.mockReturnValue({
+      remove: mocks.remove,
+      list: mocks.list,
+    });
     mocks.createClient.mockReturnValue({
       rpc: mocks.rpc,
       storage: { from: mocks.storageFrom },
@@ -63,35 +69,47 @@ describe("settlement evidence retention endpoint", () => {
   afterEach(() => {
     vi.unstubAllEnvs();
     vi.clearAllMocks();
-  });
+    },
+  );
 
-  it("rejects requests without the exact bearer token before creating a service client", async () => {
+  it(
+    "rejects requests without the exact bearer token before creating a service client",
+    async () => {
     const response = await POST(request("Bearer wrong-token"));
 
     expect(response.status).toBe(401);
     expect(mocks.createClient).not.toHaveBeenCalled();
     expect(response.headers.get("cache-control")).toBe("no-store");
-  });
+    },
+  );
 
-  it("fails closed when the retention token is missing or too short", async () => {
+  it(
+    "fails closed when the retention token is missing or too short",
+    async () => {
     vi.stubEnv("SETTLEMENT_EVIDENCE_RETENTION_TOKEN", "short");
 
     const response = await POST(request());
 
     expect(response.status).toBe(401);
     expect(mocks.createClient).not.toHaveBeenCalled();
-  });
+    },
+  );
 
-  it("fails closed when Supabase server credentials are unavailable", async () => {
+  it(
+    "fails closed when Supabase server credentials are unavailable",
+    async () => {
     vi.stubEnv("SUPABASE_SECRET_KEY", "");
 
     const response = await POST(request());
 
     expect(response.status).toBe(503);
     expect(mocks.createClient).not.toHaveBeenCalled();
-  });
+    },
+  );
 
-  it("claims a bounded batch and records successful object deletion", async () => {
+  it(
+    "claims a bounded batch and records successful object deletion",
+    async () => {
     const response = await POST(request());
 
     expect(response.status).toBe(200);
@@ -122,9 +140,12 @@ describe("settlement evidence retention endpoint", () => {
         p_error_code: null,
       }),
     );
-  });
+    },
+  );
 
-  it("records a failed object removal for bounded retry without claiming success", async () => {
+  it(
+    "records a failed object removal for bounded retry without claiming success",
+    async () => {
     mocks.remove.mockResolvedValue({
       data: null,
       error: { message: "storage unavailable" },
@@ -166,9 +187,12 @@ describe("settlement evidence retention endpoint", () => {
         p_error_code: "storage_delete_failed",
       }),
     );
-  });
+    },
+  );
 
-  it("treats a missing object as a successful idempotent delete after a retry", async () => {
+  it(
+    "treats a missing object as a successful idempotent delete after a retry",
+    async () => {
     mocks.remove.mockResolvedValue({
       data: null,
       error: { message: "object not found" },
@@ -188,7 +212,8 @@ describe("settlement evidence retention endpoint", () => {
       "finish_settlement_evidence_retention",
       expect.objectContaining({ p_deleted: true, p_error_code: null }),
     );
-  });
+    },
+  );
 
   it("fails closed if the database cannot claim retention work", async () => {
     mocks.rpc.mockResolvedValue({
@@ -200,7 +225,8 @@ describe("settlement evidence retention endpoint", () => {
 
     expect(response.status).toBe(503);
     expect(mocks.remove).not.toHaveBeenCalled();
-  });
+    },
+  );
 
   it("rejects malformed claims before deleting any object", async () => {
     mocks.rpc.mockResolvedValue({
@@ -219,9 +245,12 @@ describe("settlement evidence retention endpoint", () => {
 
     expect(response.status).toBe(503);
     expect(mocks.remove).not.toHaveBeenCalled();
-  });
+    },
+  );
 
-  it("returns a retryable server failure if deletion finishes but persistence fails", async () => {
+  it(
+    "returns a retryable server failure if deletion finishes but persistence fails",
+    async () => {
     mocks.rpc.mockImplementation(async (name: string) => {
       if (name === "claim_expired_settlement_evidence") {
         return {
@@ -243,5 +272,6 @@ describe("settlement evidence retention endpoint", () => {
 
     expect(response.status).toBe(503);
     expect(mocks.remove).toHaveBeenCalledWith([storagePath]);
-  });
+    },
+  );
 });
