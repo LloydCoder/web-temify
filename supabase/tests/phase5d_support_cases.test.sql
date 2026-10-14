@@ -1,5 +1,5 @@
 begin;
-select plan(37);
+select plan(40);
 
 select has_table('public', 'support_cases', 'support cases are persisted');
 select has_table('public', 'support_case_events', 'support case event history is persisted');
