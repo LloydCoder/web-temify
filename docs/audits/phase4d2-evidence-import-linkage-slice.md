@@ -1,6 +1,6 @@
 # Phase 4D2 Evidence-to-Import Linkage — Slice Audit
 
-**Disposition: IMPLEMENTED ON BRANCH; exact-head CI and independent review pending. Not a Phase 4D2 completion record.**
+**Disposition: PASS for this bounded slice at implementation head `658b3152c839da71e8f62ed65935971ed362c6d8`; not a Phase 4D2 completion record.**
 
 ## Scope delivered
 
@@ -24,12 +24,13 @@
 
 ## Exact verification required
 
-- [ ] Empty-database `supabase db reset` passes with this migration and the evidence-metadata privilege-tightening forward fix.
-- [ ] `supabase db lint --local` passes.
-- [ ] Full pgTAP/RLS suite passes, including `phase4d2_evidence_import_linkage.test.sql`.
-- [ ] Foundation tests, typecheck, lint, format, Playwright, and production build pass on the same PR head.
-- [ ] Security/dependency/license/secret scans pass on the same PR head.
-- [ ] Review concurrency, replay, authorization, and audit failure paths.
+- [x] Empty-database `supabase db reset` passed with the linkage and evidence-metadata privilege-tightening migrations.
+- [x] `supabase db lint --local` passed.
+- [x] Full pgTAP/RLS suite passed, including the 20-assertion `phase4d2_evidence_import_linkage.test.sql` and 13-assertion private evidence suite.
+- [x] Foundation tests, typecheck, lint, format, Playwright, and production build passed.
+- [x] Security/dependency/license/secret scans passed.
+- [x] Exact implementation-head CI: [Foundation CI run 38548542963](https://github.com/LloydCoder/web-temify/actions/runs/38548542963) and [Security/dependency governance run 38548542943](https://github.com/LloydCoder/web-temify/actions/runs/38548542943).
+- [ ] Review operational rate limits, upload cleanup, storage quotas, retention enforcement, and malware-scanning controls remains open.
 
 ## Residual Phase 4D2 blockers
 
