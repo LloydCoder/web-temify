@@ -1,5 +1,5 @@
 begin;
-select plan(69);
+select plan(73);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -712,6 +712,64 @@ select is(
      and q.row_id = 'period-mismatch-row-01'),
   'period_mismatch',
   'exception queue exposes explicit period-mismatch classifications'
+);
+
+
+-- A single posted journal batch must not satisfy two settlement rows.
+create temporary table phase4d2_duplicate_reference_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_duplicate_reference_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'settlement-duplicate-reference-2026-10-13',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('5',64), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(
+        jsonb_build_object(
+          'rowId','duplicate-ref-row-01', 'rowType','payment',
+          'providerReference','phase4d2-provider-payment-match-01',
+          'paymentReference','phase4d2-order-payment-match-01',
+          'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+          'grossMinor',1299, 'feeMinor',39, 'netMinor',1260
+        ),
+        jsonb_build_object(
+          'rowId','duplicate-ref-row-02', 'rowType','payment',
+          'providerReference','phase4d2-provider-payment-match-01',
+          'paymentReference','phase4d2-order-payment-match-01',
+          'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+          'grossMinor',1299, 'feeMinor',39, 'netMinor',1260
+        )
+      )
+    )
+  $sql$,
+  'duplicate settlement references import as immutable evidence'
+);
+select lives_ok(
+  $sql$
+    select public.reconcile_settlement_import(
+      (select import_id from phase4d2_duplicate_reference_import_ids),
+      '89200000-0000-4000-8000-000000000089'
+    )
+  $sql$,
+  'duplicate settlement references reconcile without duplicate journal linkage'
+);
+select is(
+  (select rr.result_code
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_duplicate_reference_import_ids)
+     and rr.row_id = 'duplicate-ref-row-02'),
+  'duplicate_reference',
+  'a posted journal batch cannot match two rows in one settlement report'
+);
+select is(
+  (select rr.result_status
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_duplicate_reference_import_ids)
+     and rr.row_id = 'duplicate-ref-row-02'),
+  'exception',
+  'duplicate references remain unresolved exceptions'
 );
 
 select * from finish();
