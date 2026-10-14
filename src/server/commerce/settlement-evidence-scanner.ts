@@ -130,9 +130,11 @@ export async function scanSettlementEvidence(
     if (!response.ok) return { status: "unavailable" };
 
     const payload: unknown = await response.json();
-    return parseScannerResponse(payload, expectedSha256) ?? {
-      status: "unavailable",
-    };
+    return (
+      parseScannerResponse(payload, expectedSha256) ?? {
+        status: "unavailable",
+      }
+    );
   } catch {
     return { status: "unavailable" };
   }
