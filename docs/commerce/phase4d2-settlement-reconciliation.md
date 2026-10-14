@@ -15,7 +15,7 @@ This is design research, not evidence that Web-Temify has selected, onboarded, o
 
 ## Implemented in this slice
 
-- SettlementImportSchema pins the contract to version 1.0, limits provider identifiers to the currently modeled provider enum, requires a SHA-256 digest, a source-authentication assertion, an account/report reference, a declared period and timezone, and bounded row count.
+- SettlementImportSchema pins the contract to version 1.0, currently allowing `paystack`, `polar`, and `sandbox` as settlement-source identifiers; it requires a SHA-256 digest, a source-authentication assertion, an account/report reference, a declared period and timezone, and bounded row count. This import allowlist does not enable an adapter: the existing payment-attempt, webhook, and journal provider constraints still need a separately reviewed migration before any Polar payment or journal-posting flow can exist.
 - Migration `20261013037000_phase4d2_settlement_imports.sql` adds server-only report and normalized-row persistence, RLS-deny-by-default tables, immutable evidence triggers, restricted service-role import RPC, report identity/digest uniqueness, and deterministic identical-replay/conflicting-evidence handling. pgTAP covers the initial persistence and privilege boundary.
 - Rows have stable identifiers, an explicit row type, optional provider/internal payment references, an offset-aware timestamp, currency, gross/fee/net minor-unit values, and a bounded exception taxonomy.
 - Validation rejects unknown keys, duplicate row IDs within a report, currency mismatch, rows outside the declared period, inverted periods, invalid source digests, positive-gross refunds, non-positive-gross payments, and positive-net fee rows.
