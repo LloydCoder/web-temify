@@ -10,6 +10,7 @@ declare
   existing_run public.settlement_reconciliation_runs%rowtype;
   new_run_id uuid;
   row_value record;
+  candidate_lock record;
   candidate_count bigint;
   candidate_batch_id uuid;
   candidate_currency text;
@@ -38,6 +39,27 @@ begin
   if existing_run.id is not null then return existing_run.id; end if;
   insert into public.settlement_reconciliation_runs(import_id,reconciled_by,matched_rows,exception_rows)
   values(p_import_id,p_reconciled_by,0,0) returning id into new_run_id;
+
+  -- Acquire candidate journal locks in a stable UUID order. This prevents
+  -- two reports that contain the same journal batches in different row order
+  -- from deadlocking while preserving per-batch concurrency isolation.
+  for candidate_lock in
+    select distinct b.id
+    from public.settlement_import_rows ir
+    join public.financial_journal_batches b
+      on b.provider = import_row.provider
+     and b.provider_reference = ir.provider_reference
+     and b.status = 'posted'
+     and b.source_type = case when ir.row_type = 'payment' then 'payment' else 'refund' end
+    where ir.import_id = p_import_id
+      and ir.row_type in ('payment', 'refund')
+      and ir.provider_reference is not null
+    order by b.id
+  loop
+    perform pg_catalog.pg_advisory_xact_lock(
+      pg_catalog.hashtextextended('settlement-journal-match:' || candidate_lock.id::text, 0)
+    );
+  end loop;
 
   for row_value in select * from public.settlement_import_rows where import_id = p_import_id order by row_id loop
     candidate_batch_id := null;
