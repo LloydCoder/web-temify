@@ -334,6 +334,10 @@ create table public.settlement_reconciliation_results (
   )
 );
 
+create unique index settlement_reconciliation_one_row_per_batch_uq
+  on public.settlement_reconciliation_results (run_id, journal_batch_id)
+  where journal_batch_id is not null;
+
 alter table public.settlement_reconciliation_runs enable row level security;
 alter table public.settlement_reconciliation_results enable row level security;
 revoke all on public.settlement_reconciliation_runs from public, anon, authenticated, service_role;
@@ -469,12 +473,19 @@ begin
           and b.source_type = case when row_value.row_type = 'payment' then 'payment' else 'refund' end
         limit 1;
 
-        if row_value.currency <> import_row.currency then
-          result_code_value := 'currency_mismatch';
+        if exists (
+          select 1 from public.settlement_reconciliation_results prior
+          where prior.run_id = new_run_id
+            and prior.journal_batch_id = candidate_batch_id
+        ) then
+          result_code_value := 'duplicate_reference';
+          candidate_batch_id := null;
         elsif candidate_amount <> abs(row_value.gross_minor) then
           result_code_value := 'amount_mismatch';
+          candidate_batch_id := null;
         elsif row_value.row_type = 'payment' and row_value.net_minor <> row_value.gross_minor - row_value.fee_minor then
           result_code_value := 'amount_mismatch';
+          candidate_batch_id := null;
         else
           result_code_value := case when row_value.row_type = 'payment'
             then 'matched_payment' else 'matched_refund' end;
