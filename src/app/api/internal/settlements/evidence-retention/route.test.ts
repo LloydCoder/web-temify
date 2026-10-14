@@ -225,8 +225,7 @@ describe("settlement evidence retention endpoint", () => {
 
     expect(response.status).toBe(503);
     expect(mocks.remove).not.toHaveBeenCalled();
-    },
-  );
+  });
 
   it("returns a retryable server failure if deletion finishes but persistence fails", async () => {
     mocks.rpc.mockImplementation(async (name: string) => {
