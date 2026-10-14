@@ -358,7 +358,7 @@ begin
     ) then
       raise exception using errcode = '23514', message = 'refund posting is blocked until an evidence-backed proceeds-allocation reversal exists';
     end if;
-    select we.payload_sha256 into evidence_digest
+    select we.payload_sha256, we.provider_reference into evidence_digest, provider_ref
     from public.payment_webhook_events we
     where we.order_id = new.order_id
       and we.payment_attempt_id = new.payment_attempt_id
