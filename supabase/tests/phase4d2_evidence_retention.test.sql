@@ -1,5 +1,5 @@
 begin;
-select plan(31);
+select plan(34);
 
 select has_table('public', 'settlement_evidence_retention_jobs', 'retention work queue exists');
 select ok(
@@ -131,7 +131,7 @@ select is(
   'the fixture confirms that the expired linked object is protected by an immutable link'
 );
 select is(
-  (select count(*)::integer from public.claim_expired_settlement_evidence(25, gen_random_uuid())),
+  (select count(*)::integer from public.claim_expired_settlement_evidence(25, '81400000-0000-4000-8000-000000000080')),
   2,
   'claim returns only expired evidence that is not already linked'
 );
@@ -139,6 +139,31 @@ select is(
   (select count(*)::integer from public.settlement_evidence_retention_jobs where status = 'processing'),
   2,
   'claimed evidence receives an active bounded lease'
+);
+update public.settlement_evidence_retention_jobs
+set lease_expires_at = now() - interval '1 minute'
+where evidence_id = '81000000-0000-4000-8000-000000000080';
+
+select is(
+  (select count(*)::integer
+   from public.claim_expired_settlement_evidence(25, '81500000-0000-4000-8000-000000000080')
+   where evidence_id = '81000000-0000-4000-8000-000000000080'),
+  1,
+  'an expired worker lease can be safely reclaimed'
+);
+select throws_ok(
+  $sql$select public.finish_settlement_evidence_retention(
+    '81000000-0000-4000-8000-000000000080',
+    '81400000-0000-4000-8000-000000000080', false, 'storage_delete_failed'
+  )$sql$,
+  '55000', 'settlement evidence retention claim is stale',
+  'a stale worker cannot overwrite a newer claim outcome'
+);
+select is(
+  (select attempts from public.settlement_evidence_retention_jobs
+   where evidence_id = '81000000-0000-4000-8000-000000000080'),
+  2,
+  'lease recovery increments the attempt count'
 );
 select is(
   (select count(*)::integer from public.settlement_evidence_retention_jobs
@@ -155,7 +180,7 @@ select is(
 select is(
   (select count(*)::integer from public.audit_events
    where action = 'settlement.evidence.retention_delete_requested'),
-  2,
+  3,
   'each claimed deletion has a correlated audit event'
 );
 select throws_ok(
@@ -170,7 +195,7 @@ select throws_ok(
 
 select lives_ok(
   $sql$select public.finish_settlement_evidence_retention(
-    '81000000-0000-4000-8000-000000000080', gen_random_uuid(), true, null
+    '81000000-0000-4000-8000-000000000080', '81500000-0000-4000-8000-000000000080', true, null
   )$sql$,
   'a successful storage removal can be recorded'
 );
