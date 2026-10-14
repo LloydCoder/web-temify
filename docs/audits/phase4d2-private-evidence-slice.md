@@ -8,7 +8,7 @@
 - Server-only, admin-authorized upload route with same-origin check, streamed byte cap (including chunked bodies without a declared length), server-computed SHA-256, sanitized filename, immutable object path, and pre-mutation audit event.
 - Immutable database metadata with RLS enabled, no authenticated-client access, and no service-role update/delete grants.
 - Admin-only download route that audits access, fetches from private storage, verifies byte count and SHA-256 against immutable metadata, fails closed on integrity mismatch, and serves only as an attachment with `application/octet-stream`, `nosniff`, and `no-store`.
-- Unit tests for bounded byte reads and pgTAP checks for bucket privacy, size limit, RLS, grants, and metadata immutability.
+- Unit tests for bounded byte reads, pgTAP checks for bucket privacy/size/RLS/grants/metadata immutability, and Playwright checks denying unauthenticated upload/download access.
 
 ## Security properties and non-claims
 
