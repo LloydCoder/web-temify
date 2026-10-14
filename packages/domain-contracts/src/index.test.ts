@@ -192,9 +192,9 @@ describe("Phase 4D2 settlement import contract", () => {
         },
       ],
     };
-    expect(
-      SettlementImportSchema.safeParse(positiveRefund).success,
-    ).toBe(false);
+    expect(SettlementImportSchema.safeParse(positiveRefund).success).toBe(
+      false,
+    );
     const positiveFee = {
       ...validReport,
       rows: [
