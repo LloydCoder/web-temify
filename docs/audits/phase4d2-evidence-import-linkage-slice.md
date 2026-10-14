@@ -5,6 +5,7 @@
 ## Scope delivered
 
 - Append-only `settlement_evidence_links` table with RLS enabled and no direct client/service-role table privileges.
+- Forward migration `20261014060000_phase4d2_restrict_evidence_metadata_writes.sql` removes direct service-role INSERT on evidence metadata; the server-only atomic recording RPC is the only write path, while service-role SELECT remains for audited downloads.
 - Service-only `link_settlement_evidence` RPC and same-origin admin route.
 - Link creation requires a database-owned admin who is distinct from both the evidence uploader and the import actor.
 - The evidence SHA-256 must exactly match the imported report's source SHA-256. A mismatch fails closed.
@@ -23,7 +24,7 @@
 
 ## Exact verification required
 
-- [ ] Empty-database `supabase db reset` passes with this migration.
+- [ ] Empty-database `supabase db reset` passes with this migration and the evidence-metadata privilege-tightening forward fix.
 - [ ] `supabase db lint --local` passes.
 - [ ] Full pgTAP/RLS suite passes, including `phase4d2_evidence_import_linkage.test.sql`.
 - [ ] Foundation tests, typecheck, lint, format, Playwright, and production build pass on the same PR head.
