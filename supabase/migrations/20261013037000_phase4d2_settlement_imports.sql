@@ -4,7 +4,7 @@
 
 create table public.settlement_imports (
   id uuid primary key default gen_random_uuid(),
-  provider text not null check (provider in ('paystack', 'flutterwave', 'stripe', 'sandbox')),
+  provider text not null check (provider in ('paystack', 'polar', 'sandbox')),
   provider_account_reference text not null check (char_length(provider_account_reference) between 1 and 240),
   report_reference text not null check (char_length(report_reference) between 1 and 240),
   report_period_start date not null,
@@ -112,7 +112,7 @@ declare
   exception_code_value text;
 begin
   if p_provider is null
-    or p_provider not in ('paystack', 'flutterwave', 'stripe', 'sandbox')
+    or p_provider not in ('paystack', 'polar', 'sandbox')
     or p_provider_account_reference is null
     or char_length(p_provider_account_reference) not between 1 and 240
     or p_report_reference is null
