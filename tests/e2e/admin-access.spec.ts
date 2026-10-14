@@ -44,7 +44,11 @@ test("admin rights-review mutation endpoint denies unauthenticated visitors", as
 test("admin audit and rights-review pages deny unauthenticated visitors", async ({
   page,
 }) => {
-  for (const route of ["/admin/audit", "/admin/reviews"]) {
+  for (const route of [
+    "/admin/audit",
+    "/admin/reviews",
+    "/admin/settlements",
+  ]) {
     await page.goto(route);
     await expect(page.getByText("404 — Not found")).toBeVisible();
     await expect(
@@ -52,11 +56,31 @@ test("admin audit and rights-review pages deny unauthenticated visitors", async 
     ).toBeVisible();
     await expect(
       page.getByRole("heading", {
-        name: /audit explorer|product rights review/i,
+        name: /audit explorer|product rights review|settlement exceptions/i,
       }),
     ).toHaveCount(0);
     await expect(
-      page.getByRole("navigation", { name: "Audit pagination" }),
+      page.getByRole("navigation", {
+        name: /audit pagination|settlement exception pagination/i,
+      }),
     ).toHaveCount(0);
   }
+});
+
+test("settlement triage mutation denies unauthenticated visitors", async ({
+  page,
+}) => {
+  const response = await page.request.post(
+    "/api/admin/settlements/89000000-0000-4000-8000-000000000089/decision",
+    {
+      data: {
+        rowId: "payment-row-01",
+        decision: "manual_review_required",
+        reason: "Attempted unauthenticated settlement triage.",
+        evidenceSha256: null,
+      },
+    },
+  );
+  expect(response.status()).toBe(404);
+  await expect(response.json()).resolves.toEqual({ error: "not_found" });
 });
