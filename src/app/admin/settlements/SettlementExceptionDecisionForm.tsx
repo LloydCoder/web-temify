@@ -59,7 +59,7 @@ export function SettlementExceptionDecisionForm({
           message:
             response.status === 404
               ? "Access denied or this exception is no longer available."
-              : "The triage decision could not be recorded. Check the reason and evidence digest.",
+              : "Triage decision failed. Check the reason and evidence digest.",
         });
         return;
       }
@@ -68,7 +68,7 @@ export function SettlementExceptionDecisionForm({
       setEvidenceSha256("");
       setFeedback({
         kind: "success",
-        message: "Immutable triage decision recorded. The accounting exception remains open.",
+        message: "Immutable triage decision recorded; the exception remains open.",
       });
       router.refresh();
     } catch {
@@ -102,7 +102,7 @@ export function SettlementExceptionDecisionForm({
         >
           <option value="manual_review_required">Manual review required</option>
           <option value="reimport_required">Reimport corrected report</option>
-          <option value="accepted_with_evidence">Accept triage with evidence digest</option>
+          <option value="accepted_with_evidence">Accept with evidence digest</option>
         </select>
       </label>
       <label>
@@ -114,7 +114,7 @@ export function SettlementExceptionDecisionForm({
           maxLength={500}
           required
           disabled={pending}
-          placeholder="Describe the evidence reviewed and the next operational action."
+          placeholder="Describe the evidence and next operational action."
         />
       </label>
       {decision === "accepted_with_evidence" && (
