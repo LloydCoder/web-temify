@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
+
 export const metadata: Metadata = {
-  title: "Web-Temify — Build with a better starting point",
+  title: "Web-Temify — From Idea to Deployable Web Product in Hours",
   description:
-    "A growing home for practical templates, scripts, launch kits, and tools.",
+    "Discover website templates, launch kits, digital products, and tools for turning ideas into deployable web products.",
 };
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
