@@ -1,5 +1,5 @@
 begin;
-select plan(42);
+select plan(48);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -16,6 +16,8 @@ insert into auth.users (
   id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
   created_at, updated_at, raw_app_meta_data, raw_user_meta_data
 ) values
+  ('81000000-0000-4000-8000-000000000081', '00000000-0000-0000-0000-000000000000',
+   'authenticated', 'authenticated', 'phase4d2-seller@example.test', '', now(), now(), now(), '{}'::jsonb, '{"name":"Phase 4D2 Seller"}'::jsonb),
   ('89000000-0000-4000-8000-000000000089', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'phase4d2-admin@example.test', '', now(), now(), now(), '{}'::jsonb, '{}'::jsonb),
   ('89100000-0000-4000-8000-000000000089', '00000000-0000-0000-0000-000000000000',
@@ -32,6 +34,94 @@ values
   ('89200000-0000-4000-8000-000000000089', 'admin'::public.app_role),
   ('89300000-0000-4000-8000-000000000089', 'admin'::public.app_role)
 on conflict do nothing;
+
+-- Build one verified sandbox payment journal so reconciliation tests exercise a real match.
+insert into public.categories (id, slug, name, is_active)
+values ('85000000-0000-4000-8000-000000000085', 'phase4d2-category', 'Phase 4D2 Category', true)
+on conflict (id) do nothing;
+
+insert into public.products (
+  id, creator_id, category_id, slug, name, description, product_type, status,
+  price_minor, currency, rights_status, rights_verified_at, rights_verified_by,
+  artifact_sha256, release_version, license_type, summary
+) values (
+  '86000000-0000-4000-8000-000000000086',
+  '81000000-0000-4000-8000-000000000081',
+  '85000000-0000-4000-8000-000000000085',
+  'phase4d2-verified-product', 'Phase 4D2 Verified Product', 'Synthetic fixture for settlement reconciliation tests.',
+  'template', 'published', 1299, 'USD', 'verified',
+  '2026-10-13T12:00:00Z'::timestamptz, '89000000-0000-4000-8000-000000000089',
+  repeat('c', 64), '1.0.0', 'standard', 'Verified settlement fixture'
+) on conflict (id) do nothing;
+
+insert into public.product_rights_attestations (
+  product_id, attested_by, rights_basis, statement, evidence_reference, review_status, reviewed_by, reviewed_at
+) values (
+  '86000000-0000-4000-8000-000000000086',
+  '81000000-0000-4000-8000-000000000081',
+  'original_work', 'Synthetic rights declaration reviewed independently for database tests.',
+  'test-fixture://phase4d2/rights', 'verified',
+  '89000000-0000-4000-8000-000000000089', '2026-10-13T12:00:00Z'::timestamptz
+) on conflict do nothing;
+
+insert into public.product_versions (
+  id, product_id, version, release_state, release_notes, artifact_sha256,
+  artifact_storage_path, manifest, compatibility, created_by, released_at
+) values (
+  '87000000-0000-4000-8000-000000000087',
+  '86000000-0000-4000-8000-000000000086', '1.0.0', 'released',
+  'Synthetic settlement test artifact.', repeat('c', 64),
+  'private/phase4d2/verified-product-1.0.0.zip', '{}'::jsonb, '{}'::jsonb,
+  '81000000-0000-4000-8000-000000000081', '2026-10-13T12:05:00Z'::timestamptz
+) on conflict (product_id, version) do nothing;
+
+set constraints orders_totals_guard, order_items_totals_guard deferred;
+insert into public.orders (id, customer_id, currency, subtotal_minor, tax_minor, idempotency_key)
+values (
+  '88000000-0000-4000-8000-000000000088',
+  '89100000-0000-4000-8000-000000000089', 'USD', 1299, 0,
+  'phase4d2-match-order-idempotency-01'
+) on conflict (id) do nothing;
+
+insert into public.order_items (
+  id, order_id, product_id, product_version_id, seller_id, product_name, product_slug,
+  release_version, license_type, artifact_sha256, unit_amount_minor, quantity, currency
+) values (
+  '88900000-0000-4000-8000-000000000088',
+  '88000000-0000-4000-8000-000000000088',
+  '86000000-0000-4000-8000-000000000086',
+  '87000000-0000-4000-8000-000000000087',
+  '81000000-0000-4000-8000-000000000081',
+  'Phase 4D2 Verified Product', 'phase4d2-verified-product', '1.0.0', 'standard',
+  repeat('c', 64), 1299, 1, 'USD'
+) on conflict (id) do nothing;
+set constraints orders_totals_guard, order_items_totals_guard immediate;
+
+insert into public.payment_attempts (id, order_id, provider, amount_minor, currency, idempotency_key)
+values (
+  '90000000-0000-4000-8000-000000000090',
+  '88000000-0000-4000-8000-000000000088', 'sandbox', 1299, 'USD',
+  'phase4d2-match-payment-attempt-01'
+) on conflict (id) do nothing;
+update public.payment_attempts set status = 'pending'
+where id = '90000000-0000-4000-8000-000000000090';
+
+insert into public.payment_webhook_events (
+  provider, provider_event_id, event_type, payload_sha256, signature_verified,
+  order_id, payment_attempt_id, amount_minor, currency, provider_reference
+) values (
+  'sandbox', 'phase4d2-verified-payment-event-01', 'payment.succeeded', repeat('a',64), true,
+  '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090',
+  1299, 'USD', 'phase4d2-provider-payment-match-01'
+) on conflict do nothing;
+
+select is(
+  public.process_payment_webhook_event(we.id),
+  true,
+  'verified sandbox payment creates a posted journal batch for settlement matching'
+)
+from public.payment_webhook_events we
+where we.provider_event_id = 'phase4d2-verified-payment-event-01';
 
 create temporary table phase4d2_import_ids(import_id uuid primary key) on commit drop;
 
@@ -224,6 +314,88 @@ select has_table('public', 'settlement_reconciliation_results', 'row-level recon
 select ok(not has_table_privilege('authenticated', 'public.settlement_reconciliation_runs', 'SELECT'), 'authenticated clients cannot read reconciliation runs');
 select ok(has_function_privilege('service_role', 'public.reconcile_settlement_import(uuid,uuid)', 'EXECUTE'), 'trusted service role can call reconciliation RPC');
 select ok(not has_function_privilege('authenticated', 'public.reconcile_settlement_import(uuid,uuid)', 'EXECUTE'), 'authenticated clients cannot call reconciliation RPC');
+
+-- Exact provider reference and amount must match a posted batch.
+create temporary table phase4d2_matched_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_matched_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'settlement-matched-batch-2026-10-13',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('1',64), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(jsonb_build_object(
+        'rowId','matched-payment-row-01', 'rowType','payment',
+        'providerReference','phase4d2-provider-payment-match-01',
+        'paymentReference','phase4d2-order-payment-match-01',
+        'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+        'grossMinor',1299, 'feeMinor',39, 'netMinor',1260
+      ))
+    )
+  $sql$,
+  'matched payment settlement report imports successfully'
+);
+select public.reconcile_settlement_import(
+  (select import_id from phase4d2_matched_import_ids),
+  '89200000-0000-4000-8000-000000000089'
+);
+select is(
+  (select rr.result_code
+   from public.settlement_reconciliation_results rr
+   where rr.run_id = (
+     select sr.id from public.settlement_reconciliation_runs sr
+     where sr.import_id = (select import_id from phase4d2_matched_import_ids)
+   )
+   and rr.row_id = 'matched-payment-row-01'),
+  'matched_payment',
+  'settlement row matches the exact posted payment journal'
+);
+select is(
+  (select rr.journal_batch_id is not null
+   from public.settlement_reconciliation_results rr
+   where rr.run_id = (
+     select sr.id from public.settlement_reconciliation_runs sr
+     where sr.import_id = (select import_id from phase4d2_matched_import_ids)
+   )
+     and rr.row_id = 'matched-payment-row-01'),
+  true,
+  'matched settlement result retains the immutable journal batch reference'
+);
+
+create temporary table phase4d2_currency_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_currency_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'settlement-currency-mismatch-2026-10-13',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('2',64), true,
+      'sandbox_fixture', 'EUR', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(jsonb_build_object(
+        'rowId','currency-mismatch-row-01', 'rowType','payment',
+        'providerReference','phase4d2-provider-payment-match-01',
+        'paymentReference','phase4d2-order-payment-match-01',
+        'occurredAt','2026-10-13T10:00:00Z', 'currency','EUR',
+        'grossMinor',1299, 'feeMinor',39, 'netMinor',1260
+      ))
+    )
+  $sql$,
+  'cross-currency settlement report imports as evidence without being treated as matched'
+);
+select public.reconcile_settlement_import(
+  (select import_id from phase4d2_currency_import_ids),
+  '89200000-0000-4000-8000-000000000089'
+);
+select is(
+  (select rr.result_code
+   from public.settlement_reconciliation_results rr
+   where rr.run_id = (
+     select sr.id from public.settlement_reconciliation_runs sr
+     where sr.import_id = (select import_id from phase4d2_currency_import_ids)
+   )
+   and rr.row_id = 'currency-mismatch-row-01'),
+  'currency_mismatch',
+  'matching provider reference in another currency is classified as currency mismatch'
+);
 
 create temporary table phase4d2_reconciliation_ids(run_id uuid primary key) on commit drop;
 select lives_ok(
