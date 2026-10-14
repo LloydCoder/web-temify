@@ -135,7 +135,7 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - [x] Payment/refund journal posting must reconcile to the immutable ledger transaction and verified provider event, including provider reference and payload digest; arbitrary balanced postings are rejected.
 - [x] Seller fee schedules require a database-owned admin role, independent approval/revocation actors, immutable terms, and effective/expiry controls.
 - [x] Idempotent per-order-item proceeds allocation reconciles gross, seller payable, platform commission and any tax amount already present on the order snapshot.
-- [x] Unsupported posting sources (settlement, provider fees, chargebacks, reserves, manual adjustments) fail closed; refunds after allocation remain blocked until a reversal workflow exists.
+- [x] Unsupported posting sources (settlement, provider fees, chargebacks, reserves, manual adjustments) fail closed; post-allocation refund outflow requires an approved reversal journal first.
 - [x] 169 pgTAP assertions, empty-database migration reset, schema lint, typecheck, lint, format check, Playwright, production build and cleanup passed on the exact reviewed head.
 
 ### Phase 4C forensic audit record
@@ -144,7 +144,41 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - **PR/head/merge:** [PR #24](https://github.com/LloydCoder/web-temify/pull/24), reviewed head `3e5e438af23ef6dadb0e54443609507ab14b35dd`, merged commit `ed9f1d461c3f7fab2d47f5624cbbee4483c3baa7`.
 - **CI evidence:** [Foundation CI run 38515752985](https://github.com/LloydCoder/web-temify/actions/runs/38515752985) and [Security/dependency governance run 38515753014](https://github.com/LloydCoder/web-temify/actions/runs/38515753014) both passed on the exact reviewed head.
 - **Files reviewed:** `supabase/migrations/20261013035000_phase4c_financial_journal.sql`, `supabase/tests/phase4_commerce.test.sql`, Phase 4B commerce documentation, migration README, master roadmap and phase-gate register.
-- **Residual gate:** settlement, provider fee posting, payouts, chargebacks, manual adjustments, reserves and refunds after proceeds allocation remain disabled. No live provider, tax calculation, escrow, or production readiness is claimed.
+- **Residual gate:** settlement, provider fee posting, payouts, chargebacks, manual adjustments and reserves remain disabled. Phase 4D1 now implements a sandbox/test-only reversal-before-refund workflow; settlement, provider fees, payouts, chargebacks, reserves, manual adjustments and production readiness remain blocked. No live provider, tax calculation, escrow, or production readiness is claimed.
+
+### Phase 4D — settlement, refund reversals, chargebacks, reserves and financial adjustments (in progress)
+
+#### Phase 4D1 — refund reversals after proceeds allocation (complete for tested sandbox-only scope)
+
+- [x] Exact-head empty-database migration reset, schema lint, pgTAP/RLS tests, Playwright, production build and cleanup pass.
+- [x] Exact-head dependency/license/secret governance passes.
+- [x] Forensic review verifies immutable reversal requests/lines, distinct-admin approval/rejection, verified webhook evidence, balanced reversal-before-refund posting, cumulative item/fee/tax caps, idempotency and rejected-request retry.
+- [x] Commission reversal arithmetic uses cumulative rounding, including minor-unit carry across partial refunds.
+- [x] Service-role table grants do not allow direct state-transition updates; approval/rejection uses narrowly granted server RPCs.
+- [x] Roadmap, migration README, Phase 4C commerce documentation and this gate register agree with the reviewed Phase 4D1 implementation and its tested sandbox-only boundary.
+- [x] Explicit non-claims remain: no live provider, settlement reconciliation, provider-fee posting, payout, tax calculator, chargeback, reserve, manual-adjustment execution or escrow.
+
+**Phase 4D1 forensic audit record — PASS (sandbox/test scope only)**
+
+- **Disposition:** PASS for the implemented database reversal workflow and its tested accounting invariants. This is not live-commerce, provider settlement, payout, tax, escrow, or production-launch approval.
+- **PR:** [#27 — feat(commerce): add approved refund reversal workflow](https://github.com/LloydCoder/web-temify/pull/27).
+- **Validated implementation head:** `a5182c8f6258e525059a5e960a472f00e419a943`.
+- **Foundation CI:** [run 38522581791](https://github.com/LloydCoder/web-temify/actions/runs/38522581791) — passed on the exact implementation head, including frozen install, foundation tests, typecheck, lint, formatting, empty-database migration reset, schema lint, pgTAP/RLS tests, Playwright E2E, production build and cleanup.
+- **Security/dependency governance:** [run 38522581805](https://github.com/LloydCoder/web-temify/actions/runs/38522581805) — passed on the exact implementation head, including dependency, production-license and full-history secret checks.
+- **Files reviewed:** `supabase/migrations/20261013036000_phase4d1_refund_reversals.sql`, `supabase/tests/phase4_commerce.test.sql`, `docs/commerce/phase4d1-refund-reversals.md`, `docs/commerce/phase4c-financial-journal.md`, `supabase/migrations/README.md`, the master roadmap, and this gate register.
+- **Security/accounting invariants:** restricted server-only approval/rejection RPCs; distinct database-owned admin decision-maker; immutable request/line evidence; verified provider-event matching; balanced reversal journal posted before refund outflow; per-seller attribution; cumulative gross/fee/seller-net/tax caps; cumulative commission rounding; rejected-request retry; and no direct service-role table updates to request state.
+- **Test-fixture defects corrected before PASS:** all new refund records begin in the required `requested` state; the overflow fixture requests the remaining order balance but attempts an oversized item reversal; and the failed fixture is transitioned to `failed` to release its reserved order balance. The pgTAP plan and assertion count were updated together to 215.
+- **Residual risk:** no live provider, settlement reconciliation, provider-fee posting, payout, tax/VAT calculator, chargeback/dispute workflow, reserve management, manual-adjustment execution, escrow, production environment verification, formal penetration test, legal/tax review, or full WCAG 2.2 AA assessment is implied by these passing checks.
+- **Gate decision:** Phase 4D1 is complete for its stated sandbox/test scope. Phase 4D and launch readiness remain incomplete. The next serial gate is Phase 4D2, provider settlement reconciliation; provider selection, jurisdiction eligibility, settlement evidence and external onboarding remain prerequisites.
+
+#### Phase 4D2 — provider settlement reconciliation (not started; external provider gate)
+
+- [ ] Select and verify a provider only after supported platform/seller jurisdictions, currencies, fees, settlement reports, refunds, disputes, payout capabilities and operational support are confirmed.
+- [ ] Define a versioned provider-neutral settlement import contract with signed/source-authenticated evidence, content digest, report period, currency, gross, fees, net, provider references and row-level exceptions.
+- [ ] Reconcile settlement rows idempotently to verified payment/refund journal batches; reject duplicate, missing, mismatched, out-of-period, cross-currency and unexplained amounts.
+- [ ] Post provider-fee and settlement journal entries only through source-specific balanced journal guards; no automatic money movement or payout until separately approved.
+- [ ] Add adversarial pgTAP tests, reconciliation fixtures, failure/replay tests, operator exception queues, documentation and exact-head CI/forensic audit.
+- [ ] Record external onboarding and settlement evidence; until then keep live provider processing disabled.
 
 ## Phase 5 — Admin and operations
 

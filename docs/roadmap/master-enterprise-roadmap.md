@@ -35,11 +35,19 @@ Stable IDs, categories, search, product versions, compatibility, changelog, depe
 
 Server-owned order creation and immutable item snapshots; payment-provider abstraction; cryptographically verified webhooks; durable event inbox/outbox and idempotency; financial ledger; refund reservation/evidence; order-linked entitlements/licenses; private artifacts and bounded, short-lived downloads. No redirect or client-side flag may prove payment. Keep live providers disabled until eligibility and production controls are verified.
 
-**Phase 4C implementation update (merged, CI verified):** the platform now has an immutable, evidence-bound accounting journal, verified payment/refund journal posting, independently approved seller fee schedules, and idempotent proceeds allocation. Unsupported settlement, provider-fee, chargeback, reserve, manual-adjustment and post-allocation refund sources fail closed. This is still not a live provider, tax calculator, payout or production financial-readiness approval. See `docs/commerce/phase4c-financial-journal.md` and the exact-head evidence in `docs/roadmap/phase-gates.md`.
+**Phase 4C implementation update (merged, CI verified):** the platform now has an immutable, evidence-bound accounting journal, verified payment/refund journal posting, independently approved seller fee schedules, and idempotent proceeds allocation. Post-allocation refund outflow is permitted only after an approved reversal journal; settlement, provider-fee, chargeback, reserve and manual-adjustment sources remain fail-closed. This is still not a live provider, tax calculator, payout or production financial-readiness approval. See `docs/commerce/phase4c-financial-journal.md` and the exact-head evidence in `docs/roadmap/phase-gates.md`.
 
-### Phase 4D — settlement, chargebacks, refund reversals and financial adjustments (next serial gate)
+### Phase 4D — settlement, chargebacks, refund reversals and financial adjustments (in progress; execute as audited sub-gates)
 
 Build evidence-backed state machines for provider settlement reconciliation, refund reversals after proceeds allocation, chargeback/dispute evidence, reserve holds/releases and independently approved manual adjustments. Keep money movement disabled until those paths have balanced journal postings, adversarial pgTAP tests, idempotency, audit evidence and explicit business-policy approval. This phase cannot be declared complete without a chosen provider, supported jurisdiction/settlement evidence and the required external onboarding.
+
+#### Phase 4D1 — refund reversals after proceeds allocation (complete for tested sandbox-only scope)
+
+PR #27 implements immutable item-level reversal requests/lines, distinct-admin approval/rejection through restricted server RPCs, verified-event-bound reversal journals, cumulative refund caps, cumulative commission rounding, per-seller journal attribution, and retry after a rejected request. The exact implementation head `a5182c8f6258e525059a5e960a472f00e419a943` passed [Foundation CI run 38522581791](https://github.com/LloydCoder/web-temify/actions/runs/38522581791) and [Security/dependency governance run 38522581805](https://github.com/LloydCoder/web-temify/actions/runs/38522581805). The forensic audit is recorded in `docs/roadmap/phase-gates.md`. This is a sandbox/test-only database workflow; it does not enable live providers, payouts, settlement reconciliation, tax calculation, chargebacks, reserves, manual adjustments or escrow.
+
+#### Phase 4D2 — provider settlement reconciliation (next serial sub-gate)
+
+Define a provider-neutral settlement evidence contract, idempotent reconciliation against verified payment/refund journal batches, provider-fee accounting, row-level exceptions and balanced journal posting. Keep live provider processing disabled until a provider is selected and its supported jurisdictions, seller payout eligibility, currencies, fees, refund/dispute capabilities, settlement reports and operational support are verified. This sub-gate cannot be completed from code alone without external provider onboarding and evidence.
 
 ### Phase 5 — Admin, seller operations and trust workflows
 
