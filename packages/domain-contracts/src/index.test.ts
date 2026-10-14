@@ -125,7 +125,6 @@ describe("Phase 4D2 settlement import contract", () => {
   });
 
   it("rejects invalid auth assertions and extra fields", () => {
-    const { SettlementImportSchema } = await import("./index");
     expect(
       SettlementImportSchema.safeParse({
         ...validReport,
@@ -147,7 +146,6 @@ describe("Phase 4D2 settlement import contract", () => {
   });
 
   it("rejects duplicate row IDs and currency mismatch", () => {
-    const { SettlementImportSchema } = await import("./index");
     const duplicate = {
       ...validReport,
       rows: [validReport.rows[0], { ...validReport.rows[0] }],
@@ -161,7 +159,6 @@ describe("Phase 4D2 settlement import contract", () => {
   });
 
   it("rejects out-of-period rows and invalid signs", () => {
-    const { SettlementImportSchema } = await import("./index");
     const outsidePeriod = {
       ...validReport,
       rows: [
@@ -198,7 +195,6 @@ describe("Phase 4D2 settlement import contract", () => {
   });
 
   it("checks report-period boundaries in the declared timezone", () => {
-    const { SettlementImportSchema } = await import("./index");
     const localDateOutsidePeriod = {
       ...validReport,
       reportTimezone: "Europe/Berlin",
@@ -221,7 +217,6 @@ describe("Phase 4D2 settlement import contract", () => {
   });
 
   it("rejects invalid periods and source digests", () => {
-    const { SettlementImportSchema } = await import("./index");
     expect(
       SettlementImportSchema.safeParse({
         ...validReport,
