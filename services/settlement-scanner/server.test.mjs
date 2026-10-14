@@ -84,7 +84,10 @@ function fakeClamd(scanReply = "stream: OK") {
             socket.end(Buffer.from(`${scanReply}\0`));
             return;
           }
-          fileBytes = Buffer.concat([fileBytes, buffer.subarray(0, chunkLength)]);
+          fileBytes = Buffer.concat([
+            fileBytes,
+            buffer.subarray(0, chunkLength),
+          ]);
           buffer = buffer.subarray(chunkLength);
         }
       }
@@ -104,25 +107,28 @@ describe("settlement scanner service", () => {
     expect(constantTimeTokenEquals(token, undefined)).toBe(false);
   });
 
-  it("rejects unauthenticated requests before reading or scanning a payload", async () => {
-    const scan = vi.fn(async () => ({
-      verdict: "clean",
-      scannerName: "clamav",
-      scannerVersion: "ClamAV test",
-    }));
-    const port = await listen(startGateway({ scan }));
-    const response = await fetch(`http://127.0.0.1:${port}/v1/scan`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/octet-stream",
-        "X-Evidence-SHA256": sha256,
-      },
-      body: bytes,
-    });
+  it(
+    "rejects unauthenticated requests before reading or scanning a payload",
+    async () => {
+      const scan = vi.fn(async () => ({
+        verdict: "clean",
+        scannerName: "clamav",
+        scannerVersion: "ClamAV test",
+      }));
+      const port = await listen(startGateway({ scan }));
+      const response = await fetch(`http://127.0.0.1:${port}/v1/scan`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/octet-stream",
+          "X-Evidence-SHA256": sha256,
+        },
+        body: bytes,
+      });
 
-    expect(response.status).toBe(401);
-    expect(scan).not.toHaveBeenCalled();
-  });
+      expect(response.status).toBe(401);
+      expect(scan).not.toHaveBeenCalled();
+    },
+  );
 
   it("rejects unsupported content types and digest mismatches", async () => {
     const scan = vi.fn(async () => ({
@@ -149,29 +155,32 @@ describe("settlement scanner service", () => {
     expect(scan).not.toHaveBeenCalled();
   });
 
-  it("returns a clean verdict only after the scanner accepts the exact digest", async () => {
-    const scan = vi.fn(async () => ({
-      verdict: "clean",
-      scannerName: "clamav",
-      scannerVersion: "ClamAV 1.5.4",
-    }));
-    const port = await listen(startGateway({ scan }));
-    const response = await fetch(`http://127.0.0.1:${port}/v1/scan`, {
-      method: "POST",
-      headers: authHeaders(),
-      body: bytes,
-    });
+  it(
+    "returns a clean verdict only after the scanner accepts the exact digest",
+    async () => {
+      const scan = vi.fn(async () => ({
+        verdict: "clean",
+        scannerName: "clamav",
+        scannerVersion: "ClamAV 1.5.4",
+      }));
+      const port = await listen(startGateway({ scan }));
+      const response = await fetch(`http://127.0.0.1:${port}/v1/scan`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: bytes,
+      });
 
-    expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toEqual({
-      verdict: "clean",
-      scannerName: "clamav",
-      scannerVersion: "ClamAV 1.5.4",
-      sha256,
-    });
-    expect(scan).toHaveBeenCalledOnce();
-    expect(scan.mock.calls[0][0]).toEqual(bytes);
-  });
+      expect(response.status).toBe(200);
+      await expect(response.json()).resolves.toEqual({
+        verdict: "clean",
+        scannerName: "clamav",
+        scannerVersion: "ClamAV 1.5.4",
+        sha256,
+      });
+      expect(scan).toHaveBeenCalledOnce();
+      expect(scan.mock.calls[0][0]).toEqual(bytes);
+    },
+  );
 
   it.each(["infected", "error"])(
     "preserves a scanner %s verdict and never upgrades it to clean",
@@ -208,7 +217,9 @@ describe("settlement scanner service", () => {
     });
 
     expect(response.status).toBe(503);
-    await expect(response.json()).resolves.toEqual({ error: "scanner_unavailable" });
+    await expect(response.json()).resolves.toEqual({
+      error: "scanner_unavailable",
+    });
   });
 
   it("rejects payloads above the configured byte limit", async () => {
@@ -225,12 +236,16 @@ describe("settlement scanner service", () => {
     const oversized = Buffer.from("too many bytes");
     const response = await fetch(`http://127.0.0.1:${port}/v1/scan`, {
       method: "POST",
-      headers: authHeaders(createHash("sha256").update(oversized).digest("hex")),
+      headers: authHeaders(
+        createHash("sha256").update(oversized).digest("hex"),
+      ),
       body: oversized,
     });
 
     expect(response.status).toBe(413);
-    await expect(response.json()).resolves.toEqual({ error: "scan_payload_too_large" });
+    await expect(response.json()).resolves.toEqual({
+      error: "scan_payload_too_large",
+    });
   });
 
   it("uses ClamAV INSTREAM framing and recognizes a clean result", async () => {
