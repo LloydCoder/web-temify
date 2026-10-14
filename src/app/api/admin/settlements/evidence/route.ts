@@ -153,7 +153,11 @@ export async function POST(request: Request) {
 
     if (scanRecordError) {
       return NextResponse.json(
-        { error: "settlement_evidence_scan_record_failed", requestId, scanStatus: "pending" },
+        {
+          error: "settlement_evidence_scan_record_failed",
+          requestId,
+          scanStatus: "pending",
+        },
         { status: 503, headers: { "Cache-Control": "no-store" } },
       );
     }
@@ -173,7 +177,11 @@ export async function POST(request: Request) {
     },
     {
       status:
-        scanStatus === "clean" ? 201 : scanStatus === "infected" ? 422 : 202,
+        scanStatus === "clean"
+          ? 201
+          : scanStatus === "infected"
+            ? 422
+            : 202,
       headers: { "Cache-Control": "no-store" },
     },
   );
