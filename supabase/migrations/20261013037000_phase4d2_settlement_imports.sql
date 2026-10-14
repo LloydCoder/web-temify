@@ -299,3 +299,207 @@ comment on function public.import_settlement_report(
   text, text, text, date, date, text, text, boolean, text, text, uuid, jsonb
 ) is
   'Service-only, idempotent import of normalized settlement evidence. source_authenticated is a trusted-ingress assertion, not cryptographic verification by this function.';
+
+
+-- Phase 4D2 (slice 2): immutable reconciliation outcomes against posted journal batches.
+-- This records matches/exceptions only; provider-settlement and provider-fee posting remain fail-closed.
+create table public.settlement_reconciliation_runs (
+  id uuid primary key default gen_random_uuid(),
+  import_id uuid not null unique references public.settlement_imports(id) on delete restrict,
+  reconciled_by uuid not null references auth.users(id) on delete restrict,
+  matched_rows integer not null check (matched_rows >= 0),
+  exception_rows integer not null check (exception_rows >= 0),
+  created_at timestamptz not null default now(),
+  constraint settlement_reconciliation_row_counts check (matched_rows + exception_rows > 0)
+);
+
+create table public.settlement_reconciliation_results (
+  run_id uuid not null references public.settlement_reconciliation_runs(id) on delete restrict,
+  import_id uuid not null,
+  row_id text not null,
+  result_status text not null check (result_status in ('matched', 'exception')),
+  result_code text not null check (result_code in (
+    'matched_payment', 'matched_refund', 'missing_internal_match',
+    'duplicate_reference', 'amount_mismatch', 'currency_mismatch',
+    'unsupported_row_type'
+  )),
+  journal_batch_id uuid references public.financial_journal_batches(id) on delete restrict,
+  reconciled_by uuid not null references auth.users(id) on delete restrict,
+  created_at timestamptz not null default now(),
+  primary key (run_id, row_id),
+  foreign key (import_id, row_id)
+    references public.settlement_import_rows(import_id, row_id) on delete restrict,
+  constraint settlement_reconciliation_result_shape check (
+    (result_status = 'matched' and result_code in ('matched_payment', 'matched_refund') and journal_batch_id is not null)
+    or (result_status = 'exception' and result_code not in ('matched_payment', 'matched_refund') and journal_batch_id is null)
+  )
+);
+
+alter table public.settlement_reconciliation_runs enable row level security;
+alter table public.settlement_reconciliation_results enable row level security;
+revoke all on public.settlement_reconciliation_runs from public, anon, authenticated, service_role;
+revoke all on public.settlement_reconciliation_results from public, anon, authenticated, service_role;
+
+create function public.reject_settlement_reconciliation_mutation()
+returns trigger
+language plpgsql
+set search_path = ''
+as $function$
+begin
+  raise exception using errcode = '55000', message = 'settlement reconciliation evidence is immutable';
+end;
+$function$;
+revoke all on function public.reject_settlement_reconciliation_mutation() from public, anon, authenticated, service_role;
+
+create trigger settlement_reconciliation_runs_immutable
+before update or delete on public.settlement_reconciliation_runs
+for each row execute function public.reject_settlement_reconciliation_mutation();
+create trigger settlement_reconciliation_results_immutable
+before update or delete on public.settlement_reconciliation_results
+for each row execute function public.reject_settlement_reconciliation_mutation();
+
+create function public.reconcile_settlement_import(
+  p_import_id uuid,
+  p_reconciled_by uuid
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  import_row public.settlement_imports%rowtype;
+  existing_run public.settlement_reconciliation_runs%rowtype;
+  new_run_id uuid;
+  row_value record;
+  candidate_count bigint;
+  candidate_batch_id uuid;
+  candidate_amount numeric;
+  result_code_value text;
+  matched_count integer := 0;
+  exception_count integer := 0;
+begin
+  if p_import_id is null or p_reconciled_by is null then
+    raise exception using errcode = '23514', message = 'settlement reconciliation metadata failed validation';
+  end if;
+
+  select * into import_row
+  from public.settlement_imports
+  where id = p_import_id;
+  if import_row.id is null then
+    raise exception using errcode = 'P0002', message = 'settlement import was not found';
+  end if;
+
+  if not exists (
+    select 1 from public.user_roles ur
+    where ur.user_id = p_reconciled_by
+      and ur.role = 'admin'::public.app_role
+  ) or p_reconciled_by = import_row.imported_by then
+    raise exception using errcode = '42501', message = 'settlement reconciliation requires a distinct admin reviewer';
+  end if;
+
+  perform pg_advisory_xact_lock(hashtext('settlement-reconcile:' || p_import_id::text));
+
+  select * into existing_run
+  from public.settlement_reconciliation_runs
+  where import_id = p_import_id;
+  if existing_run.id is not null then
+    return existing_run.id;
+  end if;
+
+  insert into public.settlement_reconciliation_runs (
+    import_id, reconciled_by, matched_rows, exception_rows
+  ) values (p_import_id, p_reconciled_by, 0, 0)
+  returning id into new_run_id;
+
+  for row_value in
+    select * from public.settlement_import_rows
+    where import_id = p_import_id
+    order by row_id
+  loop
+    candidate_batch_id := null;
+    candidate_amount := null;
+    candidate_count := 0;
+    result_code_value := null;
+
+    if row_value.row_type not in ('payment', 'refund') then
+      result_code_value := 'unsupported_row_type';
+    elsif row_value.provider_reference is null then
+      result_code_value := 'missing_internal_match';
+    else
+      select count(*) into candidate_count
+      from public.financial_journal_batches b
+      where b.provider = import_row.provider
+        and b.provider_reference = row_value.provider_reference
+        and b.currency = row_value.currency
+        and b.status = 'posted'
+        and b.source_type = case when row_value.row_type = 'payment' then 'payment' else 'refund' end;
+
+      if candidate_count = 0 then
+        result_code_value := 'missing_internal_match';
+      elsif candidate_count > 1 then
+        result_code_value := 'duplicate_reference';
+      else
+        select b.id,
+               (select coalesce(sum(e.amount_minor), 0)
+                from public.financial_journal_entries e
+                where e.batch_id = b.id and e.side = 'debit')
+          into candidate_batch_id, candidate_amount
+        from public.financial_journal_batches b
+        where b.provider = import_row.provider
+          and b.provider_reference = row_value.provider_reference
+          and b.currency = row_value.currency
+          and b.status = 'posted'
+          and b.source_type = case when row_value.row_type = 'payment' then 'payment' else 'refund' end
+        limit 1;
+
+        if row_value.currency <> import_row.currency then
+          result_code_value := 'currency_mismatch';
+        elsif candidate_amount <> abs(row_value.gross_minor) then
+          result_code_value := 'amount_mismatch';
+        elsif row_value.row_type = 'payment' and row_value.net_minor <> row_value.gross_minor - row_value.fee_minor then
+          result_code_value := 'amount_mismatch';
+        else
+          result_code_value := case when row_value.row_type = 'payment'
+            then 'matched_payment' else 'matched_refund' end;
+        end if;
+      end if;
+    end if;
+
+    if result_code_value in ('matched_payment', 'matched_refund') then
+      matched_count := matched_count + 1;
+      insert into public.settlement_reconciliation_results (
+        run_id, import_id, row_id, result_status, result_code,
+        journal_batch_id, reconciled_by
+      ) values (
+        new_run_id, p_import_id, row_value.row_id, 'matched', result_code_value,
+        candidate_batch_id, p_reconciled_by
+      );
+    else
+      exception_count := exception_count + 1;
+      insert into public.settlement_reconciliation_results (
+        run_id, import_id, row_id, result_status, result_code,
+        journal_batch_id, reconciled_by
+      ) values (
+        new_run_id, p_import_id, row_value.row_id, 'exception', result_code_value,
+        null, p_reconciled_by
+      );
+    end if;
+  end loop;
+
+  update public.settlement_reconciliation_runs
+  set matched_rows = matched_count, exception_rows = exception_count
+  where id = new_run_id;
+
+  return new_run_id;
+end;
+$function$;
+revoke all on function public.reconcile_settlement_import(uuid, uuid) from public, anon, authenticated;
+grant execute on function public.reconcile_settlement_import(uuid, uuid) to service_role;
+
+comment on table public.settlement_reconciliation_runs is
+  'Immutable, one-time reconciliation snapshot for imported settlement evidence; does not post money.';
+comment on table public.settlement_reconciliation_results is
+  'Immutable row-level matches and exceptions against already-posted payment/refund journal batches.';
+comment on function public.reconcile_settlement_import(uuid, uuid) is
+  'Service-only one-time reconciliation of payment/refund rows to posted journal batches. Provider settlement/fee posting and exception resolution remain disabled.';
