@@ -5,6 +5,7 @@ import {
   ProductRightsAttestationInputSchema,
   ProductStatusSchema,
   SettlementImportSchema,
+  SettlementProviderSchema,
 } from "./index";
 
 describe("shared domain contracts", () => {
@@ -81,6 +82,16 @@ describe("shared domain contracts", () => {
         rightsStatus: "verified",
       }).success,
     ).toBe(false);
+  });
+});
+
+describe("settlement source provider policy", () => {
+  it("matches the accepted provider strategy without enabling live integrations", () => {
+    expect(SettlementProviderSchema.parse("polar")).toBe("polar");
+    expect(SettlementProviderSchema.parse("paystack")).toBe("paystack");
+    expect(SettlementProviderSchema.parse("sandbox")).toBe("sandbox");
+    expect(SettlementProviderSchema.safeParse("stripe").success).toBe(false);
+    expect(SettlementProviderSchema.safeParse("flutterwave").success).toBe(false);
   });
 });
 
