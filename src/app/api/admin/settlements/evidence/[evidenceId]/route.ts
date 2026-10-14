@@ -110,7 +110,9 @@ export async function GET(
   }
 
   const filename = safeDownloadFilename(evidence.original_filename);
-  return new Response(new Blob([bytes], { type: "application/octet-stream" }), {
+  const downloadBuffer = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(downloadBuffer).set(bytes);
+  return new Response(downloadBuffer, {
     status: 200,
     headers: {
       "Content-Type": "application/octet-stream",
