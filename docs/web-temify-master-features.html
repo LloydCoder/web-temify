@@ -1,517 +1,2592 @@
 <!-- LEGACY FEATURE BACKLOG (reviewed 2026-10-13): “core platform complete” and built-feature labels are not implementation evidence. Use docs/roadmap/phase-gates.md and CI-backed source; do not infer production readiness from this mockup. -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web-Temify — Complete Master Feature List (215 Items)</title>
-<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#fffbf4;--ink:#0f0d0a;--coral:#ff5733;--yellow:#ffd60a;--mint:#00c48c;--sky:#4f8ef7;--lilac:#c084fc;--muted:#6b6559;--surface:#fff8ed;--r:4px}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font-family:'Cabinet Grotesk',sans-serif;padding:2rem;max-width:1200px;margin:0 auto;line-height:1.6}
-h1{font-size:2.8rem;font-weight:900;letter-spacing:-.04em;margin-bottom:.4rem}
-.subtitle{color:var(--muted);font-size:.95rem;font-weight:500;margin-bottom:1.5rem}
-.stats-row{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:2px solid var(--ink)}
-.stat{background:var(--surface);border:2px solid var(--ink);border-radius:var(--r);padding:.6rem 1.1rem;text-align:center}
-.stat-num{font-size:1.8rem;font-weight:900;letter-spacing:-.04em;color:var(--coral);display:block;line-height:1}
-.stat-lbl{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:.2rem;display:block}
-.built-box{background:var(--ink);color:#fff;border-radius:8px;padding:2rem;margin-bottom:2.5rem}
-.built-box h2{font-size:1.4rem;font-weight:900;letter-spacing:-.02em;margin-bottom:.5rem;color:var(--yellow)}
-.built-box p{font-size:.85rem;color:rgba(255,255,255,.6);font-weight:500}
-.built-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:1.25rem}
-.built-item{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:3px;padding:.4rem .7rem;font-size:.72rem;font-weight:600;display:flex;align-items:center;gap:.4rem}
-.built-item::before{content:'✓';color:var(--mint);font-weight:900;flex-shrink:0}
-.group{margin-bottom:2.5rem}
-.group-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:2px solid var(--ink)}
-.group-num{background:var(--coral);color:#fff;font-size:.7rem;font-weight:900;padding:.3rem .7rem;border-radius:2px;border:2px solid var(--ink);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
-.group-num.new-grp{background:var(--mint)}
-.group-title{font-size:1.2rem;font-weight:900;letter-spacing:-.02em;flex:1}
-.group-count{font-size:.72rem;font-weight:800;color:var(--muted);font-family:'DM Mono',monospace}
-.features-list{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}
-.feat{background:var(--surface);border:2px solid var(--ink);border-radius:var(--r);padding:.7rem 1rem;display:flex;gap:.7rem;align-items:flex-start;transition:transform .15s,box-shadow .15s}
-.feat:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink)}
-.feat.new-feat{border-left:3px solid var(--mint)}
-.feat.priority{border-left:3px solid var(--coral)}
-.feat-num{font-family:'DM Mono',monospace;font-size:.65rem;font-weight:500;color:var(--muted);flex-shrink:0;min-width:28px;margin-top:.1rem}
-.feat-body{}
-.feat-name{font-size:.85rem;font-weight:800;letter-spacing:-.01em;margin-bottom:.15rem}
-.feat-desc{font-size:.72rem;color:var(--muted);font-weight:500;line-height:1.5}
-.tag{display:inline-block;font-size:.55rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;padding:1px 5px;border:1.5px solid var(--ink);border-radius:2px;margin-right:.3rem;margin-bottom:.2rem}
-.tag-new{background:var(--mint);color:#fff;border-color:var(--mint)}
-.tag-priority{background:var(--coral);color:#fff;border-color:var(--coral)}
-.tag-africa{background:var(--yellow);color:var(--ink)}
-.tag-ai{background:var(--lilac);color:#fff;border-color:var(--lilac)}
-.tag-payment{background:var(--sky);color:#fff;border-color:var(--sky)}
-.products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
-.product-tier{margin-bottom:1.5rem}
-.tier-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem}
-.tier-label::after{content:'';flex:1;height:1.5px;background:var(--ink);opacity:.15}
-.phases{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-top:1.5rem}
-.phase{background:var(--surface);border:2px solid var(--ink);border-radius:6px;padding:1.25rem}
-.phase-num{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--coral);margin-bottom:.5rem}
-.phase-title{font-size:.95rem;font-weight:900;letter-spacing:-.02em;margin-bottom:.5rem}
-.phase-items{font-size:.72rem;color:var(--muted);font-weight:500;line-height:1.65}
-.legend{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1.5rem;padding:.75rem 1rem;background:var(--surface);border:2px solid var(--ink);border-radius:var(--r)}
-.leg{display:flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:700}
-.leg-dot{width:10px;height:10px;border-radius:2px}
-@media(max-width:768px){.features-list,.built-grid,.phases,.products-grid{grid-template-columns:1fr}.stats-row{gap:.5rem}}
-</style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web-Temify — Complete Master Feature List (215 Items)</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #fffbf4;
+        --ink: #0f0d0a;
+        --coral: #ff5733;
+        --yellow: #ffd60a;
+        --mint: #00c48c;
+        --sky: #4f8ef7;
+        --lilac: #c084fc;
+        --muted: #6b6559;
+        --surface: #fff8ed;
+        --r: 4px;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Cabinet Grotesk", sans-serif;
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+      h1 {
+        font-size: 2.8rem;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        margin-bottom: 0.4rem;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 0.95rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+      }
+      .stats-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 2.5rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid var(--ink);
+      }
+      .stat {
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: var(--r);
+        padding: 0.6rem 1.1rem;
+        text-align: center;
+      }
+      .stat-num {
+        font-size: 1.8rem;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        color: var(--coral);
+        display: block;
+        line-height: 1;
+      }
+      .stat-lbl {
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        margin-top: 0.2rem;
+        display: block;
+      }
+      .built-box {
+        background: var(--ink);
+        color: #fff;
+        border-radius: 8px;
+        padding: 2rem;
+        margin-bottom: 2.5rem;
+      }
+      .built-box h2 {
+        font-size: 1.4rem;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+        color: var(--yellow);
+      }
+      .built-box p {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.6);
+        font-weight: 500;
+      }
+      .built-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+        margin-top: 1.25rem;
+      }
+      .built-item {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 3px;
+        padding: 0.4rem 0.7rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .built-item::before {
+        content: "✓";
+        color: var(--mint);
+        font-weight: 900;
+        flex-shrink: 0;
+      }
+      .group {
+        margin-bottom: 2.5rem;
+      }
+      .group-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--ink);
+      }
+      .group-num {
+        background: var(--coral);
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 900;
+        padding: 0.3rem 0.7rem;
+        border-radius: 2px;
+        border: 2px solid var(--ink);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
+      }
+      .group-num.new-grp {
+        background: var(--mint);
+      }
+      .group-title {
+        font-size: 1.2rem;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        flex: 1;
+      }
+      .group-count {
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: var(--muted);
+        font-family: "DM Mono", monospace;
+      }
+      .features-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+      }
+      .feat {
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: var(--r);
+        padding: 0.7rem 1rem;
+        display: flex;
+        gap: 0.7rem;
+        align-items: flex-start;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+      }
+      .feat:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 3px 3px 0 var(--ink);
+      }
+      .feat.new-feat {
+        border-left: 3px solid var(--mint);
+      }
+      .feat.priority {
+        border-left: 3px solid var(--coral);
+      }
+      .feat-num {
+        font-family: "DM Mono", monospace;
+        font-size: 0.65rem;
+        font-weight: 500;
+        color: var(--muted);
+        flex-shrink: 0;
+        min-width: 28px;
+        margin-top: 0.1rem;
+      }
+      .feat-body {
+      }
+      .feat-name {
+        font-size: 0.85rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        margin-bottom: 0.15rem;
+      }
+      .feat-desc {
+        font-size: 0.72rem;
+        color: var(--muted);
+        font-weight: 500;
+        line-height: 1.5;
+      }
+      .tag {
+        display: inline-block;
+        font-size: 0.55rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 1px 5px;
+        border: 1.5px solid var(--ink);
+        border-radius: 2px;
+        margin-right: 0.3rem;
+        margin-bottom: 0.2rem;
+      }
+      .tag-new {
+        background: var(--mint);
+        color: #fff;
+        border-color: var(--mint);
+      }
+      .tag-priority {
+        background: var(--coral);
+        color: #fff;
+        border-color: var(--coral);
+      }
+      .tag-africa {
+        background: var(--yellow);
+        color: var(--ink);
+      }
+      .tag-ai {
+        background: var(--lilac);
+        color: #fff;
+        border-color: var(--lilac);
+      }
+      .tag-payment {
+        background: var(--sky);
+        color: #fff;
+        border-color: var(--sky);
+      }
+      .products-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.6rem;
+      }
+      .product-tier {
+        margin-bottom: 1.5rem;
+      }
+      .tier-label {
+        font-size: 0.7rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        margin-bottom: 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .tier-label::after {
+        content: "";
+        flex: 1;
+        height: 1.5px;
+        background: var(--ink);
+        opacity: 0.15;
+      }
+      .phases {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+      }
+      .phase {
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: 6px;
+        padding: 1.25rem;
+      }
+      .phase-num {
+        font-size: 0.68rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--coral);
+        margin-bottom: 0.5rem;
+      }
+      .phase-title {
+        font-size: 0.95rem;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+      }
+      .phase-items {
+        font-size: 0.72rem;
+        color: var(--muted);
+        font-weight: 500;
+        line-height: 1.65;
+      }
+      .legend {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+        padding: 0.75rem 1rem;
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: var(--r);
+      }
+      .leg {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .leg-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+      }
+      @media (max-width: 768px) {
+        .features-list,
+        .built-grid,
+        .phases,
+        .products-grid {
+          grid-template-columns: 1fr;
+        }
+        .stats-row {
+          gap: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Web-Temify <span style="color: var(--coral)">●</span></h1>
+    <p class="subtitle">
+      Complete Master Feature List · PHP Platform · Updated May 2026
+    </p>
 
-<h1>Web-Temify <span style="color:var(--coral)">●</span></h1>
-<p class="subtitle">Complete Master Feature List · PHP Platform · Updated May 2026</p>
-
-<div class="stats-row">
-  <div class="stat"><span class="stat-num">215</span><span class="stat-lbl">Items to Build</span></div>
-  <div class="stat"><span class="stat-num">113</span><span class="stat-lbl">Already Built</span></div>
-  <div class="stat"><span class="stat-num">63</span><span class="stat-lbl">New This Pass</span></div>
-  <div class="stat"><span class="stat-num">26</span><span class="stat-lbl">Feature Groups</span></div>
-  <div class="stat"><span class="stat-num">3</span><span class="stat-lbl">Gateways</span></div>
-  <div class="stat"><span class="stat-num">5</span><span class="stat-lbl">Build Phases</span></div>
-  <div class="stat"><span class="stat-num">28</span><span class="stat-lbl">Products to Build</span></div>
-  <div class="stat"><span class="stat-num">250+</span><span class="stat-lbl">PHP Files Total</span></div>
-</div>
-
-<div class="legend">
-  <div class="leg"><div class="leg-dot" style="background:var(--mint);border:1.5px solid var(--ink)"></div> New from research (63 items)</div>
-  <div class="leg"><div class="leg-dot" style="background:var(--coral);border:1.5px solid var(--ink)"></div> High priority</div>
-  <div class="leg"><div class="leg-dot" style="background:var(--yellow);border:1.5px solid var(--ink)"></div> Africa-specific</div>
-  <div class="leg"><div class="leg-dot" style="background:var(--lilac);border:1.5px solid var(--ink)"></div> AI-powered</div>
-  <div class="leg"><div class="leg-dot" style="background:var(--sky);border:1.5px solid var(--ink)"></div> Payment-related</div>
-</div>
-
-<!-- ALREADY BUILT -->
-<div class="built-box">
-  <h2>✅ Already Built — 134 Files · 113/113 Checks Passing</h2>
-  <p>Core platform complete. Auth, marketplace, payments (Paystack + Stripe + LemonSqueezy), admin panel, blog engine, SEO, PWA, cron jobs, affiliate system, 2FA, dark mode, multi-language, GDPR, webhooks, email campaigns, activity log, 25+ public pages.</p>
-  <div class="built-grid">
-    <div class="built-item">Registration + email verify</div>
-    <div class="built-item">2FA (TOTP/Google Auth)</div>
-    <div class="built-item">Brute-force lockout</div>
-    <div class="built-item">Admin impersonation</div>
-    <div class="built-item">Template marketplace</div>
-    <div class="built-item">Device switcher preview</div>
-    <div class="built-item">VirusTotal malware scan</div>
-    <div class="built-item">Secure token downloads</div>
-    <div class="built-item">Paystack integration</div>
-    <div class="built-item">Stripe integration</div>
-    <div class="built-item">LemonSqueezy integration</div>
-    <div class="built-item">4-touch dunning</div>
-    <div class="built-item">Coupon codes + gift cards</div>
-    <div class="built-item">PPP pricing by country</div>
-    <div class="built-item">Guest checkout</div>
-    <div class="built-item">VAT calculation</div>
-    <div class="built-item">Webhook HMAC verify</div>
-    <div class="built-item">Webhook idempotency</div>
-    <div class="built-item">MRR/ARR/LTV/Churn metrics</div>
-    <div class="built-item">Revenue charts (Chart.js)</div>
-    <div class="built-item">Abandoned checkout recovery</div>
-    <div class="built-item">Email campaigns + A/B test</div>
-    <div class="built-item">Drip sequences</div>
-    <div class="built-item">Blog engine (TinyMCE)</div>
-    <div class="built-item">GDPR export + deletion</div>
-    <div class="built-item">Cookie consent centre</div>
-    <div class="built-item">Affiliate 20/30/40% tiers</div>
-    <div class="built-item">Dark mode (per user)</div>
-    <div class="built-item">4 languages + RTL</div>
-    <div class="built-item">JSON-LD schema</div>
-    <div class="built-item">PWA + service worker</div>
-    <div class="built-item">9 cron jobs</div>
-  </div>
-</div>
-
-<!-- GROUP 1 -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num">Group 1</span>
-    <span class="group-title">Platform Infrastructure</span>
-    <span class="group-count">1 item</span>
-  </div>
-  <div class="features-list">
-    <div class="feat priority">
-      <span class="feat-num">001</span>
-      <div class="feat-body"><div class="feat-name"><span class="tag tag-priority">Phase 1</span>Supabase Storage Integration</div><div class="feat-desc">Offload all template preview images, demo videos, screenshots, avatars, and press kit assets from shared hosting to Supabase CDN. PHP helper class + JS uploader. Replaces local file storage with CDN URLs stored in DB.</div></div>
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-num">215</span
+        ><span class="stat-lbl">Items to Build</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">113</span
+        ><span class="stat-lbl">Already Built</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">63</span
+        ><span class="stat-lbl">New This Pass</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">26</span
+        ><span class="stat-lbl">Feature Groups</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">3</span><span class="stat-lbl">Gateways</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">5</span
+        ><span class="stat-lbl">Build Phases</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">28</span
+        ><span class="stat-lbl">Products to Build</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">250+</span
+        ><span class="stat-lbl">PHP Files Total</span>
+      </div>
     </div>
-  </div>
-</div>
 
-<!-- GROUP 2 -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num">Group 2</span>
-    <span class="group-title">Auth & Trust Additions</span>
-    <span class="group-count">8 items</span>
-  </div>
-  <div class="features-list">
-    <div class="feat"><span class="feat-num">002</span><div class="feat-body"><div class="feat-name">Social Login — Google OAuth</div><div class="feat-desc">One-click Google sign-in. Reduces registration friction dramatically. OAuth 2.0 flow, store Google ID + avatar in users table.</div></div></div>
-    <div class="feat"><span class="feat-num">003</span><div class="feat-body"><div class="feat-name">Social Login — GitHub OAuth</div><div class="feat-desc">One-click GitHub sign-in. Signals developer-first platform. Auto-populate profile with GitHub username and avatar.</div></div></div>
-    <div class="feat"><span class="feat-num">004</span><div class="feat-body"><div class="feat-name">Social Login — Twitter/X OAuth</div><div class="feat-desc">One-click Twitter/X sign-in for creator and indie founder audience.</div></div></div>
-    <div class="feat"><span class="feat-num">005</span><div class="feat-body"><div class="feat-name">Verified Seller Badges</div><div class="feat-desc">Seller submits government ID or business registration. Admin approves. "Verified" checkmark on every product card and vendor storefront. Major trust signal for high-ticket script buyers.</div></div></div>
-    <div class="feat"><span class="feat-num">006</span><div class="feat-body"><div class="feat-name">Money-Back Guarantee Badge</div><div class="feat-desc">30-day guarantee badge visible on every product page and checkout. Reduces purchase anxiety. Single DB flag, no extra logic needed.</div></div></div>
-    <div class="feat"><span class="feat-num">007</span><div class="feat-body"><div class="feat-name">"As Seen In" Press Bar</div><div class="feat-desc">Scrolling strip of media logos / community mentions on homepage. Admin manages from CMS. Even early-stage social proof increases conversion.</div></div></div>
-    <div class="feat"><span class="feat-num">008</span><div class="feat-body"><div class="feat-name">Purchase Counter on Cards</div><div class="feat-desc">"847 purchases" displayed on every template card. Pulled from orders table. ThemeForest uses this heavily — proven social proof signal.</div></div></div>
-    <div class="feat"><span class="feat-num">009</span><div class="feat-body"><div class="feat-name">Live Purchase Notifications Toast</div><div class="feat-desc">"Someone in Lagos just bought the Banking Template" — real-time toast. Different from generic social proof toasts already built. Purchase-specific, location-specific, product-specific.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 3 -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num">Group 3</span>
-    <span class="group-title">Discovery & Search</span>
-    <span class="group-count">7 items</span>
-  </div>
-  <div class="features-list">
-    <div class="feat"><span class="feat-num">010</span><div class="feat-body"><div class="feat-name"><span class="tag tag-ai">AI</span>Semantic Search</div><div class="feat-desc">"I need a website for my logistics company" returns Courier templates — not keyword matches. Claude API processes query intent. Falls back to full-text search if API unavailable.</div></div></div>
-    <div class="feat"><span class="feat-num">011</span><div class="feat-body"><div class="feat-name">Visual / Screenshot Search</div><div class="feat-desc">Upload a screenshot of a design you like → platform finds similar templates. Image hash comparison + category matching.</div></div></div>
-    <div class="feat"><span class="feat-num">012</span><div class="feat-body"><div class="feat-name"><span class="tag tag-ai">AI</span>Personalised Homepage</div><div class="feat-desc">First visit shows trending. Return visits show recommendations based on browsing history, plan type, and purchase behaviour. "Recommended for you" section above fold.</div></div></div>
-    <div class="feat"><span class="feat-num">013</span><div class="feat-body"><div class="feat-name">Advanced Filter System</div><div class="feat-desc">Filter by: tech stack, colour scheme, page count, industry, price range, license type, file format, last updated date, and platform compatibility. ThemeForest's biggest discovery advantage.</div></div></div>
-    <div class="feat"><span class="feat-num">014</span><div class="feat-body"><div class="feat-name">"Collections by Use Case" Pages</div><div class="feat-desc">Hand-curated pages: "Best for Nigerian Startups", "Web3 Founder Pack", "Complete Fintech Setup". These rank in Google and convert better than raw category pages.</div></div></div>
-    <div class="feat"><span class="feat-num">015</span><div class="feat-body"><div class="feat-name">Recently Viewed Templates</div><div class="feat-desc">Persistent across sessions. Stored in DB per user (cookie for guests). Shown as a row on homepage and template listing page.</div></div></div>
-    <div class="feat"><span class="feat-num">016</span><div class="feat-body"><div class="feat-name">"Complete the Kit" Cross-Sell</div><div class="feat-desc">After purchase: "Buyers of this template also bought these 3." Recommendation engine on thank-you page and dashboard. Passive revenue.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 4 -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num">Group 4</span>
-    <span class="group-title">New Sections & Pages</span>
-    <span class="group-count">10 items</span>
-  </div>
-  <div class="features-list">
-    <div class="feat"><span class="feat-num">017</span><div class="feat-body"><div class="feat-name">Resources / Tools Directory (10 Categories)</div><div class="feat-desc">Curated directory: AI tools, Web Dev tools, Web3, Design, No-Code, Hosting, Plugins, Blockchain, Freelancer, Learning. Featured listing monetisation. SEO goldmine.</div></div></div>
-    <div class="feat"><span class="feat-num">018</span><div class="feat-body"><div class="feat-name">Web3 Dedicated Hub Page</div><div class="feat-desc">Landing page for all Web3 content: NFT, DeFi, DAO governance, token-gated templates. Separate nav item. Own category SEO.</div></div></div>
-    <div class="feat"><span class="feat-num">019</span><div class="feat-body"><div class="feat-name">Launch Kits Section</div><div class="feat-desc">Bundled product packages: SaaS Kit, Agency Kit, E-commerce Kit, Web3 DApp Kit. Multiple templates sold as one premium package at higher price point.</div></div></div>
-    <div class="feat"><span class="feat-num">020</span><div class="feat-body"><div class="feat-name">Founder Story Page</div><div class="feat-desc">Personal brand / trust-builder. Your story, faith foundation, vision for Web-Temify, the Tinlance connection. "About" is corporate. "Our Story" is human.</div></div></div>
-    <div class="feat"><span class="feat-num">021</span><div class="feat-body"><div class="feat-name">Programmatic SEO Niche Pages</div><div class="feat-desc">Auto-generated from DB: "best courier template Nigeria", "Web3 landing page template 2026", "loan company website design". Each page targets a specific long-tail keyword.</div></div></div>
-    <div class="feat"><span class="feat-num">022</span><div class="feat-body"><div class="feat-name">Developer Hub</div><div class="feat-desc">Structured resource centre: API docs, code snippets library, component browser, GitHub integration signal. Retains developer audience between purchases.</div></div></div>
-    <div class="feat"><span class="feat-num">023</span><div class="feat-body"><div class="feat-name">Understanding Licenses Page</div><div class="feat-desc">Plain English: Regular vs Extended vs White-Label with real-world examples. Reduces disputes. Increases upsell to higher license tiers.</div></div></div>
-    <div class="feat"><span class="feat-num">024</span><div class="feat-body"><div class="feat-name">Free Tools Section</div><div class="feat-desc">Colour palette generator, font pairing tool, website checklist PDF. Drives organic traffic from developers not ready to buy yet. Builds email list.</div></div></div>
-    <div class="feat"><span class="feat-num">025</span><div class="feat-body"><div class="feat-name">Template Showcase Gallery</div><div class="feat-desc">Users submit screenshots of live sites built with Web-Temify templates. "Built with Web-Temify" tag. Social proof + community pride.</div></div></div>
-    <div class="feat"><span class="feat-num">026</span><div class="feat-body"><div class="feat-name">Community Forum</div><div class="feat-desc">"Show Your Builds", "Web3 Dev Chat", "Freelancer Lounge". Increases time-on-site. Communities retain users better than any other feature.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 5 -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num">Group 5</span>
-    <span class="group-title">Buyer Experience</span>
-    <span class="group-count">11 items</span>
-  </div>
-  <div class="features-list">
-    <div class="feat"><span class="feat-num">027</span><div class="feat-body"><div class="feat-name">Template Request System</div><div class="feat-desc">Buyers post: "I need a Halal finance template, willing to pay $X." Sellers bid or Tinlance builds. Validates demand before building products.</div></div></div>
-    <div class="feat"><span class="feat-num">028</span><div class="feat-body"><div class="feat-name">Preview with Real Content</div><div class="feat-desc">Buyer types their company name → it appears live in the template preview. Major conversion booster. JS-based text replacement on preview iframe.</div></div></div>
-    <div class="feat"><span class="feat-num">029</span><div class="feat-body"><div class="feat-name">Free Download Tier (No Card)</div><div class="feat-desc">Genuinely good free templates requiring only email signup. Loss-leader strategy. Builds list, drives trust, converts to paid. ThemeForest's free item strategy works.</div></div></div>
-    <div class="feat"><span class="feat-num">030</span><div class="feat-body"><div class="feat-name">Re-Download Button</div><div class="feat-desc">Re-download past purchases from dashboard without contacting support. Download history already shows history — needs end-to-end wiring confirmation.</div></div></div>
-    <div class="feat"><span class="feat-num">031</span><div class="feat-body"><div class="feat-name">Self-Service Subscription Pause</div><div class="feat-desc">User pauses own subscription from dashboard — no admin involvement. Currently pause is DB-level admin-controlled. Needs self-service UI + cron handling.</div></div></div>
-    <div class="feat"><span class="feat-num">032</span><div class="feat-body"><div class="feat-name">"Request Customisation" Per Template</div><div class="feat-desc">Context-aware brief form on every template page. Pre-fills template name and category. Goes to Tinlance as a qualified lead with product context.</div></div></div>
-    <div class="feat"><span class="feat-num">033</span><div class="feat-body"><div class="feat-name">Template Compatibility Checker</div><div class="feat-desc">User selects their stack (WordPress 6.x, PHP 8.2, etc.) → gets compatibility confirmation or warning before downloading.</div></div></div>
-    <div class="feat"><span class="feat-num">034</span><div class="feat-body"><div class="feat-name">Subscription Gifting</div><div class="feat-desc">Buy Pro/Business plan as a gift. Enter recipient email, pay via any of 3 gateways. They receive activation email. Expands user acquisition.</div></div></div>
-    <div class="feat"><span class="feat-num">035</span><div class="feat-body"><div class="feat-name">Two-Click Checkout (Returning Buyers)</div><div class="feat-desc">Stored payment method, one confirmation click. Currently full checkout flow every time. Return buyer friction kills repeat purchases.</div></div></div>
-    <div class="feat"><span class="feat-num">036</span><div class="feat-body"><div class="feat-name">Tutorial Video Per Template</div><div class="feat-desc">2–3 min setup video embedded on preview page. "Watch how to deploy this in 5 minutes." Reduces support tickets, increases conversion, improves SEO dwell time.</div></div></div>
-    <div class="feat"><span class="feat-num">037</span><div class="feat-body"><div class="feat-name">Product Update Notifications to Buyers</div><div class="feat-desc">When seller releases new version, all buyers who purchased get email: "Your template updated to v2.1 — re-download now." Versioning exists, buyer notification doesn't.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 6 — NEW -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num new-grp">Group 6 — NEW</span>
-    <span class="group-title">License Key Management System</span>
-    <span class="group-count">8 items</span>
-  </div>
-  <div class="features-list">
-    <div class="feat new-feat priority"><span class="feat-num">038</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span><span class="tag tag-priority">Critical</span>License Key Generator</div><div class="feat-desc">On purchase of a script/plugin, auto-generate a unique license key tied to buyer's account and domain. Stored in licenses table with activation limit, expiry date, product ID.</div></div></div>
-    <div class="feat new-feat priority"><span class="feat-num">039</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>License Activation Tracking</div><div class="feat-desc">Each key has activation limit (e.g. 1 domain). Buyer activates via API call from their site. System records domain, IP, activation date. Activation count enforced.</div></div></div>
-    <div class="feat new-feat priority"><span class="feat-num">040</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>License Validation API Endpoint</div><div class="feat-desc">/api/v1/validate-license — buyers' sites call this to verify license status. Returns JSON: {status, expiry, plan_tier, domain_allowed}. Essential for script products.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">041</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>License Deactivation</div><div class="feat-desc">Buyer deactivates from one domain and reactivates on another from dashboard. No support ticket needed. Instant DB update.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">042</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>License Revocation (Admin)</div><div class="feat-desc">Admin revokes license on chargeback, refund, or fraud. Instantly breaks all validation API calls from buyer's site. Logged in activity log.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">043</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>License Expiry & Renewal</div><div class="feat-desc">Annual licenses expire. 30-day before expiry email with renewal link. Renewal via Paystack + Stripe + LemonSqueezy. Creates recurring revenue from one-time buyers.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">044</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>License Upgrade Path</div><div class="feat-desc">Single-site → multi-site → agency. Buyer pays the difference (proration calculated and charged via any of 3 gateways).</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">045</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Bulk License Purchases</div><div class="feat-desc">Agencies buy 10+ licenses at a discounted bulk rate. All 3 payment gateways. Admin sets bulk pricing tiers (5-pack, 10-pack, 25-pack).</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 7 -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num">Group 7</span>
-    <span class="group-title">Vendor / Seller System</span>
-    <span class="group-count">23 items</span>
-  </div>
-  <div class="features-list">
-    <div class="feat"><span class="feat-num">046</span><div class="feat-body"><div class="feat-name">Vendor Registration + Onboarding Wizard</div><div class="feat-desc">Step-by-step: profile → first product → pricing → payout method → live. Currently no structured vendor onboarding. Reduces drop-off.</div></div></div>
-    <div class="feat"><span class="feat-num">047</span><div class="feat-body"><div class="feat-name">Vendor Dashboard</div><div class="feat-desc">Manage listings, view earnings, request withdrawals, see analytics. The seller's control centre.</div></div></div>
-    <div class="feat"><span class="feat-num">048</span><div class="feat-body"><div class="feat-name">Product Submission Flow</div><div class="feat-desc">Upload template/script, set price, write description, add screenshots, demo link, and license type. Admin approval required before going live.</div></div></div>
-    <div class="feat"><span class="feat-num">049</span><div class="feat-body"><div class="feat-name">Admin Vendor Approval Queue</div><div class="feat-desc">Review submitted products: approve, reject, or request revision. Rejection sends automated feedback email with improvement suggestions.</div></div></div>
-    <div class="feat"><span class="feat-num">050</span><div class="feat-body"><div class="feat-name"><span class="tag tag-payment">Payments</span>Revenue Split System</div><div class="feat-desc">Platform takes 20–30% commission. Vendor gets the rest. All 3 gateways for payouts.</div></div></div>
-    <div class="feat"><span class="feat-num">051</span><div class="feat-body"><div class="feat-name"><span class="tag tag-payment">Payments</span>Vendor Payout System</div><div class="feat-desc">Withdrawal requests from dashboard. Admin processes via Paystack, Stripe, or LemonSqueezy. Payout history and status tracking.</div></div></div>
-    <div class="feat"><span class="feat-num">052</span><div class="feat-body"><div class="feat-name">Vendor Analytics Dashboard</div><div class="feat-desc">Sales stats, download counts, revenue charts, conversion rate per product. Their own version of the admin analytics panel.</div></div></div>
-    <div class="feat"><span class="feat-num">053</span><div class="feat-body"><div class="feat-name">Vendor Revenue Forecasting</div><div class="feat-desc">Projected next 30 days revenue based on trend and seasonal patterns. Sellers who see growth projections stay on the platform longer.</div></div></div>
-    <div class="feat"><span class="feat-num">054</span><div class="feat-body"><div class="feat-name">Conversion Funnel Per Product</div><div class="feat-desc">Views → preview clicks → purchases per product. Helps vendors optimise their listings. Currently only total sales are shown.</div></div></div>
-    <div class="feat"><span class="feat-num">055</span><div class="feat-body"><div class="feat-name">Vendor Public Storefront</div><div class="feat-desc">Customisable banner, bio, social links, speciality tags, follower count. Every vendor gets a public page at /vendor/username.</div></div></div>
-    <div class="feat"><span class="feat-num">056</span><div class="feat-body"><div class="feat-name">"Follow a Seller" Feature</div><div class="feat-desc">Buyers follow vendors. New product from that vendor triggers email + bell notification to all followers. Passive repeat purchases.</div></div></div>
-    <div class="feat"><span class="feat-num">057</span><div class="feat-body"><div class="feat-name">Seller Q&A on Product Pages</div><div class="feat-desc">Buyers ask public questions. Seller answers. Q&A visible to all. Reduces support tickets and increases conversion for other buyers.</div></div></div>
-    <div class="feat"><span class="feat-num">058</span><div class="feat-body"><div class="feat-name">Dispute Resolution System</div><div class="feat-desc">Buyer claims product doesn't match description. Open → seller responds → admin mediates → resolved. Protects both sides. Builds marketplace trust.</div></div></div>
-    <div class="feat"><span class="feat-num">059</span><div class="feat-body"><div class="feat-name">Bulk Product Import</div><div class="feat-desc">Sellers with existing catalogues (from ThemeForest/Envato) import via CSV/JSON. Massive seller acquisition advantage. Envato's July 2026 fee change drives sellers out.</div></div></div>
-    <div class="feat"><span class="feat-num">060</span><div class="feat-body"><div class="feat-name">Seller Webhook Events</div><div class="feat-desc">Sellers register webhook URL for events: new purchase, new review, payout processed. Enables seller automation workflows.</div></div></div>
-    <div class="feat"><span class="feat-num">061</span><div class="feat-body"><div class="feat-name">Seller API Rate Limit Dashboard</div><div class="feat-desc">Usage visibility, rate limit status, request history. Currently API exists but no usage visibility for vendors.</div></div></div>
-    <div class="feat"><span class="feat-num">062</span><div class="feat-body"><div class="feat-name">Vendor Tier Badges</div><div class="feat-desc">Verified, Pro Seller, Top Contributor. Displayed on product cards and storefront. Incentivises quality and volume.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">063</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Exclusive Listing Programme</div><div class="feat-desc">Vendor marks product as "Web-Temify Exclusive" (not sold elsewhere) → gets 85% revenue share instead of 70–80% + exclusive badge on card. Direct attack on Envato's 50% fee model.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">064</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Listing Quality Score (0–100)</div><div class="feat-desc">Per product: screenshots provided (+20), description length (+20), demo link (+20), tags (+20), price set (+20). Shown to vendor only. Nudges them to improve before submission.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">065</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Automated Listing Feedback</div><div class="feat-desc">Rejection sends templated email with specific improvement suggestions. "Your screenshots are too low resolution. Your description is under 100 words. Add a live demo link."</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">066</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Vendor Earnings Forecast at Upload</div><div class="feat-desc">"Based on 247 similar products in this category, estimated earnings: $200–$800/month." Shown before publish. Motivates vendors to complete their listing.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">067</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Vendor SLA Dashboard</div><div class="feat-desc">Vendors see: approval time, avg response time, chargeback rate, review score. Below-threshold vendors get warnings before suspension.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">068</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Vendor Academy</div><div class="feat-desc">Guides and short videos: how to write product descriptions, price competitively, take good screenshots, pass admin review, respond to buyer questions. Improves overall marketplace quality.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 8 — NEW -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num new-grp">Group 8 — NEW</span>
-    <span class="group-title">Trust & Fraud Prevention</span>
-    <span class="group-count">9 items</span>
-  </div>
-  <div class="features-list">
-    <div class="feat new-feat priority"><span class="feat-num">069</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span><span class="tag tag-priority">Critical</span>Fraud Risk Scoring</div><div class="feat-desc">Every registration and purchase gets a risk score: device fingerprint + email reputation + IP + behaviour pattern. High-risk flagged for manual review before download released.</div></div></div>
-    <div class="feat new-feat priority"><span class="feat-num">070</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span><span class="tag tag-priority">Critical</span>Chargeback Protection System</div><div class="feat-desc">Track chargeback ratio per vendor. Flag vendors >1%. Auto-hold payouts when dispute opened. Evidence packet auto-generated (purchase time, IP, device, download logs).</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">071</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Device Fingerprinting on Registration</div><div class="feat-desc">Detect same person creating multiple accounts to abuse free trials or coupon codes. Browser fingerprint stored and compared on new registrations.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">072</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Velocity Checks</div><div class="feat-desc">Flag accounts downloading abnormally fast (50 downloads in 10 minutes). Auto-suspend pending admin review. Protects vendor revenue.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">073</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Stolen Card Detection</div><div class="feat-desc">Cross-reference purchase IP against billing address. Flag significant mismatches. Integrate with Paystack's built-in fraud signals for African card detection.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">074</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Vendor Fraud Detection</div><div class="feat-desc">Detect vendors uploading plagiarised content. Reverse image search on screenshots. File hash comparison against existing product database.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">075</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Content ID System</div><div class="feat-desc">Hash comparison + similarity scoring on all uploaded files before approval. Prevents duplicate products and stolen code from reaching buyers.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">076</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>2FA for High-Value Checkout</div><div class="feat-desc">Purchases above $200 require 2FA confirmation before payment processes. Reduces chargebacks from compromised accounts and stolen cards significantly.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">077</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>IP Allowlist for Admin Panel</div><div class="feat-desc">Admin panel only accessible from whitelisted IP addresses. Configurable from settings. Prevents admin panel access even if credentials are compromised.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 9 — NEW -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num new-grp">Group 9 — NEW</span>
-    <span class="group-title">Messaging & Support System</span>
-    <span class="group-count">5 items</span>
-  </div>
-  <div class="features-list">
-    <div class="feat new-feat priority"><span class="feat-num">078</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span><span class="tag tag-priority">High Value</span>Buyer-Vendor Direct Messaging</div><div class="feat-desc">After purchase, buyer messages vendor about their product. Threaded conversations. Admin can see all threads. Biggest trust gap in current build.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">079</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Support Ticket System</div><div class="feat-desc">Per-purchase support: open → in progress → resolved. SLA tracking (respond within 24 hours). Admin and vendor can both respond.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">080</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Vendor Response Time Badge</div><div class="feat-desc">"Avg response time: 4 hours" displayed on vendor storefront. Calculated from support ticket data. Massive purchase trust signal for high-ticket buyers.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">081</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Canned Responses for Vendors</div><div class="feat-desc">Vendors create saved reply templates for common questions. One click to insert. Speeds up support dramatically.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">082</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span><span class="tag tag-ai">AI</span>AI Support Auto-Responder</div><div class="feat-desc">First response to support tickets auto-generated from product FAQ + description via Claude API. Vendor reviews before sending. Cuts initial response time to under 1 minute.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 10 — NEW -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num new-grp">Group 10 — NEW</span>
-    <span class="group-title">Courses & Knowledge Products</span>
-    <span class="group-count">5 items</span>
-  </div>
-  <div class="features-list">
-    <div class="feat new-feat"><span class="feat-num">083</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Mini Course Builder</div><div class="feat-desc">Vendors create structured courses tied to their template products. "Buy this template + learn to use it in this 5-lesson course." Turns templates into learning products.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">084</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Video Lesson Hosting</div><div class="feat-desc">Upload lesson videos to Supabase storage. Custom video player with progress tracking, playback speed, and chapter markers.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">085</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Course Progress + Certificate</div><div class="feat-desc">Per-user progress bar. Certificate of completion auto-generated as PDF with user name, course name, completion date, and Web-Temify seal.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">086</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Prerequisite Gating</div><div class="feat-desc">Lesson 3 unlocks only after lesson 2 completed. Progress stored per user per course. Prevents skipping.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">087</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Quiz / Assessment Builder</div><div class="feat-desc">Multiple choice quizzes at end of modules. Pass/fail gates for certificate issuance. Admin and vendor can both create quizzes.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 11 -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num">Group 11</span>
-    <span class="group-title">Monetisation Additions</span>
-    <span class="group-count">18 items</span>
-  </div>
-  <div class="features-list">
-    <div class="feat"><span class="feat-num">088</span><div class="feat-body"><div class="feat-name"><span class="tag tag-payment">Payments</span>Paid Featured Listings (Directory)</div><div class="feat-desc">Tools pay for featured placement in directory. Paystack + Stripe + LemonSqueezy. $50–$500/year per listing. Passive revenue.</div></div></div>
-    <div class="feat"><span class="feat-num">089</span><div class="feat-body"><div class="feat-name"><span class="tag tag-payment">Payments</span>White-Label Licensing Tier</div><div class="feat-desc">Premium license allowing agencies to rebrand and resell templates to their clients. All 3 gateways.</div></div></div>
-    <div class="feat"><span class="feat-num">090</span><div class="feat-body"><div class="feat-name"><span class="tag tag-payment">Payments</span>Bundle / Launch Kit Checkout</div><div class="feat-desc">Multiple templates purchased as one bundle. Single transaction. All 3 gateways. Discounted vs individual purchases.</div></div></div>
-    <div class="feat"><span class="feat-num">091</span><div class="feat-body"><div class="feat-name">Directory Affiliate Link Tracking</div><div class="feat-desc">Passive commissions when visitors click through to listed tools and sign up. SaaS tools typically pay 20–30% recurring affiliate commissions.</div></div></div>
-    <div class="feat"><span class="feat-num">092</span><div class="feat-body"><div class="feat-name">Sponsorship Ad Zones (Directory)</div><div class="feat-desc">Banner-style ad slots within directory category pages. Direct deal or AdSense fallback.</div></div></div>
-    <div class="feat"><span class="feat-num">093</span><div class="feat-body"><div class="feat-name">"Pay What You Want" Pricing</div><div class="feat-desc">Seller sets minimum price. Buyer can pay more. Works for early-stage products and community building. Gumroad built their reputation on this.</div></div></div>
-    <div class="feat"><span class="feat-num">094</span><div class="feat-body"><div class="feat-name"><span class="tag tag-payment">Payments</span>Team / Agency Plan (4th Tier)</div><div class="feat-desc">Multiple seats under one billing. 5 team members, $99–$199/month. Agencies managing multiple client projects need this. All 3 gateways.</div></div></div>
-    <div class="feat"><span class="feat-num">095</span><div class="feat-body"><div class="feat-name">Volume Licensing for Agencies</div><div class="feat-desc">Single purchase covers up to 10 client websites. Higher price, massive value for agencies. ThemeForest Extended License equivalent.</div></div></div>
-    <div class="feat"><span class="feat-num">096</span><div class="feat-body"><div class="feat-name">Template Rental / Time-Limited Access</div><div class="feat-desc">30-day access at 30% of full price. For freelancers on a single project. Novel monetisation. Auto-expires via cron.</div></div></div>
-    <div class="feat"><span class="feat-num">097</span><div class="feat-body"><div class="feat-name">Early Access / Pre-Launch Listings</div><div class="feat-desc">Discounted pre-launch price. Buyers pay now, access on release date. Creates urgency and validates demand before launch.</div></div></div>
-    <div class="feat"><span class="feat-num">098</span><div class="feat-body"><div class="feat-name">Tip / Donation Button (Free Templates)</div><div class="feat-desc">"Buy the seller a coffee — $5" on free template pages. Low friction, high goodwill. Some sellers make meaningful income from tips.</div></div></div>
-    <div class="feat"><span class="feat-num">099</span><div class="feat-body"><div class="feat-name"><span class="tag tag-africa">Africa</span>Buy Now Pay Later (BNPL)</div><div class="feat-desc">Carbon or FairMoney for Africa: 3-month instalments. Unlocks higher-ticket purchases for buyers with income but limited upfront cash.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">100</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Usage-Based Pricing</div><div class="feat-desc">For API tools and scripts: charge per API call or per active user on buyer's site. Metered billing via Paystack recurring. Aligns price with buyer value.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">101</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Dynamic Pricing / Flash Sales</div><div class="feat-desc">Admin sets time-limited sale price per template. Auto-expires at set date/time. Countdown timer shown on product card. Creates urgency.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">102</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Revenue Share on Vendor Referrals</div><div class="feat-desc">Vendors earn % of revenue from buyers they refer to the platform (not just their own products). Incentivises vendors to actively promote Web-Temify.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">103</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Sponsored Placement Auctions</div><div class="feat-desc">Vendors bid for featured placement on category pages. Highest bidder gets top spot for the week. Automated weekly reset via cron.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">104</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Multi-Currency Invoicing</div><div class="feat-desc">Invoices in buyer's local currency (NGN, KES, GHS, USD, EUR). Required for African business buyers claiming expenses. Auto-converts using daily exchange rate.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">105</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Reseller Programme</div><div class="feat-desc">Approved resellers buy subscriptions at 40% discount, resell to clients at full price. White-label invoice with reseller branding. B2B channel that scales without effort.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 12 -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num">Group 12</span>
-    <span class="group-title">Community & Engagement</span>
-    <span class="group-count">11 items</span>
-  </div>
-  <div class="features-list">
-    <div class="feat"><span class="feat-num">106</span><div class="feat-body"><div class="feat-name">Points & Rewards System</div><div class="feat-desc">Earn for: purchases, reviews, referrals, profile completion, login streaks. Redeem for discount credits. 48%+ engagement increase per research.</div></div></div>
-    <div class="feat"><span class="feat-num">107</span><div class="feat-body"><div class="feat-name">Badges & Achievements</div><div class="feat-desc">"First Purchase", "10 Downloads", "Review Champion", "Early Adopter", "Web3 Pioneer". Visible on user profile. Non-monetary recognition.</div></div></div>
-    <div class="feat"><span class="feat-num">108</span><div class="feat-body"><div class="feat-name">Leaderboard</div><div class="feat-desc">Top buyers, top sellers, top reviewers. Monthly reset with prizes. Drives healthy competition and community recognition.</div></div></div>
-    <div class="feat"><span class="feat-num">109</span><div class="feat-body"><div class="feat-name">Weekly Auto-Generated Newsletter</div><div class="feat-desc">New templates this week, top sellers, community showcase, dev tips. Auto-generated from platform data. Drives repeat visits.</div></div></div>
-    <div class="feat"><span class="feat-num">110</span><div class="feat-body"><div class="feat-name">Seasonal Challenges / Contests</div><div class="feat-desc">"Best fintech build this month — winner gets $100 credit." Low cost, high engagement. Drives submissions, reviews, community content.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">111</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Annual Recap Email</div><div class="feat-desc">"Your Web-Temify Year in Review" — sent every January. Templates downloaded, money saved vs building from scratch, top categories. Viral potential. Users share on social.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">112</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Win-Back Campaign</div><div class="feat-desc">Auto-detect users inactive for 60 days. Personalised "we miss you" email with discount code. Triggered from cron. Pure passive revenue recovery.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">113</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Upgrade Nudge System</div><div class="feat-desc">Free users who viewed 5+ premium templates get targeted in-app banner: "You've been eyeing premium templates. Get full access for $19/month." Conversion funnel closer.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">114</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Usage Milestone Celebrations</div><div class="feat-desc">"You've downloaded your 10th template! 🎉" In-app notification + social share prompt. Drives engagement and word-of-mouth.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">115</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Referral Contest</div><div class="feat-desc">Top 3 referrers this month win $100 Web-Temify credit. Monthly contest tracked on leaderboard. Drives aggressive word-of-mouth at near-zero cost.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">116</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Exit Survey on Cancellation</div><div class="feat-desc">3-question survey before subscription cancellation confirmed. Captures churn reasons. Feeds directly into product roadmap. Priceless product intelligence.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUPS 13-23 condensed for space -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num">Groups 13–23</span>
-    <span class="group-title">Services, Analytics, Africa, Technical, SEO, AI, Mobile, Compliance, Operations, Positioning</span>
-    <span class="group-count">47 items (117–163)</span>
-  </div>
-  <div class="features-list">
-    <div class="feat"><span class="feat-num">117–123</span><div class="feat-body"><div class="feat-name">Services & Leads (Group 13) — 7 items</div><div class="feat-desc">Service request system, 6 service categories, project brief form, lead management in admin, services page, CTA hooks on every template page, upsell hook at checkout. All route to Tinlance as qualified leads.</div></div></div>
-    <div class="feat"><span class="feat-num">124–127</span><div class="feat-body"><div class="feat-name">New Analytics (Group 14) — 4 items</div><div class="feat-desc">Geographic sales heatmap, revenue attribution dashboard (organic/affiliate/direct/social), Product Opportunity Report from zero-result searches, seller conversion funnel per product.</div></div></div>
-    <div class="feat"><span class="feat-num">128–132</span><div class="feat-body"><div class="feat-name"><span class="tag tag-africa">Africa</span>Africa-Specific (Group 15) — 5 items</div><div class="feat-desc">MTN MoMo + Airtel Money + M-Pesa integration, Naira/multi-currency display (NGN/KES/GHS/ZAR), low-bandwidth mode, WhatsApp Business support, WhatsApp order notifications with download link.</div></div></div>
-    <div class="feat"><span class="feat-num">133–137</span><div class="feat-body"><div class="feat-name">Technical Upgrades (Group 16) — 5 items</div><div class="feat-desc">Mobile-optimised checkout, PWA push notifications for watched categories, Zapier/Make.com native integration, white-label platform option, Merchant of Record for global tax handling.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">138–143</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Discovery & External Integrations (Group 17) — 6 items</div><div class="feat-desc">ProductHunt-style launch system, Google Shopping integration, SoftwareApplication JSON-LD schema (rich snippets), Figma Community integration with backlinks, GitHub repo button on preview, NPM/composer install commands.</div></div></div>
-    <div class="feat"><span class="feat-num">144–146</span><div class="feat-body"><div class="feat-name">SEO & Content (Group 18) — 3 items</div><div class="feat-desc">User-generated review pages (indexable), template comparison landing pages (auto-generated), AI content automation engine (Python + Claude Sonnet → SEO blog drafts → cron).</div></div></div>
-    <div class="feat"><span class="feat-num">147–152</span><div class="feat-body"><div class="feat-name"><span class="tag tag-ai">AI</span>AI Features (Group 19) — 6 items</div><div class="feat-desc">AI page generator (60 seconds, Claude API + download), editable sandbox per template, AI product description generator for vendor uploads, AI pricing recommendation, AI review summariser, AI chargeback predictor.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">153–154</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Mobile App (Group 20) — 2 items</div><div class="feat-desc">iOS app (React Native) and Android app with full feature parity: browse, purchase, download, push notifications for new products in watched categories, order confirmations.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">155–158</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Compliance & Legal (Group 21) — 4 items</div><div class="feat-desc">EU-compliant VAT invoice auto-generation, licensing clarity page, GDPR CMP v2 (IAB TCF 2.2 compliant, granular consent), SOC 2 readiness checklist in admin panel.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">159–161</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span>Platform Operations (Group 22) — 3 items</div><div class="feat-desc">API key management for buyers (create/rotate/revoke from dashboard), staging environment access for Business/Agency plan holders, bulk license purchase system.</div></div></div>
-    <div class="feat"><span class="feat-num">162–163</span><div class="feat-body"><div class="feat-name">Homepage & Positioning (Group 23) — 2 items</div><div class="feat-desc">Hero copy: "From idea to deployable web product in hours." Core positioning wired through meta description, OG tags, and all landing pages.</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 24 — DIRECTORY -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num">Group 24</span>
-    <span class="group-title">Tech Directory Hub — 10 Categories + Platform</span>
-    <span class="group-count">21 items (164–184)</span>
-  </div>
-  <div class="features-list">
-    <div class="feat"><span class="feat-num">164–173</span><div class="feat-body"><div class="feat-name">10 Directory Categories</div><div class="feat-desc">Tech & AI Companies · Web Development Tools · Web3 & Blockchain · Design & UI Tools · No-Code / Low-Code · Hosting & Infrastructure · Plugins & Extensions · Blockchain & Crypto Projects · Freelancer & Agency Resources · Learning & Community</div></div></div>
-    <div class="feat"><span class="feat-num">174</span><div class="feat-body"><div class="feat-name">Directory Search + Filter System</div><div class="feat-desc">Search across all 10 categories. Filter by: pricing tier (free/freemium/paid), type, region, rating. Live results.</div></div></div>
-    <div class="feat"><span class="feat-num">175</span><div class="feat-body"><div class="feat-name"><span class="tag tag-payment">Payments</span>Featured Listing Payments</div><div class="feat-desc">Paystack + Stripe + LemonSqueezy. $50–$500/year. Top placement + featured badge. Core monetisation for directory.</div></div></div>
-    <div class="feat"><span class="feat-num">176–184</span><div class="feat-body"><div class="feat-name">Directory Platform Features — 9 more items</div><div class="feat-desc">Sponsored banners · Affiliate link tracking · User ratings + reviews · Community submission form + admin approval · AI auto-populate (Product Hunt + GitHub + RSS → draft listings) · Individual SEO page per listing · Compare Tools side-by-side · Weekly "Top Tools" digest · Internal linking to relevant templates</div></div></div>
-  </div>
-</div>
-
-<!-- GROUP 25 — PRODUCTS -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num">Group 25</span>
-    <span class="group-title">Template & Script Products (Seeding the Marketplace)</span>
-    <span class="group-count">28 items (185–212)</span>
-  </div>
-  <div class="product-tier">
-    <div class="tier-label">Tier 1 — Build First (High demand, Africa-relevant)</div>
-    <div class="products-grid">
-      <div class="feat priority"><span class="feat-num">185</span><div class="feat-body"><div class="feat-name">Courier / Logistics Template</div><div class="feat-desc">Rate calculator, tracking UI, maps, fleet management. $99–$199.</div></div></div>
-      <div class="feat priority"><span class="feat-num">186</span><div class="feat-body"><div class="feat-name">Loan / Lending Template</div><div class="feat-desc">Loan calculator, multi-step application, trust elements. $99–$249.</div></div></div>
-      <div class="feat priority"><span class="feat-num">187</span><div class="feat-body"><div class="feat-name">Banking / Neobank Template</div><div class="feat-desc">Strong trust design, calculator, compliance section. $99–$299.</div></div></div>
-      <div class="feat priority"><span class="feat-num">188</span><div class="feat-body"><div class="feat-name">Digital Agency Template</div><div class="feat-desc">Evergreen, broad demand. Portfolio + services + CTAs. $49–$99.</div></div></div>
-      <div class="feat priority"><span class="feat-num">189</span><div class="feat-body"><div class="feat-name">SaaS / Startup Template</div><div class="feat-desc">Conversion-focused. Feature sections, pricing tables. $49–$99.</div></div></div>
-      <div class="feat priority"><span class="feat-num">190</span><div class="feat-body"><div class="feat-name">Portfolio / Freelancer Template</div><div class="feat-desc">Developers, designers, Web3 creators. $29–$79.</div></div></div>
+    <div class="legend">
+      <div class="leg">
+        <div
+          class="leg-dot"
+          style="background: var(--mint); border: 1.5px solid var(--ink)"
+        ></div>
+        New from research (63 items)
+      </div>
+      <div class="leg">
+        <div
+          class="leg-dot"
+          style="background: var(--coral); border: 1.5px solid var(--ink)"
+        ></div>
+        High priority
+      </div>
+      <div class="leg">
+        <div
+          class="leg-dot"
+          style="background: var(--yellow); border: 1.5px solid var(--ink)"
+        ></div>
+        Africa-specific
+      </div>
+      <div class="leg">
+        <div
+          class="leg-dot"
+          style="background: var(--lilac); border: 1.5px solid var(--ink)"
+        ></div>
+        AI-powered
+      </div>
+      <div class="leg">
+        <div
+          class="leg-dot"
+          style="background: var(--sky); border: 1.5px solid var(--ink)"
+        ></div>
+        Payment-related
+      </div>
     </div>
-  </div>
-  <div class="product-tier">
-    <div class="tier-label">Tier 2 — Medium Term (Higher ticket, more complex)</div>
-    <div class="products-grid">
-      <div class="feat"><span class="feat-num">191</span><div class="feat-body"><div class="feat-name">P2P Crypto Trading Script</div><div class="feat-desc">Escrow, dispute, ratings, Paystack. $299–$799.</div></div></div>
-      <div class="feat"><span class="feat-num">192</span><div class="feat-body"><div class="feat-name">Online Banking Lite Script</div><div class="feat-desc">Dashboard, transfers, transaction history. $199–$499.</div></div></div>
-      <div class="feat"><span class="feat-num">193</span><div class="feat-body"><div class="feat-name">Loan Management Script</div><div class="feat-desc">Approval workflow, repayment, interest. $199–$499.</div></div></div>
-      <div class="feat"><span class="feat-num">194</span><div class="feat-body"><div class="feat-name">NFT Marketplace Template</div><div class="feat-desc">Wallet connect, gallery, minting. $99–$249.</div></div></div>
-      <div class="feat"><span class="feat-num">195</span><div class="feat-body"><div class="feat-name">Real Estate Listing Template</div><div class="feat-desc">Property search, agent dashboard. $79–$199.</div></div></div>
-      <div class="feat"><span class="feat-num">196</span><div class="feat-body"><div class="feat-name">Invoice & Billing System Script</div><div class="feat-desc">SME and freelancer appeal, Paystack. $149–$399.</div></div></div>
-    </div>
-  </div>
-  <div class="product-tier">
-    <div class="tier-label">Tier 3 — Later (Significant build effort)</div>
-    <div class="products-grid">
-      <div class="feat"><span class="feat-num">197</span><div class="feat-body"><div class="feat-name">CEX Lite Script</div><div class="feat-desc">$499–$999</div></div></div>
-      <div class="feat"><span class="feat-num">198</span><div class="feat-body"><div class="feat-name">DeFi Dashboard Template</div><div class="feat-desc">$199–$499</div></div></div>
-      <div class="feat"><span class="feat-num">199</span><div class="feat-body"><div class="feat-name">Fleet Management Script</div><div class="feat-desc">$199–$499</div></div></div>
-      <div class="feat"><span class="feat-num">200</span><div class="feat-body"><div class="feat-name">Ajo/Esusu Savings Script</div><div class="feat-desc">$149–$399</div></div></div>
-      <div class="feat"><span class="feat-num">201</span><div class="feat-body"><div class="feat-name">LMS Lite Script</div><div class="feat-desc">$149–$399</div></div></div>
-      <div class="feat"><span class="feat-num">202</span><div class="feat-body"><div class="feat-name">Crowdfunding Script</div><div class="feat-desc">$199–$499</div></div></div>
-      <div class="feat"><span class="feat-num">203</span><div class="feat-body"><div class="feat-name">Crypto Trading Dashboard</div><div class="feat-desc">$99–$249</div></div></div>
-      <div class="feat"><span class="feat-num">204</span><div class="feat-body"><div class="feat-name">Web3 dApp Landing</div><div class="feat-desc">$79–$199</div></div></div>
-      <div class="feat"><span class="feat-num">205</span><div class="feat-body"><div class="feat-name">Blockchain Agency Template</div><div class="feat-desc">$79–$199</div></div></div>
-      <div class="feat"><span class="feat-num">206</span><div class="feat-body"><div class="feat-name">Token Launch / ICO</div><div class="feat-desc">$149–$399</div></div></div>
-      <div class="feat"><span class="feat-num">207</span><div class="feat-body"><div class="feat-name">Event / Ticketing System</div><div class="feat-desc">$99–$249</div></div></div>
-      <div class="feat"><span class="feat-num">208</span><div class="feat-body"><div class="feat-name">Restaurant / Food Delivery</div><div class="feat-desc">$79–$199</div></div></div>
-      <div class="feat"><span class="feat-num">209</span><div class="feat-body"><div class="feat-name">School Management Lite</div><div class="feat-desc">$149–$399</div></div></div>
-      <div class="feat"><span class="feat-num">210</span><div class="feat-body"><div class="feat-name">Hospital / Clinic Template</div><div class="feat-desc">$79–$199</div></div></div>
-      <div class="feat"><span class="feat-num">211</span><div class="feat-body"><div class="feat-name">POS System Script</div><div class="feat-desc">$149–$399</div></div></div>
-      <div class="feat"><span class="feat-num">212</span><div class="feat-body"><div class="feat-name">Multi-Vendor Marketplace Script</div><div class="feat-desc">$299–$799</div></div></div>
-    </div>
-  </div>
-</div>
 
-<!-- GROUP 26 -->
-<div class="group">
-  <div class="group-header">
-    <span class="group-num new-grp">Group 26</span>
-    <span class="group-title">AI Automation Engine</span>
-    <span class="group-count">3 items (213–215)</span>
-  </div>
-  <div class="features-list">
-    <div class="feat new-feat"><span class="feat-num">213</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span><span class="tag tag-ai">AI</span>Python Content Automation Engine</div><div class="feat-desc">Main orchestrator: Python + Claude Sonnet API. Triggers blog + directory generators on cron schedule. Draft-first — nothing publishes without approval. Config via .env.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">214</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span><span class="tag tag-ai">AI</span>Blog Auto-Generator</div><div class="feat-desc">Research current top-ranking pages → generate 1,500-word SEO blog post → publish as draft via /api/publish-post.php → admin approves → goes live. $0.01–$0.10 per post.</div></div></div>
-    <div class="feat new-feat"><span class="feat-num">215</span><div class="feat-body"><div class="feat-name"><span class="tag tag-new">New</span><span class="tag tag-ai">AI</span>Directory Auto-Populator</div><div class="feat-desc">Fetch from Product Hunt, GitHub trending, curated RSS → generate listing data (name, description, category, tags, pricing tier) → create draft listing → admin reviews before publishing.</div></div></div>
-  </div>
-</div>
+    <!-- ALREADY BUILT -->
+    <div class="built-box">
+      <h2>✅ Already Built — 134 Files · 113/113 Checks Passing</h2>
+      <p>
+        Core platform complete. Auth, marketplace, payments (Paystack + Stripe +
+        LemonSqueezy), admin panel, blog engine, SEO, PWA, cron jobs, affiliate
+        system, 2FA, dark mode, multi-language, GDPR, webhooks, email campaigns,
+        activity log, 25+ public pages.
+      </p>
+      <div class="built-grid">
+        <div class="built-item">Registration + email verify</div>
+        <div class="built-item">2FA (TOTP/Google Auth)</div>
+        <div class="built-item">Brute-force lockout</div>
+        <div class="built-item">Admin impersonation</div>
+        <div class="built-item">Template marketplace</div>
+        <div class="built-item">Device switcher preview</div>
+        <div class="built-item">VirusTotal malware scan</div>
+        <div class="built-item">Secure token downloads</div>
+        <div class="built-item">Paystack integration</div>
+        <div class="built-item">Stripe integration</div>
+        <div class="built-item">LemonSqueezy integration</div>
+        <div class="built-item">4-touch dunning</div>
+        <div class="built-item">Coupon codes + gift cards</div>
+        <div class="built-item">PPP pricing by country</div>
+        <div class="built-item">Guest checkout</div>
+        <div class="built-item">VAT calculation</div>
+        <div class="built-item">Webhook HMAC verify</div>
+        <div class="built-item">Webhook idempotency</div>
+        <div class="built-item">MRR/ARR/LTV/Churn metrics</div>
+        <div class="built-item">Revenue charts (Chart.js)</div>
+        <div class="built-item">Abandoned checkout recovery</div>
+        <div class="built-item">Email campaigns + A/B test</div>
+        <div class="built-item">Drip sequences</div>
+        <div class="built-item">Blog engine (TinyMCE)</div>
+        <div class="built-item">GDPR export + deletion</div>
+        <div class="built-item">Cookie consent centre</div>
+        <div class="built-item">Affiliate 20/30/40% tiers</div>
+        <div class="built-item">Dark mode (per user)</div>
+        <div class="built-item">4 languages + RTL</div>
+        <div class="built-item">JSON-LD schema</div>
+        <div class="built-item">PWA + service worker</div>
+        <div class="built-item">9 cron jobs</div>
+      </div>
+    </div>
 
-<!-- BUILD PHASES -->
-<div style="margin-top:3rem;padding-top:2rem;border-top:2px solid var(--ink)">
-  <p class="eyebrow" style="font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.15em;color:var(--coral);margin-bottom:1.25rem">Build Phases</p>
-  <div class="phases">
-    <div class="phase">
-      <div class="phase-num">Phase 1 — Week 1–2</div>
-      <div class="phase-title">Deploy & Go Live</div>
-      <div class="phase-items">Deploy 134-file PHP platform · .htaccess URL rewriting · Supabase storage · Verify all 3 gateways · Homepage positioning copy · Go live</div>
+    <!-- GROUP 1 -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num">Group 1</span>
+        <span class="group-title">Platform Infrastructure</span>
+        <span class="group-count">1 item</span>
+      </div>
+      <div class="features-list">
+        <div class="feat priority">
+          <span class="feat-num">001</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-priority">Phase 1</span>Supabase Storage
+              Integration
+            </div>
+            <div class="feat-desc">
+              Offload all template preview images, demo videos, screenshots,
+              avatars, and press kit assets from shared hosting to Supabase CDN.
+              PHP helper class + JS uploader. Replaces local file storage with
+              CDN URLs stored in DB.
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="phase">
-      <div class="phase-num">Phase 2 — Month 1–2</div>
-      <div class="phase-title">Revenue Foundation</div>
-      <div class="phase-items">Vendor system · License key system · Directory hub (10 categories) · Services/leads → Tinlance · Mobile Money · Fraud prevention basics · Chargeback protection</div>
-    </div>
-    <div class="phase">
-      <div class="phase-num">Phase 3 — Month 2–4</div>
-      <div class="phase-title">Growth Engine</div>
-      <div class="phase-items">Gamification · Community forum · AI page generator · Social login · Launch kits · Courses & knowledge products · Advanced analytics · Buyer-vendor messaging</div>
-    </div>
-    <div class="phase">
-      <div class="phase-num">Phase 4 — Month 4–8</div>
-      <div class="phase-title">Scale & Automate</div>
-      <div class="phase-items">Python automation engine · Programmatic SEO · Mobile app iOS + Android · BNPL + Mobile Money full · ProductHunt-style launches · Win-back campaigns · Annual recap email</div>
-    </div>
-    <div class="phase">
-      <div class="phase-num">Phase 5 — Month 8–12</div>
-      <div class="phase-title">Enterprise & Global</div>
-      <div class="phase-items">SOC 2 compliance · White-label platform · Reseller programme · Merchant of Record · GDPR CMP v2 · Staging access · API key management · Usage-based pricing</div>
-    </div>
-  </div>
-</div>
 
-<div style="margin-top:2rem;padding:1.25rem 1.5rem;background:var(--ink);color:#fff;border-radius:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
-  <div style="font-size:.82rem;font-weight:700">Web-Temify LTD · RC: 7999659 · Nigeria · A sister company of Tinlance Limited</div>
-  <div style="font-family:'DM Mono',monospace;font-size:.72rem;color:rgba(255,255,255,.5)">Master Feature List v3.0 · May 2026 · 215 items</div>
-</div>
+    <!-- GROUP 2 -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num">Group 2</span>
+        <span class="group-title">Auth & Trust Additions</span>
+        <span class="group-count">8 items</span>
+      </div>
+      <div class="features-list">
+        <div class="feat">
+          <span class="feat-num">002</span>
+          <div class="feat-body">
+            <div class="feat-name">Social Login — Google OAuth</div>
+            <div class="feat-desc">
+              One-click Google sign-in. Reduces registration friction
+              dramatically. OAuth 2.0 flow, store Google ID + avatar in users
+              table.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">003</span>
+          <div class="feat-body">
+            <div class="feat-name">Social Login — GitHub OAuth</div>
+            <div class="feat-desc">
+              One-click GitHub sign-in. Signals developer-first platform.
+              Auto-populate profile with GitHub username and avatar.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">004</span>
+          <div class="feat-body">
+            <div class="feat-name">Social Login — Twitter/X OAuth</div>
+            <div class="feat-desc">
+              One-click Twitter/X sign-in for creator and indie founder
+              audience.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">005</span>
+          <div class="feat-body">
+            <div class="feat-name">Verified Seller Badges</div>
+            <div class="feat-desc">
+              Seller submits government ID or business registration. Admin
+              approves. "Verified" checkmark on every product card and vendor
+              storefront. Major trust signal for high-ticket script buyers.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">006</span>
+          <div class="feat-body">
+            <div class="feat-name">Money-Back Guarantee Badge</div>
+            <div class="feat-desc">
+              30-day guarantee badge visible on every product page and checkout.
+              Reduces purchase anxiety. Single DB flag, no extra logic needed.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">007</span>
+          <div class="feat-body">
+            <div class="feat-name">"As Seen In" Press Bar</div>
+            <div class="feat-desc">
+              Scrolling strip of media logos / community mentions on homepage.
+              Admin manages from CMS. Even early-stage social proof increases
+              conversion.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">008</span>
+          <div class="feat-body">
+            <div class="feat-name">Purchase Counter on Cards</div>
+            <div class="feat-desc">
+              "847 purchases" displayed on every template card. Pulled from
+              orders table. ThemeForest uses this heavily — proven social proof
+              signal.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">009</span>
+          <div class="feat-body">
+            <div class="feat-name">Live Purchase Notifications Toast</div>
+            <div class="feat-desc">
+              "Someone in Lagos just bought the Banking Template" — real-time
+              toast. Different from generic social proof toasts already built.
+              Purchase-specific, location-specific, product-specific.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-</body>
+    <!-- GROUP 3 -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num">Group 3</span>
+        <span class="group-title">Discovery & Search</span>
+        <span class="group-count">7 items</span>
+      </div>
+      <div class="features-list">
+        <div class="feat">
+          <span class="feat-num">010</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-ai">AI</span>Semantic Search
+            </div>
+            <div class="feat-desc">
+              "I need a website for my logistics company" returns Courier
+              templates — not keyword matches. Claude API processes query
+              intent. Falls back to full-text search if API unavailable.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">011</span>
+          <div class="feat-body">
+            <div class="feat-name">Visual / Screenshot Search</div>
+            <div class="feat-desc">
+              Upload a screenshot of a design you like → platform finds similar
+              templates. Image hash comparison + category matching.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">012</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-ai">AI</span>Personalised Homepage
+            </div>
+            <div class="feat-desc">
+              First visit shows trending. Return visits show recommendations
+              based on browsing history, plan type, and purchase behaviour.
+              "Recommended for you" section above fold.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">013</span>
+          <div class="feat-body">
+            <div class="feat-name">Advanced Filter System</div>
+            <div class="feat-desc">
+              Filter by: tech stack, colour scheme, page count, industry, price
+              range, license type, file format, last updated date, and platform
+              compatibility. ThemeForest's biggest discovery advantage.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">014</span>
+          <div class="feat-body">
+            <div class="feat-name">"Collections by Use Case" Pages</div>
+            <div class="feat-desc">
+              Hand-curated pages: "Best for Nigerian Startups", "Web3 Founder
+              Pack", "Complete Fintech Setup". These rank in Google and convert
+              better than raw category pages.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">015</span>
+          <div class="feat-body">
+            <div class="feat-name">Recently Viewed Templates</div>
+            <div class="feat-desc">
+              Persistent across sessions. Stored in DB per user (cookie for
+              guests). Shown as a row on homepage and template listing page.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">016</span>
+          <div class="feat-body">
+            <div class="feat-name">"Complete the Kit" Cross-Sell</div>
+            <div class="feat-desc">
+              After purchase: "Buyers of this template also bought these 3."
+              Recommendation engine on thank-you page and dashboard. Passive
+              revenue.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 4 -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num">Group 4</span>
+        <span class="group-title">New Sections & Pages</span>
+        <span class="group-count">10 items</span>
+      </div>
+      <div class="features-list">
+        <div class="feat">
+          <span class="feat-num">017</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              Resources / Tools Directory (10 Categories)
+            </div>
+            <div class="feat-desc">
+              Curated directory: AI tools, Web Dev tools, Web3, Design, No-Code,
+              Hosting, Plugins, Blockchain, Freelancer, Learning. Featured
+              listing monetisation. SEO goldmine.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">018</span>
+          <div class="feat-body">
+            <div class="feat-name">Web3 Dedicated Hub Page</div>
+            <div class="feat-desc">
+              Landing page for all Web3 content: NFT, DeFi, DAO governance,
+              token-gated templates. Separate nav item. Own category SEO.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">019</span>
+          <div class="feat-body">
+            <div class="feat-name">Launch Kits Section</div>
+            <div class="feat-desc">
+              Bundled product packages: SaaS Kit, Agency Kit, E-commerce Kit,
+              Web3 DApp Kit. Multiple templates sold as one premium package at
+              higher price point.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">020</span>
+          <div class="feat-body">
+            <div class="feat-name">Founder Story Page</div>
+            <div class="feat-desc">
+              Personal brand / trust-builder. Your story, faith foundation,
+              vision for Web-Temify, the Tinlance connection. "About" is
+              corporate. "Our Story" is human.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">021</span>
+          <div class="feat-body">
+            <div class="feat-name">Programmatic SEO Niche Pages</div>
+            <div class="feat-desc">
+              Auto-generated from DB: "best courier template Nigeria", "Web3
+              landing page template 2026", "loan company website design". Each
+              page targets a specific long-tail keyword.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">022</span>
+          <div class="feat-body">
+            <div class="feat-name">Developer Hub</div>
+            <div class="feat-desc">
+              Structured resource centre: API docs, code snippets library,
+              component browser, GitHub integration signal. Retains developer
+              audience between purchases.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">023</span>
+          <div class="feat-body">
+            <div class="feat-name">Understanding Licenses Page</div>
+            <div class="feat-desc">
+              Plain English: Regular vs Extended vs White-Label with real-world
+              examples. Reduces disputes. Increases upsell to higher license
+              tiers.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">024</span>
+          <div class="feat-body">
+            <div class="feat-name">Free Tools Section</div>
+            <div class="feat-desc">
+              Colour palette generator, font pairing tool, website checklist
+              PDF. Drives organic traffic from developers not ready to buy yet.
+              Builds email list.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">025</span>
+          <div class="feat-body">
+            <div class="feat-name">Template Showcase Gallery</div>
+            <div class="feat-desc">
+              Users submit screenshots of live sites built with Web-Temify
+              templates. "Built with Web-Temify" tag. Social proof + community
+              pride.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">026</span>
+          <div class="feat-body">
+            <div class="feat-name">Community Forum</div>
+            <div class="feat-desc">
+              "Show Your Builds", "Web3 Dev Chat", "Freelancer Lounge".
+              Increases time-on-site. Communities retain users better than any
+              other feature.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 5 -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num">Group 5</span>
+        <span class="group-title">Buyer Experience</span>
+        <span class="group-count">11 items</span>
+      </div>
+      <div class="features-list">
+        <div class="feat">
+          <span class="feat-num">027</span>
+          <div class="feat-body">
+            <div class="feat-name">Template Request System</div>
+            <div class="feat-desc">
+              Buyers post: "I need a Halal finance template, willing to pay $X."
+              Sellers bid or Tinlance builds. Validates demand before building
+              products.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">028</span>
+          <div class="feat-body">
+            <div class="feat-name">Preview with Real Content</div>
+            <div class="feat-desc">
+              Buyer types their company name → it appears live in the template
+              preview. Major conversion booster. JS-based text replacement on
+              preview iframe.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">029</span>
+          <div class="feat-body">
+            <div class="feat-name">Free Download Tier (No Card)</div>
+            <div class="feat-desc">
+              Genuinely good free templates requiring only email signup.
+              Loss-leader strategy. Builds list, drives trust, converts to paid.
+              ThemeForest's free item strategy works.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">030</span>
+          <div class="feat-body">
+            <div class="feat-name">Re-Download Button</div>
+            <div class="feat-desc">
+              Re-download past purchases from dashboard without contacting
+              support. Download history already shows history — needs end-to-end
+              wiring confirmation.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">031</span>
+          <div class="feat-body">
+            <div class="feat-name">Self-Service Subscription Pause</div>
+            <div class="feat-desc">
+              User pauses own subscription from dashboard — no admin
+              involvement. Currently pause is DB-level admin-controlled. Needs
+              self-service UI + cron handling.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">032</span>
+          <div class="feat-body">
+            <div class="feat-name">"Request Customisation" Per Template</div>
+            <div class="feat-desc">
+              Context-aware brief form on every template page. Pre-fills
+              template name and category. Goes to Tinlance as a qualified lead
+              with product context.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">033</span>
+          <div class="feat-body">
+            <div class="feat-name">Template Compatibility Checker</div>
+            <div class="feat-desc">
+              User selects their stack (WordPress 6.x, PHP 8.2, etc.) → gets
+              compatibility confirmation or warning before downloading.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">034</span>
+          <div class="feat-body">
+            <div class="feat-name">Subscription Gifting</div>
+            <div class="feat-desc">
+              Buy Pro/Business plan as a gift. Enter recipient email, pay via
+              any of 3 gateways. They receive activation email. Expands user
+              acquisition.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">035</span>
+          <div class="feat-body">
+            <div class="feat-name">Two-Click Checkout (Returning Buyers)</div>
+            <div class="feat-desc">
+              Stored payment method, one confirmation click. Currently full
+              checkout flow every time. Return buyer friction kills repeat
+              purchases.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">036</span>
+          <div class="feat-body">
+            <div class="feat-name">Tutorial Video Per Template</div>
+            <div class="feat-desc">
+              2–3 min setup video embedded on preview page. "Watch how to deploy
+              this in 5 minutes." Reduces support tickets, increases conversion,
+              improves SEO dwell time.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">037</span>
+          <div class="feat-body">
+            <div class="feat-name">Product Update Notifications to Buyers</div>
+            <div class="feat-desc">
+              When seller releases new version, all buyers who purchased get
+              email: "Your template updated to v2.1 — re-download now."
+              Versioning exists, buyer notification doesn't.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 6 — NEW -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num new-grp">Group 6 — NEW</span>
+        <span class="group-title">License Key Management System</span>
+        <span class="group-count">8 items</span>
+      </div>
+      <div class="features-list">
+        <div class="feat new-feat priority">
+          <span class="feat-num">038</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span
+              ><span class="tag tag-priority">Critical</span>License Key
+              Generator
+            </div>
+            <div class="feat-desc">
+              On purchase of a script/plugin, auto-generate a unique license key
+              tied to buyer's account and domain. Stored in licenses table with
+              activation limit, expiry date, product ID.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat priority">
+          <span class="feat-num">039</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>License Activation Tracking
+            </div>
+            <div class="feat-desc">
+              Each key has activation limit (e.g. 1 domain). Buyer activates via
+              API call from their site. System records domain, IP, activation
+              date. Activation count enforced.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat priority">
+          <span class="feat-num">040</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>License Validation API
+              Endpoint
+            </div>
+            <div class="feat-desc">
+              /api/v1/validate-license — buyers' sites call this to verify
+              license status. Returns JSON: {status, expiry, plan_tier,
+              domain_allowed}. Essential for script products.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">041</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>License Deactivation
+            </div>
+            <div class="feat-desc">
+              Buyer deactivates from one domain and reactivates on another from
+              dashboard. No support ticket needed. Instant DB update.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">042</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>License Revocation (Admin)
+            </div>
+            <div class="feat-desc">
+              Admin revokes license on chargeback, refund, or fraud. Instantly
+              breaks all validation API calls from buyer's site. Logged in
+              activity log.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">043</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>License Expiry & Renewal
+            </div>
+            <div class="feat-desc">
+              Annual licenses expire. 30-day before expiry email with renewal
+              link. Renewal via Paystack + Stripe + LemonSqueezy. Creates
+              recurring revenue from one-time buyers.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">044</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>License Upgrade Path
+            </div>
+            <div class="feat-desc">
+              Single-site → multi-site → agency. Buyer pays the difference
+              (proration calculated and charged via any of 3 gateways).
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">045</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Bulk License Purchases
+            </div>
+            <div class="feat-desc">
+              Agencies buy 10+ licenses at a discounted bulk rate. All 3 payment
+              gateways. Admin sets bulk pricing tiers (5-pack, 10-pack,
+              25-pack).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 7 -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num">Group 7</span>
+        <span class="group-title">Vendor / Seller System</span>
+        <span class="group-count">23 items</span>
+      </div>
+      <div class="features-list">
+        <div class="feat">
+          <span class="feat-num">046</span>
+          <div class="feat-body">
+            <div class="feat-name">Vendor Registration + Onboarding Wizard</div>
+            <div class="feat-desc">
+              Step-by-step: profile → first product → pricing → payout method →
+              live. Currently no structured vendor onboarding. Reduces drop-off.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">047</span>
+          <div class="feat-body">
+            <div class="feat-name">Vendor Dashboard</div>
+            <div class="feat-desc">
+              Manage listings, view earnings, request withdrawals, see
+              analytics. The seller's control centre.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">048</span>
+          <div class="feat-body">
+            <div class="feat-name">Product Submission Flow</div>
+            <div class="feat-desc">
+              Upload template/script, set price, write description, add
+              screenshots, demo link, and license type. Admin approval required
+              before going live.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">049</span>
+          <div class="feat-body">
+            <div class="feat-name">Admin Vendor Approval Queue</div>
+            <div class="feat-desc">
+              Review submitted products: approve, reject, or request revision.
+              Rejection sends automated feedback email with improvement
+              suggestions.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">050</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-payment">Payments</span>Revenue Split System
+            </div>
+            <div class="feat-desc">
+              Platform takes 20–30% commission. Vendor gets the rest. All 3
+              gateways for payouts.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">051</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-payment">Payments</span>Vendor Payout System
+            </div>
+            <div class="feat-desc">
+              Withdrawal requests from dashboard. Admin processes via Paystack,
+              Stripe, or LemonSqueezy. Payout history and status tracking.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">052</span>
+          <div class="feat-body">
+            <div class="feat-name">Vendor Analytics Dashboard</div>
+            <div class="feat-desc">
+              Sales stats, download counts, revenue charts, conversion rate per
+              product. Their own version of the admin analytics panel.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">053</span>
+          <div class="feat-body">
+            <div class="feat-name">Vendor Revenue Forecasting</div>
+            <div class="feat-desc">
+              Projected next 30 days revenue based on trend and seasonal
+              patterns. Sellers who see growth projections stay on the platform
+              longer.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">054</span>
+          <div class="feat-body">
+            <div class="feat-name">Conversion Funnel Per Product</div>
+            <div class="feat-desc">
+              Views → preview clicks → purchases per product. Helps vendors
+              optimise their listings. Currently only total sales are shown.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">055</span>
+          <div class="feat-body">
+            <div class="feat-name">Vendor Public Storefront</div>
+            <div class="feat-desc">
+              Customisable banner, bio, social links, speciality tags, follower
+              count. Every vendor gets a public page at /vendor/username.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">056</span>
+          <div class="feat-body">
+            <div class="feat-name">"Follow a Seller" Feature</div>
+            <div class="feat-desc">
+              Buyers follow vendors. New product from that vendor triggers email
+              + bell notification to all followers. Passive repeat purchases.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">057</span>
+          <div class="feat-body">
+            <div class="feat-name">Seller Q&A on Product Pages</div>
+            <div class="feat-desc">
+              Buyers ask public questions. Seller answers. Q&A visible to all.
+              Reduces support tickets and increases conversion for other buyers.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">058</span>
+          <div class="feat-body">
+            <div class="feat-name">Dispute Resolution System</div>
+            <div class="feat-desc">
+              Buyer claims product doesn't match description. Open → seller
+              responds → admin mediates → resolved. Protects both sides. Builds
+              marketplace trust.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">059</span>
+          <div class="feat-body">
+            <div class="feat-name">Bulk Product Import</div>
+            <div class="feat-desc">
+              Sellers with existing catalogues (from ThemeForest/Envato) import
+              via CSV/JSON. Massive seller acquisition advantage. Envato's July
+              2026 fee change drives sellers out.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">060</span>
+          <div class="feat-body">
+            <div class="feat-name">Seller Webhook Events</div>
+            <div class="feat-desc">
+              Sellers register webhook URL for events: new purchase, new review,
+              payout processed. Enables seller automation workflows.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">061</span>
+          <div class="feat-body">
+            <div class="feat-name">Seller API Rate Limit Dashboard</div>
+            <div class="feat-desc">
+              Usage visibility, rate limit status, request history. Currently
+              API exists but no usage visibility for vendors.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">062</span>
+          <div class="feat-body">
+            <div class="feat-name">Vendor Tier Badges</div>
+            <div class="feat-desc">
+              Verified, Pro Seller, Top Contributor. Displayed on product cards
+              and storefront. Incentivises quality and volume.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">063</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Exclusive Listing Programme
+            </div>
+            <div class="feat-desc">
+              Vendor marks product as "Web-Temify Exclusive" (not sold
+              elsewhere) → gets 85% revenue share instead of 70–80% + exclusive
+              badge on card. Direct attack on Envato's 50% fee model.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">064</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Listing Quality Score (0–100)
+            </div>
+            <div class="feat-desc">
+              Per product: screenshots provided (+20), description length (+20),
+              demo link (+20), tags (+20), price set (+20). Shown to vendor
+              only. Nudges them to improve before submission.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">065</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Automated Listing Feedback
+            </div>
+            <div class="feat-desc">
+              Rejection sends templated email with specific improvement
+              suggestions. "Your screenshots are too low resolution. Your
+              description is under 100 words. Add a live demo link."
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">066</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Vendor Earnings Forecast at
+              Upload
+            </div>
+            <div class="feat-desc">
+              "Based on 247 similar products in this category, estimated
+              earnings: $200–$800/month." Shown before publish. Motivates
+              vendors to complete their listing.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">067</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Vendor SLA Dashboard
+            </div>
+            <div class="feat-desc">
+              Vendors see: approval time, avg response time, chargeback rate,
+              review score. Below-threshold vendors get warnings before
+              suspension.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">068</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Vendor Academy
+            </div>
+            <div class="feat-desc">
+              Guides and short videos: how to write product descriptions, price
+              competitively, take good screenshots, pass admin review, respond
+              to buyer questions. Improves overall marketplace quality.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 8 — NEW -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num new-grp">Group 8 — NEW</span>
+        <span class="group-title">Trust & Fraud Prevention</span>
+        <span class="group-count">9 items</span>
+      </div>
+      <div class="features-list">
+        <div class="feat new-feat priority">
+          <span class="feat-num">069</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span
+              ><span class="tag tag-priority">Critical</span>Fraud Risk Scoring
+            </div>
+            <div class="feat-desc">
+              Every registration and purchase gets a risk score: device
+              fingerprint + email reputation + IP + behaviour pattern. High-risk
+              flagged for manual review before download released.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat priority">
+          <span class="feat-num">070</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span
+              ><span class="tag tag-priority">Critical</span>Chargeback
+              Protection System
+            </div>
+            <div class="feat-desc">
+              Track chargeback ratio per vendor. Flag vendors >1%. Auto-hold
+              payouts when dispute opened. Evidence packet auto-generated
+              (purchase time, IP, device, download logs).
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">071</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Device Fingerprinting on
+              Registration
+            </div>
+            <div class="feat-desc">
+              Detect same person creating multiple accounts to abuse free trials
+              or coupon codes. Browser fingerprint stored and compared on new
+              registrations.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">072</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Velocity Checks
+            </div>
+            <div class="feat-desc">
+              Flag accounts downloading abnormally fast (50 downloads in 10
+              minutes). Auto-suspend pending admin review. Protects vendor
+              revenue.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">073</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Stolen Card Detection
+            </div>
+            <div class="feat-desc">
+              Cross-reference purchase IP against billing address. Flag
+              significant mismatches. Integrate with Paystack's built-in fraud
+              signals for African card detection.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">074</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Vendor Fraud Detection
+            </div>
+            <div class="feat-desc">
+              Detect vendors uploading plagiarised content. Reverse image search
+              on screenshots. File hash comparison against existing product
+              database.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">075</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Content ID System
+            </div>
+            <div class="feat-desc">
+              Hash comparison + similarity scoring on all uploaded files before
+              approval. Prevents duplicate products and stolen code from
+              reaching buyers.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">076</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>2FA for High-Value Checkout
+            </div>
+            <div class="feat-desc">
+              Purchases above $200 require 2FA confirmation before payment
+              processes. Reduces chargebacks from compromised accounts and
+              stolen cards significantly.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">077</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>IP Allowlist for Admin Panel
+            </div>
+            <div class="feat-desc">
+              Admin panel only accessible from whitelisted IP addresses.
+              Configurable from settings. Prevents admin panel access even if
+              credentials are compromised.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 9 — NEW -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num new-grp">Group 9 — NEW</span>
+        <span class="group-title">Messaging & Support System</span>
+        <span class="group-count">5 items</span>
+      </div>
+      <div class="features-list">
+        <div class="feat new-feat priority">
+          <span class="feat-num">078</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span
+              ><span class="tag tag-priority">High Value</span>Buyer-Vendor
+              Direct Messaging
+            </div>
+            <div class="feat-desc">
+              After purchase, buyer messages vendor about their product.
+              Threaded conversations. Admin can see all threads. Biggest trust
+              gap in current build.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">079</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Support Ticket System
+            </div>
+            <div class="feat-desc">
+              Per-purchase support: open → in progress → resolved. SLA tracking
+              (respond within 24 hours). Admin and vendor can both respond.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">080</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Vendor Response Time Badge
+            </div>
+            <div class="feat-desc">
+              "Avg response time: 4 hours" displayed on vendor storefront.
+              Calculated from support ticket data. Massive purchase trust signal
+              for high-ticket buyers.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">081</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Canned Responses for Vendors
+            </div>
+            <div class="feat-desc">
+              Vendors create saved reply templates for common questions. One
+              click to insert. Speeds up support dramatically.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">082</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span
+              ><span class="tag tag-ai">AI</span>AI Support Auto-Responder
+            </div>
+            <div class="feat-desc">
+              First response to support tickets auto-generated from product FAQ
+              + description via Claude API. Vendor reviews before sending. Cuts
+              initial response time to under 1 minute.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 10 — NEW -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num new-grp">Group 10 — NEW</span>
+        <span class="group-title">Courses & Knowledge Products</span>
+        <span class="group-count">5 items</span>
+      </div>
+      <div class="features-list">
+        <div class="feat new-feat">
+          <span class="feat-num">083</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Mini Course Builder
+            </div>
+            <div class="feat-desc">
+              Vendors create structured courses tied to their template products.
+              "Buy this template + learn to use it in this 5-lesson course."
+              Turns templates into learning products.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">084</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Video Lesson Hosting
+            </div>
+            <div class="feat-desc">
+              Upload lesson videos to Supabase storage. Custom video player with
+              progress tracking, playback speed, and chapter markers.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">085</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Course Progress + Certificate
+            </div>
+            <div class="feat-desc">
+              Per-user progress bar. Certificate of completion auto-generated as
+              PDF with user name, course name, completion date, and Web-Temify
+              seal.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">086</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Prerequisite Gating
+            </div>
+            <div class="feat-desc">
+              Lesson 3 unlocks only after lesson 2 completed. Progress stored
+              per user per course. Prevents skipping.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">087</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Quiz / Assessment Builder
+            </div>
+            <div class="feat-desc">
+              Multiple choice quizzes at end of modules. Pass/fail gates for
+              certificate issuance. Admin and vendor can both create quizzes.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 11 -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num">Group 11</span>
+        <span class="group-title">Monetisation Additions</span>
+        <span class="group-count">18 items</span>
+      </div>
+      <div class="features-list">
+        <div class="feat">
+          <span class="feat-num">088</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-payment">Payments</span>Paid Featured
+              Listings (Directory)
+            </div>
+            <div class="feat-desc">
+              Tools pay for featured placement in directory. Paystack + Stripe +
+              LemonSqueezy. $50–$500/year per listing. Passive revenue.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">089</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-payment">Payments</span>White-Label Licensing
+              Tier
+            </div>
+            <div class="feat-desc">
+              Premium license allowing agencies to rebrand and resell templates
+              to their clients. All 3 gateways.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">090</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-payment">Payments</span>Bundle / Launch Kit
+              Checkout
+            </div>
+            <div class="feat-desc">
+              Multiple templates purchased as one bundle. Single transaction.
+              All 3 gateways. Discounted vs individual purchases.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">091</span>
+          <div class="feat-body">
+            <div class="feat-name">Directory Affiliate Link Tracking</div>
+            <div class="feat-desc">
+              Passive commissions when visitors click through to listed tools
+              and sign up. SaaS tools typically pay 20–30% recurring affiliate
+              commissions.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">092</span>
+          <div class="feat-body">
+            <div class="feat-name">Sponsorship Ad Zones (Directory)</div>
+            <div class="feat-desc">
+              Banner-style ad slots within directory category pages. Direct deal
+              or AdSense fallback.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">093</span>
+          <div class="feat-body">
+            <div class="feat-name">"Pay What You Want" Pricing</div>
+            <div class="feat-desc">
+              Seller sets minimum price. Buyer can pay more. Works for
+              early-stage products and community building. Gumroad built their
+              reputation on this.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">094</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-payment">Payments</span>Team / Agency Plan
+              (4th Tier)
+            </div>
+            <div class="feat-desc">
+              Multiple seats under one billing. 5 team members, $99–$199/month.
+              Agencies managing multiple client projects need this. All 3
+              gateways.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">095</span>
+          <div class="feat-body">
+            <div class="feat-name">Volume Licensing for Agencies</div>
+            <div class="feat-desc">
+              Single purchase covers up to 10 client websites. Higher price,
+              massive value for agencies. ThemeForest Extended License
+              equivalent.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">096</span>
+          <div class="feat-body">
+            <div class="feat-name">Template Rental / Time-Limited Access</div>
+            <div class="feat-desc">
+              30-day access at 30% of full price. For freelancers on a single
+              project. Novel monetisation. Auto-expires via cron.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">097</span>
+          <div class="feat-body">
+            <div class="feat-name">Early Access / Pre-Launch Listings</div>
+            <div class="feat-desc">
+              Discounted pre-launch price. Buyers pay now, access on release
+              date. Creates urgency and validates demand before launch.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">098</span>
+          <div class="feat-body">
+            <div class="feat-name">Tip / Donation Button (Free Templates)</div>
+            <div class="feat-desc">
+              "Buy the seller a coffee — $5" on free template pages. Low
+              friction, high goodwill. Some sellers make meaningful income from
+              tips.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">099</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-africa">Africa</span>Buy Now Pay Later (BNPL)
+            </div>
+            <div class="feat-desc">
+              Carbon or FairMoney for Africa: 3-month instalments. Unlocks
+              higher-ticket purchases for buyers with income but limited upfront
+              cash.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">100</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Usage-Based Pricing
+            </div>
+            <div class="feat-desc">
+              For API tools and scripts: charge per API call or per active user
+              on buyer's site. Metered billing via Paystack recurring. Aligns
+              price with buyer value.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">101</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Dynamic Pricing / Flash Sales
+            </div>
+            <div class="feat-desc">
+              Admin sets time-limited sale price per template. Auto-expires at
+              set date/time. Countdown timer shown on product card. Creates
+              urgency.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">102</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Revenue Share on Vendor
+              Referrals
+            </div>
+            <div class="feat-desc">
+              Vendors earn % of revenue from buyers they refer to the platform
+              (not just their own products). Incentivises vendors to actively
+              promote Web-Temify.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">103</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Sponsored Placement Auctions
+            </div>
+            <div class="feat-desc">
+              Vendors bid for featured placement on category pages. Highest
+              bidder gets top spot for the week. Automated weekly reset via
+              cron.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">104</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Multi-Currency Invoicing
+            </div>
+            <div class="feat-desc">
+              Invoices in buyer's local currency (NGN, KES, GHS, USD, EUR).
+              Required for African business buyers claiming expenses.
+              Auto-converts using daily exchange rate.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">105</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Reseller Programme
+            </div>
+            <div class="feat-desc">
+              Approved resellers buy subscriptions at 40% discount, resell to
+              clients at full price. White-label invoice with reseller branding.
+              B2B channel that scales without effort.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 12 -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num">Group 12</span>
+        <span class="group-title">Community & Engagement</span>
+        <span class="group-count">11 items</span>
+      </div>
+      <div class="features-list">
+        <div class="feat">
+          <span class="feat-num">106</span>
+          <div class="feat-body">
+            <div class="feat-name">Points & Rewards System</div>
+            <div class="feat-desc">
+              Earn for: purchases, reviews, referrals, profile completion, login
+              streaks. Redeem for discount credits. 48%+ engagement increase per
+              research.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">107</span>
+          <div class="feat-body">
+            <div class="feat-name">Badges & Achievements</div>
+            <div class="feat-desc">
+              "First Purchase", "10 Downloads", "Review Champion", "Early
+              Adopter", "Web3 Pioneer". Visible on user profile. Non-monetary
+              recognition.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">108</span>
+          <div class="feat-body">
+            <div class="feat-name">Leaderboard</div>
+            <div class="feat-desc">
+              Top buyers, top sellers, top reviewers. Monthly reset with prizes.
+              Drives healthy competition and community recognition.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">109</span>
+          <div class="feat-body">
+            <div class="feat-name">Weekly Auto-Generated Newsletter</div>
+            <div class="feat-desc">
+              New templates this week, top sellers, community showcase, dev
+              tips. Auto-generated from platform data. Drives repeat visits.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">110</span>
+          <div class="feat-body">
+            <div class="feat-name">Seasonal Challenges / Contests</div>
+            <div class="feat-desc">
+              "Best fintech build this month — winner gets $100 credit." Low
+              cost, high engagement. Drives submissions, reviews, community
+              content.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">111</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Annual Recap Email
+            </div>
+            <div class="feat-desc">
+              "Your Web-Temify Year in Review" — sent every January. Templates
+              downloaded, money saved vs building from scratch, top categories.
+              Viral potential. Users share on social.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">112</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Win-Back Campaign
+            </div>
+            <div class="feat-desc">
+              Auto-detect users inactive for 60 days. Personalised "we miss you"
+              email with discount code. Triggered from cron. Pure passive
+              revenue recovery.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">113</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Upgrade Nudge System
+            </div>
+            <div class="feat-desc">
+              Free users who viewed 5+ premium templates get targeted in-app
+              banner: "You've been eyeing premium templates. Get full access for
+              $19/month." Conversion funnel closer.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">114</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Usage Milestone Celebrations
+            </div>
+            <div class="feat-desc">
+              "You've downloaded your 10th template! 🎉" In-app notification +
+              social share prompt. Drives engagement and word-of-mouth.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">115</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Referral Contest
+            </div>
+            <div class="feat-desc">
+              Top 3 referrers this month win $100 Web-Temify credit. Monthly
+              contest tracked on leaderboard. Drives aggressive word-of-mouth at
+              near-zero cost.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">116</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Exit Survey on Cancellation
+            </div>
+            <div class="feat-desc">
+              3-question survey before subscription cancellation confirmed.
+              Captures churn reasons. Feeds directly into product roadmap.
+              Priceless product intelligence.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUPS 13-23 condensed for space -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num">Groups 13–23</span>
+        <span class="group-title"
+          >Services, Analytics, Africa, Technical, SEO, AI, Mobile, Compliance,
+          Operations, Positioning</span
+        >
+        <span class="group-count">47 items (117–163)</span>
+      </div>
+      <div class="features-list">
+        <div class="feat">
+          <span class="feat-num">117–123</span>
+          <div class="feat-body">
+            <div class="feat-name">Services & Leads (Group 13) — 7 items</div>
+            <div class="feat-desc">
+              Service request system, 6 service categories, project brief form,
+              lead management in admin, services page, CTA hooks on every
+              template page, upsell hook at checkout. All route to Tinlance as
+              qualified leads.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">124–127</span>
+          <div class="feat-body">
+            <div class="feat-name">New Analytics (Group 14) — 4 items</div>
+            <div class="feat-desc">
+              Geographic sales heatmap, revenue attribution dashboard
+              (organic/affiliate/direct/social), Product Opportunity Report from
+              zero-result searches, seller conversion funnel per product.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">128–132</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-africa">Africa</span>Africa-Specific (Group
+              15) — 5 items
+            </div>
+            <div class="feat-desc">
+              MTN MoMo + Airtel Money + M-Pesa integration, Naira/multi-currency
+              display (NGN/KES/GHS/ZAR), low-bandwidth mode, WhatsApp Business
+              support, WhatsApp order notifications with download link.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">133–137</span>
+          <div class="feat-body">
+            <div class="feat-name">Technical Upgrades (Group 16) — 5 items</div>
+            <div class="feat-desc">
+              Mobile-optimised checkout, PWA push notifications for watched
+              categories, Zapier/Make.com native integration, white-label
+              platform option, Merchant of Record for global tax handling.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">138–143</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Discovery & External
+              Integrations (Group 17) — 6 items
+            </div>
+            <div class="feat-desc">
+              ProductHunt-style launch system, Google Shopping integration,
+              SoftwareApplication JSON-LD schema (rich snippets), Figma
+              Community integration with backlinks, GitHub repo button on
+              preview, NPM/composer install commands.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">144–146</span>
+          <div class="feat-body">
+            <div class="feat-name">SEO & Content (Group 18) — 3 items</div>
+            <div class="feat-desc">
+              User-generated review pages (indexable), template comparison
+              landing pages (auto-generated), AI content automation engine
+              (Python + Claude Sonnet → SEO blog drafts → cron).
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">147–152</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-ai">AI</span>AI Features (Group 19) — 6 items
+            </div>
+            <div class="feat-desc">
+              AI page generator (60 seconds, Claude API + download), editable
+              sandbox per template, AI product description generator for vendor
+              uploads, AI pricing recommendation, AI review summariser, AI
+              chargeback predictor.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">153–154</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Mobile App (Group 20) — 2
+              items
+            </div>
+            <div class="feat-desc">
+              iOS app (React Native) and Android app with full feature parity:
+              browse, purchase, download, push notifications for new products in
+              watched categories, order confirmations.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">155–158</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Compliance & Legal (Group 21)
+              — 4 items
+            </div>
+            <div class="feat-desc">
+              EU-compliant VAT invoice auto-generation, licensing clarity page,
+              GDPR CMP v2 (IAB TCF 2.2 compliant, granular consent), SOC 2
+              readiness checklist in admin panel.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">159–161</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span>Platform Operations (Group 22)
+              — 3 items
+            </div>
+            <div class="feat-desc">
+              API key management for buyers (create/rotate/revoke from
+              dashboard), staging environment access for Business/Agency plan
+              holders, bulk license purchase system.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">162–163</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              Homepage & Positioning (Group 23) — 2 items
+            </div>
+            <div class="feat-desc">
+              Hero copy: "From idea to deployable web product in hours." Core
+              positioning wired through meta description, OG tags, and all
+              landing pages.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 24 — DIRECTORY -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num">Group 24</span>
+        <span class="group-title"
+          >Tech Directory Hub — 10 Categories + Platform</span
+        >
+        <span class="group-count">21 items (164–184)</span>
+      </div>
+      <div class="features-list">
+        <div class="feat">
+          <span class="feat-num">164–173</span>
+          <div class="feat-body">
+            <div class="feat-name">10 Directory Categories</div>
+            <div class="feat-desc">
+              Tech & AI Companies · Web Development Tools · Web3 & Blockchain ·
+              Design & UI Tools · No-Code / Low-Code · Hosting & Infrastructure
+              · Plugins & Extensions · Blockchain & Crypto Projects · Freelancer
+              & Agency Resources · Learning & Community
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">174</span>
+          <div class="feat-body">
+            <div class="feat-name">Directory Search + Filter System</div>
+            <div class="feat-desc">
+              Search across all 10 categories. Filter by: pricing tier
+              (free/freemium/paid), type, region, rating. Live results.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">175</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-payment">Payments</span>Featured Listing
+              Payments
+            </div>
+            <div class="feat-desc">
+              Paystack + Stripe + LemonSqueezy. $50–$500/year. Top placement +
+              featured badge. Core monetisation for directory.
+            </div>
+          </div>
+        </div>
+        <div class="feat">
+          <span class="feat-num">176–184</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              Directory Platform Features — 9 more items
+            </div>
+            <div class="feat-desc">
+              Sponsored banners · Affiliate link tracking · User ratings +
+              reviews · Community submission form + admin approval · AI
+              auto-populate (Product Hunt + GitHub + RSS → draft listings) ·
+              Individual SEO page per listing · Compare Tools side-by-side ·
+              Weekly "Top Tools" digest · Internal linking to relevant templates
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 25 — PRODUCTS -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num">Group 25</span>
+        <span class="group-title"
+          >Template & Script Products (Seeding the Marketplace)</span
+        >
+        <span class="group-count">28 items (185–212)</span>
+      </div>
+      <div class="product-tier">
+        <div class="tier-label">
+          Tier 1 — Build First (High demand, Africa-relevant)
+        </div>
+        <div class="products-grid">
+          <div class="feat priority">
+            <span class="feat-num">185</span>
+            <div class="feat-body">
+              <div class="feat-name">Courier / Logistics Template</div>
+              <div class="feat-desc">
+                Rate calculator, tracking UI, maps, fleet management. $99–$199.
+              </div>
+            </div>
+          </div>
+          <div class="feat priority">
+            <span class="feat-num">186</span>
+            <div class="feat-body">
+              <div class="feat-name">Loan / Lending Template</div>
+              <div class="feat-desc">
+                Loan calculator, multi-step application, trust elements.
+                $99–$249.
+              </div>
+            </div>
+          </div>
+          <div class="feat priority">
+            <span class="feat-num">187</span>
+            <div class="feat-body">
+              <div class="feat-name">Banking / Neobank Template</div>
+              <div class="feat-desc">
+                Strong trust design, calculator, compliance section. $99–$299.
+              </div>
+            </div>
+          </div>
+          <div class="feat priority">
+            <span class="feat-num">188</span>
+            <div class="feat-body">
+              <div class="feat-name">Digital Agency Template</div>
+              <div class="feat-desc">
+                Evergreen, broad demand. Portfolio + services + CTAs. $49–$99.
+              </div>
+            </div>
+          </div>
+          <div class="feat priority">
+            <span class="feat-num">189</span>
+            <div class="feat-body">
+              <div class="feat-name">SaaS / Startup Template</div>
+              <div class="feat-desc">
+                Conversion-focused. Feature sections, pricing tables. $49–$99.
+              </div>
+            </div>
+          </div>
+          <div class="feat priority">
+            <span class="feat-num">190</span>
+            <div class="feat-body">
+              <div class="feat-name">Portfolio / Freelancer Template</div>
+              <div class="feat-desc">
+                Developers, designers, Web3 creators. $29–$79.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-tier">
+        <div class="tier-label">
+          Tier 2 — Medium Term (Higher ticket, more complex)
+        </div>
+        <div class="products-grid">
+          <div class="feat">
+            <span class="feat-num">191</span>
+            <div class="feat-body">
+              <div class="feat-name">P2P Crypto Trading Script</div>
+              <div class="feat-desc">
+                Escrow, dispute, ratings, Paystack. $299–$799.
+              </div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">192</span>
+            <div class="feat-body">
+              <div class="feat-name">Online Banking Lite Script</div>
+              <div class="feat-desc">
+                Dashboard, transfers, transaction history. $199–$499.
+              </div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">193</span>
+            <div class="feat-body">
+              <div class="feat-name">Loan Management Script</div>
+              <div class="feat-desc">
+                Approval workflow, repayment, interest. $199–$499.
+              </div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">194</span>
+            <div class="feat-body">
+              <div class="feat-name">NFT Marketplace Template</div>
+              <div class="feat-desc">
+                Wallet connect, gallery, minting. $99–$249.
+              </div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">195</span>
+            <div class="feat-body">
+              <div class="feat-name">Real Estate Listing Template</div>
+              <div class="feat-desc">
+                Property search, agent dashboard. $79–$199.
+              </div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">196</span>
+            <div class="feat-body">
+              <div class="feat-name">Invoice & Billing System Script</div>
+              <div class="feat-desc">
+                SME and freelancer appeal, Paystack. $149–$399.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-tier">
+        <div class="tier-label">Tier 3 — Later (Significant build effort)</div>
+        <div class="products-grid">
+          <div class="feat">
+            <span class="feat-num">197</span>
+            <div class="feat-body">
+              <div class="feat-name">CEX Lite Script</div>
+              <div class="feat-desc">$499–$999</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">198</span>
+            <div class="feat-body">
+              <div class="feat-name">DeFi Dashboard Template</div>
+              <div class="feat-desc">$199–$499</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">199</span>
+            <div class="feat-body">
+              <div class="feat-name">Fleet Management Script</div>
+              <div class="feat-desc">$199–$499</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">200</span>
+            <div class="feat-body">
+              <div class="feat-name">Ajo/Esusu Savings Script</div>
+              <div class="feat-desc">$149–$399</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">201</span>
+            <div class="feat-body">
+              <div class="feat-name">LMS Lite Script</div>
+              <div class="feat-desc">$149–$399</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">202</span>
+            <div class="feat-body">
+              <div class="feat-name">Crowdfunding Script</div>
+              <div class="feat-desc">$199–$499</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">203</span>
+            <div class="feat-body">
+              <div class="feat-name">Crypto Trading Dashboard</div>
+              <div class="feat-desc">$99–$249</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">204</span>
+            <div class="feat-body">
+              <div class="feat-name">Web3 dApp Landing</div>
+              <div class="feat-desc">$79–$199</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">205</span>
+            <div class="feat-body">
+              <div class="feat-name">Blockchain Agency Template</div>
+              <div class="feat-desc">$79–$199</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">206</span>
+            <div class="feat-body">
+              <div class="feat-name">Token Launch / ICO</div>
+              <div class="feat-desc">$149–$399</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">207</span>
+            <div class="feat-body">
+              <div class="feat-name">Event / Ticketing System</div>
+              <div class="feat-desc">$99–$249</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">208</span>
+            <div class="feat-body">
+              <div class="feat-name">Restaurant / Food Delivery</div>
+              <div class="feat-desc">$79–$199</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">209</span>
+            <div class="feat-body">
+              <div class="feat-name">School Management Lite</div>
+              <div class="feat-desc">$149–$399</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">210</span>
+            <div class="feat-body">
+              <div class="feat-name">Hospital / Clinic Template</div>
+              <div class="feat-desc">$79–$199</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">211</span>
+            <div class="feat-body">
+              <div class="feat-name">POS System Script</div>
+              <div class="feat-desc">$149–$399</div>
+            </div>
+          </div>
+          <div class="feat">
+            <span class="feat-num">212</span>
+            <div class="feat-body">
+              <div class="feat-name">Multi-Vendor Marketplace Script</div>
+              <div class="feat-desc">$299–$799</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 26 -->
+    <div class="group">
+      <div class="group-header">
+        <span class="group-num new-grp">Group 26</span>
+        <span class="group-title">AI Automation Engine</span>
+        <span class="group-count">3 items (213–215)</span>
+      </div>
+      <div class="features-list">
+        <div class="feat new-feat">
+          <span class="feat-num">213</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span
+              ><span class="tag tag-ai">AI</span>Python Content Automation
+              Engine
+            </div>
+            <div class="feat-desc">
+              Main orchestrator: Python + Claude Sonnet API. Triggers blog +
+              directory generators on cron schedule. Draft-first — nothing
+              publishes without approval. Config via .env.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">214</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span
+              ><span class="tag tag-ai">AI</span>Blog Auto-Generator
+            </div>
+            <div class="feat-desc">
+              Research current top-ranking pages → generate 1,500-word SEO blog
+              post → publish as draft via /api/publish-post.php → admin approves
+              → goes live. $0.01–$0.10 per post.
+            </div>
+          </div>
+        </div>
+        <div class="feat new-feat">
+          <span class="feat-num">215</span>
+          <div class="feat-body">
+            <div class="feat-name">
+              <span class="tag tag-new">New</span
+              ><span class="tag tag-ai">AI</span>Directory Auto-Populator
+            </div>
+            <div class="feat-desc">
+              Fetch from Product Hunt, GitHub trending, curated RSS → generate
+              listing data (name, description, category, tags, pricing tier) →
+              create draft listing → admin reviews before publishing.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUILD PHASES -->
+    <div
+      style="
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 2px solid var(--ink);
+      "
+    >
+      <p
+        class="eyebrow"
+        style="
+          font-size: 0.72rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.15em;
+          color: var(--coral);
+          margin-bottom: 1.25rem;
+        "
+      >
+        Build Phases
+      </p>
+      <div class="phases">
+        <div class="phase">
+          <div class="phase-num">Phase 1 — Week 1–2</div>
+          <div class="phase-title">Deploy & Go Live</div>
+          <div class="phase-items">
+            Deploy 134-file PHP platform · .htaccess URL rewriting · Supabase
+            storage · Verify all 3 gateways · Homepage positioning copy · Go
+            live
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">Phase 2 — Month 1–2</div>
+          <div class="phase-title">Revenue Foundation</div>
+          <div class="phase-items">
+            Vendor system · License key system · Directory hub (10 categories) ·
+            Services/leads → Tinlance · Mobile Money · Fraud prevention basics ·
+            Chargeback protection
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">Phase 3 — Month 2–4</div>
+          <div class="phase-title">Growth Engine</div>
+          <div class="phase-items">
+            Gamification · Community forum · AI page generator · Social login ·
+            Launch kits · Courses & knowledge products · Advanced analytics ·
+            Buyer-vendor messaging
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">Phase 4 — Month 4–8</div>
+          <div class="phase-title">Scale & Automate</div>
+          <div class="phase-items">
+            Python automation engine · Programmatic SEO · Mobile app iOS +
+            Android · BNPL + Mobile Money full · ProductHunt-style launches ·
+            Win-back campaigns · Annual recap email
+          </div>
+        </div>
+        <div class="phase">
+          <div class="phase-num">Phase 5 — Month 8–12</div>
+          <div class="phase-title">Enterprise & Global</div>
+          <div class="phase-items">
+            SOC 2 compliance · White-label platform · Reseller programme ·
+            Merchant of Record · GDPR CMP v2 · Staging access · API key
+            management · Usage-based pricing
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      style="
+        margin-top: 2rem;
+        padding: 1.25rem 1.5rem;
+        background: var(--ink);
+        color: #fff;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      "
+    >
+      <div style="font-size: 0.82rem; font-weight: 700">
+        Web-Temify LTD · RC: 7999659 · Nigeria · A sister company of Tinlance
+        Limited
+      </div>
+      <div
+        style="
+          font-family: &quot;DM Mono&quot;, monospace;
+          font-size: 0.72rem;
+          color: rgba(255, 255, 255, 0.5);
+        "
+      >
+        Master Feature List v3.0 · May 2026 · 215 items
+      </div>
+    </div>
+  </body>
 </html>

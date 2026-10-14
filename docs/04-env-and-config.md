@@ -1,6 +1,7 @@
 > **LEGACY / NON-CANONICAL — reviewed 2026-10-13.** Retained for historical requirements and design context only. Do not treat its framework, database/migration strategy, provider list, security examples, product count, phase status, pricing, testimonials, metrics, or “built/production-ready” claims as current truth. Canonical authority is in `docs/architecture/overview.md`, `docs/architecture/decisions/`, `docs/roadmap/phase-gates.md`, `docs/security/`, `docs/quality/testing-strategy.md`, the tested source and Supabase migrations, and `LloydCoder/web-temify-products/catalog/products.json`. Implement only through the current phase gates and verified evidence.
 
 # WEB-TEMIFY — ENVIRONMENT VARIABLES & CONFIG
+
 ## Version 5.0 | May 2026
 
 ---
@@ -145,60 +146,66 @@ ADMIN_EMAILS=
 ## next.config.ts
 
 ```typescript
-import type { NextConfig } from 'next'
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '*.supabase.co',
-        pathname: '/storage/v1/object/public/**',
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
       },
       {
-        protocol: 'https',
-        hostname: 'www.gravatar.com',
+        protocol: "https",
+        hostname: "www.gravatar.com",
       },
     ],
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ['web-temify.com', 'www.web-temify.com'],
+      allowedOrigins: ["web-temify.com", "www.web-temify.com"],
     },
   },
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
-          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'X-XSS-Protection', value: '1; mode=block' },
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          { key: 'Permissions-Policy', value: 'geolocation=(), microphone=(), camera=()' },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-XSS-Protection", value: "1; mode=block" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "geolocation=(), microphone=(), camera=()",
+          },
         ],
       },
       {
         // Cache static assets aggressively
-        source: '/build/(.*)',
+        source: "/build/(.*)",
         headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
         ],
       },
-    ]
+    ];
   },
   async redirects() {
     return [
       {
-        source: '/home',
-        destination: '/',
+        source: "/home",
+        destination: "/",
         permanent: true,
       },
-    ]
+    ];
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;
 ```
 
 ---
@@ -206,70 +213,70 @@ export default nextConfig
 ## tailwind.config.ts
 
 ```typescript
-import type { Config } from 'tailwindcss'
-import forms from '@tailwindcss/forms'
-import typography from '@tailwindcss/typography'
+import type { Config } from "tailwindcss";
+import forms from "@tailwindcss/forms";
+import typography from "@tailwindcss/typography";
 
 const config: Config = {
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: 'class',
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        bg:      '#fffbf4',
-        ink:     '#0f0d0a',
-        coral:   '#ff5733',
-        yellow:  '#ffd60a',
-        mint:    '#00c48c',
-        sky:     '#4f8ef7',
-        lilac:   '#c084fc',
-        surface: '#fff8ed',
-        muted:   '#6b6559',
+        bg: "#fffbf4",
+        ink: "#0f0d0a",
+        coral: "#ff5733",
+        yellow: "#ffd60a",
+        mint: "#00c48c",
+        sky: "#4f8ef7",
+        lilac: "#c084fc",
+        surface: "#fff8ed",
+        muted: "#6b6559",
       },
       fontFamily: {
-        display: ['Cabinet Grotesk', 'sans-serif'],
-        serif:   ['Instrument Serif', 'serif'],
-        mono:    ['DM Mono', 'monospace'],
-        sans:    ['Cabinet Grotesk', 'sans-serif'],
+        display: ["Cabinet Grotesk", "sans-serif"],
+        serif: ["Instrument Serif", "serif"],
+        mono: ["DM Mono", "monospace"],
+        sans: ["Cabinet Grotesk", "sans-serif"],
       },
       boxShadow: {
-        'brutal':    '4px 4px 0 #0f0d0a',
-        'brutal-lg': '6px 6px 0 #0f0d0a',
-        'brutal-sm': '2px 2px 0 #0f0d0a',
-        'brutal-coral': '4px 4px 0 #ff5733',
+        brutal: "4px 4px 0 #0f0d0a",
+        "brutal-lg": "6px 6px 0 #0f0d0a",
+        "brutal-sm": "2px 2px 0 #0f0d0a",
+        "brutal-coral": "4px 4px 0 #ff5733",
       },
       borderWidth: {
-        DEFAULT: '2px',
+        DEFAULT: "2px",
       },
       animation: {
-        'scroll': 'scroll 22s linear infinite',
-        'fade-up': 'fadeUp 0.5s ease forwards',
-        'blink': 'blink 2s ease-in-out infinite',
+        scroll: "scroll 22s linear infinite",
+        "fade-up": "fadeUp 0.5s ease forwards",
+        blink: "blink 2s ease-in-out infinite",
       },
       keyframes: {
         scroll: {
-          from: { transform: 'translateX(0)' },
-          to: { transform: 'translateX(-50%)' },
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
         },
         fadeUp: {
-          from: { opacity: '0', transform: 'translateY(20px)' },
-          to: { opacity: '1', transform: 'translateY(0)' },
+          from: { opacity: "0", transform: "translateY(20px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
         },
         blink: {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.3' },
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.3" },
         },
       },
     },
   },
   plugins: [forms, typography],
-}
+};
 
-export default config
+export default config;
 ```
 
 ---
@@ -302,11 +309,11 @@ export default config
 ## src/middleware.ts
 
 ```typescript
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request })
+  let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -314,96 +321,98 @@ export async function middleware(request: NextRequest) {
     {
       cookies: {
         getAll() {
-          return request.cookies.getAll()
+          return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          )
-          supabaseResponse = NextResponse.next({ request })
+            request.cookies.set(name, value),
+          );
+          supabaseResponse = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
+            supabaseResponse.cookies.set(name, value, options),
+          );
         },
       },
-    }
-  )
+    },
+  );
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   // Protected routes — redirect to login if not authenticated
   const protectedRoutes = [
-    '/dashboard',
-    '/my-downloads',
-    '/my-purchases',
-    '/my-subscription',
-    '/my-invoices',
-    '/my-licenses',
-    '/my-collections',
-    '/my-wishlist',
-    '/points-rewards',
-    '/badges',
-    '/referrals',
-    '/account-settings',
-    '/profile/edit',
-    '/checkout',
-    '/vendor',
-    '/admin',
-  ]
+    "/dashboard",
+    "/my-downloads",
+    "/my-purchases",
+    "/my-subscription",
+    "/my-invoices",
+    "/my-licenses",
+    "/my-collections",
+    "/my-wishlist",
+    "/points-rewards",
+    "/badges",
+    "/referrals",
+    "/account-settings",
+    "/profile/edit",
+    "/checkout",
+    "/vendor",
+    "/admin",
+  ];
 
-  const isProtected = protectedRoutes.some(route =>
-    request.nextUrl.pathname.startsWith(route)
-  )
+  const isProtected = protectedRoutes.some((route) =>
+    request.nextUrl.pathname.startsWith(route),
+  );
 
   if (isProtected && !user) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    url.searchParams.set('redirectTo', request.nextUrl.pathname)
-    return NextResponse.redirect(url)
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.searchParams.set("redirectTo", request.nextUrl.pathname);
+    return NextResponse.redirect(url);
   }
 
   // Admin routes — check admin role
-  if (request.nextUrl.pathname.startsWith('/admin') && user) {
+  if (request.nextUrl.pathname.startsWith("/admin") && user) {
     const { data: profile } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
+      .from("users")
+      .select("role")
+      .eq("id", user.id)
+      .single();
 
-    if (!profile || !['ADMIN', 'SUPER_ADMIN'].includes(profile.role)) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+    if (!profile || !["ADMIN", "SUPER_ADMIN"].includes(profile.role)) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
 
   // Vendor routes — check vendor status
-  if (request.nextUrl.pathname.startsWith('/vendor/dashboard') && user) {
+  if (request.nextUrl.pathname.startsWith("/vendor/dashboard") && user) {
     const { data: vendor } = await supabase
-      .from('vendors')
-      .select('status')
-      .eq('user_id', user.id)
-      .single()
+      .from("vendors")
+      .select("status")
+      .eq("user_id", user.id)
+      .single();
 
-    if (!vendor || vendor.status !== 'ACTIVE') {
-      return NextResponse.redirect(new URL('/vendor/register', request.url))
+    if (!vendor || vendor.status !== "ACTIVE") {
+      return NextResponse.redirect(new URL("/vendor/register", request.url));
     }
   }
 
   // Cron routes — verify secret header
-  if (request.nextUrl.pathname.startsWith('/api/cron')) {
-    const authHeader = request.headers.get('authorization')
+  if (request.nextUrl.pathname.startsWith("/api/cron")) {
+    const authHeader = request.headers.get("authorization");
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
   }
 
-  return supabaseResponse
+  return supabaseResponse;
 }
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
-}
+};
 ```
 
 ---
@@ -411,24 +420,24 @@ export const config = {
 ## src/lib/supabase/client.ts
 
 ```typescript
-import { createBrowserClient } from '@supabase/ssr'
+import { createBrowserClient } from "@supabase/ssr";
 
 export function createClient() {
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
 }
 ```
 
 ## src/lib/supabase/server.ts
 
 ```typescript
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 
 export async function createClient() {
-  const cookieStore = await cookies()
+  const cookieStore = await cookies();
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -436,35 +445,38 @@ export async function createClient() {
     {
       cookies: {
         getAll() {
-          return cookieStore.getAll()
+          return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
+              cookieStore.set(name, value, options),
+            );
           } catch {}
         },
       },
-    }
-  )
+    },
+  );
 }
 ```
 
 ## src/lib/prisma.ts
 
 ```typescript
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
-}
+  prisma: PrismaClient | undefined;
+};
 
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  })
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
+  });
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 ```

@@ -1,47 +1,143 @@
 <!-- DEPRECATED PHP/MYSQL STRUCTURE MOCKUP (reviewed 2026-10-13): superseded by the accepted Next.js/Supabase modular-monolith architecture and docs/architecture/repository-structure.md. Do not implement this folder tree. -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web-Temify — Complete Folder Structure</title>
-<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#fffbf4;--ink:#0f0d0a;--coral:#ff5733;--yellow:#ffd60a;--mint:#00c48c;--sky:#4f8ef7;--lilac:#c084fc;--muted:#6b6559;--surface:#fff8ed}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font-family:'Cabinet Grotesk',sans-serif;padding:2rem;max-width:1100px;margin:0 auto}
-h1{font-size:2.5rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.5rem}
-.subtitle{color:var(--muted);font-size:.95rem;font-weight:500;margin-bottom:2rem}
-.stats-row{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:2.5rem}
-.stat{background:var(--surface);border:2px solid var(--ink);border-radius:4px;padding:.6rem 1.2rem;font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
-.stat span{color:var(--coral);font-size:1.1rem;display:block;letter-spacing:-.02em;margin-bottom:2px}
-.tree{font-family:'DM Mono',monospace;font-size:.82rem;line-height:1.9;background:#0f0d0a;color:#f0efe8;padding:2rem;border-radius:8px;overflow-x:auto;border:2px solid var(--ink)}
-.tree .folder{color:var(--yellow);font-weight:500}
-.tree .file{color:#f0efe8}
-.tree .comment{color:#6b6559}
-.tree .section{color:var(--coral);font-weight:700}
-.tree .new{color:var(--mint)}
-.legend{display:flex;gap:1.5rem;margin-top:1.5rem;flex-wrap:wrap}
-.leg-item{display:flex;align-items:center;gap:.5rem;font-size:.75rem;font-weight:700}
-.leg-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink)}
-</style>
-</head>
-<body>
-<h1>Web-Temify <span style="color:var(--coral)">●</span></h1>
-<p class="subtitle">Complete PHP Platform — Full Folder Structure · All 152 planned features · Pure PHP/MySQL</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web-Temify — Complete Folder Structure</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;700;800;900&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #fffbf4;
+        --ink: #0f0d0a;
+        --coral: #ff5733;
+        --yellow: #ffd60a;
+        --mint: #00c48c;
+        --sky: #4f8ef7;
+        --lilac: #c084fc;
+        --muted: #6b6559;
+        --surface: #fff8ed;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Cabinet Grotesk", sans-serif;
+        padding: 2rem;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        margin-bottom: 0.5rem;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 0.95rem;
+        font-weight: 500;
+        margin-bottom: 2rem;
+      }
+      .stats-row {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 2.5rem;
+      }
+      .stat {
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: 4px;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .stat span {
+        color: var(--coral);
+        font-size: 1.1rem;
+        display: block;
+        letter-spacing: -0.02em;
+        margin-bottom: 2px;
+      }
+      .tree {
+        font-family: "DM Mono", monospace;
+        font-size: 0.82rem;
+        line-height: 1.9;
+        background: #0f0d0a;
+        color: #f0efe8;
+        padding: 2rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        border: 2px solid var(--ink);
+      }
+      .tree .folder {
+        color: var(--yellow);
+        font-weight: 500;
+      }
+      .tree .file {
+        color: #f0efe8;
+      }
+      .tree .comment {
+        color: #6b6559;
+      }
+      .tree .section {
+        color: var(--coral);
+        font-weight: 700;
+      }
+      .tree .new {
+        color: var(--mint);
+      }
+      .legend {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+      }
+      .leg-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+      .leg-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 2px solid var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Web-Temify <span style="color: var(--coral)">●</span></h1>
+    <p class="subtitle">
+      Complete PHP Platform — Full Folder Structure · All 152 planned features ·
+      Pure PHP/MySQL
+    </p>
 
-<div class="stats-row">
-  <div class="stat"><span>250+</span>PHP Files</div>
-  <div class="stat"><span>70</span>DB Tables</div>
-  <div class="stat"><span>16</span>Cron Jobs</div>
-  <div class="stat"><span>3</span>Payment Gateways</div>
-  <div class="stat"><span>25+</span>Email Templates</div>
-  <div class="stat"><span>8</span>API Endpoints</div>
-  <div class="stat"><span>4</span>Languages</div>
-  <div class="stat"><span>152</span>Features</div>
-</div>
+    <div class="stats-row">
+      <div class="stat"><span>250+</span>PHP Files</div>
+      <div class="stat"><span>70</span>DB Tables</div>
+      <div class="stat"><span>16</span>Cron Jobs</div>
+      <div class="stat"><span>3</span>Payment Gateways</div>
+      <div class="stat"><span>25+</span>Email Templates</div>
+      <div class="stat"><span>8</span>API Endpoints</div>
+      <div class="stat"><span>4</span>Languages</div>
+      <div class="stat"><span>152</span>Features</div>
+    </div>
 
-<div class="tree"><pre>
+    <div class="tree">
+      <pre>
 web-temify/
 │
 ├── .htaccess                          <span class="comment"># URL rewriting, CSP headers, security</span>
@@ -461,23 +557,70 @@ web-temify/
     ├── config.php                     <span class="comment"># Main config (DB, keys, environment)</span>
     ├── config.example.php             <span class="comment"># Config template (safe to commit)</span>
     └── .env.example                   <span class="comment"># Environment variables template</span>
-</pre></div>
+</pre>
+    </div>
 
-<div class="legend">
-  <div class="leg-item"><div class="leg-dot" style="background:#ffd60a"></div> Folder</div>
-  <div class="leg-item"><div class="leg-dot" style="background:#6b6559"></div> Already built (134-file base)</div>
-  <div class="leg-item"><div class="leg-dot" style="background:#00c48c"></div> New — to be built</div>
-</div>
+    <div class="legend">
+      <div class="leg-item">
+        <div class="leg-dot" style="background: #ffd60a"></div>
+        Folder
+      </div>
+      <div class="leg-item">
+        <div class="leg-dot" style="background: #6b6559"></div>
+        Already built (134-file base)
+      </div>
+      <div class="leg-item">
+        <div class="leg-dot" style="background: #00c48c"></div>
+        New — to be built
+      </div>
+    </div>
 
-<div style="margin-top:2rem;padding:1.5rem;background:var(--surface);border:2px solid var(--ink);border-radius:8px">
-  <p style="font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;color:var(--coral)">Build Order</p>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem">
-    <div style="font-size:.78rem;font-weight:700"><strong style="color:var(--coral)">Phase 1</strong><br>Deploy existing 134-file base. URL rewriting. Supabase storage. Go live.</div>
-    <div style="font-size:.78rem;font-weight:700"><strong style="color:var(--coral)">Phase 2</strong><br>Vendor system. Directory (10 categories). Services + leads. Mobile money.</div>
-    <div style="font-size:.78rem;font-weight:700"><strong style="color:var(--coral)">Phase 3</strong><br>Gamification. Community forum. AI generator. Social login. Launch kits.</div>
-    <div style="font-size:.78rem;font-weight:700"><strong style="color:var(--coral)">Phase 4</strong><br>Automation engine (Python + Claude). Programmatic SEO. Newsletter. Web3 hub.</div>
-  </div>
-</div>
-
-</body>
+    <div
+      style="
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: 8px;
+      "
+    >
+      <p
+        style="
+          font-size: 0.82rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          margin-bottom: 0.75rem;
+          color: var(--coral);
+        "
+      >
+        Build Order
+      </p>
+      <div
+        style="
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 0.75rem;
+        "
+      >
+        <div style="font-size: 0.78rem; font-weight: 700">
+          <strong style="color: var(--coral)">Phase 1</strong><br />Deploy
+          existing 134-file base. URL rewriting. Supabase storage. Go live.
+        </div>
+        <div style="font-size: 0.78rem; font-weight: 700">
+          <strong style="color: var(--coral)">Phase 2</strong><br />Vendor
+          system. Directory (10 categories). Services + leads. Mobile money.
+        </div>
+        <div style="font-size: 0.78rem; font-weight: 700">
+          <strong style="color: var(--coral)">Phase 3</strong
+          ><br />Gamification. Community forum. AI generator. Social login.
+          Launch kits.
+        </div>
+        <div style="font-size: 0.78rem; font-weight: 700">
+          <strong style="color: var(--coral)">Phase 4</strong><br />Automation
+          engine (Python + Claude). Programmatic SEO. Newsletter. Web3 hub.
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

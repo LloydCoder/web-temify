@@ -1,7 +1,9 @@
 > **LEGACY / NON-CANONICAL — reviewed 2026-10-13.** Retained for historical requirements and design context only. Do not treat its framework, database/migration strategy, provider list, security examples, product count, phase status, pricing, testimonials, metrics, or “built/production-ready” claims as current truth. Canonical authority is in `docs/architecture/overview.md`, `docs/architecture/decisions/`, `docs/roadmap/phase-gates.md`, `docs/security/`, `docs/quality/testing-strategy.md`, the tested source and Supabase migrations, and `LloydCoder/web-temify-products/catalog/products.json`. Implement only through the current phase gates and verified evidence.
 
 # WEB-TEMIFY — PRODUCT CATALOGUE
+
 ## 44 Products to Build and List on the Marketplace
+
 ## Version 5.0 | May 2026
 
 ---
@@ -19,6 +21,7 @@
 ## TIER 1 — BUILD FIRST (6 Products)
 
 ### 1. Courier & Logistics Pro Template
+
 ```
 Price:        $79 (Regular) | $149 (Extended) | $199 (White-Label)
 Type:         Website Template
@@ -46,6 +49,7 @@ Colour scheme: Orange/Navy or Green/White
 ```
 
 ### 2. Loan & Lending Company Template
+
 ```
 Price:        $99 (Regular) | $179 (Extended) | $249 (White-Label)
 Type:         Website Template
@@ -75,6 +79,7 @@ Key differentiator: Nigeria/Africa compliance language built in
 ```
 
 ### 3. NeoBank & Digital Banking Template
+
 ```
 Price:        $99 (Regular) | $199 (Extended) | $299 (White-Label)
 Type:         Website Template
@@ -103,6 +108,7 @@ Colour scheme: Dark navy + coral OR Clean white + electric blue
 ```
 
 ### 4. Digital Agency Pro Template
+
 ```
 Price:        $49 (Regular) | $79 (Extended) | $99 (White-Label)
 Type:         Website Template
@@ -129,6 +135,7 @@ Variants: Light (cream/coral) + Dark (ink/coral) — match Web-Temify brand
 ```
 
 ### 5. SaaS & Startup Landing Page
+
 ```
 Price:        $49 (Regular) | $79 (Extended) | $99 (White-Label)
 Type:         Website Template
@@ -156,6 +163,7 @@ Colour scheme: Multiple (coral, blue, green, purple options)
 ```
 
 ### 6. Portfolio & Freelancer Template
+
 ```
 Price:        $29 (Regular) | $49 (Extended) | $79 (White-Label)
 Type:         Website Template
@@ -186,6 +194,7 @@ Variants: Developer focus + Designer focus + Web3 focus (3 homepages)
 ## TIER 4 — LAUNCH KITS (4 Products — Build Second)
 
 ### 34. SaaS Starter Kit
+
 ```
 Price:        $299 (bundle) | normally $490 individual
 Contents:
@@ -201,6 +210,7 @@ Docs: Complete README + setup guide + deployment checklist
 ```
 
 ### 35. Web3 DApp Starter Kit
+
 ```
 Price:        $399 (bundle) | normally $620 individual
 Contents:
@@ -216,6 +226,7 @@ Docs: README + web3 setup guide + contract integration hints
 ```
 
 ### 36. Fintech Launch Kit
+
 ```
 Price:        $349 (bundle) | normally $560 individual
 Contents:
@@ -232,6 +243,7 @@ Special: Africa-first — all Naira/NGN pricing psychology built in
 ```
 
 ### 37. Agency Starter Kit
+
 ```
 Price:        $249 (bundle) | normally $390 individual
 Contents:
@@ -251,6 +263,7 @@ Docs: README + client pitch tips + conversion optimisation notes
 ## TIER 5 — AFRICA NICHE (6 Products — Zero Competition)
 
 ### 38. Ajo / Esusu / Cooperative Savings Script
+
 ```
 Price:        $149 (Regular) | $249 (Extended) | $399 (White-Label)
 Type:         Full PHP Script
@@ -277,6 +290,7 @@ Features:
 ```
 
 ### 39. Islamic Finance / Halal Banking Template
+
 ```
 Price:        $99 (Regular) | $179 (Extended) | $249 (White-Label)
 Type:         Website Template
@@ -300,6 +314,7 @@ Features:
 ```
 
 ### 40. Agritech & Farm Marketplace Template
+
 ```
 Price:        $79 (Regular) | $129 (Extended) | $179 (White-Label)
 Type:         Website Template
@@ -324,6 +339,7 @@ Features:
 ```
 
 ### 41. ISP & Telecom Company Template
+
 ```
 Price:        $79 (Regular) | $129 (Extended) | $179 (White-Label)
 Type:         Website Template
@@ -348,6 +364,7 @@ Features:
 ```
 
 ### 42. Solar Energy & Power Company Template
+
 ```
 Price:        $79 (Regular) | $129 (Extended) | $179 (White-Label)
 Type:         Website Template
@@ -373,6 +390,7 @@ Features:
 ```
 
 ### 43. Ride-Hailing / Okada App Landing Page
+
 ```
 Price:        $59 (Regular) | $99 (Extended) | $149 (White-Label)
 Type:         Website Template
@@ -403,20 +421,20 @@ Features:
 
 ### Product Specs Summary
 
-| # | Product | Type | Stack | Price | Key Feature |
-|---|---|---|---|---|---|
-| 7 | P2P Crypto Trading Script | Full Script | PHP+Laravel | $299–$799 | Escrow, dispute, ratings |
-| 8 | Online Banking Lite Script | Full Script | PHP+MySQL | $199–$499 | Transfers, bills, 2FA |
-| 9 | Loan Management Script | Full Script | PHP+MySQL | $199–$499 | Approval flow, repayment |
-| 10 | NFT Marketplace Template | Template | Next.js+Web3 | $99–$249 | Wallet connect, mint |
-| 11 | Real Estate Template | Template | Next.js+Maps | $79–$199 | Property search, agent |
-| 12 | Invoice & Billing Script | Full Script | PHP+Paystack | $149–$399 | PDF invoices, recurring |
-| 13 | E-commerce Store Template | Template | WP+WooCommerce | $79–$199 | Cart, checkout, Paystack |
-| 14 | Restaurant Template | Template | HTML5+WhatsApp | $79–$199 | Menu, booking, delivery |
-| 15 | Hospital & Clinic Template | Template | HTML5+Bootstrap | $79–$199 | Appointments, doctors |
-| 16 | School & Education Template | Template | HTML5+LMS | $79–$199 | Courses, admissions |
-| 17 | SaaS Admin Dashboard | UI Kit | HTML5+React | $99–$249 | 40+ pages, charts |
-| 18 | POS System Script | Full Script | PHP+Barcode | $149–$399 | Sales, inventory, receipt |
+| #   | Product                     | Type        | Stack           | Price     | Key Feature               |
+| --- | --------------------------- | ----------- | --------------- | --------- | ------------------------- |
+| 7   | P2P Crypto Trading Script   | Full Script | PHP+Laravel     | $299–$799 | Escrow, dispute, ratings  |
+| 8   | Online Banking Lite Script  | Full Script | PHP+MySQL       | $199–$499 | Transfers, bills, 2FA     |
+| 9   | Loan Management Script      | Full Script | PHP+MySQL       | $199–$499 | Approval flow, repayment  |
+| 10  | NFT Marketplace Template    | Template    | Next.js+Web3    | $99–$249  | Wallet connect, mint      |
+| 11  | Real Estate Template        | Template    | Next.js+Maps    | $79–$199  | Property search, agent    |
+| 12  | Invoice & Billing Script    | Full Script | PHP+Paystack    | $149–$399 | PDF invoices, recurring   |
+| 13  | E-commerce Store Template   | Template    | WP+WooCommerce  | $79–$199  | Cart, checkout, Paystack  |
+| 14  | Restaurant Template         | Template    | HTML5+WhatsApp  | $79–$199  | Menu, booking, delivery   |
+| 15  | Hospital & Clinic Template  | Template    | HTML5+Bootstrap | $79–$199  | Appointments, doctors     |
+| 16  | School & Education Template | Template    | HTML5+LMS       | $79–$199  | Courses, admissions       |
+| 17  | SaaS Admin Dashboard        | UI Kit      | HTML5+React     | $99–$249  | 40+ pages, charts         |
+| 18  | POS System Script           | Full Script | PHP+Barcode     | $149–$399 | Sales, inventory, receipt |
 
 ---
 
@@ -424,28 +442,29 @@ Features:
 
 ### Product Specs Summary
 
-| # | Product | Type | Price | Notes |
-|---|---|---|---|---|
-| 19 | CEX Lite Exchange | Full Script | $499–$999 | Trading engine, order book |
-| 20 | DeFi Dashboard | Template | $199–$499 | Staking, LP, yield UI |
-| 21 | Fleet Management | Full Script | $199–$499 | GPS tracking, maintenance |
-| 22 | Crowdfunding Platform | Full Script | $199–$499 | Campaigns, pledges, rewards |
-| 23 | Crypto Trading Dashboard | Template | $99–$249 | CoinGecko API, charts |
-| 24 | Web3 dApp Landing | Template | $79–$199 | Tokenomics, roadmap, GSAP |
-| 25 | Blockchain Agency | Template | $79–$199 | Smart contracts, audits |
-| 26 | Token Launch / ICO | Script+Template | $149–$399 | Presale, whitelist, KYC |
-| 27 | Event Ticketing | Full Script | $99–$249 | QR codes, seating, Paystack |
-| 28 | Multi-Vendor Marketplace | Full Script | $299–$799 | Essentially Web-Temify lite |
-| 29 | DAO Governance | Template | $99–$249 | Proposals, voting, treasury |
-| 30 | LMS Lite | Full Script | $149–$399 | Courses, quizzes, certs |
-| 31 | Pharmacy Store | Template | $79–$179 | WooCommerce, prescriptions |
-| 32 | Construction Company | Template | $59–$149 | Portfolio, estimates |
-| 33 | Travel Agency | Template | $59–$149 | Tours, booking, packages |
-| 34 | Ajo/Esusu Script (Tier 2) | Full Script | $149–$399 | Already in Tier 5 |
+| #   | Product                   | Type            | Price     | Notes                       |
+| --- | ------------------------- | --------------- | --------- | --------------------------- |
+| 19  | CEX Lite Exchange         | Full Script     | $499–$999 | Trading engine, order book  |
+| 20  | DeFi Dashboard            | Template        | $199–$499 | Staking, LP, yield UI       |
+| 21  | Fleet Management          | Full Script     | $199–$499 | GPS tracking, maintenance   |
+| 22  | Crowdfunding Platform     | Full Script     | $199–$499 | Campaigns, pledges, rewards |
+| 23  | Crypto Trading Dashboard  | Template        | $99–$249  | CoinGecko API, charts       |
+| 24  | Web3 dApp Landing         | Template        | $79–$199  | Tokenomics, roadmap, GSAP   |
+| 25  | Blockchain Agency         | Template        | $79–$199  | Smart contracts, audits     |
+| 26  | Token Launch / ICO        | Script+Template | $149–$399 | Presale, whitelist, KYC     |
+| 27  | Event Ticketing           | Full Script     | $99–$249  | QR codes, seating, Paystack |
+| 28  | Multi-Vendor Marketplace  | Full Script     | $299–$799 | Essentially Web-Temify lite |
+| 29  | DAO Governance            | Template        | $99–$249  | Proposals, voting, treasury |
+| 30  | LMS Lite                  | Full Script     | $149–$399 | Courses, quizzes, certs     |
+| 31  | Pharmacy Store            | Template        | $79–$179  | WooCommerce, prescriptions  |
+| 32  | Construction Company      | Template        | $59–$149  | Portfolio, estimates        |
+| 33  | Travel Agency             | Template        | $59–$149  | Tours, booking, packages    |
+| 34  | Ajo/Esusu Script (Tier 2) | Full Script     | $149–$399 | Already in Tier 5           |
 
 ---
 
 ## PRODUCT UPLOAD CHECKLIST
+
 (Complete for every product before listing)
 
 ```
@@ -496,16 +515,16 @@ Admin panel listing:
 
 After listing on Web-Temify, submit to:
 
-| Platform | Submit Templates | Submit Scripts | Revenue Share |
-|---|---|---|---|
-| Web-Temify (own) | ✅ All | ✅ All | 100% |
-| Gumroad | ✅ All | ✅ All | 90% |
-| Payhip | ✅ All | ✅ All | 95% |
-| LemonSqueezy | ✅ All | ✅ All | ~93% |
-| ThemeForest | ✅ Templates only | ❌ | 50% (non-exclusive ONLY) |
-| CodeCanyon | ❌ | ✅ Scripts only | 50% (non-exclusive ONLY) |
-| Creative Market | ✅ Design-heavy | ❌ | 70% |
-| Whop | ✅ Dev tools | ✅ Scripts | 97% |
+| Platform         | Submit Templates  | Submit Scripts  | Revenue Share            |
+| ---------------- | ----------------- | --------------- | ------------------------ |
+| Web-Temify (own) | ✅ All            | ✅ All          | 100%                     |
+| Gumroad          | ✅ All            | ✅ All          | 90%                      |
+| Payhip           | ✅ All            | ✅ All          | 95%                      |
+| LemonSqueezy     | ✅ All            | ✅ All          | ~93%                     |
+| ThemeForest      | ✅ Templates only | ❌              | 50% (non-exclusive ONLY) |
+| CodeCanyon       | ❌                | ✅ Scripts only | 50% (non-exclusive ONLY) |
+| Creative Market  | ✅ Design-heavy   | ❌              | 70%                      |
+| Whop             | ✅ Dev tools      | ✅ Scripts      | 97%                      |
 
 **CRITICAL:** Always select NON-EXCLUSIVE on ThemeForest/CodeCanyon.
 Never allow exclusive — it prevents selling everywhere else.

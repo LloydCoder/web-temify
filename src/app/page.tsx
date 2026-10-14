@@ -1,4 +1,88 @@
 import Link from "next/link";
 
-const principles = [{number:"01",title:"Discover",description:"Find digital products and starter kits for your next build."},{number:"02",title:"Evaluate",description:"Review compatibility, documentation, licensing, and support before purchase."},{number:"03",title:"Build",description:"Turn a sound starting point into a product you can own and operate."}];
-export default function HomePage() { return <main className="page-shell"><header className="site-header"><Link className="wordmark" href="/" aria-label="Web-Temify home">Web-Temify<span className="wordmark-dot" aria-hidden="true">.</span></Link><span className="status-label">FOUNDATION BUILD</span></header><section className="hero" aria-labelledby="hero-title"><p className="eyebrow">A marketplace for people who build</p><h1 id="hero-title">From idea to<br/><span>deployable product.</span></h1><p className="hero-copy">A growing home for practical templates, scripts, launch kits, and tools. We are laying the groundwork carefully before opening transactions.</p><div className="hero-actions"><Link className="button button-primary" href="/catalog">Browse catalogue ↘</Link><a className="button button-secondary" href="https://tinlance.com" rel="noreferrer">Engineering by Tinlance ↗</a></div><p className="notice" role="status">Preview stage — checkout, payments, downloads, and vendor features are not live yet.</p></section><section className="principles" id="principles" aria-labelledby="principles-title"><div className="section-heading"><p className="eyebrow">The product loop</p><h2 id="principles-title">Build with a better starting point.</h2></div><div className="principle-grid">{principles.map((item)=><article className="principle-card" key={item.number}><span className="card-number">{item.number}</span><h3>{item.title}</h3><p>{item.description}</p></article>)}</div></section><footer className="site-footer"><span>© {new Date().getFullYear()} Web-Temify LTD.</span><span>Built deliberately. Shipped with evidence.</span></footer></main>; }
+const principles = [
+  {
+    number: "01",
+    title: "Discover",
+    description: "Find digital products and starter kits for your next build.",
+  },
+  {
+    number: "02",
+    title: "Evaluate",
+    description:
+      "Review compatibility, documentation, licensing, and support before purchase.",
+  },
+  {
+    number: "03",
+    title: "Build",
+    description:
+      "Turn a sound starting point into a product you can own and operate.",
+  },
+];
+export default function HomePage() {
+  return (
+    <main className="page-shell">
+      <header className="site-header">
+        <Link className="wordmark" href="/" aria-label="Web-Temify home">
+          Web-Temify
+          <span className="wordmark-dot" aria-hidden="true">
+            .
+          </span>
+        </Link>
+        <span className="status-label">FOUNDATION BUILD</span>
+      </header>
+      <section className="hero" aria-labelledby="hero-title">
+        <p className="eyebrow">A marketplace for people who build</p>
+        <h1 id="hero-title">
+          From idea to
+          <br />
+          <span>deployable product.</span>
+        </h1>
+        <p className="hero-copy">
+          A growing home for practical templates, scripts, launch kits, and
+          tools. We are laying the groundwork carefully before opening
+          transactions.
+        </p>
+        <div className="hero-actions">
+          <Link className="button button-primary" href="/catalog">
+            Browse catalogue ↘
+          </Link>
+          <a
+            className="button button-secondary"
+            href="https://tinlance.com"
+            rel="noreferrer"
+          >
+            Engineering by Tinlance ↗
+          </a>
+        </div>
+        <p className="notice" role="status">
+          Preview stage — checkout, payments, downloads, and vendor features are
+          not live yet.
+        </p>
+      </section>
+      <section
+        className="principles"
+        id="principles"
+        aria-labelledby="principles-title"
+      >
+        <div className="section-heading">
+          <p className="eyebrow">The product loop</p>
+          <h2 id="principles-title">Build with a better starting point.</h2>
+        </div>
+        <div className="principle-grid">
+          {principles.map((item) => (
+            <article className="principle-card" key={item.number}>
+              <span className="card-number">{item.number}</span>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+      <footer className="site-footer">
+        <span>© {new Date().getFullYear()} Web-Temify LTD.</span>
+        <span>Built deliberately. Shipped with evidence.</span>
+      </footer>
+    </main>
+  );
+}

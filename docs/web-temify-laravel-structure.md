@@ -1,7 +1,9 @@
 > **DEPRECATED LEGACY ARCHITECTURE — reviewed 2026-10-13.** This Laravel/PHP/MySQL structure is retained for historical context only and is superseded by the accepted Next.js App Router, strict TypeScript, pnpm/Turborepo, Supabase SQL-migration architecture. Do not implement this folder tree. See `docs/architecture/overview.md`, accepted ADRs, and `docs/architecture/repository-structure.md`.
 
 # WEB-TEMIFY — COMPLETE LARAVEL FOLDER STRUCTURE
+
 ## Laravel 11 + MySQL + Redis + Supabase Storage
+
 ### Version 4.0 | May 2026
 
 ---
@@ -772,34 +774,34 @@ web-temify/                                    # Laravel 11 root
 
 ```json
 {
-    "require": {
-        "php": "^8.2",
-        "laravel/framework": "^11.0",
-        "laravel/breeze": "^2.0",
-        "laravel/socialite": "^5.0",
-        "laravel/sanctum": "^4.0",
-        "laravel/scout": "^10.0",
-        "laravel/reverb": "^1.0",
-        "laravel/telescope": "^5.0",
-        "spatie/laravel-permission": "^6.0",
-        "spatie/laravel-activitylog": "^4.0",
-        "stripe/stripe-php": "^13.0",
-        "unicodeveloper/laravel-paystack": "^1.2",
-        "barryvdh/laravel-dompdf": "^2.0",
-        "simplesoftwareio/simple-qrcode": "^4.2",
-        "pragmarx/google2fa-laravel": "^2.0",
-        "intervention/image": "^3.0",
-        "guzzlehttp/guzzle": "^7.0",
-        "predis/predis": "^2.0",
-        "league/flysystem-aws-s3-v3": "^3.0"
-    },
-    "require-dev": {
-        "laravel/dusk": "^8.0",
-        "fakerphp/faker": "^1.9",
-        "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.0",
-        "phpunit/phpunit": "^11.0"
-    }
+  "require": {
+    "php": "^8.2",
+    "laravel/framework": "^11.0",
+    "laravel/breeze": "^2.0",
+    "laravel/socialite": "^5.0",
+    "laravel/sanctum": "^4.0",
+    "laravel/scout": "^10.0",
+    "laravel/reverb": "^1.0",
+    "laravel/telescope": "^5.0",
+    "spatie/laravel-permission": "^6.0",
+    "spatie/laravel-activitylog": "^4.0",
+    "stripe/stripe-php": "^13.0",
+    "unicodeveloper/laravel-paystack": "^1.2",
+    "barryvdh/laravel-dompdf": "^2.0",
+    "simplesoftwareio/simple-qrcode": "^4.2",
+    "pragmarx/google2fa-laravel": "^2.0",
+    "intervention/image": "^3.0",
+    "guzzlehttp/guzzle": "^7.0",
+    "predis/predis": "^2.0",
+    "league/flysystem-aws-s3-v3": "^3.0"
+  },
+  "require-dev": {
+    "laravel/dusk": "^8.0",
+    "fakerphp/faker": "^1.9",
+    "mockery/mockery": "^1.6",
+    "nunomaduro/collision": "^8.0",
+    "phpunit/phpunit": "^11.0"
+  }
 }
 ```
 
@@ -809,38 +811,35 @@ web-temify/                                    # Laravel 11 root
 
 ```js
 module.exports = {
-  content: ['./resources/**/*.blade.php', './resources/**/*.js'],
-  darkMode: 'class',
+  content: ["./resources/**/*.blade.php", "./resources/**/*.js"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        bg:      '#fffbf4',
-        ink:     '#0f0d0a',
-        coral:   '#ff5733',
-        yellow:  '#ffd60a',
-        mint:    '#00c48c',
-        sky:     '#4f8ef7',
-        lilac:   '#c084fc',
-        surface: '#fff8ed',
-        muted:   '#6b6559',
+        bg: "#fffbf4",
+        ink: "#0f0d0a",
+        coral: "#ff5733",
+        yellow: "#ffd60a",
+        mint: "#00c48c",
+        sky: "#4f8ef7",
+        lilac: "#c084fc",
+        surface: "#fff8ed",
+        muted: "#6b6559",
       },
       fontFamily: {
-        display: ['Cabinet Grotesk', 'sans-serif'],
-        serif:   ['Instrument Serif', 'serif'],
-        mono:    ['DM Mono', 'monospace'],
+        display: ["Cabinet Grotesk", "sans-serif"],
+        serif: ["Instrument Serif", "serif"],
+        mono: ["DM Mono", "monospace"],
       },
       boxShadow: {
-        'brutal':    '4px 4px 0 #0f0d0a',
-        'brutal-lg': '6px 6px 0 #0f0d0a',
-        'brutal-sm': '2px 2px 0 #0f0d0a',
+        brutal: "4px 4px 0 #0f0d0a",
+        "brutal-lg": "6px 6px 0 #0f0d0a",
+        "brutal-sm": "2px 2px 0 #0f0d0a",
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-  ],
-}
+  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")],
+};
 ```
 
 ---
@@ -900,6 +899,6 @@ php artisan storage:link
 
 ---
 
-*Web-Temify Laravel Folder Structure v4.0 — May 2026*
-*Laravel 11 · MySQL 8 · Redis · Supabase Storage*
-*332 features · 85 migrations · 80+ models · 34 service classes*
+_Web-Temify Laravel Folder Structure v4.0 — May 2026_
+_Laravel 11 · MySQL 8 · Redis · Supabase Storage_
+_332 features · 85 migrations · 80+ models · 34 service classes_

@@ -1,9 +1,11 @@
 # Phase 1 local and CI runbook
 
 ## Prerequisites
+
 Node.js 22, Corepack/pnpm 10, Docker for local Supabase, and browser dependencies for Playwright.
 
 ## Local validation
+
 1. corepack enable
 2. pnpm install
 3. pnpm check:foundation

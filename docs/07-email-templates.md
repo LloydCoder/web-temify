@@ -1,7 +1,9 @@
 > **LEGACY / NON-CANONICAL — reviewed 2026-10-13.** Retained for historical requirements and design context only. Do not treat its framework, database/migration strategy, provider list, security examples, product count, phase status, pricing, testimonials, metrics, or “built/production-ready” claims as current truth. Canonical authority is in `docs/architecture/overview.md`, `docs/architecture/decisions/`, `docs/roadmap/phase-gates.md`, `docs/security/`, `docs/quality/testing-strategy.md`, the tested source and Supabase migrations, and `LloydCoder/web-temify-products/catalog/products.json`. Implement only through the current phase gates and verified evidence.
 
 # WEB-TEMIFY — EMAIL TEMPLATES SPEC
+
 ## 25 Emails via Resend | React Email Components
+
 ## Version 5.0 | May 2026
 
 ---
@@ -9,9 +11,9 @@
 ## SETUP (src/lib/resend.ts)
 
 ```typescript
-import { Resend } from 'resend'
+import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendEmail({
   to,
@@ -19,10 +21,10 @@ export async function sendEmail({
   react,
   text,
 }: {
-  to: string | string[]
-  subject: string
-  react?: React.ReactElement
-  text?: string
+  to: string | string[];
+  subject: string;
+  react?: React.ReactElement;
+  text?: string;
 }) {
   try {
     const { data, error } = await resend.emails.send({
@@ -32,15 +34,15 @@ export async function sendEmail({
       react,
       text,
       headers: {
-        'List-Unsubscribe': `<${process.env.NEXT_PUBLIC_APP_URL}/unsubscribe>`,
-        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        "List-Unsubscribe": `<${process.env.NEXT_PUBLIC_APP_URL}/unsubscribe>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
       },
-    })
-    if (error) throw error
-    return data
+    });
+    if (error) throw error;
+    return data;
   } catch (error) {
-    console.error('Email send failed:', error)
-    throw error
+    console.error("Email send failed:", error);
+    throw error;
   }
 }
 ```
@@ -50,6 +52,7 @@ export async function sendEmail({
 ## EMAIL DESIGN SYSTEM
 
 All emails must follow this design:
+
 - Background: #fffbf4 (warm cream)
 - Primary colour: #ff5733 (coral)
 - Font: system-ui (email safe — Cabinet Grotesk not available in email)
@@ -64,6 +67,7 @@ All emails must follow this design:
 ## ALL 25 EMAIL TEMPLATES
 
 ### 1. Welcome (src/emails/welcome.tsx)
+
 ```
 Trigger: After registration
 Subject: Welcome to Web-Temify — your store for premium templates 🎉
@@ -76,6 +80,7 @@ Content:
 ```
 
 ### 2. Verify Email (src/emails/verify-email.tsx)
+
 ```
 Trigger: Registration + email change
 Subject: Verify your Web-Temify email address
@@ -86,6 +91,7 @@ Content:
 ```
 
 ### 3. Password Reset (src/emails/password-reset.tsx)
+
 ```
 Trigger: Forgot password request
 Subject: Reset your Web-Temify password
@@ -95,6 +101,7 @@ Content:
 ```
 
 ### 4. Purchase Receipt (src/emails/purchase-receipt.tsx)
+
 ```
 Trigger: Successful order completion
 Subject: Your purchase is ready — [Product Name]
@@ -109,6 +116,7 @@ Content:
 ```
 
 ### 5. Subscription Receipt (src/emails/subscription-receipt.tsx)
+
 ```
 Trigger: New subscription activation
 Subject: You're now on Web-Temify [Plan] — let's go 🚀
@@ -121,6 +129,7 @@ Content:
 ```
 
 ### 6. Expiry Reminder (src/emails/expiry-reminder.tsx)
+
 ```
 Trigger: 3 days before subscription expires (cron)
 Subject: Your Web-Temify plan expires in 3 days
@@ -132,6 +141,7 @@ Content:
 ```
 
 ### 7. Download Ready (src/emails/download-ready.tsx)
+
 ```
 Trigger: After purchase completes
 Subject: Your download is ready — [Product Name]
@@ -144,6 +154,7 @@ Content:
 ```
 
 ### 8. Product Updated (src/emails/product-updated.tsx)
+
 ```
 Trigger: Vendor releases new version (→ all buyers)
 Subject: [Product Name] just updated to v[X.X]
@@ -155,6 +166,7 @@ Content:
 ```
 
 ### 9. Vendor Approved (src/emails/vendor-approved.tsx)
+
 ```
 Trigger: Admin approves vendor product
 Subject: Your product is live on Web-Temify! 🎉
@@ -167,6 +179,7 @@ Content:
 ```
 
 ### 10. Vendor Sale (src/emails/vendor-sale.tsx)
+
 ```
 Trigger: Someone purchases vendor's product
 Subject: 💰 You just made a sale — [Product Name]
@@ -180,6 +193,7 @@ Content:
 ```
 
 ### 11. Vendor Payout (src/emails/vendor-payout.tsx)
+
 ```
 Trigger: Payout processed
 Subject: Your Web-Temify payout of $[amount] is on its way
@@ -192,6 +206,7 @@ Content:
 ```
 
 ### 12. Vendor Rejection (src/emails/vendor-rejection.tsx)
+
 ```
 Trigger: Admin rejects vendor product submission
 Subject: Feedback on your Web-Temify submission — [Product Name]
@@ -204,6 +219,7 @@ Content:
 ```
 
 ### 13. Affiliate Commission (src/emails/affiliate-commission.tsx)
+
 ```
 Trigger: Affiliate earns commission on referred sale
 Subject: You earned $[amount] in affiliate commission 🎉
@@ -216,6 +232,7 @@ Content:
 ```
 
 ### 14. Abandoned Checkout (src/emails/abandoned-checkout.tsx)
+
 ```
 Trigger: User started checkout but didn't complete (cron — 2h delay)
 Subject: You left something behind...
@@ -228,6 +245,7 @@ Content:
 ```
 
 ### 15–18. Drip Sequence (src/emails/drip-[1/3/7/14].tsx)
+
 ```
 Drip Day 1 — Subject: "3 things you can do with Web-Temify today"
   - Browse templates CTA
@@ -251,6 +269,7 @@ Drip Day 14 — Subject: "Still thinking? Here's what you're missing"
 ```
 
 ### 19–22. Dunning Sequence (src/emails/dunning-[1/2/3/final].tsx)
+
 ```
 Dunning 1 (Day 1) — Subject: "Payment failed — let's fix this"
   - Failed payment notice
@@ -275,6 +294,7 @@ Dunning Final (Day 8) — Subject: "Your subscription has been cancelled"
 ```
 
 ### 23. Suspicious Login (src/emails/suspicious-login.tsx)
+
 ```
 Trigger: Login from new device/country
 Subject: New login to your Web-Temify account
@@ -286,6 +306,7 @@ Content:
 ```
 
 ### 24. Service Request Confirmation (src/emails/service-request-confirm.tsx)
+
 ```
 Trigger: User submits service request
 Subject: We received your project brief — Tinlance will be in touch
@@ -297,6 +318,7 @@ Content:
 ```
 
 ### 25. Service Request Admin (src/emails/service-request-admin.tsx)
+
 ```
 Trigger: User submits service request (→ admin/Tinlance)
 Subject: 🔔 New service request — [Category] — $[Budget]
@@ -310,6 +332,7 @@ Content:
 ```
 
 ### Bonus: Win-Back (src/emails/win-back.tsx)
+
 ```
 Trigger: User inactive 60 days (cron)
 Subject: We miss you, [Name] — here's what's new
@@ -321,6 +344,7 @@ Content:
 ```
 
 ### Bonus: License Expiry (src/emails/license-expiry.tsx)
+
 ```
 Trigger: 30 days before annual license expires (cron)
 Subject: Your [Product] license expires in 30 days
@@ -334,6 +358,7 @@ Content:
 ```
 
 ### Bonus: Annual Recap (src/emails/annual-recap.tsx)
+
 ```
 Trigger: January 1st every year (cron)
 Subject: Your Web-Temify Year in Review 🎉

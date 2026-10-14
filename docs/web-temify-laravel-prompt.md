@@ -1,7 +1,9 @@
 > **DEPRECATED LEGACY BUILD PROMPT — reviewed 2026-10-13.** This Laravel/PHP/MySQL build prompt is historical only and conflicts with the accepted Next.js App Router, strict TypeScript, pnpm/Turborepo, and Supabase SQL-migration architecture. Do not execute it wholesale or treat its payment, security, product, or readiness claims as current. See `docs/architecture/overview.md`, accepted ADRs, and `docs/roadmap/phase-gates.md`.
 
 # WEB-TEMIFY — LARAVEL MASTER BUILD PROMPT
+
 ## Complete Laravel 11 Platform Build Brief
+
 ### Version 4.0 | May 2026 | Laravel 11 + MySQL + Supabase Storage
 
 ---
@@ -975,6 +977,7 @@ LowBandwidthMiddleware::class       // Serve lite version for slow connections
 **Phase 3 (Add):** USDT/USDC via NOWPayments (auto-convert, no volatile crypto)
 
 ### Paystack (PaystackController)
+
 ```php
 // Initiate payment
 public function initiate(Request $request): JsonResponse {
@@ -1008,6 +1011,7 @@ public function handle(Request $request): Response {
 ```
 
 ### NOWPayments - USDT/USDC (Phase 3)
+
 ```php
 // Feature flag check first
 if (!config('features.crypto_payments')) {
@@ -1264,6 +1268,7 @@ php artisan make:seeder DripSequencesSeeder
 ### PHASE 2 — REVENUE FOUNDATION (Month 1–2)
 
 Priority order:
+
 1. Vendor system (models, controllers, views, payouts)
 2. License key system (LicenseService, API endpoint, dashboard)
 3. Directory hub (10 categories, DirectoryService, admin CRUD)
@@ -1421,7 +1426,7 @@ php artisan migrate --seed
 
 ---
 
-*Web-Temify Laravel Master Build Prompt v4.0 — May 2026*
-*332 features · 34 groups · 5 build phases*
-*Laravel 11 + MySQL + Redis + Supabase + 6 Payment Gateways*
-*Multi-LLM AI: Claude → Grok → Gemini → GPT-4o*
+_Web-Temify Laravel Master Build Prompt v4.0 — May 2026_
+_332 features · 34 groups · 5 build phases_
+_Laravel 11 + MySQL + Redis + Supabase + 6 Payment Gateways_
+_Multi-LLM AI: Claude → Grok → Gemini → GPT-4o_

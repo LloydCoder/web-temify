@@ -14,9 +14,18 @@ describe("shared domain contracts", () => {
   });
 
   it("normalizes valid currency codes and rejects malformed codes", () => {
-    expect(MoneySchema.parse({ amountMinor: 1299, currency: "usd" }).currency).toBe("USD");
-    expect(MoneySchema.safeParse({ amountMinor: 1.5, currency: "USD" }).success).toBe(false);
-    expect(MoneySchema.safeParse({ amountMinor: Number.MAX_SAFE_INTEGER + 1, currency: "USD" }).success).toBe(false);
+    expect(
+      MoneySchema.parse({ amountMinor: 1299, currency: "usd" }).currency,
+    ).toBe("USD");
+    expect(
+      MoneySchema.safeParse({ amountMinor: 1.5, currency: "USD" }).success,
+    ).toBe(false);
+    expect(
+      MoneySchema.safeParse({
+        amountMinor: Number.MAX_SAFE_INTEGER + 1,
+        currency: "USD",
+      }).success,
+    ).toBe(false);
   });
 
   it("requires a verified rights state and immutable artifact digest for public catalogue data", () => {
@@ -37,18 +46,39 @@ describe("shared domain contracts", () => {
       tags: ["starter"],
     };
     expect(ProductCatalogItemSchema.safeParse(valid).success).toBe(true);
-    expect(ProductCatalogItemSchema.safeParse({ ...valid, rightsStatus: "declared" }).success).toBe(false);
-    expect(ProductCatalogItemSchema.safeParse({ ...valid, artifactSha256: "not-a-digest" }).success).toBe(false);
+    expect(
+      ProductCatalogItemSchema.safeParse({ ...valid, rightsStatus: "declared" })
+        .success,
+    ).toBe(false);
+    expect(
+      ProductCatalogItemSchema.safeParse({
+        ...valid,
+        artifactSha256: "not-a-digest",
+      }).success,
+    ).toBe(false);
   });
 
   it("validates a rights declaration without allowing a client to assert verification", () => {
     const input = {
       productId: "73000000-0000-4000-8000-000000000073",
       rightsBasis: "original_work",
-      statement: "I created this work and have the rights required to distribute it.",
+      statement:
+        "I created this work and have the rights required to distribute it.",
     };
-    expect(ProductRightsAttestationInputSchema.safeParse(input).success).toBe(true);
-    expect(ProductRightsAttestationInputSchema.safeParse({ ...input, statement: "yes" }).success).toBe(false);
-    expect(ProductRightsAttestationInputSchema.safeParse({ ...input, rightsStatus: "verified" }).success).toBe(false);
+    expect(ProductRightsAttestationInputSchema.safeParse(input).success).toBe(
+      true,
+    );
+    expect(
+      ProductRightsAttestationInputSchema.safeParse({
+        ...input,
+        statement: "yes",
+      }).success,
+    ).toBe(false);
+    expect(
+      ProductRightsAttestationInputSchema.safeParse({
+        ...input,
+        rightsStatus: "verified",
+      }).success,
+    ).toBe(false);
   });
 });

@@ -4,7 +4,14 @@ export default defineConfig({
   resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
   test: {
     environment: "node",
-    include: ["src/**/*.test.ts", "tests/unit/**/*.test.ts", "packages/**/*.test.ts"],
-    coverage: { reporter: ["text", "lcov"], include: ["src/lib/**/*.ts", "packages/domain-contracts/src/**/*.ts"] }
-  }
+    include: [
+      "src/**/*.test.ts",
+      "tests/unit/**/*.test.ts",
+      "packages/**/*.test.ts",
+    ],
+    coverage: {
+      reporter: ["text", "lcov"],
+      include: ["src/lib/**/*.ts", "packages/domain-contracts/src/**/*.ts"],
+    },
+  },
 });

@@ -7,6 +7,7 @@ Web-Temify is a planned global-first digital-product marketplace and product fac
 > Foundation in progress. Documented features are not proof of implementation. Production commerce, payment processing, vendor payouts, license enforcement, and live Tinlance Agent System execution are not yet demonstrated.
 
 ## Canonical documentation
+
 - Canonical 20-phase enterprise roadmap: [docs/roadmap/master-enterprise-roadmap.md](docs/roadmap/master-enterprise-roadmap.md)
 - Phase evidence register: [docs/roadmap/phase-gates.md](docs/roadmap/phase-gates.md)
 - Architecture overview: [docs/architecture/overview.md](docs/architecture/overview.md)
@@ -19,6 +20,7 @@ Web-Temify is a planned global-first digital-product marketplace and product fac
 - Product source monorepo and canonical planned inventory: [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products)
 
 ## Canonical technology stack
+
 - TypeScript strict mode, Next.js App Router, React.
 - Tailwind CSS, shadcn/ui conventions, Web-Temify design tokens.
 - pnpm workspaces and Turborepo.
@@ -30,6 +32,7 @@ Web-Temify is a planned global-first digital-product marketplace and product fac
 - Durable worker/job system only when asynchronous workload requires it; Python and Rust remain optional.
 
 ## Local setup
+
 1. Install Node.js 22 and enable Corepack.
 2. Run `pnpm install --frozen-lockfile`.
 3. Copy `.env.example` to `.env.local` and add only required local credentials.

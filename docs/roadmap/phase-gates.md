@@ -3,9 +3,11 @@
 This roadmap is a sequence of evidence gates, not a percentage-complete estimate. A phase is complete only when implementation, automated tests, documentation, forensic review, and CI evidence agree at the same commit SHA. A green CI run over a scaffold does not prove production readiness. Keep every incomplete exit criterion unchecked; never infer completion from a plan or a passing subset of checks.
 
 ## Phase 0 — Product and engineering foundation
+
 Scope: confirm product boundaries and launch scope; reconcile existing docs and flag conflicts; define architecture, data ownership, security, integration boundaries, test strategy, delivery gates, and repository map.
 
 Exit criteria:
+
 - [ ] Product scope and initial release scope approved.
 - [x] Architecture decisions recorded, including migration ownership.
 - [x] Legacy documents in the 2026-10-13 repository snapshot audited and labelled historical/non-canonical; future uploads follow the reconciliation protocol in `docs/governance/legacy-reconciliation.md`.
@@ -15,21 +17,27 @@ Exit criteria:
 - [x] No unresolved critical architectural contradiction in the canonical ADRs.
 
 ## Phase 1 — Reproducible engineering foundation and application skeleton
+
 Scope: branch-based delivery, root configuration, accessible App Router shell, strict TypeScript, lint/test/foundation commands, safe environment boundaries, CI checks.
 
 Exit criteria:
+
 - [x] Clean checkout installs reproducibly with committed pnpm-lock.yaml and CI enforces --frozen-lockfile.
 - [x] Lint, typecheck, foundation tests, and production build passed in CI on the Phase 2 baseline commit.
 - [x] No secrets or local env files are present in the tracked tree.
+- [ ] Formatting check (`pnpm format:check`), high/critical dependency audit with verified local-patch exception handling, license policy scan, and full-history secret scanning pass on the exact candidate head.
+- [ ] The patched Next.js/React dependency graph has no unresolved high/critical advisories in the CI audit.
 - [ ] CI results are visible on PR; required checks are not yet enforced by repository rules (repository settings gate).
 - [x] Playwright validates semantic landmarks and horizontal overflow at 320px and 1440px; full WCAG 2.2 AA audit remains a launch gate.
 - [x] Unbuilt payment, AI, vendor, and agent capabilities are not shown as live.
 - [x] Legacy/current architecture conflicts are reconciled for the audited repository snapshot; new files must enter the reconciliation register before use.
 
 ## Phase 2 — Identity, data, authorization
+
 Scope: establish Supabase Auth profile linkage, server-managed application roles, base catalogue primitives, RLS, least-privilege grants, audit event storage, and adversarial authorization tests.
 
 Exit criteria:
+
 - [x] Reviewed migration applies from an empty local Supabase database.
 - [x] RLS enabled on every exposed table in the Phase 2 schema; client grants and policies are least-privilege.
 - [x] Anonymous, owner, non-owner, and server-only paths have positive and negative tests.
@@ -37,9 +45,11 @@ Exit criteria:
 - [x] Migration and RLS tests passed in CI run 38364828400 (commit evidence: phase 2 baseline).
 
 ## Phase 3 — Marketplace catalogue and release-quality gates (complete)
+
 Scope: public catalogue/search/detail routes, compatibility metadata, rights attestations and review state, product version/release evidence, safe publication rules, and domain-contract alignment.
 
 Exit criteria:
+
 - [x] Phase 3 migration applies from an empty local Supabase database and can be replayed deterministically.
 - [x] RLS and least-privilege grants cover every new table; rights evidence is not public.
 - [x] Product table reads use column-level grants; creator identifiers and review internals are not exposed through PostgREST.
@@ -67,9 +77,11 @@ Exit criteria:
 - **Fixture invariant:** `products.rights_verified_at` must exactly equal the independently reviewed attestation's `reviewed_at`; tests use a fixed timestamp to avoid nondeterministic `now()` differences. Never weaken evidence-gated publication policy to make fixtures pass.
 
 ## Phase 4 — Commerce and secure delivery (in progress)
+
 Scope: server-owned orders and item snapshots, provider-neutral payment attempts, verified-event inbox, idempotent financial ledger, refunds, paid-order entitlements, and private-download authorization. Provider integrations remain disabled until business eligibility, jurisdiction coverage, fees, webhook semantics, and payout settlement are verified. Chargeback and manual-adjustment ledger sources are explicitly rejected until a dedicated evidence-backed state machine and accounting policy are implemented; unsupported financial states must fail closed. The current ledger only records gross payment/refund transfer evidence and is not a complete commission, seller-payable, tax, or provider-settlement accounting model.
 
 Phase 4A — database invariants (implementation and CI verified; phase-specific audit recorded below):
+
 - [x] Orders and item snapshots are protected by server-only write grants; item insertion revalidates verified rights, released artifact digest, seller, price, currency, version, and release evidence.
 - [x] Payment attempts cannot alter order amount/currency and cannot become successful without a verified provider event.
 - [x] Orders cannot become paid without a processed verified success event and matching append-only ledger entry.
@@ -94,6 +106,7 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - **Gate decision:** Phase 4A is merged and passes for its database-invariant scope only. Phase 4 as a whole remains in progress because the provider-neutral/live-provider boundary, durable event guarantees, and end-to-end delivery readiness must be verified against the canonical Phase 4 gate; this record is not launch approval.
 
 ### Phase 4B — server-side commerce workflows (complete for sandbox-only scope)
+
 - [x] Atomic server-only order creation derives price, currency, seller, rights, release version and artifact digest from the canonical database; basket and idempotency replay are validated.
 - [x] Checkout and sandbox completion are authenticated, idempotent, non-production only, and fail closed when the provider is disabled or the environment is production.
 - [x] Raw-body HMAC verification enforces event identity, timestamp tolerance, constant-time signature comparison, streaming payload limits and strict event contracts.
@@ -131,7 +144,6 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - **Explicit limits:** the console is read-only. Moderation mutations, support case workflows, provider/settlement reconciliation, disputes and chargebacks, alert delivery, backup restoration drills, incident-response automation, and break-glass governance remain incomplete. Counts are not proof of settlement or financial correctness. Production Supabase/Vercel configuration, legal/tax review, penetration testing, and full WCAG 2.2 AA verification remain separate gates.
 - **Gate decision:** Phase 5A passes only for the read-only visibility and audit scope. Phase 5 overall remains in progress.
 
-
 ### Phase 5B — Independent product-rights review (complete for this scope)
 
 - [x] Restricted server-rendered queue lists a bounded set of pending declarations and fails closed on authentication, role, configuration, audit, and database errors.
@@ -156,12 +168,12 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - **Residual risks / explicit non-claims:** product publication remains a separate gate requiring a verified rights attestation and independently released content-addressed artifact. The admin console still lacks full support-case operations, financial settlement reconciliation, dispute/chargeback handling, alert delivery, backup restoration drills, incident response, and break-glass governance. Formal penetration testing, full WCAG 2.2 AA assessment, production provider onboarding, legal/tax review, and deployment verification remain open.
 - **Gate decision:** Phase 5B is complete for its stated scope. Phase 5 overall remains in progress; do not treat this subphase as production readiness.
 
-
 ### Phase 5C — Admin audit explorer (complete for its reviewed scope)
 
 Scope: restricted audit-stream discovery with exact-match filters, stable cursor pagination, bounded queries, safe fields only, and query-performance indexes. Audit events remain append-only and are never mutated through the explorer.
 
 Exit criteria:
+
 - [x] Authenticated admin authorization and access-audit logging happen before privileged event queries.
 - [x] Exact action/entity filters and cursor input are validated; repeated, oversized, unknown, or malformed query parameters fail closed.
 - [x] The page queries at most 51 rows per request and displays at most 50; cursor pagination is stable and filter-preserving.
@@ -172,7 +184,6 @@ Exit criteria:
 - [x] Phase-specific forensic audit and residual limits are recorded before the next phase begins.
 
 Least-privilege admin controls, moderation queues, support, audit review, financial reconciliation, observability, backup/restore rehearsal, incident response and safe break-glass access.
-
 
 #### Phase 5C forensic audit record
 
@@ -194,12 +205,12 @@ Least-privilege admin controls, moderation queues, support, audit review, financ
 - [ ] Incident alerts, escalation ownership, safe break-glass access, backup/restore exercises and incident response procedures are operationally tested.
 - [ ] Support communications and data access are tenant-scoped, logged, retention-aware and protected against disclosure of secrets or payment data.
 
-
 ## Phase 6 — Seller system and product factory
 
 **Status: NOT COMPLETE.** This phase builds the trusted supply side and a repeatable, evidence-backed product release pipeline. The dedicated source monorepo is [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products); its inventory is planning input, not evidence that products have been built or released. Keep product source code, manifests, build/test contracts and immutable release evidence in that repository; keep commercial listing state and marketplace transactions in this repository.
 
 Exit gates (all required):
+
 - [ ] Seller onboarding captures legal/business identity, beneficial ownership where required, payout jurisdiction, tax status, support/contact and policy acceptance without presenting unverified claims as verified.
 - [ ] Verification is evidence-based, independently reviewable, timestamped, revocable and appealable; creator self-review is prohibited; badges/ranking reflect current evidence and never imply a government endorsement.
 - [ ] Seller status, listing publication, product rights, artifact release and payout eligibility are distinct state machines with server/database enforcement.
@@ -229,7 +240,6 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Each product has a versioned manifest, rights/license evidence, threat model, tests, deployment instructions, support policy, changelog and immutable release record.
 - [ ] Build/publish through CI with signed provenance/SBOM where supported, dependency/license/security scans and reproducible artifact checks.
 - [ ] Planned, unbuilt, unverified products are never represented as available for purchase.
-
 
 ## Phase 7 — Governed Tinlance Agent System integration
 
@@ -268,7 +278,6 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Enforce version pinning, revocation, dependency updates, vulnerability advisories and buyer notification for material changes.
 - [ ] Keep Tinlance products/providers under the same publication, verification, ranking and dispute rules as every other seller.
 
-
 ## Phase 10 — Automation sandbox, verification and delivery
 
 **Status: NOT COMPLETE.** Submitted automations must be validated outside the marketplace control plane before any hosted execution is enabled.
@@ -280,7 +289,6 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Define version pinning, revocation, rollback, vulnerability disclosure and customer notification for compromised or materially changed packages.
 - [ ] Make execution an explicit customer-side or separately governed runtime action; never execute untrusted submissions inside the marketplace control plane.
 - [ ] Test prompt injection, malicious packages, SSRF/egress abuse, secret exfiltration, resource exhaustion and cross-tenant isolation.
-
 
 ## Phase 11 — Specialist Supplier Directory
 
@@ -301,7 +309,6 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Disclose paid placement and lead-credit commercial terms; payment or subscription must never imply supplier verification.
 - [ ] Test unauthorized disclosure, repeated lead delivery, fraudulent leads, supplier conflicts and refund/dispute outcomes.
 
-
 ## Phase 13 — Outcome-Based AI Implementation Marketplace
 
 - [ ] Require scoped statements of work with baseline, measurement method, success metric, exclusions, dependencies, acceptance window, deliverables and change-control rules.
@@ -321,7 +328,6 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Define dispute intake, evidence access, independent review, reason-coded decisions, appeals and refund/chargeback coordination.
 - [ ] Keep provider execution and fund movement disabled until payment, ledger, refunds, chargebacks and seller eligibility cover every supported transition.
 - [ ] Test acceptance timeout, scope changes, failed delivery, partial completion, disputes, cancellation, replay and concurrent decisions.
-
 
 ## Phase 15 — Trust, safety, legal and compliance
 
@@ -348,7 +354,6 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 
 - [ ] Exercise incident, payment-provider outage, delayed webhook, duplicate event and financial reconciliation playbooks.
 
-
 ## Phase 17 — Security engineering and comprehensive verification
 
 - [ ] Establish a risk-based test pyramid with unit, contract, integration, database/RLS, browser E2E, accessibility, load, chaos and security regression tests.
@@ -366,7 +371,6 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Complete independent penetration testing and vulnerability-disclosure handling before launch; no unresolved critical/high finding without an approved, time-bounded exception.
 - [ ] Complete manual keyboard/screen-reader accessibility review against WCAG 2.2 AA; automated accessibility scans alone are insufficient.
 
-
 ## Phase 18 — Controlled vertical pilots and product-factory expansion
 
 - [ ] Validate demand and willingness to pay separately for digital products, automations, specialist suppliers and outcome-based implementation.
@@ -381,7 +385,6 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] For each cohort define jurisdiction, target segment, activation/conversion/refund/dispute/reliability/support guardrails, stop conditions, owner and rollback plan.
 - [ ] Expand the canonical product inventory only in the approved tier order and only when each release has rights, tests, compatibility, security evidence, documentation, support ownership and an immutable artifact.
 - [ ] Record hypotheses, cohort metrics and decisions; do not infer product-market fit from traffic or waitlist counts alone.
-
 
 ## Phase 19 — Marketplace intelligence and growth
 
@@ -404,7 +407,6 @@ Deferred until explicitly gated: live seller payouts, escrow claims, tax calcula
 - [ ] Use privacy-safe aggregation and enforce seller/buyer access boundaries for catalogue analytics and recommendations.
 - [ ] Explain material ranking/recommendation signals, protect against abuse and manipulation, and keep paid placements/affiliate relationships clearly disclosed.
 - [ ] AI-assisted metadata, documentation and support drafts require source evidence checks, human review, evaluation, cost/privacy controls, consent/opt-outs and kill switches.
-
 
 ## Phase 20 — Global scale and enterprise operations
 

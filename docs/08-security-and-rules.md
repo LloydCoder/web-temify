@@ -1,6 +1,7 @@
 > **LEGACY / NON-CANONICAL — reviewed 2026-10-13.** Retained for historical requirements and design context only. Do not treat its framework, database/migration strategy, provider list, security examples, product count, phase status, pricing, testimonials, metrics, or “built/production-ready” claims as current truth. Canonical authority is in `docs/architecture/overview.md`, `docs/architecture/decisions/`, `docs/roadmap/phase-gates.md`, `docs/security/`, `docs/quality/testing-strategy.md`, the tested source and Supabase migrations, and `LloydCoder/web-temify-products/catalog/products.json`. Implement only through the current phase gates and verified evidence.
 
 # WEB-TEMIFY — SECURITY RULES & BUILDER GUIDELINES
+
 ## Version 5.0 | May 2026
 
 ---
@@ -8,6 +9,7 @@
 ## ABSOLUTE SECURITY RULES (NEVER BREAK THESE)
 
 ### Rule 1 — Secret Keys Stay Server-Side Only
+
 ```
 ❌ NEVER:
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY) // in client component
@@ -19,80 +21,100 @@ import { stripe } from '@/lib/stripe' // server-only module
 ```
 
 ### Rule 2 — Always Verify Auth Before Any Data Access
+
 ```typescript
 // Every server action and API route must start with:
-const supabase = await createClient()
-const { data: { user } } = await supabase.auth.getUser()
+const supabase = await createClient();
+const {
+  data: { user },
+} = await supabase.auth.getUser();
 if (!user) {
-  return { error: 'Unauthorized' }
+  return { error: "Unauthorized" };
   // OR: redirect('/login')
   // OR: return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 }
 ```
 
 ### Rule 3 — Validate ALL Input with Zod
+
 ```typescript
 // Every server action and API route:
 const Schema = z.object({
   name: z.string().min(1).max(100),
   email: z.string().email(),
   amount: z.number().positive().max(10000),
-})
+});
 
-const result = Schema.safeParse(input)
+const result = Schema.safeParse(input);
 if (!result.success) {
-  return { error: result.error.flatten() }
+  return { error: result.error.flatten() };
 }
 // Use result.data — never raw input
 ```
 
 ### Rule 4 — Webhook HMAC Verification (ALWAYS FIRST LINE)
+
 ```typescript
 // Paystack
-const hash = crypto.createHmac('sha512', process.env.PAYSTACK_WEBHOOK_SECRET!)
-  .update(rawBody).digest('hex')
-if (hash !== req.headers['x-paystack-signature']) {
-  return NextResponse.json({ error: 'Invalid' }, { status: 401 })
+const hash = crypto
+  .createHmac("sha512", process.env.PAYSTACK_WEBHOOK_SECRET!)
+  .update(rawBody)
+  .digest("hex");
+if (hash !== req.headers["x-paystack-signature"]) {
+  return NextResponse.json({ error: "Invalid" }, { status: 401 });
 }
 
 // Stripe
-const event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET!)
+const event = stripe.webhooks.constructEvent(
+  rawBody,
+  sig,
+  process.env.STRIPE_WEBHOOK_SECRET!,
+);
 
 // LemonSqueezy
-const hash = crypto.createHmac('sha256', process.env.LEMONSQUEEZY_WEBHOOK_SECRET!)
-  .update(rawBody).digest('hex')
-if (hash !== req.headers['x-signature']) {
-  return NextResponse.json({ error: 'Invalid' }, { status: 401 })
+const hash = crypto
+  .createHmac("sha256", process.env.LEMONSQUEEZY_WEBHOOK_SECRET!)
+  .update(rawBody)
+  .digest("hex");
+if (hash !== req.headers["x-signature"]) {
+  return NextResponse.json({ error: "Invalid" }, { status: 401 });
 }
 
 // NOWPayments
-const sorted = Object.keys(parsed).sort().reduce((acc, key) => ({ ...acc, [key]: parsed[key] }), {})
-const hash = crypto.createHmac('sha512', process.env.NOWPAYMENTS_IPN_SECRET!)
-  .update(JSON.stringify(sorted)).digest('hex')
+const sorted = Object.keys(parsed)
+  .sort()
+  .reduce((acc, key) => ({ ...acc, [key]: parsed[key] }), {});
+const hash = crypto
+  .createHmac("sha512", process.env.NOWPAYMENTS_IPN_SECRET!)
+  .update(JSON.stringify(sorted))
+  .digest("hex");
 ```
 
 ### Rule 5 — Idempotency on ALL Webhooks
+
 ```typescript
 // Check if we already processed this event
 const existing = await prisma.payment.findFirst({
-  where: { gatewayRef: event.data.reference }
-})
+  where: { gatewayRef: event.data.reference },
+});
 if (existing) {
-  return NextResponse.json({ received: true }) // silently ignore
+  return NextResponse.json({ received: true }); // silently ignore
 }
 ```
 
 ### Rule 6 — Secure Downloads Only (Signed URLs)
+
 ```typescript
 // NEVER: return { url: `https://storage.supabase.co/public/${filename}` }
 // ALWAYS: generate signed URL that expires
 const { data } = await supabase.storage
-  .from('secure-downloads')
-  .createSignedUrl(filename, 300) // 5 minutes
-return NextResponse.redirect(data.signedUrl)
+  .from("secure-downloads")
+  .createSignedUrl(filename, 300); // 5 minutes
+return NextResponse.redirect(data.signedUrl);
 ```
 
 ### Rule 7 — Row Level Security on Supabase
+
 ```sql
 -- Every table with user data MUST have RLS enabled
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
@@ -106,14 +128,15 @@ CREATE POLICY "own_orders" ON orders
 ```
 
 ### Rule 8 — Rate Limiting on All Public Routes
+
 ```typescript
 // Use Vercel's built-in rate limiting or implement manually
 // Add to API routes that accept public input:
 const rateLimitHeaders = {
-  'X-RateLimit-Limit': '100',
-  'X-RateLimit-Remaining': remaining.toString(),
-  'X-RateLimit-Reset': reset.toString(),
-}
+  "X-RateLimit-Limit": "100",
+  "X-RateLimit-Remaining": remaining.toString(),
+  "X-RateLimit-Reset": reset.toString(),
+};
 // License validation: 1000/hour per IP
 // Search: 100/minute per IP
 // Checkout initiate: 10/hour per user
@@ -121,25 +144,27 @@ const rateLimitHeaders = {
 ```
 
 ### Rule 9 — Admin Routes Protection
+
 ```typescript
 // middleware.ts already handles this, but double-check in every admin route:
 const { data: profile } = await supabase
-  .from('users')
-  .select('role')
-  .eq('id', user.id)
-  .single()
+  .from("users")
+  .select("role")
+  .eq("id", user.id)
+  .single();
 
-if (!['ADMIN', 'SUPER_ADMIN'].includes(profile?.role ?? '')) {
-  redirect('/dashboard')
+if (!["ADMIN", "SUPER_ADMIN"].includes(profile?.role ?? "")) {
+  redirect("/dashboard");
 }
 ```
 
 ### Rule 10 — Cron Route Protection
+
 ```typescript
 // All /api/cron/* routes:
-const authHeader = request.headers.get('authorization')
+const authHeader = request.headers.get("authorization");
 if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-  return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 }
 // Vercel automatically sends this header when triggering cron jobs
 ```
@@ -149,6 +174,7 @@ if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
 ## TYPESCRIPT RULES
 
 ### Strict Mode (tsconfig.json)
+
 ```json
 {
   "compilerOptions": {
@@ -161,17 +187,19 @@ if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
 ```
 
 ### No `any` Types
+
 ```typescript
 // ❌ NEVER
-const data: any = await fetchSomething()
+const data: any = await fetchSomething();
 function process(input: any) {}
 
 // ✅ ALWAYS use proper types
-const data: Product = await fetchSomething()
+const data: Product = await fetchSomething();
 function process(input: ProcessInput): ProcessOutput {}
 ```
 
 ### Server vs Client Components
+
 ```typescript
 // Default to Server Components (no 'use client' directive)
 // Add 'use client' ONLY when you need:
@@ -206,18 +234,20 @@ export function ProductGrid({ products }: { products: Product[] }) {
 ## DATABASE RULES
 
 ### Always Use Prisma (Never Raw SQL in App Code)
+
 ```typescript
 // ❌ NEVER
-const result = await prisma.$queryRaw`SELECT * FROM users WHERE id = ${userId}`
+const result = await prisma.$queryRaw`SELECT * FROM users WHERE id = ${userId}`;
 
 // ✅ ALWAYS
-const user = await prisma.user.findUnique({ where: { id: userId } })
+const user = await prisma.user.findUnique({ where: { id: userId } });
 ```
 
 ### Select Only What You Need
+
 ```typescript
 // ❌ Wrong — fetches all columns
-const products = await prisma.product.findMany()
+const products = await prisma.product.findMany();
 
 // ✅ Right — only fetch what the UI needs
 const products = await prisma.product.findMany({
@@ -230,23 +260,24 @@ const products = await prisma.product.findMany({
     ratingAvg: true,
     purchases: true,
   },
-  where: { status: 'APPROVED' },
+  where: { status: "APPROVED" },
   take: 12,
-})
+});
 ```
 
 ### Always Handle Prisma Errors
+
 ```typescript
 try {
-  const user = await prisma.user.create({ data: userData })
-  return { success: true, user }
+  const user = await prisma.user.create({ data: userData });
+  return { success: true, user };
 } catch (error) {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    if (error.code === 'P2002') {
-      return { error: 'Email already exists' }
+    if (error.code === "P2002") {
+      return { error: "Email already exists" };
     }
   }
-  throw error
+  throw error;
 }
 ```
 
@@ -256,16 +287,19 @@ try {
 
 ```typescript
 // Validate before uploading to Supabase Storage
-const ALLOWED_TEMPLATE_TYPES = ['application/zip', 'application/x-zip-compressed']
-const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
-const MAX_TEMPLATE_SIZE = 50 * 1024 * 1024 // 50MB
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024 // 5MB
+const ALLOWED_TEMPLATE_TYPES = [
+  "application/zip",
+  "application/x-zip-compressed",
+];
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_TEMPLATE_SIZE = 50 * 1024 * 1024; // 50MB
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 
 // Always check file type from buffer (not just extension)
-import { fileTypeFromBuffer } from 'file-type'
-const fileType = await fileTypeFromBuffer(buffer)
-if (!ALLOWED_TEMPLATE_TYPES.includes(fileType?.mime ?? '')) {
-  return { error: 'Invalid file type' }
+import { fileTypeFromBuffer } from "file-type";
+const fileType = await fileTypeFromBuffer(buffer);
+if (!ALLOWED_TEMPLATE_TYPES.includes(fileType?.mime ?? "")) {
+  return { error: "Invalid file type" };
 }
 
 // Trigger VirusTotal scan on template uploads
@@ -279,33 +313,40 @@ if (!ALLOWED_TEMPLATE_TYPES.includes(fileType?.mime ?? '')) {
 
 ```typescript
 // High-value purchases require 2FA
-const HIGH_VALUE_THRESHOLD = parseInt(process.env.HIGH_VALUE_CHECKOUT_THRESHOLD ?? '200')
+const HIGH_VALUE_THRESHOLD = parseInt(
+  process.env.HIGH_VALUE_CHECKOUT_THRESHOLD ?? "200",
+);
 if (amount > HIGH_VALUE_THRESHOLD) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { twoFactorEnabled: true }
-  })
+    select: { twoFactorEnabled: true },
+  });
   if (!user?.twoFactorEnabled) {
-    return { requiresTwoFactor: true, redirectTo: '/2fa-setup' }
+    return { requiresTwoFactor: true, redirectTo: "/2fa-setup" };
   }
 }
 
 // Fraud score check before processing
-const fraudScore = await calculateFraudScore({ userId, ipAddress, amount, gateway })
+const fraudScore = await calculateFraudScore({
+  userId,
+  ipAddress,
+  amount,
+  gateway,
+});
 if (fraudScore > 80) {
   // Flag for manual review — don't process automatically
   await prisma.fraudFlag.create({
-    data: { userId, type: 'HIGH_RISK_PURCHASE', score: fraudScore }
-  })
-  return { error: 'Payment under review. Our team will contact you.' }
+    data: { userId, type: "HIGH_RISK_PURCHASE", score: fraudScore },
+  });
+  return { error: "Payment under review. Our team will contact you." };
 }
 
 // NOWPayments — crypto rules
 // USDT (TRC-20) and USDC only — never accept other coins
 // Always auto-convert — never hold crypto
 // Refunds always = platform credits, never on-chain
-const ACCEPTED_CRYPTO_CURRENCIES = ['USDT', 'USDC']
-const ACCEPTED_NETWORKS = ['TRC20', 'ERC20']
+const ACCEPTED_CRYPTO_CURRENCIES = ["USDT", "USDC"];
+const ACCEPTED_NETWORKS = ["TRC20", "ERC20"];
 ```
 
 ---

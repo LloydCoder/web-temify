@@ -7,9 +7,16 @@ const serverEnvSchema = z.object({
   SUPABASE_SECRET_KEY: z.string().optional(),
   PAYMENT_PROVIDER: z.enum(["disabled", "sandbox"]).default("disabled"),
   PAYMENT_WEBHOOK_SECRET: z.string().optional(),
-  WEB_TEMIFY_ARTIFACT_BUCKET: z.string().trim().min(1).max(100).default("products-private"),
+  WEB_TEMIFY_ARTIFACT_BUCKET: z
+    .string()
+    .trim()
+    .min(1)
+    .max(100)
+    .default("products-private"),
   TINLANCE_AGENT_SYSTEM_ENABLED: z.enum(["true", "false"]).default("false"),
   TINLANCE_AGENT_SYSTEM_BASE_URL: optionalUrl,
-  TINLANCE_AGENT_SYSTEM_TOKEN: z.string().optional()
+  TINLANCE_AGENT_SYSTEM_TOKEN: z.string().optional(),
 });
-export function getServerEnv() { return serverEnvSchema.parse(process.env); }
+export function getServerEnv() {
+  return serverEnvSchema.parse(process.env);
+}

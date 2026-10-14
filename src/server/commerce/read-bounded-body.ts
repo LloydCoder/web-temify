@@ -1,6 +1,9 @@
 export type BoundedBodyResult =
   | { ok: true; body: string }
-  | { ok: false; reason: "too_large" | "invalid_length" | "invalid_utf8" | "read_error" };
+  | {
+      ok: false;
+      reason: "too_large" | "invalid_length" | "invalid_utf8" | "read_error";
+    };
 
 /**
  * Read a request body with a hard byte ceiling before allocating an unbounded
@@ -9,7 +12,7 @@ export type BoundedBodyResult =
  */
 export async function readBoundedRequestBody(
   request: Request,
-  maxBytes: number
+  maxBytes: number,
 ): Promise<BoundedBodyResult> {
   if (!Number.isSafeInteger(maxBytes) || maxBytes < 0) {
     throw new RangeError("maxBytes must be a non-negative safe integer");
@@ -59,7 +62,10 @@ export async function readBoundedRequestBody(
     }
 
     try {
-      return { ok: true, body: new TextDecoder("utf-8", { fatal: true }).decode(bytes) };
+      return {
+        ok: true,
+        body: new TextDecoder("utf-8", { fatal: true }).decode(bytes),
+      };
     } catch {
       return { ok: false, reason: "invalid_utf8" };
     }
