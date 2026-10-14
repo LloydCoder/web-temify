@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { SettlementExceptionDecisionSchema } from "./settlement-exception-decision";
+import {
+  SettlementExceptionDecisionSchema,
+} from "./settlement-exception-decision";
 
 const baseInput = {
   rowId: "payment-row-01",
