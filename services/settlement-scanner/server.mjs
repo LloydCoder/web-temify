@@ -201,23 +201,27 @@ export function createScannerServer({
       return;
     }
     if (request.method !== "POST" || request.url !== "/v1/scan") {
+      request.resume();
       sendJson(response, 404, { error: "not_found" });
       return;
     }
 
     const suppliedToken = parseBearerToken(request.headers.authorization);
     if (!suppliedToken || !constantTimeTokenEquals(token, suppliedToken)) {
+      request.resume();
       sendJson(response, 401, { error: "unauthorized" });
       return;
     }
 
     if (request.headers["content-type"]?.split(";")[0]?.trim().toLowerCase() !== "application/octet-stream") {
+      request.resume();
       sendJson(response, 415, { error: "content_type_required" });
       return;
     }
 
     const expectedSha256 = request.headers["x-evidence-sha256"];
     if (typeof expectedSha256 !== "string" || !DIGEST_PATTERN.test(expectedSha256)) {
+      request.resume();
       sendJson(response, 400, { error: "invalid_evidence_digest" });
       return;
     }
