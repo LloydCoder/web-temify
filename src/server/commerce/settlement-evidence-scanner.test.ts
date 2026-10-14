@@ -88,7 +88,9 @@ describe("scanSettlementEvidence", () => {
   it(
     "sends the exact bytes and digest to the private scanner and accepts a clean result",
     async () => {
-      const fetcher = vi.fn<typeof fetch>().mockResolvedValue(scannerResponse());
+      const fetcher = vi
+        .fn<typeof fetch>()
+        .mockResolvedValue(scannerResponse());
 
       await expect(
         scanSettlementEvidence(bytes, digest, configuredEnv(), fetcher),
