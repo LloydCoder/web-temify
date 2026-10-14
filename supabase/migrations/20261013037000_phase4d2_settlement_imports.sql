@@ -165,6 +165,8 @@ begin
       and existing_import.currency = p_currency
       and existing_import.report_period_start = p_report_period_start
       and existing_import.report_period_end = p_report_period_end
+      and existing_import.report_timezone = p_report_timezone
+      and existing_import.source_authentication_method = p_source_authentication_method
     then
       return existing_import.id;
     end if;
