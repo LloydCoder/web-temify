@@ -71,18 +71,20 @@ export async function POST(request: Request) {
   const storagePath = `${evidenceId}/${sourceSha256}`;
   const filename = safeFilename(request.headers.get("x-evidence-filename"));
 
-  const { error: intentError } = await context.admin.from("audit_events").insert({
-    actor_id: context.userId,
-    action: "settlement.evidence.upload_requested",
-    entity_type: "settlement_evidence",
-    entity_id: evidenceId,
-    request_id: requestId,
-    metadata: {
-      source_sha256: sourceSha256,
-      byte_size: body.bytes.byteLength,
-      content_type: contentType,
-    },
-  });
+  const { error: intentError } = await context.admin
+    .from("audit_events")
+    .insert({
+      actor_id: context.userId,
+      action: "settlement.evidence.upload_requested",
+      entity_type: "settlement_evidence",
+      entity_id: evidenceId,
+      request_id: requestId,
+      metadata: {
+        source_sha256: sourceSha256,
+        byte_size: body.bytes.byteLength,
+        content_type: contentType,
+      },
+    });
   if (intentError) {
     return NextResponse.json(
       { error: "settlement_audit_unavailable", requestId },
