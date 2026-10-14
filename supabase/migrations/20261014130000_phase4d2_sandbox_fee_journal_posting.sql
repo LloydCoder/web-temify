@@ -196,7 +196,7 @@ begin
     batch_id, account, side, amount_minor, currency, memo
   ) values
     (new_batch_id, 'provider_fee_expense', 'debit', fee_row.fee_minor, fee_row.currency,
-      'Sandbox settlement fee row ' || fee_row.row_id),
+      left('Sandbox settlement fee row ' || fee_row.row_id, 240)),
     (new_batch_id, 'provider_clearing', 'credit', fee_row.fee_minor, fee_row.currency,
       'Sandbox settlement fee row ' || fee_row.row_id);
 
@@ -452,6 +452,9 @@ begin
       or settlement_row.currency <> settlement_import.currency
       or settlement_row.currency <> new.currency
       or new.provider <> settlement_import.provider
+      or new.order_id is not null
+      or new.payment_attempt_id is not null
+      or new.refund_id is not null
       or new.provider_reference <> coalesce(settlement_row.provider_reference, settlement_row.row_id)
       or new.source_key <> 'settlement-fee:' || settlement_posting.import_id::text || ':' || settlement_posting.row_id
       or new.idempotency_key <> 'settlement-fee:' || settlement_posting.import_id::text || ':' || settlement_posting.row_id
