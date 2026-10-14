@@ -95,7 +95,8 @@ function parseScannerResponse(
 
 /**
  * Calls a private scanner service. A missing or unhealthy scanner is explicitly
- * non-clean: callers must leave the evidence pending and never infer a clean scan.
+ * non-clean: callers must leave the evidence pending and never infer a clean
+ * scan.
  */
 export async function scanSettlementEvidence(
   bytes: Uint8Array,
