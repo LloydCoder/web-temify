@@ -1,5 +1,5 @@
 begin;
-select plan(11);
+select plan(10);
 
 select has_table('public', 'settlement_evidence', 'private settlement evidence metadata table exists');
 select ok(
