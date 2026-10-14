@@ -77,6 +77,10 @@ describe("settlement evidence retention endpoint", () => {
     expect(response.status).toBe(401);
     expect(mocks.createClient).not.toHaveBeenCalled();
     expect(response.headers.get("cache-control")).toBe("no-store");
+
+    const rawTokenResponse = await POST(request(token));
+    expect(rawTokenResponse.status).toBe(401);
+    expect(mocks.createClient).not.toHaveBeenCalled();
   });
 
   it("accepts Vercel Cron GET requests authenticated with CRON_SECRET", async () => {
