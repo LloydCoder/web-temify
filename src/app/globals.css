@@ -565,7 +565,6 @@ a {
   }
 }
 
-
 /* V3 canonical homepage viewport */
 .v3-home {
   position: fixed;
@@ -578,6 +577,7 @@ a {
   padding: 0;
   overflow: hidden;
 }
+
 .v3-home-frame {
   display: block;
   width: 100%;
