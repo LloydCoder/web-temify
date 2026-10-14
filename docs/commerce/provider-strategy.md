@@ -6,12 +6,10 @@
 
 The previously accepted commercial architecture separates four distinct responsibilities:
 
-| Provider | Intended role | Must not be treated as |
-| --- | --- | --- |
-| Polar | Primary global merchant-of-record (MoR) route for eligible digital-product sales; use its own seller onboarding and payout model where the product and seller are eligible | A generic card processor or a source of truth for Web-Temify's internal orders, entitlements, or accounting ledger |
-| Paystack | Nigeria/local payments and a candidate direct-payment route for a specifically approved marketplace flow | Proof of payment based solely on a browser redirect or client callback |
-| Sellra | Secondary MoR/African-rails candidate | Production-approved until current official documentation, contracting, supported jurisdictions, settlement reports, refunds, disputes, fees, payout capabilities, and operational support are independently verified |
-| Grey | International treasury/FX and business-account workflow where eligible | A checkout processor, MoR, or substitute for payment-provider reconciliation |
+- **Polar:** Primary global merchant-of-record (MoR) route for eligible digital-product sales, subject to its seller onboarding and payout model. It is not a generic card processor or the source of truth for Web-Temify's internal orders, entitlements, or accounting ledger.
+- **Paystack:** Candidate for Nigeria/local payments and a specifically approved direct-payment marketplace flow. A browser redirect or client callback is not proof of payment.
+- **Sellra:** Unverified secondary MoR/African-rails candidate. Do not treat it as production-approved until official documentation, contracting, supported jurisdictions, settlement reports, refunds, disputes, fees, payout capabilities, and operational support are independently verified.
+- **Grey:** Treasury/FX and business-account workflow where eligible. It is not a checkout processor, MoR, or substitute for payment-provider reconciliation.
 
 This role split is the canonical strategy to validate against current onboarding evidence. It supersedes older exploratory lists that included Flutterwave, Wise, Payoneer, Stripe, Paddle, Lemon Squeezy, Dodo, or other providers as possible candidates. Those historical mentions are not approval to integrate them.
 
