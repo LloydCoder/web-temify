@@ -610,7 +610,7 @@ begin
       and we.event_type = 'payment.succeeded'
       and we.signature_verified and we.processing_status in ('processing', 'processed')
     order by (we.id::text = replace(new.reference_key, 'payment-event:', '')) desc,
-             (we.processing_status = 'processing') desc, we.created_at desc
+             (we.processing_status = 'processing') desc, we.received_at desc
     limit 1;
     journal_source := 'legacy-ledger:payment:' || new.reference_key;
   elsif new.source_type = 'refund' then
