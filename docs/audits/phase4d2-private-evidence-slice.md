@@ -1,6 +1,6 @@
 # Phase 4D2 Private Settlement Evidence — Slice Audit
 
-**Disposition: IMPLEMENTED ON BRANCH; awaiting exact-head CI and review. Not a Phase 4D2 completion record.**
+**Disposition: PASS for this bounded slice at commit `4d12faa6c20eb00bc3da3d288d020ceb42dbc01c`; not a Phase 4D2 completion record.**
 
 ## Scope delivered
 
@@ -19,14 +19,15 @@
 - Evidence metadata is not yet bound to a settlement import/reconciliation run by this route. That association must be an explicit, audited operation and must not be inferred from a filename or client-supplied digest.
 - Provider-specific API signature validation, authenticated report download, settlement/fee journal posting, payouts, and exception auto-resolution remain disabled.
 
-## Exact verification required
+## Exact verification evidence
 
-- [ ] Empty-database `supabase db reset` passes with this migration.
-- [ ] `supabase db lint --local` passes.
-- [ ] Full pgTAP/RLS suite passes, including `phase4d2_private_settlement_evidence.test.sql`.
-- [ ] Foundation tests, typecheck, lint, format, Playwright, and production build pass on the same PR head.
-- [ ] Security/dependency/license/secret scans pass on the same PR head.
-- [ ] Review upload cleanup behavior, audit failure paths, storage quotas, rate limiting, and operational retention policy.
+- [x] Empty-database `supabase db reset` passed.
+- [x] `supabase db lint --local` passed.
+- [x] Full pgTAP/RLS suite passed, including `phase4d2_private_settlement_evidence.test.sql`.
+- [x] Foundation tests (39 unit tests), typecheck, lint, format, Playwright, and production build passed.
+- [x] Security/dependency/license/secret scans passed.
+- [x] CI was green on implementation head `4d12faa6c20eb00bc3da3d288d020ceb42dbc01c`: [Foundation CI run 38545970329](https://github.com/LloydCoder/web-temify/actions/runs/38545970329) and [Security/dependency governance run 38545970409](https://github.com/LloydCoder/web-temify/actions/runs/38545970409).
+- [ ] Review upload cleanup behavior, audit failure paths, storage quotas, rate limiting, and operational retention policy remain operational hardening follow-ups.
 
 ## Residual Phase 4D2 blockers
 
