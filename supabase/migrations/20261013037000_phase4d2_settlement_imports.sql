@@ -530,3 +530,114 @@ comment on table public.settlement_reconciliation_results is
   'Immutable row-level matches and exceptions against already-posted payment/refund journal batches.';
 comment on function public.reconcile_settlement_import(uuid, uuid) is
   'Service-only one-time reconciliation of payment/refund rows to posted journal batches. Provider settlement/fee posting and exception resolution remain disabled.';
+
+
+-- Phase 4D2 (slice 3): immutable triage decisions for reconciliation exceptions.
+-- Decisions never post journals, initiate payouts, or turn an exception into a match.
+create table public.settlement_exception_decisions (
+  id uuid primary key default gen_random_uuid(),
+  run_id uuid not null,
+  row_id text not null,
+  decision text not null check (decision in (
+    'reimport_required', 'manual_review_required', 'accepted_with_evidence'
+  )),
+  reason text not null check (char_length(btrim(reason)) between 12 and 500),
+  evidence_sha256 text check (evidence_sha256 is null or evidence_sha256 ~ '^[a-f0-9]{64}$'),
+  decided_by uuid not null references auth.users(id) on delete restrict,
+  created_at timestamptz not null default now(),
+  foreign key (run_id, row_id)
+    references public.settlement_reconciliation_results(run_id, row_id) on delete restrict,
+  constraint settlement_exception_evidence_requirement check (
+    (decision = 'accepted_with_evidence' and evidence_sha256 is not null)
+    or (decision <> 'accepted_with_evidence' and evidence_sha256 is null)
+  ),
+  unique (run_id, row_id)
+);
+alter table public.settlement_exception_decisions enable row level security;
+revoke all on public.settlement_exception_decisions from public, anon, authenticated, service_role;
+
+create trigger settlement_exception_decisions_immutable
+before update or delete on public.settlement_exception_decisions
+for each row execute function public.reject_settlement_reconciliation_mutation();
+
+create function public.decide_settlement_exception(
+  p_run_id uuid,
+  p_row_id text,
+  p_decision text,
+  p_reason text,
+  p_evidence_sha256 text,
+  p_decided_by uuid
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  result_row public.settlement_reconciliation_results%rowtype;
+  run_row public.settlement_reconciliation_runs%rowtype;
+  import_row public.settlement_imports%rowtype;
+  existing_decision public.settlement_exception_decisions%rowtype;
+  new_decision_id uuid;
+begin
+  if p_run_id is null or p_row_id is null
+    or p_decision not in ('reimport_required', 'manual_review_required', 'accepted_with_evidence')
+    or p_reason is null or char_length(btrim(p_reason)) not between 12 and 500
+    or p_decided_by is null
+    or (p_decision = 'accepted_with_evidence' and coalesce(p_evidence_sha256, '') !~ '^[a-f0-9]{64}$')
+    or (p_decision <> 'accepted_with_evidence' and p_evidence_sha256 is not null)
+  then
+    raise exception using errcode = '23514', message = 'settlement exception decision failed validation';
+  end if;
+
+  select * into result_row
+  from public.settlement_reconciliation_results
+  where run_id = p_run_id and row_id = p_row_id;
+  if result_row.run_id is null or result_row.result_status <> 'exception' then
+    raise exception using errcode = '23514', message = 'only unresolved settlement exceptions can receive a decision';
+  end if;
+
+  select * into run_row from public.settlement_reconciliation_runs where id = p_run_id;
+  select * into import_row from public.settlement_imports where id = run_row.import_id;
+
+  if not exists (
+    select 1 from public.user_roles ur
+    where ur.user_id = p_decided_by and ur.role = 'admin'::public.app_role
+  ) or p_decided_by in (run_row.reconciled_by, import_row.imported_by) then
+    raise exception using errcode = '42501', message = 'settlement exception decision requires an independent admin';
+  end if;
+
+  perform pg_advisory_xact_lock(hashtext('settlement-exception:' || p_run_id::text || ':' || p_row_id));
+
+  select * into existing_decision
+  from public.settlement_exception_decisions
+  where run_id = p_run_id and row_id = p_row_id;
+  if existing_decision.id is not null then
+    if existing_decision.decision = p_decision
+      and existing_decision.reason = btrim(p_reason)
+      and existing_decision.evidence_sha256 is not distinct from p_evidence_sha256
+      and existing_decision.decided_by = p_decided_by
+    then
+      return existing_decision.id;
+    end if;
+    raise exception using errcode = '23514', message = 'settlement exception already has a conflicting immutable decision';
+  end if;
+
+  insert into public.settlement_exception_decisions (
+    run_id, row_id, decision, reason, evidence_sha256, decided_by
+  ) values (
+    p_run_id, p_row_id, p_decision, btrim(p_reason), p_evidence_sha256, p_decided_by
+  ) returning id into new_decision_id;
+
+  return new_decision_id;
+end;
+$function$;
+revoke all on function public.decide_settlement_exception(uuid, text, text, text, text, uuid)
+  from public, anon, authenticated;
+grant execute on function public.decide_settlement_exception(uuid, text, text, text, text, uuid)
+  to service_role;
+
+comment on table public.settlement_exception_decisions is
+  'Immutable independent-admin triage decisions; a decision does not resolve the accounting exception or authorize journal posting.';
+comment on function public.decide_settlement_exception(uuid, text, text, text, text, uuid) is
+  'Service-only immutable exception triage requiring an admin distinct from importer and reconciler; no financial posting is permitted.';
