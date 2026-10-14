@@ -104,40 +104,24 @@ export async function POST(request: Request) {
     );
   }
 
-  const { error: metadataError } = await context.admin
-    .from("settlement_evidence")
-    .insert({
-      id: evidenceId,
-      storage_path: storagePath,
-      source_sha256: sourceSha256,
-      mime_type: contentType,
-      byte_size: body.bytes.byteLength,
-      original_filename: filename,
-      uploaded_by: context.userId,
-    });
-  if (metadataError) {
+  const { error: recordError } = await context.admin.rpc(
+    "record_settlement_evidence",
+    {
+      p_id: evidenceId,
+      p_storage_path: storagePath,
+      p_source_sha256: sourceSha256,
+      p_mime_type: contentType,
+      p_byte_size: body.bytes.byteLength,
+      p_original_filename: filename,
+      p_uploaded_by: context.userId,
+      p_request_id: requestId,
+    },
+  );
+  if (recordError) {
     await context.admin.storage.from("settlement-evidence").remove([storagePath]);
     return NextResponse.json(
       { error: "settlement_evidence_record_failed", requestId },
-      { status: 503 },
-    );
-  }
-
-  const { error: completionAuditError } = await context.admin.from("audit_events").insert({
-    actor_id: context.userId,
-    action: "settlement.evidence.uploaded",
-    entity_type: "settlement_evidence",
-    entity_id: evidenceId,
-    request_id: requestId,
-    metadata: {
-      source_sha256: sourceSha256,
-      byte_size: body.bytes.byteLength,
-    },
-  });
-  if (completionAuditError) {
-    return NextResponse.json(
-      { error: "settlement_evidence_audit_incomplete", requestId },
-      { status: 503 },
+      { status: recordError.code === "42501" ? 403 : 503 },
     );
   }
 
