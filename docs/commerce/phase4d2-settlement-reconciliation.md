@@ -2,7 +2,7 @@
 
 ## Status
 
-**In progress — the import/reconciliation foundation, cross-currency classification, private evidence custody, and evidence-to-import linkage are merged. The follow-up `20261014130000_phase4d2_sandbox_fee_journal_posting.sql` adds a sandbox-only provider-fee journal path behind linked-evidence and independent-review gates.** Live-provider ingress, provider settlement/payout posting, retention enforcement, malware scanning, escalation/expiry policy, complete concurrency coverage, and external provider evidence remain incomplete. The admin exception queue supports immutable triage decisions, but a triage decision does not resolve an accounting exception or authorize posting. Do not enable live-provider processing or claim Phase 4D2 complete.
+**In progress — the import/reconciliation foundation, cross-currency classification, private evidence custody, and evidence-to-import linkage are merged. The follow-up `20261014130000_phase4d2_sandbox_fee_journal_posting.sql` adds a sandbox-only provider-fee journal path behind linked-evidence and independent-review gates.** Live-provider ingress, provider settlement/payout posting, automated retention enforcement, trusted scanner integration, escalation/expiry policy, complete concurrency coverage, and external provider evidence remain incomplete. A new fail-closed database gate requires an immutable, digest-matched clean scan attestation before evidence linkage or fee posting; it records scanner results but does not scan files itself. The admin exception queue supports immutable triage decisions, but a triage decision does not resolve an accounting exception or authorize posting. Do not enable live-provider processing or claim Phase 4D2 complete.
 
 ## Research basis
 
@@ -47,7 +47,20 @@ Migration `20261014130000_phase4d2_sandbox_fee_journal_posting.sql` adds a narro
 - A missing evidence link or invalid reviewer aborts the transaction without leaving a reconciliation run or journal batch. Evidence can be linked and the reconciliation retried.
 - This is not provider settlement/payout posting, live provider integration, or money movement. Payout, settlement cash movement, and all non-sandbox provider paths remain disabled.
 
-The dedicated pgTAP suite `supabase/tests/phase4d2_sandbox_fee_posting.test.sql` covers balanced posting, digest linkage, independent actors, immutable posting evidence, replay idempotency, missing-evidence rollback/retry, and invalid fee arithmetic. The Phase 4D2 gate remains open for concurrent-race testing, provider-authenticated ingress, settlement/payout posting, retention and malware controls, escalation/expiry, and external onboarding evidence.
+The dedicated pgTAP suite `supabase/tests/phase4d2_sandbox_fee_posting.test.sql` covers balanced posting, digest linkage, independent actors, immutable posting evidence, replay idempotency, missing-evidence rollback/retry, and invalid fee arithmetic. Migration `20261014140000_phase4d2_evidence_malware_gate.sql` adds immutable scanner attestations and requires the latest digest-matched verdict to be clean before evidence linkage or fee posting. The service-role-only RPC is an attestation boundary, not a scanner; a trusted scanner integration must inspect the exact stored bytes and report the verdict. The Phase 4D2 gate remains open for scanner integration, concurrent-race testing, provider-authenticated ingress, settlement/payout posting, retention/deletion enforcement, escalation/expiry, and external onboarding evidence.
+
+## Malware-scan gate (partial implementation)
+
+Migration `20261014140000_phase4d2_evidence_malware_gate.sql` adds append-only `settlement_evidence_scan_results` records with the evidence digest, verdict, scanner name/version, server timestamp, and correlated audit event.
+
+- Only the service-role scanner attestation RPC can add results; browser/authenticated roles cannot insert or read scan attestations.
+- The RPC requires the exact SHA-256 already recorded for the private evidence object. A digest mismatch fails without an attestation.
+- Evidence linkage fails closed when no scan exists or the latest verdict is `infected` or `error`. A subsequent clean rescan restores eligibility without mutating prior scan history.
+- The financial journal guard independently checks the latest scan verdict and digest at posting time, so a scan marked infected after linkage cannot be used to post a provider-fee journal.
+- Scan attestations and their audit events are append-only and committed atomically.
+- **Not complete:** this migration does not inspect bytes or provide antivirus functionality. The upload route currently stores evidence and records metadata; a trusted scanner worker/service still must retrieve the private object, scan the exact digest, and call the service-only RPC. Until that integration is deployed and tested, new evidence remains pending and cannot be linked or posted.
+
+The dedicated `supabase/tests/phase4d2_evidence_malware_gate.test.sql` covers least privilege, pending/infected denial, digest mismatch, clean scanning, immutable history, audit events, and clean-rescan recovery.
 
 ## Critical trust boundary
 
