@@ -174,11 +174,15 @@ create table public.seller_fee_schedules (
   expires_at timestamptz,
   approved_by uuid references auth.users(id) on delete restrict,
   approved_at timestamptz,
+  revoked_by uuid references auth.users(id) on delete restrict,
+  revoked_at timestamptz,
   created_at timestamptz not null default now(),
   constraint seller_fee_schedule_expiry check (expires_at is null or expires_at > effective_at),
   constraint seller_fee_schedule_approval check (
-    (status = 'pending' and approved_by is null and approved_at is null)
-    or (status in ('active', 'revoked') and approved_by is not null and approved_by <> seller_id and approved_at is not null)
+    (status = 'pending' and approved_by is null and approved_at is null and revoked_by is null and revoked_at is null)
+    or (status = 'active' and approved_by is not null and approved_by <> seller_id and approved_at is not null and revoked_by is null and revoked_at is null)
+    or (status = 'revoked' and revoked_by is not null and revoked_by <> seller_id and revoked_at is not null
+      and ((approved_by is null and approved_at is null) or (approved_by is not null and approved_by <> seller_id and approved_at is not null)))
   )
 );
 create unique index seller_fee_schedule_one_active_uq
@@ -198,7 +202,9 @@ set search_path = ''
 as $function$
 begin
   if tg_op = 'INSERT' then
-    if new.status <> 'pending' or new.approved_by is not null or new.approved_at is not null then
+    if new.status <> 'pending'
+      or new.approved_by is not null or new.approved_at is not null
+      or new.revoked_by is not null or new.revoked_at is not null then
       raise exception using errcode = '23514', message = 'seller fee schedules must start pending independent approval';
     end if;
     return new;
@@ -208,18 +214,33 @@ begin
     raise exception using errcode = '23514', message = 'seller fee schedule history cannot be deleted';
   end if;
 
-  if old.status <> 'pending'
-    or new.status not in ('active', 'revoked')
-    or new.id is distinct from old.id
+  if new.id is distinct from old.id
     or new.seller_id is distinct from old.seller_id
     or new.platform_fee_bps is distinct from old.platform_fee_bps
     or new.effective_at is distinct from old.effective_at
     or new.expires_at is distinct from old.expires_at
-    or new.created_at is distinct from old.created_at
-    or new.approved_by is null
-    or new.approved_by = new.seller_id
-    or new.approved_at is null then
-    raise exception using errcode = '23514', message = 'fee schedules require independent approval and immutable commercial terms';
+    or new.created_at is distinct from old.created_at then
+    raise exception using errcode = '23514', message = 'fee schedule commercial terms are immutable';
+  end if;
+
+  if old.status = 'pending' and new.status = 'active' then
+    if new.approved_by is null or new.approved_by = new.seller_id or new.approved_at is null
+      or new.revoked_by is not null or new.revoked_at is not null then
+      raise exception using errcode = '23514', message = 'activation requires an independent approver';
+    end if;
+  elsif old.status = 'pending' and new.status = 'revoked' then
+    if new.revoked_by is null or new.revoked_by = new.seller_id or new.revoked_at is null
+      or new.approved_by is not null or new.approved_at is not null then
+      raise exception using errcode = '23514', message = 'pending schedule revocation requires an independent actor';
+    end if;
+  elsif old.status = 'active' and new.status = 'revoked' then
+    if new.approved_by is distinct from old.approved_by
+      or new.approved_at is distinct from old.approved_at
+      or new.revoked_by is null or new.revoked_by = new.seller_id or new.revoked_at is null then
+      raise exception using errcode = '23514', message = 'active schedule revocation requires a separate actor and preserves original approval evidence';
+    end if;
+  else
+    raise exception using errcode = '23514', message = 'invalid seller fee schedule transition';
   end if;
   return new;
 end;
