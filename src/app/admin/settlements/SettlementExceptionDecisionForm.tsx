@@ -68,7 +68,7 @@ export function SettlementExceptionDecisionForm({
       setEvidenceSha256("");
       setFeedback({
         kind: "success",
-        message: "Immutable triage decision recorded; the exception remains open.",
+        message: "Triage decision recorded; the exception remains open.",
       });
       router.refresh();
     } catch {
@@ -102,7 +102,7 @@ export function SettlementExceptionDecisionForm({
         >
           <option value="manual_review_required">Manual review required</option>
           <option value="reimport_required">Reimport corrected report</option>
-          <option value="accepted_with_evidence">Accept with evidence digest</option>
+          <option value="accepted_with_evidence">Accept with digest</option>
         </select>
       </label>
       <label>
