@@ -27,7 +27,6 @@ Supabase SQL migrations are the sole authoritative schema history for Web-Temify
 - `20261014010000_phase4d2_currency_mismatch_classification.sql` — classify unique cross-currency provider-reference matches explicitly without posting journals or moving funds.
 - `20261014100000_phase4d2_provider_ingress_fail_closed.sql` — reject non-sandbox settlement imports until provider-specific authenticated ingress replaces the trusted boolean assertion.
 - `20261014110000_phase5_support_cases.sql` — server-managed support-case intake, idempotent create RPC, admin-only state transitions, append-only case events, and transactional audit evidence.
-- `20261014110000_phase5_support_cases.sql` — server-managed support-case intake, idempotent create RPC, admin-only state transitions, append-only case events, and transactional audit evidence.
 - `20261014020000_phase4d2_exception_queue.sql` — bounded, read-only service-only RPC for an audited admin settlement-exception queue; validates the database-owned admin role, limits page size and cursor shape, and exposes normalized exception/triage fields only.
 
 - `docs/commerce/phase4d2-settlement-reconciliation.md` — versioned provider-neutral settlement import contract and remaining acceptance gates only; no settlement tables, reconciliation processor, or provider integration are implemented by this document.
