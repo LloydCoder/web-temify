@@ -229,10 +229,22 @@ begin
       or new.revoked_by is not null or new.revoked_at is not null then
       raise exception using errcode = '23514', message = 'activation requires an independent approver';
     end if;
+    if not exists (
+      select 1 from public.user_roles ur
+      where ur.user_id = new.approved_by and ur.role = 'admin'::public.app_role
+    ) then
+      raise exception using errcode = '23514', message = 'fee schedule approver must hold the database-owned admin role';
+    end if;
   elsif old.status = 'pending' and new.status = 'revoked' then
     if new.revoked_by is null or new.revoked_by = new.seller_id or new.revoked_at is null
       or new.approved_by is not null or new.approved_at is not null then
       raise exception using errcode = '23514', message = 'pending schedule revocation requires an independent actor';
+    end if;
+    if not exists (
+      select 1 from public.user_roles ur
+      where ur.user_id = new.revoked_by and ur.role = 'admin'::public.app_role
+    ) then
+      raise exception using errcode = '23514', message = 'fee schedule revoker must hold the database-owned admin role';
     end if;
   elsif old.status = 'active' and new.status = 'revoked' then
     if new.approved_by is distinct from old.approved_by
@@ -240,6 +252,12 @@ begin
       or new.revoked_by is null or new.revoked_by = new.seller_id
       or new.revoked_by = new.approved_by or new.revoked_at is null then
       raise exception using errcode = '23514', message = 'active schedule revocation requires a separate actor and preserves original approval evidence';
+    end if;
+    if not exists (
+      select 1 from public.user_roles ur
+      where ur.user_id = new.revoked_by and ur.role = 'admin'::public.app_role
+    ) then
+      raise exception using errcode = '23514', message = 'fee schedule revoker must hold the database-owned admin role';
     end if;
   else
     raise exception using errcode = '23514', message = 'invalid seller fee schedule transition';
