@@ -82,3 +82,133 @@ describe("shared domain contracts", () => {
     ).toBe(false);
   });
 });
+
+
+describe("Phase 4D2 settlement import contract", () => {
+  const validReport = {
+    contractVersion: "1.0" as const,
+    provider: "sandbox" as const,
+    providerAccountReference: "sandbox-account-01",
+    reportReference: "settlement-batch-2026-10-13",
+    reportPeriodStart: "2026-10-13",
+    reportPeriodEnd: "2026-10-13",
+    reportTimezone: "UTC",
+    sourceSha256: "b".repeat(64),
+    sourceAuthenticated: true as const,
+    currency: "USD",
+    rows: [
+      {
+        rowId: "row-payment-01",
+        rowType: "payment" as const,
+        providerReference: "provider-payment-01",
+        paymentReference: "order-payment-01",
+        occurredAt: "2026-10-13T10:00:00Z",
+        currency: "USD",
+        grossMinor: 10000,
+        feeMinor: 300,
+        netMinor: 9700,
+      },
+      {
+        rowId: "row-fee-01",
+        rowType: "fee" as const,
+        occurredAt: "2026-10-13T10:00:00Z",
+        currency: "USD",
+        grossMinor: 0,
+        feeMinor: 300,
+        netMinor: -300,
+      },
+    ],
+  };
+
+  it("accepts a versioned, source-digested, normalized settlement report", async () => {
+    const { SettlementImportSchema } = await import("./index");
+    expect(SettlementImportSchema.safeParse(validReport).success).toBe(true);
+  });
+
+  it("rejects unauthenticated source assertions, unknown fields, and unsupported contract versions", async () => {
+    const { SettlementImportSchema } = await import("./index");
+    expect(
+      SettlementImportSchema.safeParse({
+        ...validReport,
+        sourceAuthenticated: false,
+      }).success,
+    ).toBe(false);
+    expect(
+      SettlementImportSchema.safeParse({
+        ...validReport,
+        contractVersion: "2.0",
+      }).success,
+    ).toBe(false);
+    expect(
+      SettlementImportSchema.safeParse({
+        ...validReport,
+        rawProviderPayload: "must-not-be-added",
+      }).success,
+    ).toBe(false);
+  });
+
+  it("rejects duplicate row identifiers and row/report currency mismatches", async () => {
+    const { SettlementImportSchema } = await import("./index");
+    const duplicate = {
+      ...validReport,
+      rows: [validReport.rows[0], { ...validReport.rows[0] }],
+    };
+    expect(SettlementImportSchema.safeParse(duplicate).success).toBe(false);
+    const wrongCurrency = {
+      ...validReport,
+      rows: [{ ...validReport.rows[0], currency: "EUR" }],
+    };
+    expect(SettlementImportSchema.safeParse(wrongCurrency).success).toBe(false);
+  });
+
+  it("rejects rows outside the declared report period and invalid financial signs", async () => {
+    const { SettlementImportSchema } = await import("./index");
+    const outsidePeriod = {
+      ...validReport,
+      rows: [
+        {
+          ...validReport.rows[0],
+          occurredAt: "2026-10-12T23:59:59Z",
+        },
+      ],
+    };
+    expect(SettlementImportSchema.safeParse(outsidePeriod).success).toBe(false);
+    const positiveRefund = {
+      ...validReport,
+      rows: [
+        {
+          ...validReport.rows[0],
+          rowType: "refund",
+          grossMinor: 100,
+        },
+      ],
+    };
+    expect(SettlementImportSchema.safeParse(positiveRefund).success).toBe(false);
+    const positiveFee = {
+      ...validReport,
+      rows: [
+        {
+          ...validReport.rows[1],
+          netMinor: 300,
+        },
+      ],
+    };
+    expect(SettlementImportSchema.safeParse(positiveFee).success).toBe(false);
+  });
+
+  it("rejects inverted report periods and non-SHA-256 source digests", async () => {
+    const { SettlementImportSchema } = await import("./index");
+    expect(
+      SettlementImportSchema.safeParse({
+        ...validReport,
+        reportPeriodStart: "2026-10-14",
+      }).success,
+    ).toBe(false);
+    expect(
+      SettlementImportSchema.safeParse({
+        ...validReport,
+        sourceSha256: "not-a-digest",
+      }).success,
+    ).toBe(false);
+  });
+});
