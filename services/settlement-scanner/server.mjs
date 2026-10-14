@@ -20,7 +20,9 @@ function parseBoundedInteger(value, fallback, minimum, maximum) {
 }
 
 export function constantTimeTokenEquals(expected, supplied) {
-  if (typeof expected !== "string" || typeof supplied !== "string") return false;
+  if (typeof expected !== "string" || typeof supplied !== "string") {
+    return false;
+  }
   const expectedDigest = createHash("sha256").update(expected).digest();
   const suppliedDigest = createHash("sha256").update(supplied).digest();
   return timingSafeEqual(expectedDigest, suppliedDigest);
@@ -44,7 +46,9 @@ function clamdRequest({ host, port, command, bytes, timeoutMs }) {
       else resolve(value);
     }
 
-    socket.setTimeout(timeoutMs, () => finish(new Error("clamd socket timed out")));
+    socket.setTimeout(timeoutMs, () =>
+      finish(new Error("clamd socket timed out")),
+    );
     socket.on("error", (error) => finish(error));
     socket.on("end", () => {
       if (response.length > 0) {
@@ -90,7 +94,9 @@ function clamdRequest({ host, port, command, bytes, timeoutMs }) {
           socket.write(Buffer.alloc(4));
         }
       } catch (error) {
-        finish(error instanceof Error ? error : new Error("clamd request failed"));
+        finish(
+          error instanceof Error ? error : new Error("clamd request failed"),
+        );
       }
     });
   });
@@ -187,7 +193,11 @@ export function createScannerServer({
   if (!Number.isInteger(clamdPort) || clamdPort < 1 || clamdPort > 65535) {
     throw new Error("CLAMD_PORT must be a valid TCP port");
   }
-  if (!Number.isInteger(maxBytes) || maxBytes < 1 || maxBytes > MAX_SCAN_BYTES) {
+  if (
+    !Number.isInteger(maxBytes) ||
+    maxBytes < 1 ||
+    maxBytes > MAX_SCAN_BYTES
+  ) {
     throw new Error("MAX_SCAN_BYTES must be between 1 byte and 5 MiB");
   }
   if (
@@ -243,7 +253,10 @@ export function createScannerServer({
     }
 
     const expectedSha256 = request.headers["x-evidence-sha256"];
-    if (typeof expectedSha256 !== "string" || !DIGEST_PATTERN.test(expectedSha256)) {
+    if (
+      typeof expectedSha256 !== "string" ||
+      !DIGEST_PATTERN.test(expectedSha256)
+    ) {
       request.resume();
       sendJson(response, 400, { error: "invalid_evidence_digest" });
       return;
@@ -314,7 +327,9 @@ export function createScannerServer({
         sha256,
       });
     } catch {
-      if (!response.headersSent) sendJson(response, 400, { error: "invalid_request" });
+      if (!response.headersSent) {
+        sendJson(response, 400, { error: "invalid_request" });
+      }
     } finally {
       activeScans -= 1;
     }
@@ -331,7 +346,10 @@ function requiredPort(value, fallback, label) {
   return parsed;
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
   const token = process.env.SCANNER_BEARER_TOKEN;
   const clamdHost = process.env.CLAMD_HOST || "clamav";
   const clamdPort = requiredPort(process.env.CLAMD_PORT, 3310, "CLAMD_PORT");
