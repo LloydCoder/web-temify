@@ -75,7 +75,7 @@ Migration `20261014150000_phase4d2_evidence_retention_worker.sql` adds a service
 
 The dedicated pgTAP suite `supabase/tests/phase4d2_evidence_retention.test.sql` covers RLS/privileges, linked and non-expired exclusions, expired-link denial, audit events, tombstones, bounded retry, blocked states, lease recovery, stale-worker rejection, and batch limits. The forensic implementation record is `docs/audits/phase4d2-evidence-retention-worker.md`. Application tests cover authentication, bounded claims, storage failures, database failures, malformed claims, and completion failures.
 
-**Operational gate still open:** `SETTLEMENT_EVIDENCE_RETENTION_TOKEN` must be configured as a high-entropy secret and a scheduler must be configured to POST the endpoint on a reviewed cadence. A production smoke test, alerting for blocked/retryable jobs, policy approval for linked financial evidence, and an auditable manual-review/deletion process remain required. Do not claim retention operations are active until those external controls are verified.
+**Operational gate still open:** `vercel.json` declares a daily 03:15 UTC Vercel Cron invocation, and the route accepts Vercel's `Authorization: Bearer $CRON_SECRET` header (or the dedicated `SETTLEMENT_EVIDENCE_RETENTION_TOKEN` when configured). The production deployment and high-entropy secret must be configured; a live smoke test, alerting for blocked/retryable jobs, policy approval for linked financial evidence, and an auditable manual-review/deletion process remain required. Do not claim retention operations are active until those external controls are verified.
 
 ## Critical trust boundary
 
