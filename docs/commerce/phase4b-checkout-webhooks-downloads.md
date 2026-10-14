@@ -56,7 +56,7 @@ Migration `20261013035000_phase4c_financial_journal.sql` adds the immutable fina
 - No live provider adapter is enabled or selected.
 - No tax/VAT calculation is implemented; order tax is currently zero and must not be represented as a tax quote.
 - Free/zero-value checkout is unsupported.
-Seller commission allocation is implemented, but no seller payout, provider settlement, provider-fee posting, chargeback, reserve, manual financial adjustment, or refund reversal after allocation is enabled. Refunds after proceeds allocation fail closed pending a reversal workflow. Partial refunds remain order-level rather than item-specific; full refunds revoke all order entitlements.
+- Seller commission allocation is implemented, but no seller payout, provider settlement, provider-fee posting, chargeback, reserve, manual financial adjustment, or refund reversal after allocation is enabled. Refunds after proceeds allocation fail closed pending a reversal workflow. Partial refunds remain order-level rather than item-specific; full refunds revoke all order entitlements.
 - The private bucket must be provisioned as private in the actual Supabase project; local schema CI does not prove production bucket configuration.
 - Supabase signed URLs cannot be revoked immediately once issued; the implemented TTL is 60 seconds, but it remains a bearer URL until expiry.
 - Production secrets, live provider eligibility, end-to-end provider sandbox account verification, formal security review, penetration testing, and legal/tax review remain release gates.
