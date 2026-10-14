@@ -119,16 +119,12 @@ describe("Phase 4D2 settlement import contract", () => {
     ],
   };
 
-  it(
-    "accepts a versioned, source-digested, normalized settlement report",
-    async () => {
+  it("accepts a valid settlement report", async () => {
     const { SettlementImportSchema } = await import("./index");
     expect(SettlementImportSchema.safeParse(validReport).success).toBe(true);
   });
 
-  it(
-    "rejects unauthenticated source assertions, unknown fields, and unsupported contract versions",
-    async () => {
+  it("rejects invalid auth assertions, extra fields, and versions", async () => {
     const { SettlementImportSchema } = await import("./index");
     expect(
       SettlementImportSchema.safeParse({
@@ -150,9 +146,7 @@ describe("Phase 4D2 settlement import contract", () => {
     ).toBe(false);
   });
 
-  it(
-    "rejects duplicate row identifiers and row/report currency mismatches",
-    async () => {
+  it("rejects duplicate row IDs and currency mismatch", async () => {
     const { SettlementImportSchema } = await import("./index");
     const duplicate = {
       ...validReport,
@@ -166,9 +160,7 @@ describe("Phase 4D2 settlement import contract", () => {
     expect(SettlementImportSchema.safeParse(wrongCurrency).success).toBe(false);
   });
 
-  it(
-    "rejects rows outside the declared report period and invalid financial signs",
-    async () => {
+  it("rejects out-of-period rows and invalid signs", async () => {
     const { SettlementImportSchema } = await import("./index");
     const outsidePeriod = {
       ...validReport,
@@ -205,9 +197,7 @@ describe("Phase 4D2 settlement import contract", () => {
     expect(SettlementImportSchema.safeParse(positiveFee).success).toBe(false);
   });
 
-  it(
-    "uses the declared IANA timezone for report-period boundaries",
-    async () => {
+  it("checks report-period boundaries in the declared timezone", async () => {
     const { SettlementImportSchema } = await import("./index");
     const localDateOutsidePeriod = {
       ...validReport,
@@ -230,9 +220,7 @@ describe("Phase 4D2 settlement import contract", () => {
     ).toBe(false);
   });
 
-  it(
-    "rejects inverted report periods and non-SHA-256 source digests",
-    async () => {
+  it("rejects invalid periods and source digests", async () => {
     const { SettlementImportSchema } = await import("./index");
     expect(
       SettlementImportSchema.safeParse({
