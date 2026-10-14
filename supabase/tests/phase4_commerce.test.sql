@@ -1,5 +1,5 @@
 begin;
-select plan(167);
+select plan(169);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -940,6 +940,51 @@ select is(
   (select status from public.seller_fee_schedules
    where seller_id = '81000000-0000-4000-8000-000000000081' and platform_fee_bps = 1000),
   'revoked', 'revoked fee schedule is no longer eligible for future allocations'
+);
+
+-- A trusted server role must not be able to post arbitrary balanced financial batches.
+insert into public.financial_journal_batches (
+  source_type, source_key, idempotency_key, order_id, payment_attempt_id,
+  provider, provider_reference, currency, evidence_sha256
+)
+select 'payment', 'legacy-ledger:payment:test-fake-reference-0001',
+  'test-fake-payment-posting-0001', o.id, pa.id, 'sandbox',
+  'test-fake-provider-reference', o.currency, repeat('a',64)
+from public.orders o
+join phase4c_allocation_order_ids t on t.order_id = o.id
+join public.payment_attempts pa on pa.order_id = o.id;
+insert into public.financial_journal_entries (batch_id, account, side, amount_minor, currency, memo)
+select b.id, 'provider_clearing', 'debit', 1299, 'USD', 'Synthetic bypass attempt'
+from public.financial_journal_batches b
+where b.source_key = 'legacy-ledger:payment:test-fake-reference-0001';
+insert into public.financial_journal_entries (batch_id, account, side, amount_minor, currency, memo)
+select b.id, 'unallocated_order_liability', 'credit', 1299, 'USD', 'Synthetic bypass attempt'
+from public.financial_journal_batches b
+where b.source_key = 'legacy-ledger:payment:test-fake-reference-0001';
+select throws_ok(
+  $sql$update public.financial_journal_batches set status = 'posted'
+    where source_key = 'legacy-ledger:payment:test-fake-reference-0001'$sql$,
+  '23514', null, 'balanced payment batch cannot post without its own verified ledger and webhook evidence'
+);
+
+insert into public.financial_journal_batches (
+  source_type, source_key, idempotency_key, currency, evidence_sha256
+) values (
+  'manual_adjustment', 'test-manual-adjustment-0001',
+  'test-manual-adjustment-0001', 'USD', repeat('b',64)
+);
+insert into public.financial_journal_entries (batch_id, account, side, amount_minor, currency, memo)
+select b.id, 'platform_cash', 'debit', 100, 'USD', 'Synthetic unapproved adjustment'
+from public.financial_journal_batches b
+where b.source_key = 'test-manual-adjustment-0001';
+insert into public.financial_journal_entries (batch_id, account, side, amount_minor, currency, memo)
+select b.id, 'platform_revenue', 'credit', 100, 'USD', 'Synthetic unapproved adjustment'
+from public.financial_journal_batches b
+where b.source_key = 'test-manual-adjustment-0001';
+select throws_ok(
+  $sql$update public.financial_journal_batches set status = 'posted'
+    where source_key = 'test-manual-adjustment-0001'$sql$,
+  '23514', null, 'manual financial adjustments remain blocked until a dedicated approved workflow exists'
 );
 
 select * from finish();
