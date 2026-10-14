@@ -40,8 +40,13 @@ type RetentionClaim = {
   byte_size: number;
 };
 
-export async function POST(request: Request) {
-  if (!authorized(request, process.env.SETTLEMENT_EVIDENCE_RETENTION_TOKEN)) {
+async function runRetention(request: Request) {
+  if (
+    !authorized(
+      request,
+      process.env.SETTLEMENT_EVIDENCE_RETENTION_TOKEN || process.env.CRON_SECRET,
+    )
+  ) {
     return NextResponse.json(
       { error: "unauthorized" },
       { status: 401, headers: { "Cache-Control": "no-store" } },
@@ -147,4 +152,12 @@ export async function POST(request: Request) {
     },
     { status: 200, headers: { "Cache-Control": "no-store" } },
   );
+}
+
+export async function GET(request: Request) {
+  return runRetention(request);
+}
+
+export async function POST(request: Request) {
+  return runRetention(request);
 }
