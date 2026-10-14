@@ -1,5 +1,5 @@
 begin;
-select plan(57);
+select plan(58);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -551,6 +551,13 @@ select throws_ok(
   )$sql$,
   '23514', 'settlement exception cursor is incomplete',
   'queue rejects partially supplied cursor tuples'
+);
+select throws_ok(
+  $sql$select count(*) from public.list_settlement_exception_queue(
+    '89000000-0000-4000-8000-000000000089', 51, now(), gen_random_uuid(), ''
+  )$sql$,
+  '23514', 'settlement exception cursor row identifier is outside the allowed range',
+  'queue rejects empty row identifiers in cursor tuples'
 );
 
 select * from finish();
