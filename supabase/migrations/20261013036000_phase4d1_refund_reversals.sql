@@ -605,9 +605,12 @@ begin
       into verified_event_id, evidence_digest, provider_ref
     from public.payment_webhook_events we
     where we.order_id = new.order_id and we.payment_attempt_id = new.payment_attempt_id
-      and we.provider = provider_name and we.provider_reference = provider_ref
+      and we.provider = provider_name
+      and (we.id::text = replace(new.reference_key, 'payment-event:', '') or we.provider_reference = provider_ref)
       and we.event_type = 'payment.succeeded'
       and we.signature_verified and we.processing_status in ('processing', 'processed')
+    order by (we.id::text = replace(new.reference_key, 'payment-event:', '')) desc,
+             (we.processing_status = 'processing') desc, we.created_at desc
     limit 1;
     journal_source := 'legacy-ledger:payment:' || new.reference_key;
   elsif new.source_type = 'refund' then
