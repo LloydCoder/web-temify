@@ -84,3 +84,25 @@ test("settlement triage mutation denies unauthenticated visitors", async ({
   expect(response.status()).toBe(404);
   await expect(response.json()).resolves.toEqual({ error: "not_found" });
 });
+
+
+test("settlement evidence upload denies unauthenticated visitors", async ({
+  page,
+}) => {
+  const response = await page.request.post("/api/admin/settlements/evidence", {
+    headers: { "Content-Type": "text/csv" },
+    data: "date,amount\\n2026-10-14,100",
+  });
+  expect(response.status()).toBe(404);
+  await expect(response.json()).resolves.toEqual({ error: "not_found" });
+});
+
+test("settlement evidence download denies unauthenticated visitors", async ({
+  page,
+}) => {
+  const response = await page.request.get(
+    "/api/admin/settlements/evidence/8b000000-0000-4000-8000-00000000008b",
+  );
+  expect(response.status()).toBe(404);
+  await expect(response.json()).resolves.toEqual({ error: "not_found" });
+});
