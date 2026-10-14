@@ -197,16 +197,19 @@ begin
         raise exception using errcode = '22023', message = 'invalid support case transition';
       end if;
       next_status := 'escalated';
+      event_type_value := 'escalated';
     when 'resolve' then
       if current_case.status not in ('triaged', 'waiting_on_requester', 'escalated') then
         raise exception using errcode = '22023', message = 'invalid support case transition';
       end if;
       next_status := 'resolved';
+      event_type_value := 'resolved';
     when 'close' then
       if current_case.status <> 'resolved' then
         raise exception using errcode = '22023', message = 'invalid support case transition';
       end if;
       next_status := 'closed';
+      event_type_value := 'closed';
     when 'reopen' then
       if current_case.status not in ('resolved', 'closed') then
         raise exception using errcode = '22023', message = 'invalid support case transition';
