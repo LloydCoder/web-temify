@@ -19,6 +19,7 @@ Supabase SQL migrations are the sole authoritative schema history for Web-Temify
 - `20261013020000_phase4_commerce.sql` — provider-neutral order/payment/refund state invariants, append-only transfer ledger, entitlements, and atomic private-download authorization grants.
 - `20261013030000_phase4b_checkout_webhooks.sql` — atomic server-side checkout and verified, idempotent sandbox event processing.
 - `20261013035000_phase4c_financial_journal.sql` — immutable evidence-bound accounting journal, source-specific posting validation, independently approved seller fee schedules and idempotent proceeds allocation.
+- `20261013036000_phase4d1_refund_reversals.sql` — item-level refund reversal requests/lines, independent approval/rejection, verified-event-bound reversal journal and cumulative commission/refund guards.
 
 ## Important maturity boundary
 
@@ -31,3 +32,7 @@ Migration 20261013030000_phase4b_checkout_webhooks.sql adds server-only atomic o
 ## Phase 4C — immutable financial journal and proceeds allocation
 
 Migration `20261013035000_phase4c_financial_journal.sql` creates a server-only append-only journal with source-specific posting checks. Payment/refund postings must match verified event evidence and existing ledger transactions; allocation postings must reconcile to a paid order, immutable item totals, independently approved fee schedules, seller payable, platform commission and any tax amount on the order snapshot. The supported posting sources are payment, refund before allocation, and proceeds allocation. Other financial sources fail closed until a dedicated workflow is reviewed and tested. See `docs/commerce/phase4c-financial-journal.md`.
+
+## Phase 4D1 — refund reversals after proceeds allocation (under review)
+
+Migration `20261013036000_phase4d1_refund_reversals.sql` adds immutable item-level reversal requests and lines, independent approval/rejection RPCs, evidence-bound reversal journal posting before a verified refund outflow, cumulative refund and commission arithmetic, and a retry path after rejection. It is not a live payment integration and does not enable settlement, payout, tax calculation, chargebacks, reserves, manual adjustments or escrow. Keep Phase 4 in progress until exact-head Foundation CI, security/dependency governance, forensic audit and merge are complete.

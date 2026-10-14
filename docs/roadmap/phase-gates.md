@@ -144,7 +144,27 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - **PR/head/merge:** [PR #24](https://github.com/LloydCoder/web-temify/pull/24), reviewed head `3e5e438af23ef6dadb0e54443609507ab14b35dd`, merged commit `ed9f1d461c3f7fab2d47f5624cbbee4483c3baa7`.
 - **CI evidence:** [Foundation CI run 38515752985](https://github.com/LloydCoder/web-temify/actions/runs/38515752985) and [Security/dependency governance run 38515753014](https://github.com/LloydCoder/web-temify/actions/runs/38515753014) both passed on the exact reviewed head.
 - **Files reviewed:** `supabase/migrations/20261013035000_phase4c_financial_journal.sql`, `supabase/tests/phase4_commerce.test.sql`, Phase 4B commerce documentation, migration README, master roadmap and phase-gate register.
-- **Residual gate:** settlement, provider fee posting, payouts, chargebacks, manual adjustments, reserves and refunds after proceeds allocation remain disabled. No live provider, tax calculation, escrow, or production readiness is claimed.
+- **Residual gate:** settlement, provider fee posting, payouts, chargebacks, manual adjustments and reserves remain disabled. Refund reversals after proceeds allocation are being addressed in Phase 4D1; this PR is not yet a completed gate. No live provider, tax calculation, escrow, or production readiness is claimed.
+
+### Phase 4D — settlement, refund reversals, chargebacks, reserves and financial adjustments (in progress)
+
+#### Phase 4D1 — refund reversals after proceeds allocation (implementation under review)
+
+- [ ] Exact-head empty-database migration reset, schema lint, pgTAP/RLS tests, Playwright, production build and cleanup pass.
+- [ ] Exact-head dependency/license/secret governance passes.
+- [ ] Forensic review verifies immutable reversal requests/lines, distinct-admin approval/rejection, verified webhook evidence, balanced reversal-before-refund posting, cumulative item/fee/tax caps, idempotency and rejected-request retry.
+- [ ] Commission reversal arithmetic uses cumulative rounding, including minor-unit carry across partial refunds.
+- [ ] Service-role table grants do not allow direct state-transition updates; approval/rejection uses narrowly granted server RPCs.
+- [ ] Roadmap, migration README, Phase 4C commerce documentation and this gate register agree with the merged implementation.
+- [ ] Explicit non-claims remain: no live provider, settlement reconciliation, provider-fee posting, payout, tax calculator, chargeback, reserve, manual-adjustment execution or escrow.
+
+**Phase 4D1 forensic audit record — PENDING**
+
+- **Disposition:** not complete until exact-head CI is green and the implementation audit is recorded after reviewing the final diff.
+- **PR:** [#27 — feat(commerce): add approved refund reversal workflow](https://github.com/LloydCoder/web-temify/pull/27).
+- **Audit findings already corrected during review:** undeclared fee_bps in the reversal-line trigger; per-refund commission rounding that could under-reverse cumulative commission; inability to create a new audited request after a rejection; direct service_role updates to reversal-request state.
+- **Current verification boundary:** security/dependency governance is checked per exact PR head; Foundation CI and the final phase gate remain pending until the final commit is tested.
+- **Residual risk:** no provider settlement reconciliation, payout, tax, chargeback, reserve, manual-adjustment workflow, or production financial-readiness approval.
 
 ## Phase 5 — Admin and operations
 

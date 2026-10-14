@@ -37,9 +37,13 @@ Server-owned order creation and immutable item snapshots; payment-provider abstr
 
 **Phase 4C implementation update (merged, CI verified):** the platform now has an immutable, evidence-bound accounting journal, verified payment/refund journal posting, independently approved seller fee schedules, and idempotent proceeds allocation. Unsupported settlement, provider-fee, chargeback, reserve, manual-adjustment and post-allocation refund sources fail closed. This is still not a live provider, tax calculator, payout or production financial-readiness approval. See `docs/commerce/phase4c-financial-journal.md` and the exact-head evidence in `docs/roadmap/phase-gates.md`.
 
-### Phase 4D — settlement, chargebacks, refund reversals and financial adjustments (next serial gate)
+### Phase 4D — settlement, chargebacks, refund reversals and financial adjustments (in progress; execute as audited sub-gates)
 
 Build evidence-backed state machines for provider settlement reconciliation, refund reversals after proceeds allocation, chargeback/dispute evidence, reserve holds/releases and independently approved manual adjustments. Keep money movement disabled until those paths have balanced journal postings, adversarial pgTAP tests, idempotency, audit evidence and explicit business-policy approval. This phase cannot be declared complete without a chosen provider, supported jurisdiction/settlement evidence and the required external onboarding.
+
+#### Phase 4D1 — refund reversals after proceeds allocation (implementation under review)
+
+The current PR #27 adds immutable item-level reversal requests/lines, distinct-admin approval and rejection through restricted server RPCs, verified-event-bound reversal journals, cumulative refund caps, cumulative commission rounding, and retry after a rejected request. The implementation remains a sandbox/test-only database workflow until exact-head Foundation CI and Security/dependency governance pass, a phase-specific forensic audit is recorded, and the PR is merged. It does not enable live payment providers, payouts, settlement reconciliation, tax calculation, chargebacks, reserves, manual adjustments or escrow.
 
 ### Phase 5 — Admin, seller operations and trust workflows
 
