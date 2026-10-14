@@ -1,5 +1,5 @@
 begin;
-select plan(164);
+select plan(167);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -536,6 +536,28 @@ select is(
    join public.refunds r on r.id = lt.refund_id
    where r.idempotency_key = 'phase4b-refund-idempotency-0001'),
   1::bigint, 'refund processor posts exactly one refund ledger entry'
+);
+select is(
+  (select count(*) from public.financial_journal_batches b
+   join public.refunds r on r.id = b.refund_id
+   where r.idempotency_key = 'phase4b-refund-idempotency-0001'
+     and b.source_type = 'refund' and b.status = 'posted'),
+  1::bigint, 'verified refund produces exactly one posted accounting journal batch'
+);
+select is(
+  (select b.provider_reference from public.financial_journal_batches b
+   join public.refunds r on r.id = b.refund_id
+   where r.idempotency_key = 'phase4b-refund-idempotency-0001'),
+  'phase4b-provider-refund-0001', 'refund journal preserves the verified provider refund reference'
+);
+select ok(
+  (select sum(e.amount_minor) filter (where e.side = 'debit')
+          = sum(e.amount_minor) filter (where e.side = 'credit')
+   from public.financial_journal_entries e
+   join public.financial_journal_batches b on b.id = e.batch_id
+   join public.refunds r on r.id = b.refund_id
+   where r.idempotency_key = 'phase4b-refund-idempotency-0001'),
+  'verified refund accounting batch is balanced'
 );
 select is(
   (select we.processing_status from public.payment_webhook_events we
