@@ -1,5 +1,5 @@
 begin;
-select plan(10);
+select plan(12);
 
 select has_table('public', 'settlement_evidence', 'private settlement evidence metadata table exists');
 select ok(
@@ -30,6 +30,14 @@ select ok(
 select ok(
   not has_table_privilege('service_role', 'public.settlement_evidence', 'DELETE'),
   'service role cannot delete immutable evidence metadata'
+);
+select ok(
+  has_function_privilege('service_role', 'public.record_settlement_evidence(uuid,text,text,text,bigint,text,uuid,uuid)', 'EXECUTE'),
+  'service role can call the atomic evidence recording RPC'
+);
+select ok(
+  not has_function_privilege('authenticated', 'public.record_settlement_evidence(uuid,text,text,text,bigint,text,uuid,uuid)', 'EXECUTE'),
+  'authenticated clients cannot call the evidence recording RPC'
 );
 
 insert into auth.users (
