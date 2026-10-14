@@ -80,7 +80,7 @@ declare
   new_case_id uuid;
 begin
   if p_requester_id is null or p_request_id is null
-    or p_category not in ('account', 'billing', 'product_access', 'product_rights', 'security', 'other')
+    or p_category is null or p_category not in ('account', 'billing', 'product_access', 'product_rights', 'security', 'other')
     or p_subject is null or char_length(btrim(p_subject)) not between 5 and 160
     or p_description is null or char_length(btrim(p_description)) not between 10 and 8000
     or p_idempotency_key is null or char_length(p_idempotency_key) not between 16 and 200
@@ -91,6 +91,8 @@ begin
   if not exists (select 1 from auth.users u where u.id = p_requester_id) then
     raise exception using errcode = '42501', message = 'support case requester does not exist';
   end if;
+
+  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(p_requester_id::text || ':' || p_idempotency_key, 0));
 
   select * into existing_case
   from public.support_cases
@@ -183,6 +185,7 @@ begin
         raise exception using errcode = '22023', message = 'invalid support case transition';
       end if;
       next_status := 'triaged';
+      event_type_value := 'triaged';
     when 'request_info' then
       if current_case.status not in ('triaged', 'escalated') then
         raise exception using errcode = '22023', message = 'invalid support case transition';
@@ -209,6 +212,7 @@ begin
         raise exception using errcode = '22023', message = 'invalid support case transition';
       end if;
       next_status := 'open';
+      event_type_value := 'reopened';
     when 'assign' then
       if current_case.status = 'closed' or p_assignee_id is null or not exists (
         select 1 from public.user_roles ur
@@ -217,6 +221,7 @@ begin
         raise exception using errcode = '22023', message = 'support case assignee must be an active admin and case must not be closed';
       end if;
       next_assignee := p_assignee_id;
+      event_type_value := 'assigned';
     else
       raise exception using errcode = '22023', message = 'unsupported support case action';
   end case;
