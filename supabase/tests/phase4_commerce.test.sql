@@ -1000,7 +1000,7 @@ select lives_ok(
   $sql$insert into public.refunds (
     id, order_id, payment_attempt_id, amount_minor, currency, status, reason, idempotency_key, requested_by
   )
-  select '99000000-0000-4000-8000-000000000099', o.id, pa.id, 500, o.currency, 'pending',
+  select '99000000-0000-4000-8000-000000000099', o.id, pa.id, 333, o.currency, 'pending',
     'Phase 4D1 approved partial refund', 'test-refund-reversal-0001', o.customer_id
   from public.orders o
   join phase4c_allocation_order_ids t on t.order_id = o.id
@@ -1027,7 +1027,7 @@ select lives_ok(
     gross_refund_minor, platform_fee_reversal_minor, seller_payable_reversal_minor, tax_reversal_minor, currency
   )
   select rr.id, rr.refund_id, opa.order_id, opa.order_item_id, opa.seller_id, opa.fee_schedule_id,
-    500, 50, 450, 0, opa.currency
+    333, 33, 300, 0, opa.currency
   from phase4d1_request_ids ids
   join public.refund_reversal_requests rr on rr.id = ids.request_id
   join public.order_proceeds_allocations opa on opa.order_id = rr.order_id$sql$,
@@ -1095,21 +1095,21 @@ select is(
    join public.financial_journal_batches b on b.id = e.batch_id
    join phase4d1_request_ids ids on ids.refund_id = b.refund_id
    where b.source_type = 'refund_reversal' and e.account = 'seller_payable' and e.side = 'debit'),
-  450::numeric, 'reversal debits the seller payable by the approved seller-net amount'
+  300::numeric, 'reversal debits the seller payable by the approved seller-net amount'
 );
 select is(
   (select sum(e.amount_minor) from public.financial_journal_entries e
    join public.financial_journal_batches b on b.id = e.batch_id
    join phase4d1_request_ids ids on ids.refund_id = b.refund_id
    where b.source_type = 'refund_reversal' and e.account = 'platform_revenue' and e.side = 'debit'),
-  50::numeric, 'reversal debits the approved commission reversal'
+  33::numeric, 'reversal debits the approved commission reversal'
 );
 select is(
   (select sum(e.amount_minor) from public.financial_journal_entries e
    join public.financial_journal_batches b on b.id = e.batch_id
    join phase4d1_request_ids ids on ids.refund_id = b.refund_id
    where b.source_type = 'refund_reversal' and e.account = 'unallocated_order_liability' and e.side = 'credit'),
-  500::numeric, 'reversal restores gross proceeds liability before the refund outflow'
+  333::numeric, 'reversal restores gross proceeds liability before the refund outflow'
 );
 select is(
   (select count(*) from public.financial_journal_batches b
@@ -1144,6 +1144,53 @@ select is(
    join phase4d1_request_ids ids on ids.refund_id = lt.refund_id
    where lt.source_type = 'refund'),
   1::bigint, 'verified reversal-backed refund creates exactly one legacy transfer ledger row'
+);
+
+-- Partial refunds must reverse commission using cumulative rounding; the final refund captures residual minor units.
+select lives_ok(
+  $sql$insert into public.refunds (
+    id, order_id, payment_attempt_id, amount_minor, currency, status, reason, idempotency_key, requested_by
+  )
+  select '99200000-0000-4000-8000-000000000099', o.id, pa.id, 667, o.currency, 'pending',
+    'Cumulative commission rounding fixture', 'test-refund-reversal-rounding-0001', o.customer_id
+  from public.orders o
+  join phase4c_allocation_order_ids t on t.order_id = o.id
+  join public.payment_attempts pa on pa.order_id = o.id$sql$,
+  'second partial refund is created for cumulative commission rounding'
+);
+create temporary table phase4d1_rounding_request_ids(request_id uuid primary key, refund_id uuid not null) on commit drop;
+select lives_ok(
+  $sql$with request_row as (
+    insert into public.refund_reversal_requests (
+      refund_id, order_id, amount_minor, currency, evidence_sha256, reason, requested_by
+    )
+    select r.id, r.order_id, r.amount_minor, r.currency, repeat('f',64),
+      'Cumulative commission rounding reversal', '83000000-0000-4000-8000-000000000083'
+    from public.refunds r where r.id = '99200000-0000-4000-8000-000000000099'
+    returning id, refund_id
+  )
+  insert into phase4d1_rounding_request_ids select id, refund_id from request_row$sql$,
+  'second partial refund reversal request is recorded'
+);
+select lives_ok(
+  $sql$insert into public.refund_reversal_lines (
+    request_id, refund_id, order_id, order_item_id, seller_id, fee_schedule_id,
+    gross_refund_minor, platform_fee_reversal_minor, seller_payable_reversal_minor, tax_reversal_minor, currency
+  )
+  select rr.id, rr.refund_id, opa.order_id, opa.order_item_id, opa.seller_id, opa.fee_schedule_id,
+    667, 67, 600, 0, opa.currency
+  from phase4d1_rounding_request_ids ids
+  join public.refund_reversal_requests rr on rr.id = ids.request_id
+  join public.order_proceeds_allocations opa on opa.order_id = rr.order_id$sql$,
+  'final partial refund reverses the remaining commission minor unit after cumulative rounding'
+);
+select is(
+  public.reject_refund_reversal_request(
+    (select request_id from phase4d1_rounding_request_ids),
+    '84000000-0000-4000-8000-000000000084'
+  ),
+  (select request_id from phase4d1_rounding_request_ids),
+  'rounding fixture can be rejected after its line arithmetic is verified'
 );
 
 -- A second reversal cannot consume more than the remaining allocated item gross/fee/net.
