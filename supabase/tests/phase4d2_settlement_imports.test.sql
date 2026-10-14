@@ -1,5 +1,5 @@
 begin;
-select plan(67);
+select plan(69);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -688,6 +688,30 @@ select is(
      and rr.row_id = 'period-mismatch-row-01'),
   'exception',
   'an explicitly period-mismatched row cannot be reported as a matched payment'
+);
+
+
+select is(
+  (select q.result_code
+   from public.list_settlement_exception_queue(
+     '89000000-0000-4000-8000-000000000089', 51, null, null, null
+   ) q
+   join public.settlement_reconciliation_runs sr on sr.id = q.run_id
+   where sr.import_id = (select import_id from phase4d2_explicit_exception_import_ids)
+     and q.row_id = 'unexplained-adjustment-row-01'),
+  'unexplained_adjustment',
+  'exception queue exposes explicit unexplained-adjustment classifications'
+);
+select is(
+  (select q.result_code
+   from public.list_settlement_exception_queue(
+     '89000000-0000-4000-8000-000000000089', 51, null, null, null
+   ) q
+   join public.settlement_reconciliation_runs sr on sr.id = q.run_id
+   where sr.import_id = (select import_id from phase4d2_explicit_exception_import_ids)
+     and q.row_id = 'period-mismatch-row-01'),
+  'period_mismatch',
+  'exception queue exposes explicit period-mismatch classifications'
 );
 
 select * from finish();
