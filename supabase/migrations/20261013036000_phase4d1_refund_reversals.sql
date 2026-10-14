@@ -184,7 +184,6 @@ begin
   from public.seller_fee_schedules s where s.id = new.fee_schedule_id;
 
   if allocation_row.id is null or fee_bps is null
-    or new.platform_fee_reversal_minor <> floor((new.gross_refund_minor::numeric * fee_bps::numeric) / 10000)::bigint
     or new.seller_payable_reversal_minor <> new.gross_refund_minor - new.platform_fee_reversal_minor - new.tax_reversal_minor
     or new.platform_fee_reversal_minor > allocation_row.platform_fee_minor
     or new.seller_payable_reversal_minor > allocation_row.seller_net_minor then
@@ -205,6 +204,17 @@ begin
     or previous_fee + new.platform_fee_reversal_minor > allocation_row.platform_fee_minor
     or previous_net + new.seller_payable_reversal_minor > allocation_row.seller_net_minor then
     raise exception using errcode = '23514', message = 'cumulative item refunds cannot exceed original allocated gross, fee or seller payable';
+  end if;
+
+  -- Reverse commission cumulatively, not by rounding each partial refund in isolation.
+  -- The final refund reverses any residual fee minor unit left by earlier rounding.
+  if previous_fee + new.platform_fee_reversal_minor <>
+    case
+      when previous_gross + new.gross_refund_minor >= allocation_row.gross_minor
+        then allocation_row.platform_fee_minor
+      else floor(((previous_gross + new.gross_refund_minor)::numeric * fee_bps::numeric) / 10000)::bigint
+    end then
+    raise exception using errcode = '23514', message = 'cumulative platform fee reversal must match allocated commission rounding';
   end if;
 
   select o.tax_minor into order_tax from public.orders o where o.id = new.order_id;
