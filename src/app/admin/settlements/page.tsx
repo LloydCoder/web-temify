@@ -25,9 +25,9 @@ const queueItemSchema = z.object({
   row_type: z.enum(["payment", "refund", "fee", "payout", "adjustment"]),
   provider_reference: z.string().max(240).nullable(),
   payment_reference: z.string().max(240).nullable(),
-  gross_minor: z.number().int().safe(),
-  fee_minor: z.number().int().safe(),
-  net_minor: z.number().int().safe(),
+  gross_minor: z.string().regex(/^-?[0-9]{1,19}$/),
+  fee_minor: z.string().regex(/^[0-9]{1,19}$/),
+  net_minor: z.string().regex(/^-?[0-9]{1,19}$/),
   triage_decision: z
     .enum(["reimport_required", "manual_review_required", "accepted_with_evidence"])
     .nullable(),
@@ -42,6 +42,10 @@ const cursorSchema = z.object({
 }).strict();
 
 type QueueItem = z.infer<typeof queueItemSchema>;
+
+function formatMinorUnits(value: string) {
+  return BigInt(value).toLocaleString("en");
+}
 
 function formatTimestamp(value: string) {
   return `${new Date(value).toLocaleString("en", {
@@ -168,9 +172,9 @@ export default async function AdminSettlementExceptionsPage({
                   <div><dt>Report timezone</dt><dd>{item.report_timezone}</dd></div>
                   <div><dt>Provider reference</dt><dd>{item.provider_reference ?? "Not supplied"}</dd></div>
                   <div><dt>Internal payment reference</dt><dd>{item.payment_reference ?? "Not supplied"}</dd></div>
-                  <div><dt>Gross (minor units)</dt><dd>{item.gross_minor.toLocaleString("en")}</dd></div>
-                  <div><dt>Fee (minor units)</dt><dd>{item.fee_minor.toLocaleString("en")}</dd></div>
-                  <div><dt>Net (minor units)</dt><dd>{item.net_minor.toLocaleString("en")}</dd></div>
+                  <div><dt>Gross (minor units)</dt><dd>{formatMinorUnits(item.gross_minor)}</dd></div>
+                  <div><dt>Fee (minor units)</dt><dd>{formatMinorUnits(item.fee_minor)}</dd></div>
+                  <div><dt>Net (minor units)</dt><dd>{formatMinorUnits(item.net_minor)}</dd></div>
                   <div><dt>Reconciliation recorded</dt><dd>{formatTimestamp(item.result_created_at)}</dd></div>
                   <div><dt>Triage reason</dt><dd>{item.triage_reason ?? "No triage decision recorded"}</dd></div>
                 </dl>
