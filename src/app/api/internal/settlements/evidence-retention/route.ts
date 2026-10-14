@@ -41,12 +41,9 @@ type RetentionClaim = {
 };
 
 async function runRetention(request: Request) {
-  if (
-    !authorized(
-      request,
-      process.env.SETTLEMENT_EVIDENCE_RETENTION_TOKEN || process.env.CRON_SECRET,
-    )
-  ) {
+  const retentionToken =
+    process.env.SETTLEMENT_EVIDENCE_RETENTION_TOKEN || process.env.CRON_SECRET;
+  if (!authorized(request, retentionToken)) {
     return NextResponse.json(
       { error: "unauthorized" },
       { status: 401, headers: { "Cache-Control": "no-store" } },
