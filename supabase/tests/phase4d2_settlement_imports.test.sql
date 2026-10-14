@@ -1,5 +1,5 @@
 begin;
-select plan(91);
+select plan(102);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -714,6 +714,123 @@ select is(
   'exception queue exposes explicit period-mismatch classifications'
 );
 
+
+-- A verified refund must reconcile to its own posted refund journal, not the original payment.
+select lives_ok(
+  $sql$insert into public.refunds (
+    id, order_id, payment_attempt_id, amount_minor, currency, reason, idempotency_key, requested_by
+  ) values (
+    '99400000-0000-4000-8000-000000000099',
+    '88000000-0000-4000-8000-000000000088',
+    '90000000-0000-4000-8000-000000000090',
+    300, 'USD', 'Phase 4D2 matched refund fixture',
+    'phase4d2-matched-refund-idempotency-01',
+    '89100000-0000-4000-8000-000000000089'
+  )$sql$,
+  'a partial refund request is created for the paid sandbox order'
+);
+select lives_ok(
+  $sql$insert into public.payment_webhook_events (
+    provider, provider_event_id, event_type, payload_sha256, signature_verified,
+    order_id, payment_attempt_id, refund_id, amount_minor, currency, provider_reference
+  ) values (
+    'sandbox', 'phase4d2-verified-refund-event-01', 'refund.succeeded', repeat('b',64), true,
+    '88000000-0000-4000-8000-000000000088',
+    '90000000-0000-4000-8000-000000000090',
+    '99400000-0000-4000-8000-000000000099',
+    300, 'USD', 'phase4d2-provider-refund-match-01'
+  )$sql$,
+  'verified refund event binds the exact refund, order, attempt, amount and provider reference'
+);
+select is(
+  public.process_payment_webhook_event(we.id),
+  true,
+  'verified refund event posts the refund ledger and accounting journal'
+)
+from public.payment_webhook_events we
+where we.provider_event_id = 'phase4d2-verified-refund-event-01';
+select is(
+  (select count(*) from public.financial_journal_batches b
+   where b.source_type = 'refund'
+     and b.refund_id = '99400000-0000-4000-8000-000000000099'
+     and b.provider_reference = 'phase4d2-provider-refund-match-01'
+     and b.status = 'posted'),
+  1::bigint,
+  'refund processing creates exactly one posted journal with its own provider reference'
+);
+
+create temporary table phase4d2_matched_refund_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_matched_refund_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'settlement-matched-refund-batch-2026-10-13',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('abcdef0123456789',4), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(jsonb_build_object(
+        'rowId','matched-refund-row-01', 'rowType','refund',
+        'providerReference','phase4d2-provider-refund-match-01',
+        'paymentReference','phase4d2-order-payment-match-01',
+        'occurredAt','2026-10-13T10:30:00Z', 'currency','USD',
+        'grossMinor',-300, 'feeMinor',0, 'netMinor',-300
+      ))
+    )
+  $sql$,
+  'settlement report imports a refund row with negative gross minor units'
+);
+select lives_ok(
+  $sql$
+    select public.reconcile_settlement_import(
+      (select import_id from phase4d2_matched_refund_import_ids),
+      '89200000-0000-4000-8000-000000000089'
+    )
+  $sql$,
+  'refund settlement row reconciles without changing the immutable refund journal'
+);
+select is(
+  (select rr.result_code
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_matched_refund_import_ids)
+     and rr.row_id = 'matched-refund-row-01'),
+  'matched_refund',
+  'refund settlement row matches only a posted refund journal'
+);
+select is(
+  (select rr.result_status
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_matched_refund_import_ids)
+     and rr.row_id = 'matched-refund-row-01'),
+  'matched',
+  'verified refund match is represented as a matched reconciliation result'
+);
+select is(
+  (select rr.journal_batch_id
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_matched_refund_import_ids)
+     and rr.row_id = 'matched-refund-row-01'),
+  (select b.id from public.financial_journal_batches b
+   where b.source_type = 'refund'
+     and b.refund_id = '99400000-0000-4000-8000-000000000099'
+     and b.status = 'posted'),
+  'reconciliation preserves the exact refund journal batch identity'
+);
+select is(
+  (select sr.matched_rows
+   from public.settlement_reconciliation_runs sr
+   where sr.import_id = (select import_id from phase4d2_matched_refund_import_ids)),
+  1,
+  'reconciliation matched-row count includes the refund match'
+);
+select is(
+  (select sr.exception_rows
+   from public.settlement_reconciliation_runs sr
+   where sr.import_id = (select import_id from phase4d2_matched_refund_import_ids)),
+  0,
+  'valid refund match creates no reconciliation exception'
+);
 
 -- A single posted journal batch must not satisfy two settlement rows.
 create temporary table phase4d2_duplicate_reference_import_ids(import_id uuid primary key) on commit drop;
