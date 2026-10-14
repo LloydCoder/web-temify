@@ -1,5 +1,5 @@
 begin;
-select plan(169);
+select plan(196);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -985,6 +985,211 @@ select throws_ok(
   $sql$update public.financial_journal_batches set status = 'posted'
     where source_key = 'test-manual-adjustment-0001'$sql$,
   '23514', null, 'manual financial adjustments remain blocked until a dedicated approved workflow exists'
+);
+
+
+-- Phase 4D1: a refund after proceeds allocation requires independently approved item-level reversal.
+select has_table('public', 'refund_reversal_requests', 'refund reversal requests preserve independent approval evidence');
+select has_table('public', 'refund_reversal_lines', 'refund reversal lines reconcile item gross, fee, seller payable and tax');
+select ok(
+  not has_function_privilege('authenticated', 'public.approve_refund_reversal_request(uuid,uuid)', 'EXECUTE')
+  and has_function_privilege('service_role', 'public.approve_refund_reversal_request(uuid,uuid)', 'EXECUTE'),
+  'refund reversal approval is restricted to the trusted server role'
+);
+select lives_ok(
+  $sql$insert into public.refunds (
+    id, order_id, payment_attempt_id, amount_minor, currency, status, reason, idempotency_key, requested_by
+  )
+  select '99000000-0000-4000-8000-000000000099', o.id, pa.id, 500, o.currency, 'pending',
+    'Phase 4D1 approved partial refund', 'test-refund-reversal-0001', o.customer_id
+  from public.orders o
+  join phase4c_allocation_order_ids t on t.order_id = o.id
+  join public.payment_attempts pa on pa.order_id = o.id$sql$,
+  'partial refund fixture is created against an already allocated paid order'
+);
+create temporary table phase4d1_request_ids(request_id uuid primary key, refund_id uuid not null) on commit drop;
+select lives_ok(
+  $sql$with request_row as (
+    insert into public.refund_reversal_requests (
+      refund_id, order_id, amount_minor, currency, evidence_sha256, reason, requested_by
+    )
+    select r.id, r.order_id, r.amount_minor, r.currency, repeat('c',64),
+      'Approved item-level reversal required before refund', '83000000-0000-4000-8000-000000000083'
+    from public.refunds r where r.id = '99000000-0000-4000-8000-000000000099'
+    returning id, refund_id
+  )
+  insert into phase4d1_request_ids select id, refund_id from request_row$sql$,
+  'reversal request is created by a database-owned admin'
+);
+select lives_ok(
+  $sql$insert into public.refund_reversal_lines (
+    request_id, refund_id, order_id, order_item_id, seller_id, fee_schedule_id,
+    gross_refund_minor, platform_fee_reversal_minor, seller_payable_reversal_minor, tax_reversal_minor, currency
+  )
+  select rr.id, rr.refund_id, opa.order_id, opa.order_item_id, opa.seller_id, opa.fee_schedule_id,
+    500, 50, 450, 0, opa.currency
+  from phase4d1_request_ids ids
+  join public.refund_reversal_requests rr on rr.id = ids.request_id
+  join public.order_proceeds_allocations opa on opa.order_id = rr.order_id$sql$,
+  'item-level reversal line matches original seller proceeds allocation and fee arithmetic'
+);
+select throws_ok(
+  $sql$select public.approve_refund_reversal_request(
+    (select request_id from phase4d1_request_ids),
+    '83000000-0000-4000-8000-000000000083'
+  )$sql$,
+  '23514', null, 'refund reversal requester cannot approve their own request'
+);
+select is(
+  public.approve_refund_reversal_request(
+    (select request_id from phase4d1_request_ids),
+    '84000000-0000-4000-8000-000000000084'
+  ),
+  (select request_id from phase4d1_request_ids),
+  'a distinct database-owned admin approves the item-level refund reversal'
+);
+select lives_ok(
+  $sql$insert into public.payment_webhook_events (
+    provider, provider_event_id, event_type, payload_sha256, signature_verified,
+    order_id, payment_attempt_id, refund_id, amount_minor, currency, provider_reference
+  )
+  select 'sandbox', 'phase4d1-verified-refund-event-0001', 'refund.succeeded', repeat('d',64), true,
+    r.order_id, r.payment_attempt_id, r.id, r.amount_minor, r.currency, 'phase4d1-provider-refund-0001'
+  from public.refunds r where r.id = '99000000-0000-4000-8000-000000000099'$sql$,
+  'verified refund webhook is stored with provider reference and payload evidence'
+);
+select is(
+  (select public.process_payment_webhook_event(we.id)
+   from public.payment_webhook_events we
+   where we.provider_event_id = 'phase4d1-verified-refund-event-0001'),
+  true, 'refund webhook posts approved reversal before posting refund outflow'
+);
+select is(
+  (select rr.status from public.refund_reversal_requests rr
+   join phase4d1_request_ids ids on ids.request_id = rr.id),
+  'posted', 'approved reversal request is linked to its immutable posted journal'
+);
+select is(
+  (select count(*) from public.financial_journal_batches b
+   join phase4d1_request_ids ids on ids.refund_id = b.refund_id
+   where b.source_type = 'refund_reversal' and b.status = 'posted'),
+  1::bigint, 'exactly one reversal journal is posted for the refund'
+);
+select is(
+  (select b.provider_reference from public.financial_journal_batches b
+   join phase4d1_request_ids ids on ids.refund_id = b.refund_id
+   where b.source_type = 'refund_reversal'),
+  'phase4d1-provider-refund-0001', 'reversal journal preserves the verified provider refund reference'
+);
+select ok(
+  (select sum(e.amount_minor) filter (where e.side = 'debit')
+          = sum(e.amount_minor) filter (where e.side = 'credit')
+   from public.financial_journal_entries e
+   join public.financial_journal_batches b on b.id = e.batch_id
+   join phase4d1_request_ids ids on ids.refund_id = b.refund_id
+   where b.source_type = 'refund_reversal'),
+  'refund reversal journal is balanced'
+);
+select is(
+  (select sum(e.amount_minor) from public.financial_journal_entries e
+   join public.financial_journal_batches b on b.id = e.batch_id
+   join phase4d1_request_ids ids on ids.refund_id = b.refund_id
+   where b.source_type = 'refund_reversal' and e.account = 'seller_payable' and e.side = 'debit'),
+  450::numeric, 'reversal debits the seller payable by the approved seller-net amount'
+);
+select is(
+  (select sum(e.amount_minor) from public.financial_journal_entries e
+   join public.financial_journal_batches b on b.id = e.batch_id
+   join phase4d1_request_ids ids on ids.refund_id = b.refund_id
+   where b.source_type = 'refund_reversal' and e.account = 'platform_revenue' and e.side = 'debit'),
+  50::numeric, 'reversal debits the approved commission reversal'
+);
+select is(
+  (select sum(e.amount_minor) from public.financial_journal_entries e
+   join public.financial_journal_batches b on b.id = e.batch_id
+   join phase4d1_request_ids ids on ids.refund_id = b.refund_id
+   where b.source_type = 'refund_reversal' and e.account = 'unallocated_order_liability' and e.side = 'credit'),
+  500::numeric, 'reversal restores gross proceeds liability before the refund outflow'
+);
+select is(
+  (select count(*) from public.financial_journal_batches b
+   join phase4d1_request_ids ids on ids.refund_id = b.refund_id
+   where b.source_type = 'refund' and b.status = 'posted'),
+  1::bigint, 'verified refund outflow posts exactly one journal after the reversal'
+);
+select ok(
+  (select sum(e.amount_minor) filter (where e.side = 'debit')
+          = sum(e.amount_minor) filter (where e.side = 'credit')
+   from public.financial_journal_entries e
+   join public.financial_journal_batches b on b.id = e.batch_id
+   join phase4d1_request_ids ids on ids.refund_id = b.refund_id
+   where b.source_type = 'refund'),
+  'refund outflow journal remains balanced after proceeds reversal'
+);
+select is(
+  (select r.status from public.refunds r
+   join phase4d1_request_ids ids on ids.refund_id = r.id),
+  'succeeded', 'refund status advances only after reversal and refund journals post'
+);
+select is(
+  (select o.status from public.orders o
+   join phase4d1_request_ids ids on ids.refund_id = (
+     select rr.refund_id from public.refund_reversal_requests rr where rr.order_id = o.id
+     order by rr.created_at desc limit 1
+   )),
+  'partially_refunded', 'partial refund updates the order state after accounting is posted'
+);
+select is(
+  (select count(*) from public.ledger_transactions lt
+   join phase4d1_request_ids ids on ids.refund_id = lt.refund_id
+   where lt.source_type = 'refund'),
+  1::bigint, 'verified reversal-backed refund creates exactly one legacy transfer ledger row'
+);
+
+-- A second reversal cannot consume more than the remaining allocated item gross/fee/net.
+select lives_ok(
+  $sql$insert into public.refunds (
+    id, order_id, payment_attempt_id, amount_minor, currency, status, reason, idempotency_key, requested_by
+  )
+  select '99100000-0000-4000-8000-000000000099', o.id, pa.id, 900, o.currency, 'pending',
+    'Over-allocation rejection fixture', 'test-refund-reversal-overflow-0001', o.customer_id
+  from public.orders o
+  join phase4c_allocation_order_ids t on t.order_id = o.id
+  join public.payment_attempts pa on pa.order_id = o.id$sql$,
+  'over-refund fixture is created for cumulative allocation guard'
+);
+select lives_ok(
+  $sql$insert into public.refund_reversal_requests (
+    refund_id, order_id, amount_minor, currency, evidence_sha256, reason, requested_by
+  )
+  select r.id, r.order_id, r.amount_minor, r.currency, repeat('e',64),
+    'Reject reversal that exceeds remaining allocated proceeds', '83000000-0000-4000-8000-000000000083'
+  from public.refunds r where r.id = '99100000-0000-4000-8000-000000000099'$sql$,
+  'over-refund request is recorded pending review'
+);
+select throws_ok(
+  $sql$insert into public.refund_reversal_lines (
+    request_id, refund_id, order_id, order_item_id, seller_id, fee_schedule_id,
+    gross_refund_minor, platform_fee_reversal_minor, seller_payable_reversal_minor, tax_reversal_minor, currency
+  )
+  select rr.id, rr.refund_id, opa.order_id, opa.order_item_id, opa.seller_id, opa.fee_schedule_id,
+    900, 90, 810, 0, opa.currency
+  from public.refund_reversal_requests rr
+  join public.order_proceeds_allocations opa on opa.order_id = rr.order_id
+  where rr.refund_id = '99100000-0000-4000-8000-000000000099'$sql$,
+  '23514', null, 'cumulative refund reversal cannot exceed original allocated item gross, fee or seller payable'
+);
+select is(
+  public.reject_refund_reversal_request(
+    (select id from public.refund_reversal_requests where refund_id = '99100000-0000-4000-8000-000000000099'),
+    '84000000-0000-4000-8000-000000000084'
+  ),
+  (select id from public.refund_reversal_requests where refund_id = '99100000-0000-4000-8000-000000000099'),
+  'independent admin can reject a reversal request and release its reserved allocation'
+);
+select is(
+  (select status from public.refund_reversal_requests where refund_id = '99100000-0000-4000-8000-000000000099'),
+  'rejected', 'rejected reversal request is retained as immutable audit history'
 );
 
 select * from finish();
