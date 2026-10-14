@@ -1,5 +1,5 @@
 begin;
-select plan(118);
+select plan(123);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -830,6 +830,57 @@ select is(
    where sr.import_id = (select import_id from phase4d2_matched_refund_import_ids)),
   0,
   'valid refund match creates no reconciliation exception'
+);
+
+-- Refund net arithmetic must be checked before a replay classification.
+create temporary table phase4d2_refund_net_mismatch_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_refund_net_mismatch_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'settlement-refund-net-mismatch-2026-10-13',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('a1b2c3d4e5f60718',4), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(jsonb_build_object(
+        'rowId','refund-net-mismatch-row-01', 'rowType','refund',
+        'providerReference','phase4d2-provider-refund-match-01',
+        'occurredAt','2026-10-13T12:02:00Z', 'currency','USD',
+        'grossMinor',-300, 'feeMinor',1, 'netMinor',-300
+      ))
+    )
+  $sql$,
+  'refund report with inconsistent net arithmetic is retained as immutable evidence'
+);
+select lives_ok(
+  $sql$select public.reconcile_settlement_import(
+    (select import_id from phase4d2_refund_net_mismatch_import_ids),
+    '89200000-0000-4000-8000-000000000089'
+  )$sql$,
+  'refund net mismatch reconciles to an exception before replay classification'
+);
+select is(
+  (select rr.result_code from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id=rr.run_id
+   where sr.import_id=(select import_id from phase4d2_refund_net_mismatch_import_ids)
+     and rr.row_id='refund-net-mismatch-row-01'),
+  'amount_mismatch',
+  'refund net must equal gross minus reported fee'
+);
+select is(
+  (select rr.result_status from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id=rr.run_id
+   where sr.import_id=(select import_id from phase4d2_refund_net_mismatch_import_ids)
+     and rr.row_id='refund-net-mismatch-row-01'),
+  'exception',
+  'refund net mismatch remains unresolved'
+);
+select is(
+  (select rr.journal_batch_id from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id=rr.run_id
+   where sr.import_id=(select import_id from phase4d2_refund_net_mismatch_import_ids)
+     and rr.row_id='refund-net-mismatch-row-01'),
+  null::uuid,
+  'refund net mismatch cannot retain a journal match'
 );
 
 -- Refund matching must classify amount/currency mismatches before replay checks.
