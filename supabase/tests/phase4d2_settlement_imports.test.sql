@@ -1247,32 +1247,27 @@ select lives_ok(
   $sql$,
   'a fee-only row with a negative net amount imports as evidence'
 );
-select lives_ok(
+select throws_ok(
   $sql$
     select public.reconcile_settlement_import(
       (select import_id from phase4d2_fee_only_import_ids),
       '89200000-0000-4000-8000-000000000089'
     )
   $sql$,
-  'a fee-only row is classified without posting provider fees'
+  '23514', 'settlement fee posting requires independently linked evidence with matching source digest',
+  'a fee-only row fails closed without independently linked private evidence'
 );
 select is(
-  (select rr.result_code
-   from public.settlement_reconciliation_results rr
-   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
-   where sr.import_id = (select import_id from phase4d2_fee_only_import_ids)
-     and rr.row_id = 'fee-only-row-01'),
-  'unsupported_row_type',
-  'fee-only row is explicitly classified as unsupported for matching'
+  (select count(*) from public.settlement_reconciliation_runs
+   where import_id = (select import_id from phase4d2_fee_only_import_ids)),
+  0::bigint,
+  'missing evidence leaves no partial fee-only reconciliation run'
 );
 select is(
-  (select rr.result_status
-   from public.settlement_reconciliation_results rr
-   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
-   where sr.import_id = (select import_id from phase4d2_fee_only_import_ids)
-     and rr.row_id = 'fee-only-row-01'),
-  'exception',
-  'fee-only row remains unresolved until provider-fee posting policy is approved'
+  (select count(*) from public.settlement_journal_postings
+   where import_id = (select import_id from phase4d2_fee_only_import_ids)),
+  0::bigint,
+  'missing evidence creates no provider-fee journal posting'
 );
 
 create temporary table phase4d2_adjustment_row_import_ids(import_id uuid primary key) on commit drop;
