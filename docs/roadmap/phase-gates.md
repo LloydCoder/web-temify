@@ -266,6 +266,15 @@ Least-privilege admin controls, moderation queues, support, audit review, financ
 - [ ] Incident alerts, escalation ownership, safe break-glass access, backup/restore exercises and incident response procedures are operationally tested.
 - [ ] Support communications and data access are tenant-scoped, logged, retention-aware and protected against disclosure of secrets or payment data.
 
+### Phase 5D — Audited support-case workflow (implementation in progress)
+
+- [ ] Migration and pgTAP tests pass from an empty database on the exact candidate head.
+- [ ] Authenticated customer intake and ownership-scoped case history are verified.
+- [ ] Admin queue and state transitions enforce server-side role checks, same-origin requests, bounded bodies, explicit transitions, admin-only assignment, append-only events, and transactional audit evidence.
+- [ ] E2E verifies unauthenticated admin access denial and customer history authentication.
+- [ ] Phase-specific forensic audit records exact-head CI evidence and remaining operational limits.
+- **Explicit limits:** outbound notifications, automated SLA escalation, staffed on-call, incident response, takedown/appeal workflow, disputes/chargebacks, financial reconciliation, backup restore and break-glass controls remain separate gates.
+
 ## Phase 6 — Seller system and product factory
 
 **Status: NOT COMPLETE.** This phase builds the trusted supply side and a repeatable, evidence-backed product release pipeline. The dedicated source monorepo is [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products); its inventory is planning input, not evidence that products have been built or released. Keep product source code, manifests, build/test contracts and immutable release evidence in that repository; keep commercial listing state and marketplace transactions in this repository.
