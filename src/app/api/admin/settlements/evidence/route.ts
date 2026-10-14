@@ -177,11 +177,7 @@ export async function POST(request: Request) {
     },
     {
       status:
-        scanStatus === "clean"
-          ? 201
-          : scanStatus === "infected"
-            ? 422
-            : 202,
+        scanStatus === "clean" ? 201 : scanStatus === "infected" ? 422 : 202,
       headers: { "Cache-Control": "no-store" },
     },
   );

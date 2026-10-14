@@ -101,37 +101,31 @@ afterEach(async () => {
 });
 
 describe("settlement scanner service", () => {
-  it(
-    "compares bearer tokens without length-dependent timingSafeEqual errors",
-    () => {
+  it("compares bearer tokens without length-dependent timingSafeEqual errors", () => {
     expect(constantTimeTokenEquals(token, token)).toBe(true);
     expect(constantTimeTokenEquals(token, "wrong")).toBe(false);
     expect(constantTimeTokenEquals(token, undefined)).toBe(false);
-    },
-  );
+  });
 
-  it(
-    "rejects unauthenticated requests before reading or scanning a payload",
-    async () => {
-      const scan = vi.fn(async () => ({
-        verdict: "clean",
-        scannerName: "clamav",
-        scannerVersion: "ClamAV test",
-      }));
-      const port = await listen(startGateway({ scan }));
-      const response = await fetch(`http://127.0.0.1:${port}/v1/scan`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/octet-stream",
-          "X-Evidence-SHA256": sha256,
-        },
-        body: bytes,
-      });
+  it("rejects unauthenticated requests before reading or scanning a payload", async () => {
+    const scan = vi.fn(async () => ({
+      verdict: "clean",
+      scannerName: "clamav",
+      scannerVersion: "ClamAV test",
+    }));
+    const port = await listen(startGateway({ scan }));
+    const response = await fetch(`http://127.0.0.1:${port}/v1/scan`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/octet-stream",
+        "X-Evidence-SHA256": sha256,
+      },
+      body: bytes,
+    });
 
-      expect(response.status).toBe(401);
-      expect(scan).not.toHaveBeenCalled();
-    },
-  );
+    expect(response.status).toBe(401);
+    expect(scan).not.toHaveBeenCalled();
+  });
 
   it("rejects unsupported content types and digest mismatches", async () => {
     const scan = vi.fn(async () => ({
@@ -158,32 +152,29 @@ describe("settlement scanner service", () => {
     expect(scan).not.toHaveBeenCalled();
   });
 
-  it(
-    "returns a clean verdict only after the scanner accepts the exact digest",
-    async () => {
-      const scan = vi.fn(async () => ({
-        verdict: "clean",
-        scannerName: "clamav",
-        scannerVersion: "ClamAV 1.5.4",
-      }));
-      const port = await listen(startGateway({ scan }));
-      const response = await fetch(`http://127.0.0.1:${port}/v1/scan`, {
-        method: "POST",
-        headers: authHeaders(),
-        body: bytes,
-      });
+  it("returns a clean verdict only after the scanner accepts the exact digest", async () => {
+    const scan = vi.fn(async () => ({
+      verdict: "clean",
+      scannerName: "clamav",
+      scannerVersion: "ClamAV 1.5.4",
+    }));
+    const port = await listen(startGateway({ scan }));
+    const response = await fetch(`http://127.0.0.1:${port}/v1/scan`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: bytes,
+    });
 
-      expect(response.status).toBe(200);
-      await expect(response.json()).resolves.toEqual({
-        verdict: "clean",
-        scannerName: "clamav",
-        scannerVersion: "ClamAV 1.5.4",
-        sha256,
-      });
-      expect(scan).toHaveBeenCalledOnce();
-      expect(scan.mock.calls[0][0]).toEqual(bytes);
-    },
-  );
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      verdict: "clean",
+      scannerName: "clamav",
+      scannerVersion: "ClamAV 1.5.4",
+      sha256,
+    });
+    expect(scan).toHaveBeenCalledOnce();
+    expect(scan.mock.calls[0][0]).toEqual(bytes);
+  });
 
   it.each(["infected", "error"])(
     "preserves a scanner %s verdict and never upgrades it to clean",

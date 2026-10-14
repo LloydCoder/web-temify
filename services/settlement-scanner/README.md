@@ -62,7 +62,7 @@ query the ClamAV daemon. Neither endpoint exposes the scanner version.
   HTTP in production.
 - Configure the same high-entropy bearer token in the gateway and Web-Temify
   server environment. Rotate it by coordinated secret update and service
-  restart; never put it in a NEXT_PUBLIC_* variable.
+  restart; never put it in a NEXT*PUBLIC*\* variable.
 - Pin CLAMAV_IMAGE to a reviewed, platform-appropriate image digest for
   production instead of relying on a floating tag. The compose file defaults
   to the official ClamAV 1.5.4-debian13-slim image tag for local

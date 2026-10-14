@@ -52,10 +52,7 @@ function clamdRequest({ host, port, command, bytes, timeoutMs }) {
     socket.on("error", (error) => finish(error));
     socket.on("end", () => {
       if (response.length > 0) {
-        finish(
-          null,
-          response.toString("utf8").replace(/\0.*$/s, "").trim(),
-        );
+        finish(null, response.toString("utf8").replace(/\0.*$/s, "").trim());
       } else {
         finish(new Error("clamd closed without a response"));
       }
