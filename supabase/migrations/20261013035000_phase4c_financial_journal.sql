@@ -79,6 +79,14 @@ declare
   debit_total numeric;
   credit_total numeric;
   mismatched_currency boolean;
+  source_amount bigint;
+  source_subtotal bigint;
+  source_tax bigint;
+  source_item_count bigint;
+  allocation_count bigint;
+  allocation_gross numeric;
+  allocation_fee numeric;
+  allocation_net numeric;
 begin
   if tg_op = 'INSERT' then
     if new.status <> 'draft' or new.posted_at is not null then
@@ -119,6 +127,127 @@ begin
 
   if entry_count < 2 or debit_total <= 0 or debit_total <> credit_total or mismatched_currency then
     raise exception using errcode = '23514', message = 'financial batch must contain balanced entries in one currency before posting';
+  end if;
+
+  if new.source_type = 'payment' then
+    select lt.amount_minor into source_amount
+    from public.ledger_transactions lt
+    where lt.source_type = 'payment'
+      and lt.order_id = new.order_id
+      and lt.payment_attempt_id = new.payment_attempt_id
+      and lt.reference_key = replace(new.source_key, 'legacy-ledger:payment:', '')
+      and lt.currency = new.currency;
+
+    if source_amount is null
+      or not exists (
+        select 1
+        from public.payment_webhook_events we
+        where we.order_id = new.order_id
+          and we.payment_attempt_id = new.payment_attempt_id
+          and we.provider = new.provider
+          and we.event_type = 'payment.succeeded'
+          and we.signature_verified
+          and we.processing_status in ('processing', 'processed')
+          and we.payload_sha256 = new.evidence_sha256
+          and we.provider_reference = new.provider_reference
+      )
+      or entry_count <> 2
+      or not exists (
+        select 1 from public.financial_journal_entries e
+        where e.batch_id = new.id and e.account = 'provider_clearing'
+          and e.side = 'debit' and e.amount_minor = source_amount
+      )
+      or not exists (
+        select 1 from public.financial_journal_entries e
+        where e.batch_id = new.id and e.account = 'unallocated_order_liability'
+          and e.side = 'credit' and e.amount_minor = source_amount
+      ) then
+      raise exception using errcode = '23514', message = 'payment journal must match an immutable ledger posting and verified provider event';
+    end if;
+
+  elsif new.source_type = 'refund' then
+    select lt.amount_minor into source_amount
+    from public.ledger_transactions lt
+    where lt.source_type = 'refund'
+      and lt.order_id = new.order_id
+      and lt.payment_attempt_id = new.payment_attempt_id
+      and lt.refund_id = new.refund_id
+      and lt.reference_key = replace(new.source_key, 'legacy-ledger:refund:', '')
+      and lt.currency = new.currency;
+
+    if source_amount is null
+      or exists (
+        select 1 from public.order_proceeds_allocations opa where opa.order_id = new.order_id
+      )
+      or not exists (
+        select 1
+        from public.payment_webhook_events we
+        where we.order_id = new.order_id
+          and we.payment_attempt_id = new.payment_attempt_id
+          and we.refund_id = new.refund_id
+          and we.provider = new.provider
+          and we.event_type = 'refund.succeeded'
+          and we.signature_verified
+          and we.processing_status in ('processing', 'processed')
+          and we.payload_sha256 = new.evidence_sha256
+          and we.provider_reference = new.provider_reference
+      )
+      or entry_count <> 2
+      or not exists (
+        select 1 from public.financial_journal_entries e
+        where e.batch_id = new.id and e.account = 'unallocated_order_liability'
+          and e.side = 'debit' and e.amount_minor = source_amount
+      )
+      or not exists (
+        select 1 from public.financial_journal_entries e
+        where e.batch_id = new.id and e.account = 'provider_clearing'
+          and e.side = 'credit' and e.amount_minor = source_amount
+      ) then
+      raise exception using errcode = '23514', message = 'refund journal must match a verified refund event and cannot bypass allocation reversal';
+    end if;
+
+  elsif new.source_type = 'proceeds_allocation' then
+    select o.total_minor, o.subtotal_minor, o.tax_minor
+      into source_amount, source_subtotal, source_tax
+    from public.orders o
+    where o.id = new.order_id and o.status = 'paid' and o.currency = new.currency;
+
+    select count(*) into source_item_count
+    from public.order_items oi where oi.order_id = new.order_id;
+
+    select count(*), coalesce(sum(opa.gross_minor), 0),
+           coalesce(sum(opa.platform_fee_minor), 0), coalesce(sum(opa.seller_net_minor), 0)
+      into allocation_count, allocation_gross, allocation_fee, allocation_net
+    from public.order_proceeds_allocations opa
+    where opa.journal_batch_id = new.id;
+
+    if source_amount is null
+      or allocation_count <> source_item_count
+      or allocation_count = 0
+      or allocation_gross <> source_subtotal
+      or allocation_fee + allocation_net <> allocation_gross
+      or (select count(*) from public.financial_journal_entries e
+          where e.batch_id = new.id and e.account = 'unallocated_order_liability'
+            and e.side = 'debit' and e.amount_minor = source_amount) <> 1
+      or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e
+          where e.batch_id = new.id and e.account = 'seller_payable' and e.side = 'credit') <> allocation_net
+      or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e
+          where e.batch_id = new.id and e.account = 'platform_revenue' and e.side = 'credit') <> allocation_fee
+      or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e
+          where e.batch_id = new.id and e.account = 'tax_payable' and e.side = 'credit') <> source_tax
+      or exists (
+        select 1 from public.financial_journal_entries e
+        where e.batch_id = new.id
+          and not (
+            (e.account = 'unallocated_order_liability' and e.side = 'debit')
+            or (e.account in ('seller_payable', 'platform_revenue', 'tax_payable') and e.side = 'credit')
+          )
+      ) then
+      raise exception using errcode = '23514', message = 'proceeds allocation journal must reconcile to paid order, item allocations, approved fees and tax';
+    end if;
+
+  else
+    raise exception using errcode = '23514', message = 'financial posting source has no approved posting workflow';
   end if;
 
   new.posted_at := coalesce(new.posted_at, now());
