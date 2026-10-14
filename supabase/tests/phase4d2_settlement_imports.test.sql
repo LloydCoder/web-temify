@@ -113,7 +113,7 @@ insert into public.payment_webhook_events (
   'sandbox', 'phase4d2-verified-payment-event-01', 'payment.succeeded', repeat('a',64), true,
   '88000000-0000-4000-8000-000000000088', '90000000-0000-4000-8000-000000000090',
   1299, 'USD', 'phase4d2-provider-payment-match-01'
-) on conflict (provider, provider_event_id) do nothing;
+) on conflict do nothing;
 
 select is(
   public.process_payment_webhook_event(we.id),
