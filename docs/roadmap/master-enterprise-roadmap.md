@@ -41,9 +41,13 @@ Server-owned order creation and immutable item snapshots; payment-provider abstr
 
 Build evidence-backed state machines for provider settlement reconciliation, refund reversals after proceeds allocation, chargeback/dispute evidence, reserve holds/releases and independently approved manual adjustments. Keep money movement disabled until those paths have balanced journal postings, adversarial pgTAP tests, idempotency, audit evidence and explicit business-policy approval. This phase cannot be declared complete without a chosen provider, supported jurisdiction/settlement evidence and the required external onboarding.
 
-#### Phase 4D1 — refund reversals after proceeds allocation (implementation under review)
+#### Phase 4D1 — refund reversals after proceeds allocation (complete for tested sandbox-only scope)
 
-The current PR #27 adds immutable item-level reversal requests/lines, distinct-admin approval and rejection through restricted server RPCs, verified-event-bound reversal journals, cumulative refund caps, cumulative commission rounding, and retry after a rejected request. The implementation remains a sandbox/test-only database workflow until exact-head Foundation CI and Security/dependency governance pass, a phase-specific forensic audit is recorded, and the PR is merged. It does not enable live payment providers, payouts, settlement reconciliation, tax calculation, chargebacks, reserves, manual adjustments or escrow.
+PR #27 implements immutable item-level reversal requests/lines, distinct-admin approval/rejection through restricted server RPCs, verified-event-bound reversal journals, cumulative refund caps, cumulative commission rounding, per-seller journal attribution, and retry after a rejected request. The exact implementation head `a5182c8f6258e525059a5e960a472f00e419a943` passed [Foundation CI run 38522581791](https://github.com/LloydCoder/web-temify/actions/runs/38522581791) and [Security/dependency governance run 38522581805](https://github.com/LloydCoder/web-temify/actions/runs/38522581805). The forensic audit is recorded in `docs/roadmap/phase-gates.md`. This is a sandbox/test-only database workflow; it does not enable live providers, payouts, settlement reconciliation, tax calculation, chargebacks, reserves, manual adjustments or escrow.
+
+#### Phase 4D2 — provider settlement reconciliation (next serial sub-gate)
+
+Define a provider-neutral settlement evidence contract, idempotent reconciliation against verified payment/refund journal batches, provider-fee accounting, row-level exceptions and balanced journal posting. Keep live provider processing disabled until a provider is selected and its supported jurisdictions, seller payout eligibility, currencies, fees, refund/dispute capabilities, settlement reports and operational support are verified. This sub-gate cannot be completed from code alone without external provider onboarding and evidence.
 
 ### Phase 5 — Admin, seller operations and trust workflows
 
