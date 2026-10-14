@@ -564,3 +564,29 @@ a {
     grid-column: auto;
   }
 }
+
+
+/* V3 canonical homepage viewport */
+html:has(.v3-home),
+body:has(.v3-home) {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+.v3-home {
+  width: 100%;
+  height: 100dvh;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.v3-home-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  border: 0;
+  background: #fffbf4;
+}
