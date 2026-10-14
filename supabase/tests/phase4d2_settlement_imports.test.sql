@@ -1,5 +1,5 @@
 begin;
-select plan(48);
+select plan(73);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -473,6 +473,303 @@ select throws_ok(
     where id = (select decision_id from phase4d2_decision_ids)$sql$,
   '55000', 'settlement reconciliation evidence is immutable',
   'exception decisions cannot be mutated after creation'
+);
+
+select ok(
+  has_function_privilege(
+    'service_role',
+    'public.list_settlement_exception_queue(uuid,integer,timestamp with time zone,uuid,text)',
+    'EXECUTE'
+  ),
+  'trusted service role can read the bounded settlement exception queue'
+);
+select ok(
+  not has_function_privilege(
+    'authenticated',
+    'public.list_settlement_exception_queue(uuid,integer,timestamp with time zone,uuid,text)',
+    'EXECUTE'
+  ),
+  'authenticated clients cannot read the settlement exception queue RPC'
+);
+select is(
+  (select q.result_code
+   from public.list_settlement_exception_queue(
+     '89000000-0000-4000-8000-000000000089', 51, null, null, null
+   ) q
+   where q.run_id = (select run_id from phase4d2_reconciliation_ids)
+     and q.row_id = 'payment-row-01'),
+  'missing_internal_match',
+  'admin queue exposes the immutable exception classification'
+);
+select is(
+  (select q.triage_decision
+   from public.list_settlement_exception_queue(
+     '89000000-0000-4000-8000-000000000089', 51, null, null, null
+   ) q
+   where q.run_id = (select run_id from phase4d2_reconciliation_ids)
+     and q.row_id = 'payment-row-01'),
+  'manual_review_required',
+  'admin queue shows triage separately without resolving the accounting exception'
+);
+select is(
+  (select q.gross_minor
+   from public.list_settlement_exception_queue(
+     '89000000-0000-4000-8000-000000000089', 51, null, null, null
+   ) q
+   where q.run_id = (select run_id from phase4d2_reconciliation_ids)
+     and q.row_id = 'payment-row-01'),
+  '10000',
+  'queue serializes gross minor units as exact decimal text'
+);
+select is(
+  (select q.net_minor
+   from public.list_settlement_exception_queue(
+     '89000000-0000-4000-8000-000000000089', 51, null, null, null
+   ) q
+   where q.run_id = (select run_id from phase4d2_reconciliation_ids)
+     and q.row_id = 'payment-row-01'),
+  '9700',
+  'queue serializes net minor units as exact decimal text'
+);
+select throws_ok(
+  $sql$select count(*) from public.list_settlement_exception_queue(
+    '81000000-0000-4000-8000-000000000081', 51, null, null, null
+  )$sql$,
+  '42501', 'settlement exception queue requires an admin',
+  'non-admin identity cannot read settlement exception details'
+);
+select throws_ok(
+  $sql$select count(*) from public.list_settlement_exception_queue(
+    '89000000-0000-4000-8000-000000000089', 52, null, null, null
+  )$sql$,
+  '23514', 'settlement exception queue limit is outside the allowed range',
+  'queue refuses an unbounded or oversized page request'
+);
+select throws_ok(
+  $sql$select count(*) from public.list_settlement_exception_queue(
+    '89000000-0000-4000-8000-000000000089', 51, now(), null, null
+  )$sql$,
+  '23514', 'settlement exception cursor is incomplete',
+  'queue rejects partially supplied cursor tuples'
+);
+select throws_ok(
+  $sql$select count(*) from public.list_settlement_exception_queue(
+    '89000000-0000-4000-8000-000000000089', 51, now(), gen_random_uuid(), ''
+  )$sql$,
+  '23514', 'settlement exception cursor row identifier is outside the allowed range',
+  'queue rejects empty row identifiers in cursor tuples'
+);
+select is(
+  (
+    with first_page as (
+      select q.run_id, q.row_id, q.result_created_at
+      from public.list_settlement_exception_queue(
+        '89000000-0000-4000-8000-000000000089', 1, null, null, null
+      ) q
+      order by q.result_created_at desc, q.run_id desc, q.row_id desc
+      limit 1
+    )
+    select count(*)
+    from first_page fp
+    cross join lateral public.list_settlement_exception_queue(
+      '89000000-0000-4000-8000-000000000089', 51,
+      fp.result_created_at, fp.run_id, fp.row_id
+    ) q
+    where q.run_id = fp.run_id and q.row_id = fp.row_id
+  ),
+  0::bigint,
+  'pagination cursor excludes the previous page boundary row'
+);
+
+
+-- A matching provider reference with a different gross amount must be an exception.
+create temporary table phase4d2_amount_mismatch_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_amount_mismatch_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'settlement-amount-mismatch-2026-10-13',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('3',64), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(jsonb_build_object(
+        'rowId','amount-mismatch-row-01', 'rowType','payment',
+        'providerReference','phase4d2-provider-payment-match-01',
+        'paymentReference','phase4d2-order-payment-match-01',
+        'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+        'grossMinor',1298, 'feeMinor',39, 'netMinor',1259
+      ))
+    )
+  $sql$,
+  'amount-mismatched settlement row imports as immutable evidence'
+);
+select lives_ok(
+  $sql$
+    select public.reconcile_settlement_import(
+      (select import_id from phase4d2_amount_mismatch_import_ids),
+      '89200000-0000-4000-8000-000000000089'
+    )
+  $sql$,
+  'amount-mismatched settlement row can be classified without posting money'
+);
+select is(
+  (select rr.result_code
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_amount_mismatch_import_ids)
+     and rr.row_id = 'amount-mismatch-row-01'),
+  'amount_mismatch',
+  'a matching provider reference with a different amount is explicitly classified'
+);
+select is(
+  (select rr.result_status
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_amount_mismatch_import_ids)
+     and rr.row_id = 'amount-mismatch-row-01'),
+  'exception',
+  'amount mismatches remain unresolved exceptions rather than being treated as matches'
+);
+
+
+-- Explicit import exception classifications must override otherwise matching references.
+create temporary table phase4d2_explicit_exception_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_explicit_exception_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'settlement-explicit-exceptions-2026-10-13',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('4',64), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(
+        jsonb_build_object(
+          'rowId','unexplained-adjustment-row-01', 'rowType','payment',
+          'providerReference','phase4d2-provider-payment-match-01',
+          'paymentReference','phase4d2-order-payment-match-01',
+          'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+          'grossMinor',1299, 'feeMinor',39, 'netMinor',1260,
+          'exceptionCode','unexplained_adjustment'
+        ),
+        jsonb_build_object(
+          'rowId','period-mismatch-row-01', 'rowType','payment',
+          'providerReference','phase4d2-provider-payment-match-01',
+          'paymentReference','phase4d2-order-payment-match-01',
+          'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+          'grossMinor',1299, 'feeMinor',39, 'netMinor',1260,
+          'exceptionCode','period_mismatch'
+        )
+      )
+    )
+  $sql$,
+  'explicit settlement exceptions import as immutable evidence'
+);
+select lives_ok(
+  $sql$
+    select public.reconcile_settlement_import(
+      (select import_id from phase4d2_explicit_exception_import_ids),
+      '89200000-0000-4000-8000-000000000089'
+    )
+  $sql$,
+  'explicit settlement exceptions reconcile without being promoted to matches'
+);
+select is(
+  (select rr.result_code
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_explicit_exception_import_ids)
+     and rr.row_id = 'unexplained-adjustment-row-01'),
+  'unexplained_adjustment',
+  'an explicitly unexplained adjustment remains classified as an exception'
+);
+select is(
+  (select rr.result_status
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_explicit_exception_import_ids)
+     and rr.row_id = 'period-mismatch-row-01'),
+  'exception',
+  'an explicitly period-mismatched row cannot be reported as a matched payment'
+);
+
+
+select is(
+  (select q.result_code
+   from public.list_settlement_exception_queue(
+     '89000000-0000-4000-8000-000000000089', 51, null, null, null
+   ) q
+   join public.settlement_reconciliation_runs sr on sr.id = q.run_id
+   where sr.import_id = (select import_id from phase4d2_explicit_exception_import_ids)
+     and q.row_id = 'unexplained-adjustment-row-01'),
+  'unexplained_adjustment',
+  'exception queue exposes explicit unexplained-adjustment classifications'
+);
+select is(
+  (select q.result_code
+   from public.list_settlement_exception_queue(
+     '89000000-0000-4000-8000-000000000089', 51, null, null, null
+   ) q
+   join public.settlement_reconciliation_runs sr on sr.id = q.run_id
+   where sr.import_id = (select import_id from phase4d2_explicit_exception_import_ids)
+     and q.row_id = 'period-mismatch-row-01'),
+  'period_mismatch',
+  'exception queue exposes explicit period-mismatch classifications'
+);
+
+
+-- A single posted journal batch must not satisfy two settlement rows.
+create temporary table phase4d2_duplicate_reference_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_duplicate_reference_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'settlement-duplicate-reference-2026-10-13',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('5',64), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(
+        jsonb_build_object(
+          'rowId','duplicate-ref-row-01', 'rowType','payment',
+          'providerReference','phase4d2-provider-payment-match-01',
+          'paymentReference','phase4d2-order-payment-match-01',
+          'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+          'grossMinor',1299, 'feeMinor',39, 'netMinor',1260
+        ),
+        jsonb_build_object(
+          'rowId','duplicate-ref-row-02', 'rowType','payment',
+          'providerReference','phase4d2-provider-payment-match-01',
+          'paymentReference','phase4d2-order-payment-match-01',
+          'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+          'grossMinor',1299, 'feeMinor',39, 'netMinor',1260
+        )
+      )
+    )
+  $sql$,
+  'duplicate settlement references import as immutable evidence'
+);
+select lives_ok(
+  $sql$
+    select public.reconcile_settlement_import(
+      (select import_id from phase4d2_duplicate_reference_import_ids),
+      '89200000-0000-4000-8000-000000000089'
+    )
+  $sql$,
+  'duplicate settlement references reconcile without duplicate journal linkage'
+);
+select is(
+  (select rr.result_code
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_duplicate_reference_import_ids)
+     and rr.row_id = 'duplicate-ref-row-02'),
+  'duplicate_reference',
+  'a posted journal batch cannot match two rows in one settlement report'
+);
+select is(
+  (select rr.result_status
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_duplicate_reference_import_ids)
+     and rr.row_id = 'duplicate-ref-row-02'),
+  'exception',
+  'duplicate references remain unresolved exceptions'
 );
 
 select * from finish();

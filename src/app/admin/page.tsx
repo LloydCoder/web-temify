@@ -91,6 +91,9 @@ export default async function AdminOperationsPage() {
           <Link className="button button-secondary" href="/admin/audit">
             Audit explorer
           </Link>
+          <Link className="button button-secondary" href="/admin/settlements">
+            Settlement exceptions
+          </Link>
           <Link className="button button-secondary" href="/">
             Public site
           </Link>
