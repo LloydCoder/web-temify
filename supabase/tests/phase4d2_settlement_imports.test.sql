@@ -335,12 +335,16 @@ select lives_ok(
   $sql$,
   'matched payment settlement report imports successfully'
 );
+select public.reconcile_settlement_import(
+  (select import_id from phase4d2_matched_import_ids),
+  '89200000-0000-4000-8000-000000000089'
+);
 select is(
   (select rr.result_code
    from public.settlement_reconciliation_results rr
-   where rr.run_id = public.reconcile_settlement_import(
-     (select import_id from phase4d2_matched_import_ids),
-     '89200000-0000-4000-8000-000000000089'
+   where rr.run_id = (
+     select sr.id from public.settlement_reconciliation_runs sr
+     where sr.import_id = (select import_id from phase4d2_matched_import_ids)
    )
    and rr.row_id = 'matched-payment-row-01'),
   'matched_payment',
@@ -349,9 +353,10 @@ select is(
 select is(
   (select rr.journal_batch_id is not null
    from public.settlement_reconciliation_results rr
-   where rr.run_id = (select public.reconcile_settlement_import(
-     import_id, '89200000-0000-4000-8000-000000000089'
-   ) from phase4d2_matched_import_ids)
+   where rr.run_id = (
+     select sr.id from public.settlement_reconciliation_runs sr
+     where sr.import_id = (select import_id from phase4d2_matched_import_ids)
+   )
      and rr.row_id = 'matched-payment-row-01'),
   true,
   'matched settlement result retains the immutable journal batch reference'
@@ -376,12 +381,16 @@ select lives_ok(
   $sql$,
   'cross-currency settlement report imports as evidence without being treated as matched'
 );
+select public.reconcile_settlement_import(
+  (select import_id from phase4d2_currency_import_ids),
+  '89200000-0000-4000-8000-000000000089'
+);
 select is(
   (select rr.result_code
    from public.settlement_reconciliation_results rr
-   where rr.run_id = public.reconcile_settlement_import(
-     (select import_id from phase4d2_currency_import_ids),
-     '89200000-0000-4000-8000-000000000089'
+   where rr.run_id = (
+     select sr.id from public.settlement_reconciliation_runs sr
+     where sr.import_id = (select import_id from phase4d2_currency_import_ids)
    )
    and rr.row_id = 'currency-mismatch-row-01'),
   'currency_mismatch',
