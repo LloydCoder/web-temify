@@ -2,8 +2,10 @@ import { createHash, randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getAdminContext } from "@/server/admin/authorization";
 import { readBoundedRequestBytes } from "@/server/commerce/read-bounded-bytes";
+import { scanSettlementEvidence } from "@/server/commerce/settlement-evidence-scanner";
 
 export const runtime = "nodejs";
+export const maxDuration = 30;
 
 const MAX_EVIDENCE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_CONTENT_TYPES = new Set([
@@ -129,6 +131,36 @@ export async function POST(request: Request) {
     );
   }
 
+  const scan = await scanSettlementEvidence(body.bytes, sourceSha256);
+  let scanStatus: "pending" | "clean" | "infected" | "error" = "pending";
+
+  if (
+    scan.status === "clean" ||
+    scan.status === "infected" ||
+    scan.status === "error"
+  ) {
+    const { error: scanRecordError } = await context.admin.rpc(
+      "record_settlement_evidence_scan_result",
+      {
+        p_evidence_id: evidenceId,
+        p_source_sha256: sourceSha256,
+        p_verdict: scan.status,
+        p_scanner_name: scan.scannerName,
+        p_scanner_version: scan.scannerVersion,
+        p_request_id: requestId,
+      },
+    );
+
+    if (scanRecordError) {
+      return NextResponse.json(
+        { error: "settlement_evidence_scan_record_failed", requestId, scanStatus: "pending" },
+        { status: 503, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    scanStatus = scan.status;
+  }
+
   return NextResponse.json(
     {
       id: evidenceId,
@@ -136,8 +168,13 @@ export async function POST(request: Request) {
       byteSize: body.bytes.byteLength,
       filename,
       requestId,
+      scanStatus,
       sourceAuthenticity: "not_verified",
     },
-    { status: 201, headers: { "Cache-Control": "no-store" } },
+    {
+      status:
+        scanStatus === "clean" ? 201 : scanStatus === "infected" ? 422 : 202,
+      headers: { "Cache-Control": "no-store" },
+    },
   );
 }
