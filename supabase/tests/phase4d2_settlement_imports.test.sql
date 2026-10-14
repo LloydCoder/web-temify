@@ -765,7 +765,7 @@ select lives_ok(
     insert into phase4d2_matched_refund_import_ids
     select public.import_settlement_report(
       'sandbox', 'sandbox-account-01', 'settlement-matched-refund-batch-2026-10-13',
-      '2026-10-13', '2026-10-13', 'UTC', repeat('8',64), true,
+      '2026-10-13', '2026-10-13', 'UTC', repeat('abcdef0123456789',4), true,
       'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
       jsonb_build_array(jsonb_build_object(
         'rowId','matched-refund-row-01', 'rowType','refund',
