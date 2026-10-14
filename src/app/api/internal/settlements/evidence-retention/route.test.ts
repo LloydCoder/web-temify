@@ -206,8 +206,7 @@ describe("settlement evidence retention endpoint", () => {
 
     expect(response.status).toBe(503);
     expect(mocks.remove).not.toHaveBeenCalled();
-    },
-  );
+  });
 
   it("rejects malformed claims before deleting any object", async () => {
     mocks.rpc.mockResolvedValue({
