@@ -10,6 +10,7 @@ Web-Temify is a planned global-first digital-product marketplace and product fac
 
 - Canonical 20-phase enterprise roadmap: [docs/roadmap/master-enterprise-roadmap.md](docs/roadmap/master-enterprise-roadmap.md)
 - Phase evidence register: [docs/roadmap/phase-gates.md](docs/roadmap/phase-gates.md)
+- Payment/MoR/treasury provider strategy and activation gates: [docs/commerce/provider-strategy.md](docs/commerce/provider-strategy.md)
 - Architecture overview: [docs/architecture/overview.md](docs/architecture/overview.md)
 - Repository structure: [docs/architecture/repository-structure.md](docs/architecture/repository-structure.md)
 - Domain boundaries: [docs/architecture/domain-boundaries.md](docs/architecture/domain-boundaries.md)
