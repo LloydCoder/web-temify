@@ -8,8 +8,8 @@ can be updated independently.
 ## Trust and data flow
 
 1. The authenticated admin upload route stores the original bytes in the private
-   Supabase Storage bucket and records immutable metadata with the server-computed
-   SHA-256.
+   Supabase Storage bucket and records immutable metadata with the
+   server-computed SHA-256.
 2. If CLAMAV_SCANNER_URL and CLAMAV_SCANNER_TOKEN are configured, the Next.js
    route posts the exact in-memory bytes and expected digest to this service
    over HTTPS.
@@ -19,8 +19,8 @@ can be updated independently.
    results are recorded as such; timeouts, missing configuration, invalid
    responses, or unavailable scanners leave the evidence pending.
 5. Web-Temify records the scanner verdict through the service-role-only
-   record_settlement_evidence_scan_result RPC. Database guards require the latest
-   verdict to be clean for the exact evidence digest at both linkage and
+   record_settlement_evidence_scan_result RPC. Database guards require the
+   latest verdict to be clean for the exact evidence digest at both linkage and
    journal-posting time.
 
 A scan verdict is not proof of provider origin or report authenticity. The
@@ -65,13 +65,15 @@ query the ClamAV daemon. Neither endpoint exposes the scanner version.
   restart; never put it in a NEXT_PUBLIC_* variable.
 - Pin CLAMAV_IMAGE to a reviewed, platform-appropriate image digest for
   production instead of relying on a floating tag. The compose file defaults
-  to the official ClamAV 1.5.4-debian13-slim image tag for local reproducibility.
+  to the official ClamAV 1.5.4-debian13-slim image tag for local
+  reproducibility.
 - Restrict gateway ingress to the application or trusted private ingress,
   enforce TLS, and monitor scanner readiness, timeouts, infected verdicts,
   signature-database freshness, and capacity.
 - Do not expose ClamAV's TCP port outside the private Docker network. ClamAV
   documents that its TCP protocol is not encrypted or authenticated; see the
-  [official ClamD protocol guide](https://docs.clamav.net/manual/Usage/ClamdProtocol.html).
+  official ClamD protocol guide:
+  https://docs.clamav.net/manual/Usage/ClamdProtocol.html
 - The gateway caps input at 5 MiB, rejects unauthenticated calls before reading
   the body, compares the supplied digest with a fresh SHA-256, and limits
   concurrent scans. It never logs evidence contents or malware signature names.
