@@ -68,7 +68,9 @@ describe("scanSettlementEvidence", () => {
     expect(fetcher).not.toHaveBeenCalled();
   });
 
-  it("fails closed in production when the scanner URL is HTTP even on loopback", async () => {
+  it(
+    "fails closed in production when the scanner URL is HTTP even on loopback",
+    async () => {
     const fetcher = vi.fn<typeof fetch>();
 
     await expect(
@@ -82,7 +84,9 @@ describe("scanSettlementEvidence", () => {
     expect(fetcher).not.toHaveBeenCalled();
   });
 
-  it("sends the exact bytes and digest to the private scanner and accepts a clean result", async () => {
+  it(
+    "sends the exact bytes and digest to the private scanner and accepts a clean result",
+    async () => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValue(scannerResponse());
 
     await expect(
@@ -147,7 +151,9 @@ describe("scanSettlementEvidence", () => {
     ).resolves.toEqual({ status: "unavailable" });
   });
 
-  it("does not claim a scan when the private scanner times out or is unreachable", async () => {
+  it(
+    "does not claim a scan when the private scanner times out or is unreachable",
+    async () => {
     const fetcher = vi
       .fn<typeof fetch>()
       .mockRejectedValue(new Error("offline"));
