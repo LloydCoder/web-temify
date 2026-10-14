@@ -121,6 +121,12 @@ select public.link_settlement_evidence(
 );
 
 select is(
+  (select count(*)::integer from public.settlement_evidence_links
+   where evidence_id = '81200000-0000-4000-8000-000000000080'),
+  1,
+  'the fixture confirms that the expired linked object is protected by an immutable link'
+);
+select is(
   (select count(*)::integer from public.claim_expired_settlement_evidence(25, gen_random_uuid())),
   2,
   'claim returns only expired evidence that is not already linked'
