@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   createClient: vi.fn(),
   rpc: vi.fn(),
   remove: vi.fn(),
+  list: vi.fn(),
   storageFrom: vi.fn(),
 }));
 
@@ -32,13 +33,15 @@ describe("settlement evidence retention endpoint", () => {
     mocks.createClient.mockReset();
     mocks.rpc.mockReset();
     mocks.remove.mockReset();
+    mocks.list.mockReset();
     mocks.storageFrom.mockReset();
-    mocks.storageFrom.mockReturnValue({ remove: mocks.remove });
+    mocks.storageFrom.mockReturnValue({ remove: mocks.remove, list: mocks.list });
     mocks.createClient.mockReturnValue({
       rpc: mocks.rpc,
       storage: { from: mocks.storageFrom },
     });
     mocks.remove.mockResolvedValue({ data: [], error: null });
+    mocks.list.mockResolvedValue({ data: [], error: null });
     mocks.rpc.mockImplementation(async (name: string) => {
       if (name === "claim_expired_settlement_evidence") {
         return {
@@ -126,6 +129,10 @@ describe("settlement evidence retention endpoint", () => {
       data: null,
       error: { message: "storage unavailable" },
     });
+    mocks.list.mockResolvedValue({
+      data: [{ name: "a".repeat(64) }],
+      error: null,
+    });
     mocks.rpc.mockImplementation(async (name: string) => {
       if (name === "claim_expired_settlement_evidence") {
         return {
@@ -158,6 +165,28 @@ describe("settlement evidence retention endpoint", () => {
         p_deleted: false,
         p_error_code: "storage_delete_failed",
       }),
+    );
+  });
+
+  it("treats a missing object as a successful idempotent delete after a retry", async () => {
+    mocks.remove.mockResolvedValue({
+      data: null,
+      error: { message: "object not found" },
+    });
+    mocks.list.mockResolvedValue({ data: [], error: null });
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      claimed: 1,
+      deleted: 1,
+      retryable: 0,
+    });
+    expect(mocks.rpc).toHaveBeenNthCalledWith(
+      2,
+      "finish_settlement_evidence_retention",
+      expect.objectContaining({ p_deleted: true, p_error_code: null }),
     );
   });
 
