@@ -1,5 +1,5 @@
 begin;
-select plan(24);
+select plan(25);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -78,6 +78,22 @@ select throws_ok(
   )$sql$,
   '23514', 'settlement report identity already exists with conflicting evidence',
   'same report identity with a different source digest is rejected'
+);
+
+select throws_ok(
+  $sql$select public.import_settlement_report(
+    'sandbox', 'sandbox-account-01', 'settlement-batch-2026-10-13',
+    '2026-10-13', '2026-10-13', 'Europe/Berlin', repeat('d',64), true,
+    'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+    jsonb_build_array(jsonb_build_object(
+      'rowId','payment-row-01', 'rowType','payment',
+      'providerReference','provider-payment-01', 'paymentReference','order-payment-01',
+      'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+      'grossMinor',10000, 'feeMinor',300, 'netMinor',9700
+    ))
+  )$sql$,
+  '23514', 'settlement report identity already exists with conflicting evidence',
+  'same source digest with conflicting timezone metadata is rejected'
 );
 
 select throws_ok(
