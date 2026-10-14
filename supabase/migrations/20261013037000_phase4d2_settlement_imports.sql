@@ -168,6 +168,40 @@ begin
       and existing_import.report_timezone = p_report_timezone
       and existing_import.source_authentication_method = p_source_authentication_method
     then
+      if (
+        select count(*) from public.settlement_import_rows
+        where import_id = existing_import.id
+      ) <> jsonb_array_length(p_rows)
+      or exists (
+        select 1
+        from jsonb_to_recordset(p_rows) as incoming(
+          "rowId" text,
+          "rowType" text,
+          "providerReference" text,
+          "paymentReference" text,
+          "occurredAt" timestamptz,
+          currency text,
+          "grossMinor" bigint,
+          "feeMinor" bigint,
+          "netMinor" bigint,
+          "exceptionCode" text
+        )
+        left join public.settlement_import_rows stored
+          on stored.import_id = existing_import.id
+         and stored.row_id = incoming."rowId"
+        where stored.row_id is null
+          or stored.row_type is distinct from incoming."rowType"
+          or stored.provider_reference is distinct from nullif(incoming."providerReference", '')
+          or stored.payment_reference is distinct from nullif(incoming."paymentReference", '')
+          or stored.occurred_at is distinct from incoming."occurredAt"
+          or stored.currency is distinct from incoming.currency
+          or stored.gross_minor is distinct from incoming."grossMinor"
+          or stored.fee_minor is distinct from incoming."feeMinor"
+          or stored.net_minor is distinct from incoming."netMinor"
+          or stored.exception_code is distinct from nullif(incoming."exceptionCode", '')
+      ) then
+        raise exception using errcode = '23514', message = 'settlement report identity already exists with conflicting evidence';
+      end if;
       return existing_import.id;
     end if;
     raise exception using errcode = '23514', message = 'settlement report identity already exists with conflicting evidence';
