@@ -1,5 +1,5 @@
 begin;
-select plan(200);
+select plan(202);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -1191,6 +1191,28 @@ select is(
   ),
   (select request_id from phase4d1_rounding_request_ids),
   'rounding fixture can be rejected after its line arithmetic is verified'
+);
+create temporary table phase4d1_retry_request_ids(request_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$with request_row as (
+    insert into public.refund_reversal_requests (
+      refund_id, order_id, amount_minor, currency, evidence_sha256, reason, requested_by
+    )
+    select r.id, r.order_id, r.amount_minor, r.currency, repeat('a',64),
+      'Retry after prior reversal rejection', '83000000-0000-4000-8000-000000000083'
+    from public.refunds r where r.id = '99200000-0000-4000-8000-000000000099'
+    returning id
+  )
+  insert into phase4d1_retry_request_ids select id from request_row$sql$,
+  'a rejected immutable reversal request can be retried with a new audit record'
+);
+select is(
+  public.reject_refund_reversal_request(
+    (select request_id from phase4d1_retry_request_ids),
+    '84000000-0000-4000-8000-000000000084'
+  ),
+  (select request_id from phase4d1_retry_request_ids),
+  'replacement reversal request remains independently rejectable'
 );
 
 -- A second reversal cannot consume more than the remaining allocated item gross/fee/net.
