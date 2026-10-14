@@ -341,7 +341,7 @@ begin
   end if;
 
   if new.source_type = 'payment' then
-    select we.payload_sha256 into evidence_digest
+    select we.payload_sha256, we.provider_reference into evidence_digest, provider_ref
     from public.payment_webhook_events we
     where we.order_id = new.order_id
       and we.payment_attempt_id = new.payment_attempt_id
@@ -369,8 +369,6 @@ begin
       and we.processing_status in ('processing', 'processed')
     order by we.received_at desc
     limit 1;
-    select r.provider_refund_reference into provider_ref
-    from public.refunds r where r.id = new.refund_id;
     journal_source := 'legacy-ledger:refund:' || new.reference_key;
   else
     raise exception using errcode = '23514', message = 'unsupported legacy ledger source';
