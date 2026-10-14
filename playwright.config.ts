@@ -11,7 +11,7 @@ export default defineConfig({
     ...devices["Desktop Chrome"],
   },
   webServer: {
-    command: "corepack pnpm dev",
+    command: "bash -lc 'set -e; eval \"$(supabase status -o env)\"; export NEXT_PUBLIC_SUPABASE_URL=\"$API_URL\" NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=\"${PUBLISHABLE_KEY:-$ANON_KEY}\" SUPABASE_SECRET_KEY=\"${SECRET_KEY:-$SERVICE_ROLE_KEY}\"; exec corepack pnpm dev'",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
