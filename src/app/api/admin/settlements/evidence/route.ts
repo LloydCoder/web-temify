@@ -120,7 +120,9 @@ export async function POST(request: Request) {
     },
   );
   if (recordError) {
-    await context.admin.storage.from("settlement-evidence").remove([storagePath]);
+    await context.admin.storage
+      .from("settlement-evidence")
+      .remove([storagePath]);
     return NextResponse.json(
       { error: "settlement_evidence_record_failed", requestId },
       { status: recordError.code === "42501" ? 403 : 503 },
