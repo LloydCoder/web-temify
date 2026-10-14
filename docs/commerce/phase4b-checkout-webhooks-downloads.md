@@ -47,12 +47,16 @@ Migration 20261013030000_phase4b_checkout_webhooks.sql provides:
 - process_payment_webhook_event: service-role-only, row-locked, idempotent state processor. It checks event/attempt/order/refund/amount/currency evidence, posts a unique ledger transfer, transitions the order, and creates entitlements within one transaction. Failed processing leaves a retryable failed inbox row; raw provider payloads are not retained.
 - Trigger-level checks that a processed event has matching attempt/refund and ledger evidence.
 
+## Phase 4C accounting extension
+
+Migration `20261013035000_phase4c_financial_journal.sql` adds the immutable financial journal and proceeds-allocation workflow. Verified payment/refund ledger rows create balanced journal batches bound to provider-event digest/reference. Seller fee schedules require independent database-owned admin approval, and allocations reconcile item gross to seller payable, platform commission and any order tax already recorded. The allocation RPC is idempotent and server-role-only. The journal rejects arbitrary balanced postings and blocks refunds after allocation until a reversal workflow is available. See [Phase 4C forensic audit](phase4c-financial-journal.md).
+
 ## Explicit launch blockers
 
 - No live provider adapter is enabled or selected.
 - No tax/VAT calculation is implemented; order tax is currently zero and must not be represented as a tax quote.
 - Free/zero-value checkout is unsupported.
-- No seller payout, commission, provider settlement, refund execution, chargeback, or manual financial adjustment flow is enabled. Partial refunds are order-level goodwill refunds, not item-specific refunds; full refunds revoke all order entitlements.
+Seller commission allocation is implemented, but no seller payout, provider settlement, provider-fee posting, chargeback, reserve, manual financial adjustment, or refund reversal after allocation is enabled. Refunds after proceeds allocation fail closed pending a reversal workflow. Partial refunds remain order-level rather than item-specific; full refunds revoke all order entitlements.
 - The private bucket must be provisioned as private in the actual Supabase project; local schema CI does not prove production bucket configuration.
 - Supabase signed URLs cannot be revoked immediately once issued; the implemented TTL is 60 seconds, but it remains a bearer URL until expiry.
 - Production secrets, live provider eligibility, end-to-end provider sandbox account verification, formal security review, penetration testing, and legal/tax review remain release gates.
