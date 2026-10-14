@@ -52,3 +52,62 @@ comment on table public.settlement_evidence is
   'Private, immutable metadata for uploaded settlement evidence. Source SHA-256 proves byte identity only; it does not authenticate a provider or report origin.';
 comment on column public.settlement_evidence.retention_until is
   'Policy target only. Automated retention enforcement/deletion remains a separately reviewed operational gate.';
+
+
+create function public.record_settlement_evidence(
+  p_id uuid,
+  p_storage_path text,
+  p_source_sha256 text,
+  p_mime_type text,
+  p_byte_size bigint,
+  p_original_filename text,
+  p_uploaded_by uuid,
+  p_request_id uuid
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+begin
+  if p_uploaded_by is null or not exists (
+    select 1 from public.user_roles ur
+    where ur.user_id = p_uploaded_by and ur.role = 'admin'::public.app_role
+  ) then
+    raise exception using errcode = '42501', message = 'settlement evidence upload requires an admin';
+  end if;
+
+  insert into public.settlement_evidence (
+    id, storage_path, source_sha256, mime_type, byte_size,
+    original_filename, uploaded_by
+  ) values (
+    p_id, p_storage_path, p_source_sha256, p_mime_type, p_byte_size,
+    p_original_filename, p_uploaded_by
+  );
+
+  insert into public.audit_events (
+    actor_id, action, entity_type, entity_id, request_id, metadata
+  ) values (
+    p_uploaded_by,
+    'settlement.evidence.uploaded',
+    'settlement_evidence',
+    p_id::text,
+    p_request_id,
+    jsonb_build_object(
+      'source_sha256', p_source_sha256,
+      'byte_size', p_byte_size,
+      'content_type', p_mime_type
+    )
+  );
+
+  return p_id;
+end;
+$function$;
+
+revoke all on function public.record_settlement_evidence(uuid, text, text, text, bigint, text, uuid, uuid)
+  from public, anon, authenticated, service_role;
+grant execute on function public.record_settlement_evidence(uuid, text, text, text, bigint, text, uuid, uuid)
+  to service_role;
+
+comment on function public.record_settlement_evidence(uuid, text, text, text, bigint, text, uuid, uuid) is
+  'Atomically records immutable settlement evidence metadata and the completion audit event after the private object upload succeeds.';
