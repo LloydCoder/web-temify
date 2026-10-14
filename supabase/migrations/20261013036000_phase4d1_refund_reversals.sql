@@ -157,6 +157,7 @@ declare
   previous_tax numeric;
   order_tax bigint;
   fee_bps integer;
+  expected_fee numeric;
 begin
   if tg_op <> 'INSERT' then
     raise exception using errcode = '23514', message = 'refund reversal lines are append-only';
@@ -211,12 +212,12 @@ begin
 
   -- Reverse commission cumulatively, not by rounding each partial refund in isolation.
   -- The final refund reverses any residual fee minor unit left by earlier rounding.
-  if previous_fee + new.platform_fee_reversal_minor <>
-    case
-      when previous_gross + new.gross_refund_minor >= allocation_row.gross_minor
-        then allocation_row.platform_fee_minor
-      else floor(((previous_gross + new.gross_refund_minor)::numeric * fee_bps::numeric) / 10000)::bigint
-    end then
+  if previous_gross + new.gross_refund_minor >= allocation_row.gross_minor then
+    expected_fee := allocation_row.platform_fee_minor;
+  else
+    expected_fee := floor(((previous_gross + new.gross_refund_minor)::numeric * fee_bps::numeric) / 10000)::bigint;
+  end if;
+  if previous_fee + new.platform_fee_reversal_minor <> expected_fee then
     raise exception using errcode = '23514', message = 'cumulative platform fee reversal must match allocated commission rounding';
   end if;
 
