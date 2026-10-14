@@ -1,5 +1,5 @@
 begin;
-select plan(34);
+select plan(35);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
