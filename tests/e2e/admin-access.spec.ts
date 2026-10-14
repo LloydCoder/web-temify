@@ -106,7 +106,6 @@ test("settlement evidence download denies unauthenticated visitors", async ({
   await expect(response.json()).resolves.toEqual({ error: "not_found" });
 });
 
-
 test("settlement evidence linking denies unauthenticated visitors", async ({
   page,
 }) => {
