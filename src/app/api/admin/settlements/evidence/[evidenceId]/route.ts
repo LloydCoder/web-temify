@@ -73,7 +73,10 @@ export async function GET(
     );
   }
   if (!evidence) {
-    return NextResponse.json({ error: "not_found", requestId }, { status: 404 });
+    return NextResponse.json(
+      { error: "not_found", requestId },
+      { status: 404 },
+    );
   }
 
   const { data: file, error: storageError } = await adminContext.admin.storage
