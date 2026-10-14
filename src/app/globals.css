@@ -401,6 +401,27 @@ a {
   font-size: 0.75rem;
   font-weight: 750;
 }
+.admin-settlement-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 12px 18px;
+  margin: 18px 0 0;
+}
+.admin-settlement-details div {
+  min-width: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.admin-settlement-details dt {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.admin-settlement-details dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
 .admin-review-evidence {
   padding: 14px;
   background: var(--background);
