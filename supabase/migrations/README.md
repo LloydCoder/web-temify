@@ -19,7 +19,7 @@ Supabase SQL migrations are the sole authoritative schema history for Web-Temify
 - `20261013020000_phase4_commerce.sql` — provider-neutral order/payment/refund state invariants, append-only transfer ledger, entitlements, and atomic private-download authorization grants.
 - `20261013030000_phase4b_checkout_webhooks.sql` — atomic server-side checkout and verified, idempotent sandbox event processing.
 - `20261013035000_phase4c_financial_journal.sql` — immutable evidence-bound accounting journal, source-specific posting validation, independently approved seller fee schedules and idempotent proceeds allocation.
-- `20261013036000_phase4d1_refund_reversals.sql` — item-level refund reversal requests/lines, independent approval/rejection, verified-event-bound reversal journal and cumulative commission/refund guards.
+- `20261013036000_phase4d1_refund_reversals.sql` — item-level refund reversal requests/lines, independent approval/rejection, verified-event-bound reversal journal, cumulative commission/refund guards, and per-seller journal attribution checks.
 
 ## Important maturity boundary
 

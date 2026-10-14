@@ -162,7 +162,7 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 
 - **Disposition:** not complete until exact-head CI is green and the implementation audit is recorded after reviewing the final diff.
 - **PR:** [#27 — feat(commerce): add approved refund reversal workflow](https://github.com/LloydCoder/web-temify/pull/27).
-- **Audit findings already corrected during review:** undeclared fee_bps in the reversal-line trigger; per-refund commission rounding that could under-reverse cumulative commission; inability to create a new audited request after a rejection; direct service_role updates to reversal-request state.
+- **Audit findings already corrected during review:** undeclared fee_bps in the reversal-line trigger; per-refund commission rounding that could under-reverse cumulative commission; inability to create a new audited request after a rejection; direct service_role updates to reversal-request state; and journal guards that validated seller-payable totals only in aggregate. The current migration validates seller attribution per seller ID for both proceeds allocations and refund reversals, with a balanced-but-misassigned journal regression test.
 - **Current verification boundary:** security/dependency governance is checked per exact PR head; Foundation CI and the final phase gate remain pending until the final commit is tested.
 - **Residual risk:** no provider settlement reconciliation, payout, tax, chargeback, reserve, manual-adjustment workflow, or production financial-readiness approval.
 

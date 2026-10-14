@@ -15,7 +15,7 @@ When seller proceeds have already been allocated, a verified refund must not be 
 - Request and line evidence is immutable; lines are append-only.
 - Approval and rejection are narrowly granted server RPCs. service_role cannot directly update request state.
 - A rejected request remains immutable, but a new request can be submitted and audited. At most one active request exists per refund; a posted reversal cannot be repeated.
-- The reversal journal must match approved item-level lines and verified provider-event evidence. The refund outflow journal is blocked unless the reversal journal is already posted.
+- The reversal journal must match approved item-level lines and verified provider-event evidence; seller-payable debits must match each original seller, not merely the aggregate amount. The same guard hardens proceeds-allocation journals with per-seller checks. The refund outflow journal is blocked unless the reversal journal is already posted.
 - Cumulative gross, commission, seller-payable and order-tax reversal caps are checked against original allocations. Commission reversal uses cumulative rounding so splitting a refund cannot silently under-reverse commission minor units.
 
 ## State and accounting order
@@ -30,7 +30,7 @@ When seller proceeds have already been allocated, a verified refund must not be 
 ## Verification expectations
 
 - Fresh-database migration reset and schema lint.
-- pgTAP tests for role/function grants, independent approval/rejection, line arithmetic, cumulative commission rounding, cumulative over-refund rejection, retry after rejection, verified event matching, balanced journal ordering and duplicate/idempotency behavior.
+- pgTAP tests for role/function grants, independent approval/rejection, line arithmetic, cumulative commission rounding, cumulative over-refund rejection, retry after rejection, verified event matching, balanced journal ordering, wrong-seller attribution rejection and duplicate/idempotency behavior.
 - Typecheck, lint, format, Playwright and production build.
 - High/critical dependency audit, production license policy and full-history secret scan.
 - Forensic review of the exact PR diff and workflow evidence before merge.
