@@ -85,7 +85,6 @@ test("settlement triage mutation denies unauthenticated visitors", async ({
   await expect(response.json()).resolves.toEqual({ error: "not_found" });
 });
 
-
 test("settlement evidence upload denies unauthenticated visitors", async ({
   page,
 }) => {
