@@ -617,11 +617,12 @@ begin
     select we.id, we.payload_sha256, we.provider_reference
       into verified_event_id, evidence_digest, provider_ref
     from public.payment_webhook_events we
-    where we.id::text = replace(new.reference_key, 'refund-event:', '')
-      and we.order_id = new.order_id and we.payment_attempt_id = new.payment_attempt_id
+    where we.order_id = new.order_id and we.payment_attempt_id = new.payment_attempt_id
       and we.refund_id = new.refund_id and we.provider = provider_name
       and we.event_type = 'refund.succeeded' and we.signature_verified
       and we.processing_status in ('processing', 'processed')
+    order by (we.id::text = replace(new.reference_key, 'refund-event:', '')) desc,
+             (we.processing_status = 'processing') desc, we.received_at desc
     limit 1;
     if exists (select 1 from public.order_proceeds_allocations opa where opa.order_id = new.order_id) then
       perform public.post_refund_reversal_from_verified_event(new.refund_id, verified_event_id);
