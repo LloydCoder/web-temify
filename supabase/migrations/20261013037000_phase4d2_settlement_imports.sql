@@ -309,8 +309,7 @@ create table public.settlement_reconciliation_runs (
   reconciled_by uuid not null references auth.users(id) on delete restrict,
   matched_rows integer not null check (matched_rows >= 0),
   exception_rows integer not null check (exception_rows >= 0),
-  created_at timestamptz not null default now(),
-  constraint settlement_reconciliation_row_counts check (matched_rows + exception_rows > 0)
+  created_at timestamptz not null default now()
 );
 
 create table public.settlement_reconciliation_results (
@@ -348,19 +347,19 @@ as $function$
 begin
   -- A run is inserted as a zero-count placeholder so result rows can reference it.
   -- Permit exactly one final count update; all result rows are written in the same transaction.
-  if tg_table_name = 'settlement_reconciliation_runs'
-    and tg_op = 'UPDATE'
-    and old.matched_rows = 0
-    and old.exception_rows = 0
-    and new.id is not distinct from old.id
-    and new.import_id is not distinct from old.import_id
-    and new.reconciled_by is not distinct from old.reconciled_by
-    and new.created_at is not distinct from old.created_at
-    and new.matched_rows >= 0
-    and new.exception_rows >= 0
-    and new.matched_rows + new.exception_rows > 0
-  then
-    return new;
+  if tg_table_name = 'settlement_reconciliation_runs' and tg_op = 'UPDATE' then
+    if old.matched_rows = 0
+      and old.exception_rows = 0
+      and new.id is not distinct from old.id
+      and new.import_id is not distinct from old.import_id
+      and new.reconciled_by is not distinct from old.reconciled_by
+      and new.created_at is not distinct from old.created_at
+      and new.matched_rows >= 0
+      and new.exception_rows >= 0
+      and new.matched_rows + new.exception_rows > 0
+    then
+      return new;
+    end if;
   end if;
 
   raise exception using errcode = '55000', message = 'settlement reconciliation evidence is immutable';
