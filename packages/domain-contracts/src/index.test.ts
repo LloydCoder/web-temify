@@ -124,7 +124,7 @@ describe("Phase 4D2 settlement import contract", () => {
     expect(SettlementImportSchema.safeParse(validReport).success).toBe(true);
   });
 
-  it("rejects invalid auth assertions, extra fields, and versions", async () => {
+  it("rejects invalid auth assertions and extra fields", async () => {
     const { SettlementImportSchema } = await import("./index");
     expect(
       SettlementImportSchema.safeParse({
