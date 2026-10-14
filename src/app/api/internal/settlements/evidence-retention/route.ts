@@ -149,8 +149,12 @@ async function runRetention(request: Request) {
       deleted,
       retryable,
       maxBatchSize: MAX_BATCH_SIZE,
+      error: retryable > 0 ? "retention_partial_failure" : null,
     },
-    { status: 200, headers: { "Cache-Control": "no-store" } },
+    {
+      status: retryable > 0 ? 503 : 200,
+      headers: { "Cache-Control": "no-store" },
+    },
   );
 }
 
