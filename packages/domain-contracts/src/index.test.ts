@@ -4,6 +4,7 @@ import {
   ProductCatalogItemSchema,
   ProductRightsAttestationInputSchema,
   ProductStatusSchema,
+  SettlementImportSchema,
 } from "./index";
 
 describe("shared domain contracts", () => {
@@ -119,12 +120,11 @@ describe("Phase 4D2 settlement import contract", () => {
     ],
   };
 
-  it("accepts a valid settlement report", async () => {
-    const { SettlementImportSchema } = await import("./index");
+  it("accepts a valid settlement report", () => {
     expect(SettlementImportSchema.safeParse(validReport).success).toBe(true);
   });
 
-  it("rejects invalid auth assertions and extra fields", async () => {
+  it("rejects invalid auth assertions and extra fields", () => {
     const { SettlementImportSchema } = await import("./index");
     expect(
       SettlementImportSchema.safeParse({
@@ -146,7 +146,7 @@ describe("Phase 4D2 settlement import contract", () => {
     ).toBe(false);
   });
 
-  it("rejects duplicate row IDs and currency mismatch", async () => {
+  it("rejects duplicate row IDs and currency mismatch", () => {
     const { SettlementImportSchema } = await import("./index");
     const duplicate = {
       ...validReport,
@@ -160,7 +160,7 @@ describe("Phase 4D2 settlement import contract", () => {
     expect(SettlementImportSchema.safeParse(wrongCurrency).success).toBe(false);
   });
 
-  it("rejects out-of-period rows and invalid signs", async () => {
+  it("rejects out-of-period rows and invalid signs", () => {
     const { SettlementImportSchema } = await import("./index");
     const outsidePeriod = {
       ...validReport,
@@ -197,7 +197,7 @@ describe("Phase 4D2 settlement import contract", () => {
     expect(SettlementImportSchema.safeParse(positiveFee).success).toBe(false);
   });
 
-  it("checks report-period boundaries in the declared timezone", async () => {
+  it("checks report-period boundaries in the declared timezone", () => {
     const { SettlementImportSchema } = await import("./index");
     const localDateOutsidePeriod = {
       ...validReport,
@@ -220,7 +220,7 @@ describe("Phase 4D2 settlement import contract", () => {
     ).toBe(false);
   });
 
-  it("rejects invalid periods and source digests", async () => {
+  it("rejects invalid periods and source digests", () => {
     const { SettlementImportSchema } = await import("./index");
     expect(
       SettlementImportSchema.safeParse({
