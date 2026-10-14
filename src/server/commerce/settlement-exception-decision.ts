@@ -9,7 +9,10 @@ export const SettlementExceptionDecisionSchema = z
       "accepted_with_evidence",
     ]),
     reason: z.string().trim().min(12).max(500),
-    evidenceSha256: z.string().regex(/^[a-f0-9]{64}$/).nullable(),
+    evidenceSha256: z
+      .string()
+      .regex(/^[a-f0-9]{64}$/)
+      .nullable(),
   })
   .strict()
   .superRefine((value, context) => {
