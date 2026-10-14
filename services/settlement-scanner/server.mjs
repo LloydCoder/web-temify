@@ -184,6 +184,22 @@ export function createScannerServer({
       sendJson(response, 200, { ok: true });
       return;
     }
+    if (request.method === "GET" && request.url === "/readyz") {
+      try {
+        const version = await clamdRequest({
+          host: clamdHost,
+          port: clamdPort,
+          command: "VERSION",
+          timeoutMs,
+        });
+        sendJson(response, version.startsWith("ClamAV ") ? 200 : 503, {
+          ok: version.startsWith("ClamAV "),
+        });
+      } catch {
+        sendJson(response, 503, { ok: false });
+      }
+      return;
+    }
     if (request.method !== "POST" || request.url !== "/v1/scan") {
       sendJson(response, 404, { error: "not_found" });
       return;
