@@ -16,6 +16,7 @@ This is design research, not evidence that Web-Temify has selected, onboarded, o
 ## Implemented in this slice
 
 - SettlementImportSchema pins the contract to version 1.0, limits provider identifiers to the currently modeled provider enum, requires a SHA-256 digest, a source-authentication assertion, an account/report reference, a declared period and timezone, and bounded row count.
+- Migration `20261013037000_phase4d2_settlement_imports.sql` adds server-only report and normalized-row persistence, RLS-deny-by-default tables, immutable evidence triggers, restricted service-role import RPC, report identity/digest uniqueness, and deterministic identical-replay/conflicting-evidence handling. pgTAP covers the initial persistence and privilege boundary.
 - Rows have stable identifiers, an explicit row type, optional provider/internal payment references, an offset-aware timestamp, currency, gross/fee/net minor-unit values, and a bounded exception taxonomy.
 - Validation rejects unknown keys, duplicate row IDs within a report, currency mismatch, rows outside the declared period, inverted periods, invalid source digests, positive-gross refunds, non-positive-gross payments, and positive-net fee rows.
 - Contract tests cover valid reports and the adversarial boundary cases above.
@@ -28,14 +29,13 @@ Contract validation does not prove that netMinor = grossMinor - feeMinor: settle
 
 ## Required next work before Phase 4D2 can pass
 
-1. Add server-only immutable settlement import/report/row tables with unique source digest and provider/account/report identity, RLS-deny-by-default, narrow RPCs, and append-only evidence.
-2. Add deterministic import idempotency and conflict detection: identical report replay is a no-op; same identity with a different digest is quarantined.
-3. Reconcile payment/refund rows against the verified journal and provider references; quarantine missing, duplicate, cross-currency, out-of-period, amount-mismatched, and unexplained rows. Never auto-resolve an exception.
-4. Implement source-specific posting guards for provider settlement and provider fees. Require balanced same-currency entries, evidence linkage, row-level reconciliation, and idempotency; keep money movement and payout execution disabled.
-5. Add pgTAP and application tests for duplicate/replay/conflict, concurrency, partial imports, missing/mismatched references, period/timezone edges, fee-only rows, refunds, unsupported adjustments, journal imbalance, privilege denial, and rollback behavior.
-6. Build a bounded admin exception queue with immutable decisions and independent approval where required.
-7. Run empty-database migration reset, schema lint, full database/RLS tests, foundation/domain tests, typecheck, lint, format, Playwright, production build, security/dependency/license/secret scans, and an exact-head forensic review.
-8. Record provider selection, supported jurisdictions/currencies, fees, dispute/refund behavior, settlement report semantics, and onboarding evidence separately. Until those are verified, all live-provider processing remains disabled.
+1. Authenticate the actual source at trusted ingress, calculate `source_sha256` from the exact received bytes, validate the timezone and report metadata before invoking the service-only RPC, and bind the authenticated operations actor to the request. The database boolean is only an assertion and is not cryptographic proof.
+2. Reconcile payment/refund rows against verified journal batches and provider references; quarantine missing, duplicate, cross-currency, out-of-period, amount-mismatched, and unexplained rows. Never auto-resolve an exception.
+3. Implement source-specific posting guards for provider settlement and provider fees. Require balanced same-currency entries, evidence linkage, row-level reconciliation, and idempotency; keep money movement and payout execution disabled.
+4. Extend pgTAP and application tests for concurrent duplicate imports, partial-import rollback, missing/mismatched references, period/timezone edges, fee-only rows, refunds, unsupported adjustments, journal imbalance, privilege denial, and retry behavior.
+5. Build a bounded admin exception queue with immutable decisions and independent approval where required.
+6. Run empty-database migration reset, schema lint, full database/RLS tests, foundation/domain tests, typecheck, lint, format, Playwright, production build, security/dependency/license/secret scans, and an exact-head forensic review.
+7. Record provider selection, supported jurisdictions/currencies, fees, dispute/refund behavior, settlement report semantics, and onboarding evidence separately. Until those are verified, all live-provider processing remains disabled.
 
 ## Acceptance rule
 
