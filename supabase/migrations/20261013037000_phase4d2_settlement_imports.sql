@@ -128,7 +128,8 @@ begin
     or p_source_authentication_method is null
     or p_source_authentication_method not in ('provider_api_signature', 'authenticated_report_download', 'sandbox_fixture')
     or p_currency is null
-    or p_currency !~ '^[A-Z]{3}    or p_imported_by is null
+    or p_currency !~ '^[A-Z]{3}$'
+    or p_imported_by is null
   then
     raise exception using errcode = '23514', message = 'settlement report metadata failed validation';
   end if;
