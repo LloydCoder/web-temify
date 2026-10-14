@@ -8,6 +8,7 @@ export default defineConfig({
       "src/**/*.test.ts",
       "tests/unit/**/*.test.ts",
       "packages/**/*.test.ts",
+      "services/**/*.test.mjs",
     ],
     coverage: {
       reporter: ["text", "lcov"],
