@@ -8,9 +8,12 @@ on:
 permissions:
   contents: read
 
+# Do not cancel the only full-stack validation run when several small commits land
+# in quick succession. Each candidate must reach a terminal result so a cancelled
+# run cannot be mistaken for a failing test or leave the latest head unverified.
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   foundation:
