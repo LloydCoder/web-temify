@@ -55,10 +55,13 @@ export async function POST(request: Request) {
   }
 
   const requestId = randomUUID();
-  const { data, error } = await client.rpc("claim_expired_settlement_evidence", {
+  const { data, error } = await client.rpc(
+    "claim_expired_settlement_evidence",
+    {
     p_limit: MAX_BATCH_SIZE,
-    p_request_id: requestId,
-  });
+      p_request_id: requestId,
+    },
+  );
 
   if (error || !Array.isArray(data)) {
     return NextResponse.json(
