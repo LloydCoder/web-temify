@@ -1,5 +1,5 @@
 begin;
-select plan(58);
+select plan(59);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -558,6 +558,27 @@ select throws_ok(
   )$sql$,
   '23514', 'settlement exception cursor row identifier is outside the allowed range',
   'queue rejects empty row identifiers in cursor tuples'
+);
+select is(
+  (
+    with first_page as (
+      select q.run_id, q.row_id, q.result_created_at
+      from public.list_settlement_exception_queue(
+        '89000000-0000-4000-8000-000000000089', 1, null, null, null
+      ) q
+      order by q.result_created_at desc, q.run_id desc, q.row_id desc
+      limit 1
+    )
+    select count(*)
+    from first_page fp
+    cross join lateral public.list_settlement_exception_queue(
+      '89000000-0000-4000-8000-000000000089', 51,
+      fp.result_created_at, fp.run_id, fp.row_id
+    ) q
+    where q.run_id = fp.run_id and q.row_id = fp.row_id
+  ),
+  0::bigint,
+  'pagination cursor excludes the previous page boundary row'
 );
 
 select * from finish();
