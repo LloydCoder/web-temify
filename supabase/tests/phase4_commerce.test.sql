@@ -806,6 +806,12 @@ select ok(
   'gross payment accounting batch is balanced'
 );
 
+insert into public.user_roles (user_id, role, granted_by)
+values
+  ('83000000-0000-4000-8000-000000000083', 'admin', null),
+  ('84000000-0000-4000-8000-000000000084', 'admin', '83000000-0000-4000-8000-000000000083')
+on conflict (user_id, role) do nothing;
+
 select lives_ok(
   $sql$insert into public.seller_fee_schedules (seller_id, platform_fee_bps)
     values ('81000000-0000-4000-8000-000000000081', 1000)$sql$,
