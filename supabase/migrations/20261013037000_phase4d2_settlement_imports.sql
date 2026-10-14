@@ -128,8 +128,7 @@ begin
     or p_source_authentication_method is null
     or p_source_authentication_method not in ('provider_api_signature', 'authenticated_report_download', 'sandbox_fixture')
     or p_currency is null
-    or p_currency !~ '^[A-Z]{3}
-    or p_imported_by is null
+    or p_currency !~ '^[A-Z]{3}    or p_imported_by is null
   then
     raise exception using errcode = '23514', message = 'settlement report metadata failed validation';
   end if;
@@ -207,128 +206,6 @@ begin
       raise exception using errcode = '23514', message = 'settlement row has unknown or missing fields';
     end if;
 
-    row_id_value := row_value ->> 'rowId';
-    row_type_value := row_value ->> 'rowType';
-    provider_reference_value := nullif(row_value ->> 'providerReference', '');
-    payment_reference_value := nullif(row_value ->> 'paymentReference', '');
-    occurred_at_value := (row_value ->> 'occurredAt')::timestamptz;
-    currency_value := row_value ->> 'currency';
-    gross_minor_value := (row_value ->> 'grossMinor')::bigint;
-    fee_minor_value := (row_value ->> 'feeMinor')::bigint;
-    net_minor_value := (row_value ->> 'netMinor')::bigint;
-    exception_code_value := nullif(row_value ->> 'exceptionCode', '');
-
-    if row_id_value is null or char_length(row_id_value) not between 1 and 240
-      or row_type_value not in ('payment', 'refund', 'fee', 'payout', 'adjustment')
-      or occurred_at_value is null
-      or currency_value is distinct from p_currency
-      or fee_minor_value < 0
-      or (row_type_value = 'payment' and gross_minor_value <= 0)
-      or (row_type_value = 'refund' and gross_minor_value >= 0)
-      or (row_type_value = 'fee' and net_minor_value >= 0)
-      or (occurred_at_value at time zone p_report_timezone)::date < p_report_period_start
-      or (occurred_at_value at time zone p_report_timezone)::date > p_report_period_end
-      or (exception_code_value is not null and exception_code_value not in (
-        'missing_internal_match', 'duplicate_reference', 'amount_mismatch',
-        'currency_mismatch', 'period_mismatch', 'unsupported_row_type', 'unexplained_adjustment'
-      ))
-    then
-      raise exception using errcode = '23514', message = 'settlement row failed period, currency, type, amount, or exception validation';
-    end if;
-
-    insert into public.settlement_import_rows (
-      import_id, row_id, row_type, provider_reference, payment_reference,
-      occurred_at, currency, gross_minor, fee_minor, net_minor, exception_code
-    ) values (
-      new_import_id, row_id_value, row_type_value, provider_reference_value, payment_reference_value,
-      occurred_at_value, currency_value, gross_minor_value, fee_minor_value, net_minor_value, exception_code_value
-    );
-  end loop;
-
-  return new_import_id;
-end;
-$function$;
-revoke all on function public.import_settlement_report(
-  text, text, text, date, date, text, text, boolean, text, text, uuid, jsonb
-) from public, anon, authenticated;
-grant execute on function public.import_settlement_report(
-  text, text, text, date, date, text, text, boolean, text, text, uuid, jsonb
-) to service_role;
-
-comment on table public.settlement_imports is
-  'Immutable settlement source/report metadata. Import is not reconciliation or journal posting.';
-comment on table public.settlement_import_rows is
-  'Immutable normalized settlement rows. Matching, exceptions, and journal posting require later reviewed Phase 4D2 gates.';
-comment on function public.import_settlement_report(
-  text, text, text, date, date, text, text, boolean, text, text, uuid, jsonb
-) is
-  'Service-only, idempotent import of normalized settlement evidence. source_authenticated is a trusted-ingress assertion, not cryptographic verification by this function.';
-
-    or p_imported_by is null
-  then
-    raise exception using errcode = '23514', message = 'settlement report metadata failed validation';
-  end if;
-
-  if not exists (
-    select 1 from public.user_roles ur
-    where ur.user_id = p_imported_by
-      and ur.role in ('admin'::public.app_role, 'moderator'::public.app_role)
-  ) then
-    raise exception using errcode = '42501', message = 'settlement import requires an authorized operations actor';
-  end if;
-
-  if jsonb_typeof(p_rows) is distinct from 'array'
-    or jsonb_array_length(p_rows) < 1
-    or jsonb_array_length(p_rows) > 100000
-  then
-    raise exception using errcode = '23514', message = 'settlement report rows must be a bounded non-empty array';
-  end if;
-
-  -- Serialize same-report imports so idempotency remains deterministic under concurrency.
-  perform pg_advisory_xact_lock(hashtext(
-    p_provider || ':' || p_provider_account_reference || ':' || p_report_reference
-  ));
-
-  select * into existing_import
-  from public.settlement_imports
-  where provider = p_provider
-    and provider_account_reference = p_provider_account_reference
-    and report_reference = p_report_reference;
-
-  if existing_import.id is not null then
-    if existing_import.source_sha256 = p_source_sha256
-      and existing_import.currency = p_currency
-      and existing_import.report_period_start = p_report_period_start
-      and existing_import.report_period_end = p_report_period_end
-    then
-      return existing_import.id;
-    end if;
-    raise exception using errcode = '23514', message = 'settlement report identity already exists with conflicting evidence';
-  end if;
-
-  if exists (
-    select 1 from public.settlement_imports
-    where provider = p_provider
-      and provider_account_reference = p_provider_account_reference
-      and source_sha256 = p_source_sha256
-  ) then
-    raise exception using errcode = '23514', message = 'settlement source digest is already bound to another report identity';
-  end if;
-
-  insert into public.settlement_imports (
-    provider, provider_account_reference, report_reference,
-    report_period_start, report_period_end, report_timezone,
-    source_sha256, source_authentication_method, source_authenticated_at,
-    currency, imported_by
-  ) values (
-    p_provider, p_provider_account_reference, p_report_reference,
-    p_report_period_start, p_report_period_end, p_report_timezone,
-    p_source_sha256, p_source_authentication_method, now(),
-    p_currency, p_imported_by
-  ) returning id into new_import_id;
-
-  for row_value in select value from jsonb_array_elements(p_rows)
-  loop
     row_id_value := row_value ->> 'rowId';
     row_type_value := row_value ->> 'rowType';
     provider_reference_value := nullif(row_value ->> 'providerReference', '');
