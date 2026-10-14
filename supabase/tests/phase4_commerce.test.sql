@@ -1379,7 +1379,8 @@ select lives_ok(
 select throws_ok(
   $sql$update public.financial_journal_batches set status = 'posted'
     where id = (select batch_id from phase4d1_bad_seller_batch_ids)$sql$,
-  '23514', null, 'financial journal rejects a balanced reversal assigned to the wrong seller'
+  '23514', 'refund reversal journal must reconcile to approved item-level reversal lines and verified provider evidence',
+  'financial journal rejects a balanced reversal assigned to the wrong seller'
 );
 
 select * from finish();
