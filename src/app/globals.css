@@ -441,6 +441,7 @@ a {
   font-weight: 800;
   font-size: 0.85rem;
 }
+.admin-review-form input,
 .admin-review-form select,
 .admin-review-form textarea {
   width: 100%;
@@ -471,7 +472,7 @@ a {
   opacity: 0.6;
   cursor: wait;
 }
-.admin-review-form :is(select, textarea, button):focus-visible {
+.admin-review-form :is(input, select, textarea, button):focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
