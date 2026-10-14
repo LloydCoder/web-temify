@@ -993,8 +993,11 @@ select has_table('public', 'refund_reversal_requests', 'refund reversal requests
 select has_table('public', 'refund_reversal_lines', 'refund reversal lines reconcile item gross, fee, seller payable and tax');
 select ok(
   not has_function_privilege('authenticated', 'public.approve_refund_reversal_request(uuid,uuid)', 'EXECUTE')
-  and has_function_privilege('service_role', 'public.approve_refund_reversal_request(uuid,uuid)', 'EXECUTE'),
-  'refund reversal approval is restricted to the trusted server role'
+  and has_function_privilege('service_role', 'public.approve_refund_reversal_request(uuid,uuid)', 'EXECUTE')
+  and not has_function_privilege('authenticated', 'public.reject_refund_reversal_request(uuid,uuid)', 'EXECUTE')
+  and has_function_privilege('service_role', 'public.reject_refund_reversal_request(uuid,uuid)', 'EXECUTE')
+  and not has_table_privilege('service_role', 'public.refund_reversal_requests', 'UPDATE'),
+  'refund reversal state transitions use restricted server RPCs rather than direct table updates'
 );
 select lives_ok(
   $sql$insert into public.refunds (
