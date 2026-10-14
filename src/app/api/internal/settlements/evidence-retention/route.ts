@@ -86,6 +86,7 @@ async function runRetention(request: Request) {
       !/^[0-9a-f-]{36}\/[a-f0-9]{64}$/.test(claim.storage_path) ||
       claim.storage_path.split("/")[0] !== claim.evidence_id ||
       !/^[a-f0-9]{64}$/.test(claim.source_sha256) ||
+      claim.storage_path !== `${claim.evidence_id}/${claim.source_sha256}` ||
       !Number.isSafeInteger(Number(claim.byte_size)) ||
       Number(claim.byte_size) < 1 ||
       Number(claim.byte_size) > 5 * 1024 * 1024
