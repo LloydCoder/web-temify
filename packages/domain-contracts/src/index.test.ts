@@ -83,7 +83,6 @@ describe("shared domain contracts", () => {
   });
 });
 
-
 describe("Phase 4D2 settlement import contract", () => {
   const validReport = {
     contractVersion: "1.0" as const,
