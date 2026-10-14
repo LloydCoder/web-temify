@@ -1,43 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { SettlementExceptionDecisionSchema } from "@/server/commerce/settlement-exception-decision";
 import { getAdminContext } from "@/server/admin/authorization";
 import { readBoundedRequestBody } from "@/server/commerce/read-bounded-body";
-
-const decisionSchema = z
-  .object({
-    rowId: z.string().min(1).max(240),
-    decision: z.enum([
-      "reimport_required",
-      "manual_review_required",
-      "accepted_with_evidence",
-    ]),
-    reason: z.string().trim().min(12).max(500),
-    evidenceSha256: z.string().regex(/^[a-f0-9]{64}$/).nullable(),
-  })
-  .strict()
-  .superRefine((value, context) => {
-    if (
-      value.decision === "accepted_with_evidence" &&
-      value.evidenceSha256 === null
-    ) {
-      context.addIssue({
-        code: "custom",
-        path: ["evidenceSha256"],
-        message: "Evidence digest is required for this decision.",
-      });
-    }
-    if (
-      value.decision !== "accepted_with_evidence" &&
-      value.evidenceSha256 !== null
-    ) {
-      context.addIssue({
-        code: "custom",
-        path: ["evidenceSha256"],
-        message: "Evidence digest is only allowed for evidence-backed triage.",
-      });
-    }
-  });
 
 export async function POST(
   request: Request,
@@ -100,7 +66,7 @@ export async function POST(
     );
   }
 
-  const parsed = decisionSchema.safeParse(untrusted);
+  const parsed = SettlementExceptionDecisionSchema.safeParse(untrusted);
   if (!parsed.success) {
     return NextResponse.json(
       { error: "invalid_settlement_decision", requestId },
