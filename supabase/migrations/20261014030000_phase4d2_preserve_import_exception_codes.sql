@@ -84,11 +84,12 @@ begin
     elsif row_value.provider_reference is null then
       result_code_value := 'missing_internal_match';
     else
+      -- Count every posted batch with this provider reference before filtering by
+      -- currency so a cross-currency collision is not misreported as missing.
       select count(*) into candidate_count
       from public.financial_journal_batches b
       where b.provider = import_row.provider
         and b.provider_reference = row_value.provider_reference
-        and b.currency = row_value.currency
         and b.status = 'posted'
         and b.source_type = case when row_value.row_type = 'payment' then 'payment' else 'refund' end;
 
@@ -110,7 +111,9 @@ begin
           and b.source_type = case when row_value.row_type = 'payment' then 'payment' else 'refund' end
         limit 1;
 
-        if exists (
+        if candidate_batch_id is null then
+          result_code_value := 'currency_mismatch';
+        elsif exists (
           select 1 from public.settlement_reconciliation_results prior
           where prior.run_id = new_run_id
             and prior.journal_batch_id = candidate_batch_id
