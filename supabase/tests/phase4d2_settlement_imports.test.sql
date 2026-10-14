@@ -870,7 +870,7 @@ select lives_ok(
     insert into phase4d2_unmatched_refund_import_ids
     select public.import_settlement_report(
       'sandbox', 'sandbox-account-01', 'unmatched-refund-report',
-      '2026-10-13', '2026-10-13', 'UTC', repeat('1',64), true,
+      '2026-10-13', '2026-10-13', 'UTC', repeat('0',64), true,
       'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
       jsonb_build_array(jsonb_build_object(
         'rowId','unmatched-refund-row-01', 'rowType','refund',
@@ -917,7 +917,7 @@ select lives_ok(
     insert into phase4d2_fee_only_import_ids
     select public.import_settlement_report(
       'sandbox', 'sandbox-account-01', 'fee-only-report',
-      '2026-10-13', '2026-10-13', 'UTC', repeat('2',64), true,
+      '2026-10-13', '2026-10-13', 'UTC', repeat('6',64), true,
       'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
       jsonb_build_array(jsonb_build_object(
         'rowId','fee-only-row-01', 'rowType','fee',
@@ -962,7 +962,7 @@ select lives_ok(
     insert into phase4d2_adjustment_row_import_ids
     select public.import_settlement_report(
       'sandbox', 'sandbox-account-01', 'unexplained-adjustment-row-report',
-      '2026-10-13', '2026-10-13', 'UTC', repeat('3',64), true,
+      '2026-10-13', '2026-10-13', 'UTC', repeat('8',64), true,
       'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
       jsonb_build_array(jsonb_build_object(
         'rowId','unexplained-adjustment-row-02', 'rowType','adjustment',
