@@ -26,7 +26,9 @@ type TestEnvironment = {
   CLAMAV_SCANNER_TOKEN?: string;
 };
 
-function configuredEnv(overrides: Partial<TestEnvironment> = {}): TestEnvironment {
+function configuredEnv(
+  overrides: Partial<TestEnvironment> = {},
+): TestEnvironment {
   return {
     NODE_ENV: "test",
     CLAMAV_SCANNER_URL: "http://127.0.0.1:8088/v1/scan",
@@ -40,7 +42,12 @@ describe("scanSettlementEvidence", () => {
     const fetcher = vi.fn<typeof fetch>();
 
     await expect(
-      scanSettlementEvidence(bytes, digest, { NODE_ENV: "test" }, fetcher),
+      scanSettlementEvidence(
+        bytes,
+        digest,
+        { NODE_ENV: "test" },
+        fetcher,
+      ),
     ).resolves.toEqual({ status: "not_configured" });
     expect(fetcher).not.toHaveBeenCalled();
   });
@@ -52,7 +59,9 @@ describe("scanSettlementEvidence", () => {
       scanSettlementEvidence(
         bytes,
         digest,
-        configuredEnv({ CLAMAV_SCANNER_URL: "http://scanner.internal/v1/scan" }),
+        configuredEnv({
+          CLAMAV_SCANNER_URL: "http://scanner.internal/v1/scan",
+        }),
         fetcher,
       ),
     ).resolves.toEqual({ status: "unavailable" });
@@ -88,7 +97,9 @@ describe("scanSettlementEvidence", () => {
     const [url, init] = fetcher.mock.calls[0]!;
     expect(String(url)).toBe("http://127.0.0.1:8088/v1/scan");
     expect(init?.method).toBe("POST");
-    expect(new Headers(init?.headers).get("authorization")).toBe(`Bearer ${token}`);
+    expect(new Headers(init?.headers).get("authorization")).toBe(
+      `Bearer ${token}`,
+    );
     expect(new Headers(init?.headers).get("x-evidence-sha256")).toBe(digest);
     expect(Buffer.from(init?.body as Uint8Array)).toEqual(bytes);
     expect(init?.cache).toBe("no-store");
@@ -98,7 +109,9 @@ describe("scanSettlementEvidence", () => {
   it.each(["infected", "error"] as const)(
     "preserves the scanner's %s verdict rather than treating it as clean",
     async (verdict) => {
-      const fetcher = vi.fn<typeof fetch>().mockResolvedValue(scannerResponse(verdict));
+      const fetcher = vi
+        .fn<typeof fetch>()
+        .mockResolvedValue(scannerResponse(verdict));
 
       await expect(
         scanSettlementEvidence(bytes, digest, configuredEnv(), fetcher),
@@ -135,7 +148,9 @@ describe("scanSettlementEvidence", () => {
   });
 
   it("does not claim a scan when the private scanner times out or is unreachable", async () => {
-    const fetcher = vi.fn<typeof fetch>().mockRejectedValue(new Error("offline"));
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockRejectedValue(new Error("offline"));
 
     await expect(
       scanSettlementEvidence(bytes, digest, configuredEnv(), fetcher),
