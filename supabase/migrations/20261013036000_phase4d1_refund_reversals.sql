@@ -75,7 +75,7 @@ alter table public.refund_reversal_requests enable row level security;
 alter table public.refund_reversal_lines enable row level security;
 revoke all on public.refund_reversal_requests from public, anon, authenticated;
 revoke all on public.refund_reversal_lines from public, anon, authenticated;
-grant select, insert, update on public.refund_reversal_requests to service_role;
+grant select, insert on public.refund_reversal_requests to service_role;
 grant select, insert on public.refund_reversal_lines to service_role;
 
 create function public.guard_refund_reversal_request()
@@ -424,6 +424,7 @@ $function$;
 create function public.reject_refund_reversal_request(p_request_id uuid, p_reviewer uuid)
 returns uuid
 language plpgsql
+security definer
 set search_path = ''
 as $function$
 declare
@@ -616,6 +617,7 @@ $function$;
 create function public.approve_refund_reversal_request(p_request_id uuid, p_approver uuid)
 returns uuid
 language plpgsql
+security definer
 set search_path = ''
 as $function$
 declare
