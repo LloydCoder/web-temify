@@ -27,7 +27,7 @@ test("homepage has semantic landmarks and no horizontal overflow on mobile or de
 
     const frame = page.locator('iframe[title="Web-Temify V3 marketplace experience"]');
     const hasHorizontalOverflow = await frame.evaluate((element) => {
-      const document = element.contentDocument;
+      const document = (element as HTMLIFrameElement).contentDocument;
       return document
         ? document.documentElement.scrollWidth > document.documentElement.clientWidth
         : true;
