@@ -3,6 +3,7 @@ import type { UrlObject } from "url";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { getAdminContext } from "@/server/admin/authorization";
+import { SettlementExceptionDecisionForm } from "./SettlementExceptionDecisionForm";
 
 export const dynamic = "force-dynamic";
 
@@ -259,6 +260,11 @@ export default async function AdminSettlementExceptionsPage({
                     </dd>
                   </div>
                 </dl>
+                <SettlementExceptionDecisionForm
+                  runId={item.run_id}
+                  rowId={item.row_id}
+                  existingDecision={item.triage_decision}
+                />
               </article>
             ))}
           </section>
