@@ -257,6 +257,8 @@ declare
   allocation_gross numeric;
   allocation_fee numeric;
   allocation_net numeric;
+  allocation_tax numeric;
+  fee_bps integer;
   settlement_posting public.settlement_journal_postings%rowtype;
   settlement_import public.settlement_imports%rowtype;
   settlement_row public.settlement_import_rows%rowtype;
@@ -305,120 +307,158 @@ begin
   if new.source_type = 'payment' then
     select lt.amount_minor into source_amount
     from public.ledger_transactions lt
-    where lt.source_type = 'payment'
-      and lt.order_id = new.order_id
+    where lt.source_type = 'payment' and lt.order_id = new.order_id
       and lt.payment_attempt_id = new.payment_attempt_id
       and lt.reference_key = replace(new.source_key, 'legacy-ledger:payment:', '')
       and lt.currency = new.currency;
-
     if source_amount is null
       or not exists (
-        select 1
-        from public.payment_webhook_events we
-        where we.order_id = new.order_id
-          and we.payment_attempt_id = new.payment_attempt_id
-          and we.provider = new.provider
-          and we.event_type = 'payment.succeeded'
-          and we.signature_verified
-          and we.processing_status in ('processing', 'processed')
-          and we.payload_sha256 = new.evidence_sha256
-          and we.provider_reference = new.provider_reference
+        select 1 from public.payment_webhook_events we
+        where we.order_id = new.order_id and we.payment_attempt_id = new.payment_attempt_id
+          and we.provider = new.provider and we.event_type = 'payment.succeeded'
+          and we.signature_verified and we.processing_status in ('processing', 'processed')
+          and we.payload_sha256 = new.evidence_sha256 and we.provider_reference = new.provider_reference
       )
       or entry_count <> 2
-      or not exists (
-        select 1 from public.financial_journal_entries e
-        where e.batch_id = new.id and e.account = 'provider_clearing'
-          and e.side = 'debit' and e.amount_minor = source_amount
-      )
-      or not exists (
-        select 1 from public.financial_journal_entries e
-        where e.batch_id = new.id and e.account = 'unallocated_order_liability'
-          and e.side = 'credit' and e.amount_minor = source_amount
-      ) then
+      or not exists (select 1 from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'provider_clearing' and e.side = 'debit' and e.amount_minor = source_amount)
+      or not exists (select 1 from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'unallocated_order_liability' and e.side = 'credit' and e.amount_minor = source_amount) then
       raise exception using errcode = '23514', message = 'payment journal must match an immutable ledger posting and verified provider event';
     end if;
 
   elsif new.source_type = 'refund' then
     select lt.amount_minor into source_amount
     from public.ledger_transactions lt
-    where lt.source_type = 'refund'
-      and lt.order_id = new.order_id
-      and lt.payment_attempt_id = new.payment_attempt_id
-      and lt.refund_id = new.refund_id
+    where lt.source_type = 'refund' and lt.order_id = new.order_id
+      and lt.payment_attempt_id = new.payment_attempt_id and lt.refund_id = new.refund_id
       and lt.reference_key = replace(new.source_key, 'legacy-ledger:refund:', '')
       and lt.currency = new.currency;
-
     if source_amount is null
-      or exists (
-        select 1 from public.order_proceeds_allocations opa where opa.order_id = new.order_id
-      )
+      or (exists (select 1 from public.order_proceeds_allocations opa where opa.order_id = new.order_id)
+        and not exists (
+          select 1 from public.financial_journal_batches rb
+          join public.financial_journal_entries re on re.batch_id = rb.id
+          where rb.source_type = 'refund_reversal' and rb.refund_id = new.refund_id
+            and rb.status = 'posted' and re.account = 'unallocated_order_liability'
+            and re.side = 'credit' and re.amount_minor = source_amount
+        ))
       or not exists (
-        select 1
-        from public.payment_webhook_events we
-        where we.order_id = new.order_id
-          and we.payment_attempt_id = new.payment_attempt_id
-          and we.refund_id = new.refund_id
-          and we.provider = new.provider
-          and we.event_type = 'refund.succeeded'
-          and we.signature_verified
+        select 1 from public.payment_webhook_events we
+        where we.order_id = new.order_id and we.payment_attempt_id = new.payment_attempt_id
+          and we.refund_id = new.refund_id and we.provider = new.provider
+          and we.event_type = 'refund.succeeded' and we.signature_verified
           and we.processing_status in ('processing', 'processed')
-          and we.payload_sha256 = new.evidence_sha256
-          and we.provider_reference = new.provider_reference
+          and we.payload_sha256 = new.evidence_sha256 and we.provider_reference = new.provider_reference
       )
       or entry_count <> 2
+      or not exists (select 1 from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'unallocated_order_liability' and e.side = 'debit' and e.amount_minor = source_amount)
+      or not exists (select 1 from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'provider_clearing' and e.side = 'credit' and e.amount_minor = source_amount) then
+      raise exception using errcode = '23514', message = 'refund journal must match verified refund evidence and an approved reversal when proceeds were allocated';
+    end if;
+
+  elsif new.source_type = 'refund_reversal' then
+    select r.amount_minor into source_amount
+    from public.refunds r
+    where r.id = new.refund_id and r.order_id = new.order_id
+      and r.payment_attempt_id = new.payment_attempt_id and r.currency = new.currency
+      and r.status in ('requested', 'pending');
+    select count(*), coalesce(sum(rl.gross_refund_minor),0),
+           coalesce(sum(rl.platform_fee_reversal_minor),0),
+           coalesce(sum(rl.seller_payable_reversal_minor),0),
+           coalesce(sum(rl.tax_reversal_minor),0)
+      into allocation_count, allocation_gross, allocation_fee, allocation_net, allocation_tax
+    from public.refund_reversal_lines rl
+    join public.refund_reversal_requests rr on rr.id = rl.request_id
+    where rr.refund_id = new.refund_id and rr.status = 'approved';
+    if source_amount is null or allocation_count = 0 or allocation_gross <> source_amount
+      or allocation_fee + allocation_net + allocation_tax <> source_amount
       or not exists (
-        select 1 from public.financial_journal_entries e
-        where e.batch_id = new.id and e.account = 'unallocated_order_liability'
-          and e.side = 'debit' and e.amount_minor = source_amount
+        select 1 from public.refund_reversal_requests rr
+        where rr.refund_id = new.refund_id and rr.status = 'approved'
+          and rr.order_id = new.order_id and rr.amount_minor = source_amount
+          and rr.currency = new.currency
       )
       or not exists (
+        select 1 from public.payment_webhook_events we
+        where we.refund_id = new.refund_id and we.order_id = new.order_id
+          and we.payment_attempt_id = new.payment_attempt_id and we.provider = new.provider
+          and we.event_type = 'refund.succeeded' and we.signature_verified
+          and we.processing_status in ('processing', 'processed')
+          and we.payload_sha256 = new.evidence_sha256 and we.provider_reference = new.provider_reference
+      )
+      or (select coalesce(sum(e.amount_minor),0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'seller_payable' and e.side = 'debit') <> allocation_net
+      or (select coalesce(sum(e.amount_minor),0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'platform_revenue' and e.side = 'debit') <> allocation_fee
+      or (select coalesce(sum(e.amount_minor),0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'tax_payable' and e.side = 'debit') <> allocation_tax
+      or exists (
+        select 1
+        from public.refund_reversal_lines rl
+        join public.refund_reversal_requests rr on rr.id = rl.request_id
+        where rr.refund_id = new.refund_id and rr.status = 'approved'
+        group by rl.seller_id
+        having coalesce(sum(rl.seller_payable_reversal_minor),0) <>
+          coalesce((
+            select sum(e.amount_minor) from public.financial_journal_entries e
+            where e.batch_id = new.id and e.account = 'seller_payable'
+              and e.side = 'debit' and e.seller_id = rl.seller_id
+          ),0)
+      )
+      or exists (
         select 1 from public.financial_journal_entries e
-        where e.batch_id = new.id and e.account = 'provider_clearing'
-          and e.side = 'credit' and e.amount_minor = source_amount
+        where e.batch_id = new.id and e.account = 'seller_payable' and e.side = 'debit'
+          and not exists (
+            select 1 from public.refund_reversal_lines rl
+            join public.refund_reversal_requests rr on rr.id = rl.request_id
+            where rr.refund_id = new.refund_id and rr.status = 'approved' and rl.seller_id = e.seller_id
+          )
+      )
+      or (select coalesce(sum(e.amount_minor),0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'unallocated_order_liability' and e.side = 'credit') <> source_amount
+      or exists (
+        select 1 from public.financial_journal_entries e
+        where e.batch_id = new.id and not (
+          (e.account in ('seller_payable','platform_revenue','tax_payable') and e.side = 'debit')
+          or (e.account = 'unallocated_order_liability' and e.side = 'credit')
+        )
       ) then
-      raise exception using errcode = '23514', message = 'refund journal must match a verified refund event and cannot bypass allocation reversal';
+      raise exception using errcode = '23514', message = 'refund reversal journal must reconcile to approved item-level reversal lines and verified provider evidence';
     end if;
 
   elsif new.source_type = 'proceeds_allocation' then
     select o.total_minor, o.subtotal_minor, o.tax_minor
       into source_amount, source_subtotal, source_tax
     from public.orders o
-    where o.id = new.order_id and o.status = 'paid' and o.currency = new.currency;
-
-    select count(*) into source_item_count
-    from public.order_items oi where oi.order_id = new.order_id;
-
-    select count(*), coalesce(sum(opa.gross_minor), 0),
-           coalesce(sum(opa.platform_fee_minor), 0), coalesce(sum(opa.seller_net_minor), 0)
+    where o.id = new.order_id and o.status in ('paid','partially_refunded') and o.currency = new.currency;
+    select count(*) into source_item_count from public.order_items oi where oi.order_id = new.order_id;
+    select count(*), coalesce(sum(opa.gross_minor), 0), coalesce(sum(opa.platform_fee_minor), 0), coalesce(sum(opa.seller_net_minor), 0)
       into allocation_count, allocation_gross, allocation_fee, allocation_net
-    from public.order_proceeds_allocations opa
-    where opa.journal_batch_id = new.id;
-
-    if source_amount is null
-      or allocation_count <> source_item_count
-      or allocation_count = 0
-      or allocation_gross <> source_subtotal
-      or allocation_fee + allocation_net <> allocation_gross
-      or (select count(*) from public.financial_journal_entries e
-          where e.batch_id = new.id and e.account = 'unallocated_order_liability'
-            and e.side = 'debit' and e.amount_minor = source_amount) <> 1
-      or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e
-          where e.batch_id = new.id and e.account = 'seller_payable' and e.side = 'credit') <> allocation_net
-      or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e
-          where e.batch_id = new.id and e.account = 'platform_revenue' and e.side = 'credit') <> allocation_fee
-      or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e
-          where e.batch_id = new.id and e.account = 'tax_payable' and e.side = 'credit') <> source_tax
+    from public.order_proceeds_allocations opa where opa.journal_batch_id = new.id;
+    if source_amount is null or allocation_count <> source_item_count or allocation_count = 0
+      or allocation_gross <> source_subtotal or allocation_fee + allocation_net <> allocation_gross
+      or (select count(*) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'unallocated_order_liability' and e.side = 'debit' and e.amount_minor = source_amount) <> 1
+      or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'seller_payable' and e.side = 'credit') <> allocation_net
+      or exists (
+        select 1
+        from public.order_proceeds_allocations opa
+        where opa.journal_batch_id = new.id
+        group by opa.seller_id
+        having coalesce(sum(opa.seller_net_minor),0) <>
+          coalesce((
+            select sum(e.amount_minor) from public.financial_journal_entries e
+            where e.batch_id = new.id and e.account = 'seller_payable'
+              and e.side = 'credit' and e.seller_id = opa.seller_id
+          ),0)
+      )
       or exists (
         select 1 from public.financial_journal_entries e
-        where e.batch_id = new.id
-          and not (
-            (e.account = 'unallocated_order_liability' and e.side = 'debit')
-            or (e.account in ('seller_payable', 'platform_revenue', 'tax_payable') and e.side = 'credit')
+        where e.batch_id = new.id and e.account = 'seller_payable' and e.side = 'credit'
+          and not exists (
+            select 1 from public.order_proceeds_allocations opa
+            where opa.journal_batch_id = new.id and opa.seller_id = e.seller_id
           )
-      ) then
+      )
+      or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'platform_revenue' and e.side = 'credit') <> allocation_fee
+      or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'tax_payable' and e.side = 'credit') <> source_tax
+      or exists (select 1 from public.financial_journal_entries e where e.batch_id = new.id and not ((e.account = 'unallocated_order_liability' and e.side = 'debit') or (e.account in ('seller_payable','platform_revenue','tax_payable') and e.side = 'credit'))) then
       raise exception using errcode = '23514', message = 'proceeds allocation journal must reconcile to paid order, item allocations, approved fees and tax';
     end if;
-
   elsif new.source_type = 'provider_fee' then
     select * into settlement_posting
     from public.settlement_journal_postings
