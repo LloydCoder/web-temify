@@ -8,7 +8,6 @@ Phase 4D2 settlement tests:
 
 These tests verify only the sandbox/provider-neutral data and control-plane behavior. They do not establish provider-authenticated ingress, matched-refund correctness, production retention/deletion, malware scanning, or approval for live financial posting.
 
-
 Phase 5D support-case workflow:
 
 - `phase5d_support_cases.test.sql` — support-case grants/RLS, idempotent create/replay, conflicting idempotency-key rejection, administrator-only state transitions, assignment, terminal timestamps, append-only event history, and audit evidence.
