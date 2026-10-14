@@ -12,7 +12,7 @@ vi.mock("@supabase/supabase-js", () => ({
   createClient: mocks.createClient,
 }));
 
-import { POST } from "./route";
+import { GET, POST } from "./route";
 
 const token = "retention-worker-token-that-is-long-enough-123456";
 const evidenceId = "81000000-0000-4000-8000-000000000080";
@@ -77,6 +77,20 @@ describe("settlement evidence retention endpoint", () => {
     expect(response.status).toBe(401);
     expect(mocks.createClient).not.toHaveBeenCalled();
     expect(response.headers.get("cache-control")).toBe("no-store");
+  });
+
+  it("accepts Vercel Cron GET requests authenticated with CRON_SECRET", async () => {
+    vi.stubEnv("SETTLEMENT_EVIDENCE_RETENTION_TOKEN", "");
+    vi.stubEnv("CRON_SECRET", token);
+
+    const response = await GET(request());
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      claimed: 1,
+      deleted: 1,
+      retryable: 0,
+    });
   });
 
   it("fails closed when the retention token is missing or too short", async () => {
