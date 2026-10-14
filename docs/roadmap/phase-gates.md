@@ -173,7 +173,8 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 
 #### Phase 4D2 — provider settlement reconciliation (not started; external provider gate)
 
-- [ ] Select and verify a provider only after supported platform/seller jurisdictions, currencies, fees, settlement reports, refunds, disputes, payout capabilities and operational support are confirmed.
+- [x] Reconcile the previously accepted provider-role strategy and record evidence boundaries in [`docs/commerce/provider-strategy.md`](../commerce/provider-strategy.md). The record distinguishes Polar (MoR candidate), Paystack (Nigeria/local direct-payment candidate), Sellra (unverified candidate), and Grey (treasury/FX only); older exploratory providers are not automatically approved for integration.
+- [ ] Select the first-launch route from the accepted roles only after Web-Temify account/KYB approval, marketplace contractual permission, supported buyer/seller jurisdictions, currencies, fees, refunds/disputes, settlement evidence and operational support are confirmed. Public provider documentation alone is insufficient.
 - [ ] Define a versioned provider-neutral settlement import contract with signed/source-authenticated evidence, content digest, report period, currency, gross, fees, net, provider references and row-level exceptions.
 - [ ] Reconcile settlement rows idempotently to verified payment/refund journal batches; reject duplicate, missing, mismatched, out-of-period, cross-currency and unexplained amounts.
 - [ ] Post provider-fee and settlement journal entries only through source-specific balanced journal guards; no automatic money movement or payout until separately approved.
@@ -182,7 +183,7 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 
 #### Phase 4D2 implementation checkpoint — partial, not a gate pass
 
-- **Disposition:** IN PROGRESS. The settlement import contract, immutable report/row persistence, service-only import RPC, replay/conflicting-digest handling, timezone-aware period validation, and initial pgTAP coverage are proposed in [PR #30](https://github.com/LloydCoder/web-temify/pull/30).
+- **Disposition:** IN PROGRESS. The settlement import contract, immutable report/row persistence, service-only import RPC, replay/conflicting-evidence handling, timezone-aware period validation, and initial pgTAP coverage are proposed in [PR #30](https://github.com/LloydCoder/web-temify/pull/30).
 - **Implementation boundary:** this checkpoint does not satisfy the Phase 4D2 exit criteria. Journal reconciliation and source-specific settlement/fee posting guards, operator exception decisions, concurrency/failure-replay coverage beyond report import, external provider onboarding evidence, and exact-head forensic review remain open. The source-authentication field is a trusted-ingress assertion, not cryptographic verification.
 - **Acceptance status:** keep every Phase 4D2 exit criterion unchecked until the complete workflow, adversarial database tests, security review, exact-head CI, and external evidence have passed together. Do not enable live provider processing.
 
