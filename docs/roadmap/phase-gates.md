@@ -180,6 +180,12 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - [ ] Add adversarial pgTAP tests, reconciliation fixtures, failure/replay tests, operator exception queues, documentation and exact-head CI/forensic audit.
 - [ ] Record external onboarding and settlement evidence; until then keep live provider processing disabled.
 
+#### Phase 4D2 implementation checkpoint — partial, not a gate pass
+
+- **Disposition:** IN PROGRESS. The settlement import contract, immutable report/row persistence, service-only import RPC, replay/conflicting-digest handling, timezone-aware period validation, and initial pgTAP coverage are proposed in [PR #30](https://github.com/LloydCoder/web-temify/pull/30).
+- **Implementation boundary:** this checkpoint does not satisfy the Phase 4D2 exit criteria. Journal reconciliation and source-specific settlement/fee posting guards, operator exception decisions, concurrency/failure-replay coverage beyond report import, external provider onboarding evidence, and exact-head forensic review remain open. The source-authentication field is a trusted-ingress assertion, not cryptographic verification.
+- **Acceptance status:** keep every Phase 4D2 exit criterion unchecked until the complete workflow, adversarial database tests, security review, exact-head CI, and external evidence have passed together. Do not enable live provider processing.
+
 ## Phase 5 — Admin and operations
 
 ### Phase 5A forensic audit record
