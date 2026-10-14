@@ -1,9 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import {
-  SettlementExceptionDecisionSchema,
-} from "@/server/commerce/settlement-exception-decision";
+import { SettlementExceptionDecisionSchema } from "@/server/commerce/settlement-exception-decision";
 import { getAdminContext } from "@/server/admin/authorization";
 import { readBoundedRequestBody } from "@/server/commerce/read-bounded-body";
 
