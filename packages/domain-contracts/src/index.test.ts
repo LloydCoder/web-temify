@@ -91,9 +91,9 @@ describe("settlement source provider policy", () => {
     expect(SettlementProviderSchema.parse("paystack")).toBe("paystack");
     expect(SettlementProviderSchema.parse("sandbox")).toBe("sandbox");
     expect(SettlementProviderSchema.safeParse("stripe").success).toBe(false);
-    expect(
-      SettlementProviderSchema.safeParse("flutterwave").success,
-    ).toBe(false);
+    expect(SettlementProviderSchema.safeParse("flutterwave").success).toBe(
+      false,
+    );
   });
 });
 
