@@ -1003,7 +1003,7 @@ select lives_ok(
   $sql$insert into public.refunds (
     id, order_id, payment_attempt_id, amount_minor, currency, status, reason, idempotency_key, requested_by
   )
-  select '99000000-0000-4000-8000-000000000099', o.id, pa.id, 333, o.currency, 'pending',
+  select '99000000-0000-4000-8000-000000000099', o.id, pa.id, 333, o.currency, 'requested',
     'Phase 4D1 approved partial refund', 'test-refund-reversal-0001', o.customer_id
   from public.orders o
   join phase4c_allocation_order_ids t on t.order_id = o.id
