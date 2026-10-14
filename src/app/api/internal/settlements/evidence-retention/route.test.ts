@@ -172,11 +172,12 @@ describe("settlement evidence retention endpoint", () => {
 
     const response = await POST(request());
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(503);
     await expect(response.json()).resolves.toMatchObject({
       claimed: 1,
       deleted: 0,
       retryable: 1,
+      error: "retention_partial_failure",
     });
     expect(mocks.rpc).toHaveBeenNthCalledWith(
       2,
