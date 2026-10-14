@@ -20,7 +20,7 @@ When seller proceeds have already been allocated, a verified refund must not be 
 
 ## State and accounting order
 
-1. Record a pending refund and an immutable reversal request with item-level lines.
+1. Record a requested refund and an immutable reversal request with item-level lines.
 2. A distinct database-owned admin approves or rejects the request.
 3. On a cryptographically verified refund-success event, the processor validates matching refund/order/attempt/amount/currency/provider evidence.
 4. The system posts a balanced reversal journal that debits seller payable, platform revenue and recorded tax liability as applicable, and credits unallocated order liability.

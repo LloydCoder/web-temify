@@ -135,7 +135,7 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - [x] Payment/refund journal posting must reconcile to the immutable ledger transaction and verified provider event, including provider reference and payload digest; arbitrary balanced postings are rejected.
 - [x] Seller fee schedules require a database-owned admin role, independent approval/revocation actors, immutable terms, and effective/expiry controls.
 - [x] Idempotent per-order-item proceeds allocation reconciles gross, seller payable, platform commission and any tax amount already present on the order snapshot.
-- [x] Unsupported posting sources (settlement, provider fees, chargebacks, reserves, manual adjustments) fail closed; refunds after allocation remain blocked until a reversal workflow exists.
+- [x] Unsupported posting sources (settlement, provider fees, chargebacks, reserves, manual adjustments) fail closed; post-allocation refund outflow requires an approved reversal journal first.
 - [x] 169 pgTAP assertions, empty-database migration reset, schema lint, typecheck, lint, format check, Playwright, production build and cleanup passed on the exact reviewed head.
 
 ### Phase 4C forensic audit record
@@ -155,7 +155,7 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - [x] Forensic review verifies immutable reversal requests/lines, distinct-admin approval/rejection, verified webhook evidence, balanced reversal-before-refund posting, cumulative item/fee/tax caps, idempotency and rejected-request retry.
 - [x] Commission reversal arithmetic uses cumulative rounding, including minor-unit carry across partial refunds.
 - [x] Service-role table grants do not allow direct state-transition updates; approval/rejection uses narrowly granted server RPCs.
-- [x] Roadmap, migration README, Phase 4C commerce documentation and this gate register agree with the merged implementation.
+- [x] Roadmap, migration README, Phase 4C commerce documentation and this gate register agree with the reviewed Phase 4D1 implementation and its tested sandbox-only boundary.
 - [x] Explicit non-claims remain: no live provider, settlement reconciliation, provider-fee posting, payout, tax calculator, chargeback, reserve, manual-adjustment execution or escrow.
 
 **Phase 4D1 forensic audit record — PASS (sandbox/test scope only)**

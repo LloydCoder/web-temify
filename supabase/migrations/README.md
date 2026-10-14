@@ -31,7 +31,7 @@ Migration 20261013030000_phase4b_checkout_webhooks.sql adds server-only atomic o
 
 ## Phase 4C — immutable financial journal and proceeds allocation
 
-Migration `20261013035000_phase4c_financial_journal.sql` creates a server-only append-only journal with source-specific posting checks. Payment/refund postings must match verified event evidence and existing ledger transactions; allocation postings must reconcile to a paid order, immutable item totals, independently approved fee schedules, seller payable, platform commission and any tax amount on the order snapshot. The supported posting sources are payment, refund before allocation, and proceeds allocation. Other financial sources fail closed until a dedicated workflow is reviewed and tested. See `docs/commerce/phase4c-financial-journal.md`.
+Migration `20261013035000_phase4c_financial_journal.sql` creates a server-only append-only journal with source-specific posting checks. Payment/refund postings must match verified event evidence and existing ledger transactions; allocation postings must reconcile to a paid order, immutable item totals, independently approved fee schedules, seller payable, platform commission and any tax amount on the order snapshot. The supported posting sources are verified payment, verified refund before proceeds allocation, proceeds allocation, and an approved refund reversal that precedes a verified post-allocation refund outflow. Settlement, provider fees, chargebacks, reserves and manual adjustments fail closed until dedicated workflows are reviewed and tested. See `docs/commerce/phase4c-financial-journal.md`.
 
 ## Phase 4D1 — refund reversals after proceeds allocation (complete for tested sandbox-only scope)
 
