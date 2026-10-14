@@ -50,28 +50,29 @@ begin
   end if;
 
   with exhausted_leases as (
-    update public.settlement_evidence_retention_jobs
+    update public.settlement_evidence_retention_jobs as retention_job
     set status = 'blocked', lease_expires_at = null,
         last_error_code = 'worker_lease_expired',
         updated_at = now(), last_request_id = p_request_id
-    where status = 'processing'
-      and lease_expires_at <= now()
-      and attempts >= 5
-    returning evidence_id, source_sha256, byte_size, attempts
+    where retention_job.status = 'processing'
+      and retention_job.lease_expires_at <= now()
+      and retention_job.attempts >= 5
+    returning retention_job.evidence_id, retention_job.source_sha256,
+      retention_job.byte_size, retention_job.attempts
   )
   insert into public.audit_events (
     actor_id, action, entity_type, entity_id, request_id, metadata
   )
   select null, 'settlement.evidence.retention_delete_failed',
-    'settlement_evidence', evidence_id::text, p_request_id::text,
+    'settlement_evidence', expired.evidence_id::text, p_request_id::text,
     jsonb_build_object(
-      'source_sha256', source_sha256,
-      'byte_size', byte_size,
-      'attempt', attempts,
+      'source_sha256', expired.source_sha256,
+      'byte_size', expired.byte_size,
+      'attempt', expired.attempts,
       'status', 'blocked',
       'error_code', 'worker_lease_expired'
     )
-  from exhausted_leases;
+  from exhausted_leases as expired;
 
   for evidence_row in
     select e.*
