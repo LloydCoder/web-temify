@@ -20,7 +20,7 @@ This is design research, not evidence that Web-Temify has selected, onboarded, o
 - Rows have stable identifiers, an explicit row type, optional provider/internal payment references, an offset-aware timestamp, currency, gross/fee/net minor-unit values, and a bounded exception taxonomy.
 - Validation rejects unknown keys, duplicate row IDs within a report, currency mismatch, rows outside the declared period, inverted periods, invalid source digests, positive-gross refunds, non-positive-gross payments, and positive-net fee rows.
 - Contract tests cover accepted report payloads and the listed schema-validation boundaries. They do not establish complete reconciliation correctness; the missing reconciliation adversarial cases are tracked explicitly below.
-- A draft follow-up adds a server-rendered, read-only admin exception queue backed by a bounded service-only RPC. The RPC rechecks the database-owned admin role, limits page size and cursor shape, exposes normalized row/report fields and immutable triage metadata, and cannot resolve exceptions or post journals. The queue remains subject to exact-head CI and forensic review.
+- A draft follow-up adds a server-rendered, read-only admin exception queue backed by a bounded service-only RPC. The RPC rechecks the database-owned admin role, limits page size and cursor shape, exposes normalized row/report fields and immutable triage metadata, and cannot resolve exceptions or post journals. The queue remains subject to exact-head CI and forensic review. Pagination uses an exclusive `(created_at, run_id, row_id)` cursor with bounded row identifiers, and minor-unit amounts are returned as decimal text to avoid JavaScript integer precision loss.
 
 ## Critical trust boundary
 
