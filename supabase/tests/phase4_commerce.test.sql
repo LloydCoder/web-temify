@@ -1,5 +1,5 @@
 begin;
-select plan(214);
+select plan(215);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -1268,6 +1268,11 @@ select is(
 select is(
   (select status from public.refund_reversal_requests where refund_id = '99100000-0000-4000-8000-000000000099'),
   'rejected', 'rejected reversal request is retained as immutable audit history'
+);
+select lives_ok(
+  $sql$update public.refunds set status = 'failed'
+    where id = '99100000-0000-4000-8000-000000000099'$sql$,
+  'failed overflow refund fixture releases its order-level refund reservation'
 );
 
 -- Financial journal source validation must preserve seller attribution, not only aggregate balance.
