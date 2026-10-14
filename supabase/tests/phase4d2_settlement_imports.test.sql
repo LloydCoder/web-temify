@@ -1,5 +1,5 @@
 begin;
-select plan(26);
+select plan(34);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -19,11 +19,15 @@ insert into auth.users (
   ('89000000-0000-4000-8000-000000000089', '00000000-0000-0000-0000-000000000000',
    'authenticated', 'authenticated', 'phase4d2-admin@example.test', '', now(), now(), now(), '{}'::jsonb, '{}'::jsonb),
   ('89100000-0000-4000-8000-000000000089', '00000000-0000-0000-0000-000000000000',
-   'authenticated', 'authenticated', 'phase4d2-customer@example.test', '', now(), now(), now(), '{}'::jsonb, '{}'::jsonb)
+   'authenticated', 'authenticated', 'phase4d2-customer@example.test', '', now(), now(), now(), '{}'::jsonb, '{}'::jsonb),
+  ('89200000-0000-4000-8000-000000000089', '00000000-0000-0000-0000-000000000000',
+   'authenticated', 'authenticated', 'phase4d2-reviewer@example.test', '', now(), now(), now(), '{}'::jsonb, '{}'::jsonb)
 on conflict (id) do nothing;
 
 insert into public.user_roles (user_id, role)
-values ('89000000-0000-4000-8000-000000000089', 'admin'::public.app_role)
+values
+  ('89000000-0000-4000-8000-000000000089', 'admin'::public.app_role),
+  ('89200000-0000-4000-8000-000000000089', 'admin'::public.app_role)
 on conflict do nothing;
 
 create temporary table phase4d2_import_ids(import_id uuid primary key) on commit drop;
@@ -209,6 +213,46 @@ select throws_ok(
     where import_id = (select import_id from phase4d2_import_ids)$sql$,
   '55000', 'settlement import evidence is immutable',
   'normalized settlement rows cannot be deleted'
+);
+
+
+select has_table('public', 'settlement_reconciliation_runs', 'reconciliation runs are persisted');
+select has_table('public', 'settlement_reconciliation_results', 'row-level reconciliation results are persisted');
+select ok(not has_table_privilege('authenticated', 'public.settlement_reconciliation_runs', 'SELECT'), 'authenticated clients cannot read reconciliation runs');
+select ok(has_function_privilege('service_role', 'public.reconcile_settlement_import(uuid,uuid)', 'EXECUTE'), 'trusted service role can call reconciliation RPC');
+select ok(not has_function_privilege('authenticated', 'public.reconcile_settlement_import(uuid,uuid)', 'EXECUTE'), 'authenticated clients cannot call reconciliation RPC');
+
+create temporary table phase4d2_reconciliation_ids(run_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_reconciliation_ids
+    select public.reconcile_settlement_import(
+      (select import_id from phase4d2_import_ids),
+      '89200000-0000-4000-8000-000000000089'
+    )
+  $sql$,
+  'a distinct admin can reconcile an imported report against posted journal evidence'
+);
+select is(
+  public.reconcile_settlement_import(
+    (select import_id from phase4d2_import_ids),
+    '89200000-0000-4000-8000-000000000089'
+  ),
+  (select run_id from phase4d2_reconciliation_ids),
+  'reconciliation replay returns the original immutable run'
+);
+select is(
+  (select result_code from public.settlement_reconciliation_results
+   where run_id = (select run_id from phase4d2_reconciliation_ids)
+     and row_id = 'payment-row-01'),
+  'missing_internal_match',
+  'a settlement row without a posted matching journal is recorded as an exception'
+);
+select throws_ok(
+  $sql$update public.settlement_reconciliation_results set result_code = 'matched_payment'
+    where run_id = (select run_id from phase4d2_reconciliation_ids)$sql$,
+  '55000', 'settlement reconciliation evidence is immutable',
+  'reconciliation results cannot be mutated after creation'
 );
 
 select * from finish();
