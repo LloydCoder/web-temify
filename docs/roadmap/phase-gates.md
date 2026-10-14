@@ -171,7 +171,7 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - **Residual risk:** no live provider, settlement reconciliation, provider-fee posting, payout, tax/VAT calculator, chargeback/dispute workflow, reserve management, manual-adjustment execution, escrow, production environment verification, formal penetration test, legal/tax review, or full WCAG 2.2 AA assessment is implied by these passing checks.
 - **Gate decision:** Phase 4D1 is complete for its stated sandbox/test scope. Phase 4D and launch readiness remain incomplete. The next serial gate is Phase 4D2, provider settlement reconciliation; provider selection, jurisdiction eligibility, settlement evidence and external onboarding remain prerequisites.
 
-#### Phase 4D2 — provider settlement reconciliation (not started; external provider gate)
+#### Phase 4D2 — provider settlement reconciliation (in progress; implementation partial, external provider gate open)
 
 - [x] Reconcile the previously accepted provider-role strategy and record evidence boundaries in [`docs/commerce/provider-strategy.md`](../commerce/provider-strategy.md). The record distinguishes Polar (MoR candidate), Paystack (Nigeria/local direct-payment candidate), Sellra (unverified candidate), and Grey (treasury/FX only); older exploratory providers are not automatically approved for integration.
 - [ ] Select the first-launch route from the accepted roles only after Web-Temify account/KYB approval, marketplace contractual permission, supported buyer/seller jurisdictions, currencies, fees, refunds/disputes, settlement evidence and operational support are confirmed. Public provider documentation alone is insufficient.
