@@ -1,5 +1,5 @@
 begin;
-select plan(19);
+select plan(20);
 
 select has_table('public', 'settlement_evidence_links', 'evidence-to-import links are persisted separately');
 select ok(
@@ -151,6 +151,18 @@ select throws_ok(
   )$sql$,
   '42501', 'settlement evidence linking requires a distinct independent admin',
   'a non-admin cannot link settlement evidence'
+);
+
+
+select throws_ok(
+  $sql$select public.link_settlement_evidence(
+    '8b000000-0000-4000-8000-00000000008b',
+    (select import_id from phase4d2_link_import_ids),
+    '8d000000-0000-4000-8000-00000000008d',
+    '8d000000-0000-4000-8000-00000000008d'
+  )$sql$,
+  '42501', 'settlement evidence linking requires a distinct independent admin',
+  'the report importer cannot independently approve their own evidence link'
 );
 
 select throws_ok(
