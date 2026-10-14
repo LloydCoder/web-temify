@@ -509,7 +509,7 @@ select lives_ok(
   select 'sandbox', 'phase4b-verified-refund-event-0001', 'refund.succeeded', repeat('c',64), true,
     r.order_id, r.payment_attempt_id, r.id, r.amount_minor, r.currency, 'phase4b-provider-refund-0001'
   from public.refunds r
-  where r.idempotency_key = 'phase4b-refund-idempotency-0001'$sql$,
+  where r.id = (select we.refund_id from public.payment_webhook_events we where we.provider_event_id = 'phase4b-verified-refund-event-0001')$sql$,
   'verified refund event is stored with exact refund amount and provider reference'
 );
 select is(
@@ -519,7 +519,7 @@ select is(
   true, 'refund-success event processes'
 );
 select is(
-  (select r.status from public.refunds r where r.idempotency_key = 'phase4b-refund-idempotency-0001'),
+  (select r.status from public.refunds r where r.id = (select we.refund_id from public.payment_webhook_events we where we.provider_event_id = 'phase4b-verified-refund-event-0001')),
   'succeeded', 'refund becomes succeeded only after ledger evidence'
 );
 select is(
@@ -534,20 +534,20 @@ select is(
 select is(
   (select count(*) from public.ledger_transactions lt
    join public.refunds r on r.id = lt.refund_id
-   where r.idempotency_key = 'phase4b-refund-idempotency-0001'),
+   where r.id = (select we.refund_id from public.payment_webhook_events we where we.provider_event_id = 'phase4b-verified-refund-event-0001')),
   1::bigint, 'refund processor posts exactly one refund ledger entry'
 );
 select is(
   (select count(*) from public.financial_journal_batches b
    join public.refunds r on r.id = b.refund_id
-   where r.idempotency_key = 'phase4b-refund-idempotency-0001'
+   where r.id = (select we.refund_id from public.payment_webhook_events we where we.provider_event_id = 'phase4b-verified-refund-event-0001')
      and b.source_type = 'refund' and b.status = 'posted'),
   1::bigint, 'verified refund produces exactly one posted accounting journal batch'
 );
 select is(
   (select b.provider_reference from public.financial_journal_batches b
    join public.refunds r on r.id = b.refund_id
-   where r.idempotency_key = 'phase4b-refund-idempotency-0001'),
+   where r.id = (select we.refund_id from public.payment_webhook_events we where we.provider_event_id = 'phase4b-verified-refund-event-0001')),
   'phase4b-provider-refund-0001', 'refund journal preserves the verified provider refund reference'
 );
 select ok(
@@ -556,7 +556,7 @@ select ok(
    from public.financial_journal_entries e
    join public.financial_journal_batches b on b.id = e.batch_id
    join public.refunds r on r.id = b.refund_id
-   where r.idempotency_key = 'phase4b-refund-idempotency-0001'),
+   where r.id = (select we.refund_id from public.payment_webhook_events we where we.provider_event_id = 'phase4b-verified-refund-event-0001')),
   'verified refund accounting batch is balanced'
 );
 select is(
