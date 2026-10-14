@@ -27,7 +27,7 @@ This is design research, not evidence that Web-Temify has selected, onboarded, o
 
 The forward migration `20261014070000_phase4d2_global_journal_match_guard.sql` replaces the per-run-only uniqueness rule with a global unique partial index on `journal_batch_id`. A single posted financial journal batch therefore cannot be counted as matched by two different settlement imports. The migration fails closed if historical reconciliation evidence already contains duplicate batch matches, requiring forensic review rather than rewriting immutable evidence. A schema-level pgTAP assertion verifies the unique partial index.
 
-This closes one data-integrity gap; it does not yet classify cross-import replay as a durable exception. A conflicting reconciliation attempt will fail atomically at the database constraint until a future reviewed workflow records a safe duplicate exception. Provider-authenticated ingress, matched-refund correctness, concurrent replay classification, settlement/fee posting, retention, malware scanning, escalation/expiry, and external onboarding remain open. Live-provider processing remains disabled.
+This closes one data-integrity gap; it does not yet classify cross-import replay as a durable exception. A forward migration now serializes candidate journal matches with a transaction-scoped advisory lock and classifies cross-import/concurrent replay as an immutable `duplicate_reference` exception; the global unique index remains the final integrity backstop. Provider-authenticated ingress, matched-refund correctness, concurrent replay classification, settlement/fee posting, retention, malware scanning, escalation/expiry, and external onboarding remain open. Live-provider processing remains disabled.
 
 ## Critical trust boundary
 
