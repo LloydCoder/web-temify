@@ -1,5 +1,5 @@
 begin;
-select plan(63);
+select plan(67);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -628,6 +628,66 @@ select is(
      and rr.row_id = 'amount-mismatch-row-01'),
   'exception',
   'amount mismatches remain unresolved exceptions rather than being treated as matches'
+);
+
+
+-- Explicit import exception classifications must override otherwise matching references.
+create temporary table phase4d2_explicit_exception_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_explicit_exception_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'settlement-explicit-exceptions-2026-10-13',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('4',64), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(
+        jsonb_build_object(
+          'rowId','unexplained-adjustment-row-01', 'rowType','payment',
+          'providerReference','phase4d2-provider-payment-match-01',
+          'paymentReference','phase4d2-order-payment-match-01',
+          'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+          'grossMinor',1299, 'feeMinor',39, 'netMinor',1260,
+          'exceptionCode','unexplained_adjustment'
+        ),
+        jsonb_build_object(
+          'rowId','period-mismatch-row-01', 'rowType','payment',
+          'providerReference','phase4d2-provider-payment-match-01',
+          'paymentReference','phase4d2-order-payment-match-01',
+          'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+          'grossMinor',1299, 'feeMinor',39, 'netMinor',1260,
+          'exceptionCode','period_mismatch'
+        )
+      )
+    )
+  $sql$,
+  'explicit settlement exceptions import as immutable evidence'
+);
+select lives_ok(
+  $sql$
+    select public.reconcile_settlement_import(
+      (select import_id from phase4d2_explicit_exception_import_ids),
+      '89200000-0000-4000-8000-000000000089'
+    )
+  $sql$,
+  'explicit settlement exceptions reconcile without being promoted to matches'
+);
+select is(
+  (select rr.result_code
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_explicit_exception_import_ids)
+     and rr.row_id = 'unexplained-adjustment-row-01'),
+  'unexplained_adjustment',
+  'an explicitly unexplained adjustment remains classified as an exception'
+);
+select is(
+  (select rr.result_status
+   from public.settlement_reconciliation_results rr
+   join public.settlement_reconciliation_runs sr on sr.id = rr.run_id
+   where sr.import_id = (select import_id from phase4d2_explicit_exception_import_ids)
+     and rr.row_id = 'period-mismatch-row-01'),
+  'exception',
+  'an explicitly period-mismatched row cannot be reported as a matched payment'
 );
 
 select * from finish();
