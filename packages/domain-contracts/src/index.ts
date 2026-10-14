@@ -91,3 +91,142 @@ export type ProductCatalogItem = z.infer<typeof ProductCatalogItemSchema>;
 export type ProductRightsAttestationInput = z.infer<
   typeof ProductRightsAttestationInputSchema
 >;
+
+// Phase 4D2: provider-neutral settlement import contract.
+// This validates normalized data only; it does not authenticate source files,
+// reconcile transactions, or authorize journal posting.
+export const SettlementProviderSchema = z.enum([
+  "paystack",
+  "polar",
+  "sandbox",
+]);
+export const SettlementRowTypeSchema = z.enum([
+  "payment",
+  "refund",
+  "fee",
+  "payout",
+  "adjustment",
+]);
+export const SettlementImportRowSchema = z
+  .object({
+    rowId: z.string().trim().min(1).max(240),
+    rowType: SettlementRowTypeSchema,
+    providerReference: z.string().trim().min(1).max(240).optional(),
+    paymentReference: z.string().trim().min(1).max(240).optional(),
+    occurredAt: z.string().datetime({ offset: true }),
+    currency: z.string().regex(/^[A-Z]{3}$/),
+    grossMinor: z.number().int().safe(),
+    feeMinor: z.number().int().nonnegative().safe(),
+    netMinor: z.number().int().safe(),
+    exceptionCode: z
+      .enum([
+        "missing_internal_match",
+        "duplicate_reference",
+        "amount_mismatch",
+        "currency_mismatch",
+        "period_mismatch",
+        "unsupported_row_type",
+        "unexplained_adjustment",
+      ])
+      .optional(),
+  })
+  .strict()
+  .superRefine((row, ctx) => {
+    if (row.rowType === "payment" && row.grossMinor <= 0) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["grossMinor"],
+        message: "Payment gross must be positive",
+      });
+    }
+    if (row.rowType === "refund" && row.grossMinor >= 0) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["grossMinor"],
+        message: "Refund gross must be negative",
+      });
+    }
+    if (row.rowType === "fee" && row.netMinor >= 0) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["netMinor"],
+        message: "Fee rows must have a negative net amount",
+      });
+    }
+  });
+export const SettlementImportSchema = z
+  .object({
+    contractVersion: z.literal("1.0"),
+    provider: SettlementProviderSchema,
+    providerAccountReference: z.string().trim().min(1).max(240),
+    reportReference: z.string().trim().min(1).max(240),
+    reportPeriodStart: z.string().date(),
+    reportPeriodEnd: z.string().date(),
+    reportTimezone: z.string().trim().min(1).max(100),
+    sourceSha256: Sha256Schema,
+    sourceAuthenticated: z.literal(true),
+    currency: z.string().regex(/^[A-Z]{3}$/),
+    rows: z.array(SettlementImportRowSchema).min(1).max(100_000),
+  })
+  .strict()
+  .superRefine((report, ctx) => {
+    let reportDateFormatter: Intl.DateTimeFormat | undefined;
+    try {
+      reportDateFormatter = new Intl.DateTimeFormat("en-CA", {
+        timeZone: report.reportTimezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    } catch {
+      ctx.addIssue({
+        code: "custom",
+        path: ["reportTimezone"],
+        message: "Report timezone must be a valid IANA timezone",
+      });
+    }
+    if (report.reportPeriodStart > report.reportPeriodEnd) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["reportPeriodEnd"],
+        message: "Report period end must not precede its start",
+      });
+    }
+    const rowIds = new Set<string>();
+    report.rows.forEach((row, index) => {
+      if (rowIds.has(row.rowId)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["rows", index, "rowId"],
+          message: "Row identifiers must be unique within a report",
+        });
+      }
+      rowIds.add(row.rowId);
+      if (row.currency !== report.currency) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["rows", index, "currency"],
+          message: "Row currency must match report currency in contract v1",
+        });
+      }
+      const localDateParts = reportDateFormatter?.formatToParts(
+        new Date(row.occurredAt),
+      );
+      const localDate = localDateParts
+        ? `${localDateParts.find((part) => part.type === "year")?.value}-${localDateParts.find((part) => part.type === "month")?.value}-${localDateParts.find((part) => part.type === "day")?.value}`
+        : undefined;
+      if (
+        localDate &&
+        (localDate < report.reportPeriodStart ||
+          localDate > report.reportPeriodEnd)
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["rows", index, "occurredAt"],
+          message: "Row timestamp falls outside the declared report period",
+        });
+      }
+    });
+  });
+export type SettlementImport = z.infer<typeof SettlementImportSchema>;
+export type SettlementImportRow = z.infer<typeof SettlementImportRowSchema>;

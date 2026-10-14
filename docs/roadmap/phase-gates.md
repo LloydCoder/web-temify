@@ -171,7 +171,7 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - **Residual risk:** no live provider, settlement reconciliation, provider-fee posting, payout, tax/VAT calculator, chargeback/dispute workflow, reserve management, manual-adjustment execution, escrow, production environment verification, formal penetration test, legal/tax review, or full WCAG 2.2 AA assessment is implied by these passing checks.
 - **Gate decision:** Phase 4D1 is complete for its stated sandbox/test scope. Phase 4D and launch readiness remain incomplete. The next serial gate is Phase 4D2, provider settlement reconciliation; provider selection, jurisdiction eligibility, settlement evidence and external onboarding remain prerequisites.
 
-#### Phase 4D2 — provider settlement reconciliation (not started; external provider gate)
+#### Phase 4D2 — provider settlement reconciliation (in progress; implementation partial, external provider gate open)
 
 - [x] Reconcile the previously accepted provider-role strategy and record evidence boundaries in [`docs/commerce/provider-strategy.md`](../commerce/provider-strategy.md). The record distinguishes Polar (MoR candidate), Paystack (Nigeria/local direct-payment candidate), Sellra (unverified candidate), and Grey (treasury/FX only); older exploratory providers are not automatically approved for integration.
 - [ ] Select the first-launch route from the accepted roles only after Web-Temify account/KYB approval, marketplace contractual permission, supported buyer/seller jurisdictions, currencies, fees, refunds/disputes, settlement evidence and operational support are confirmed. Public provider documentation alone is insufficient.
@@ -180,6 +180,12 @@ Phase 4A — database invariants (implementation and CI verified; phase-specific
 - [ ] Post provider-fee and settlement journal entries only through source-specific balanced journal guards; no automatic money movement or payout until separately approved.
 - [ ] Add adversarial pgTAP tests, reconciliation fixtures, failure/replay tests, operator exception queues, documentation and exact-head CI/forensic audit.
 - [ ] Record external onboarding and settlement evidence; until then keep live provider processing disabled.
+
+#### Phase 4D2 implementation checkpoint — partial, not a gate pass
+
+- **Disposition:** IN PROGRESS. The settlement import contract, immutable report/row persistence, service-only import RPC, replay/conflicting-evidence handling, timezone-aware period validation, immutable reconciliation runs/results, distinct-admin review, idempotent reconciliation retries, immutable independent-admin exception triage decisions, and pgTAP coverage are proposed in [PR #30](https://github.com/LloydCoder/web-temify/pull/30).
+- **Implementation boundary:** this checkpoint does not satisfy the Phase 4D2 exit criteria. The current reconciliation slice matches only payment/refund rows against already-posted journal batches and records missing-match/unsupported-row exceptions; matched-row adversarial fixtures, complete mismatch coverage, source-specific settlement/fee posting guards, operator exception queue/UI and escalation policy, cryptographic source authentication at trusted ingress, external provider onboarding evidence, and exact-head forensic review remain open. The source-authentication field is a trusted-ingress assertion, not cryptographic verification.
+- **Acceptance status:** keep every Phase 4D2 exit criterion unchecked until the complete workflow, adversarial database tests, security review, exact-head CI, and external evidence have passed together. Do not enable live provider processing.
 
 ## Phase 5 — Admin and operations
 
