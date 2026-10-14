@@ -97,8 +97,7 @@ export type ProductRightsAttestationInput = z.infer<
 // reconcile transactions, or authorize journal posting.
 export const SettlementProviderSchema = z.enum([
   "paystack",
-  "flutterwave",
-  "stripe",
+  "polar",
   "sandbox",
 ]);
 export const SettlementRowTypeSchema = z.enum([
