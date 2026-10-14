@@ -52,6 +52,12 @@ begin
     raise exception using errcode = '23514', message = 'settlement exception cursor is incomplete';
   end if;
 
+  if p_before_row_id is not null
+    and char_length(p_before_row_id) not between 1 and 240
+  then
+    raise exception using errcode = '23514', message = 'settlement exception cursor row identifier is outside the allowed range';
+  end if;
+
   return query
   select
     rr.run_id,
