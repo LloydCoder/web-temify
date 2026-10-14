@@ -1229,7 +1229,7 @@ select lives_ok(
   $sql$insert into public.refunds (
     id, order_id, payment_attempt_id, amount_minor, currency, status, reason, idempotency_key, requested_by
   )
-  select '99100000-0000-4000-8000-000000000099', o.id, pa.id, 1000, o.currency, 'requested',
+  select '99100000-0000-4000-8000-000000000099', o.id, pa.id, 299, o.currency, 'requested',
     'Over-allocation rejection fixture', 'test-refund-reversal-overflow-0001', o.customer_id
   from public.orders o
   join phase4c_allocation_order_ids t on t.order_id = o.id
