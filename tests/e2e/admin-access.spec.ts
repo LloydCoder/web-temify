@@ -121,7 +121,9 @@ test("settlement evidence linking denies unauthenticated visitors", async ({
   await expect(response.json()).resolves.toEqual({ error: "not_found" });
 });
 
-test("admin support-case mutation denies unauthenticated visitors", async ({ page }) => {
+test("admin support-case mutation denies unauthenticated visitors", async ({
+  page,
+}) => {
   const response = await page.request.post(
     "/api/admin/support-cases/89000000-0000-4000-8000-000000000089/transition",
     {
@@ -135,8 +137,12 @@ test("admin support-case mutation denies unauthenticated visitors", async ({ pag
   await expect(response.json()).resolves.toEqual({ error: "not_found" });
 });
 
-test("customer support-case history requires authentication", async ({ page }) => {
+test("customer support-case history requires authentication", async ({
+  page,
+}) => {
   const response = await page.request.get("/api/support-cases");
   expect(response.status()).toBe(401);
-  await expect(response.json()).resolves.toEqual({ error: "authentication_required" });
+  await expect(response.json()).resolves.toEqual({
+    error: "authentication_required",
+  });
 });

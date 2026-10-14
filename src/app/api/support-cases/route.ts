@@ -27,7 +27,10 @@ export async function GET() {
   const session = await createSupabaseServerClient();
   const { data: authData, error: authError } = await session.auth.getUser();
   if (authError || !authData.user) {
-    return NextResponse.json({ error: "authentication_required" }, { status: 401 });
+    return NextResponse.json(
+      { error: "authentication_required" },
+      { status: 401 },
+    );
   }
 
   try {
@@ -60,13 +63,21 @@ export async function GET() {
 
 export async function POST(request: Request) {
   if (request.headers.get("origin") !== new URL(request.url).origin) {
-    return NextResponse.json({ error: "same_origin_required" }, { status: 403 });
+    return NextResponse.json(
+      { error: "same_origin_required" },
+      { status: 403 },
+    );
   }
 
   const bounded = await readBoundedRequestBody(request, 16 * 1024);
   if (!bounded.ok) {
     return NextResponse.json(
-      { error: bounded.reason === "too_large" ? "request_too_large" : "invalid_request_body" },
+      {
+        error:
+          bounded.reason === "too_large"
+            ? "request_too_large"
+            : "invalid_request_body",
+      },
       { status: bounded.reason === "too_large" ? 413 : 400 },
     );
   }
@@ -79,13 +90,19 @@ export async function POST(request: Request) {
   }
   const parsed = SupportCaseSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "invalid_support_case" }, { status: 400 });
+    return NextResponse.json(
+      { error: "invalid_support_case" },
+      { status: 400 },
+    );
   }
 
   const session = await createSupabaseServerClient();
   const { data: authData, error: authError } = await session.auth.getUser();
   if (authError || !authData.user) {
-    return NextResponse.json({ error: "authentication_required" }, { status: 401 });
+    return NextResponse.json(
+      { error: "authentication_required" },
+      { status: 401 },
+    );
   }
 
   const requestId = randomUUID();

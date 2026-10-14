@@ -28,7 +28,9 @@ export default async function SupportPage() {
     const admin = createSupabaseAdminClient();
     const { data, error } = await admin
       .from("support_cases")
-      .select("id,category,subject,status,priority,created_at,updated_at,resolved_at,closed_at")
+      .select(
+        "id,category,subject,status,priority,created_at,updated_at,resolved_at,closed_at",
+      )
       .eq("requester_id", authData.user.id)
       .order("created_at", { ascending: false })
       .limit(50);
@@ -44,20 +46,29 @@ export default async function SupportPage() {
         <p className="text-sm text-muted-foreground">Web-Temify support</p>
         <h1 className="text-3xl font-semibold tracking-tight">Support cases</h1>
         <p className="max-w-2xl text-muted-foreground">
-          Open a case for account, billing, product-access, rights, or security concerns.
-          Never include passwords, payment-card details, or authentication secrets.
+          Open a case for account, billing, product-access, rights, or security
+          concerns. Never include passwords, payment-card details, or
+          authentication secrets.
         </p>
       </header>
       <section aria-labelledby="open-support-case" className="space-y-3">
-        <h2 id="open-support-case" className="text-xl font-semibold">Open a support case</h2>
+        <h2 id="open-support-case" className="text-xl font-semibold">
+          Open a support case
+        </h2>
         <SupportCaseCreateForm />
       </section>
       <section aria-labelledby="your-support-cases" className="space-y-3">
-        <h2 id="your-support-cases" className="text-xl font-semibold">Your cases</h2>
+        <h2 id="your-support-cases" className="text-xl font-semibold">
+          Your cases
+        </h2>
         {unavailable ? (
-          <p role="status" className="rounded-lg border p-4 text-sm">Support case history is temporarily unavailable.</p>
+          <p role="status" className="rounded-lg border p-4 text-sm">
+            Support case history is temporarily unavailable.
+          </p>
         ) : cases.length === 0 ? (
-          <p className="rounded-lg border p-4 text-sm text-muted-foreground">No support cases yet.</p>
+          <p className="rounded-lg border p-4 text-sm text-muted-foreground">
+            No support cases yet.
+          </p>
         ) : (
           <ul className="space-y-3">
             {cases.map((supportCase) => (
@@ -74,7 +85,9 @@ export default async function SupportPage() {
                     {supportCase.status.replaceAll("_", " ")}
                   </span>
                 </div>
-                <p className="mt-2 text-xs text-muted-foreground">Reference: {supportCase.id}</p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Reference: {supportCase.id}
+                </p>
               </li>
             ))}
           </ul>

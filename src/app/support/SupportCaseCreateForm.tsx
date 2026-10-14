@@ -20,7 +20,12 @@ export function SupportCaseCreateForm() {
       const response = await fetch("/api/support-cases", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ category, subject, description, idempotencyKey: key }),
+        body: JSON.stringify({
+          category,
+          subject,
+          description,
+          idempotencyKey: key,
+        }),
       });
       const result = (await response.json()) as { error?: string; id?: string };
       if (!response.ok) {
@@ -47,7 +52,12 @@ export function SupportCaseCreateForm() {
   return (
     <form className="space-y-4 rounded-xl border p-5" onSubmit={submit}>
       <div>
-        <label className="mb-1 block text-sm font-medium" htmlFor="support-category">Category</label>
+        <label
+          className="mb-1 block text-sm font-medium"
+          htmlFor="support-category"
+        >
+          Category
+        </label>
         <select
           id="support-category"
           className="w-full rounded-md border bg-background px-3 py-2"
@@ -57,13 +67,20 @@ export function SupportCaseCreateForm() {
           <option value="account">Account</option>
           <option value="billing">Billing</option>
           <option value="product_access">Product access or download</option>
-          <option value="product_rights">Product rights or intellectual property</option>
+          <option value="product_rights">
+            Product rights or intellectual property
+          </option>
           <option value="security">Security concern</option>
           <option value="other">Other</option>
         </select>
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium" htmlFor="support-subject">Subject</label>
+        <label
+          className="mb-1 block text-sm font-medium"
+          htmlFor="support-subject"
+        >
+          Subject
+        </label>
         <input
           id="support-subject"
           className="w-full rounded-md border bg-background px-3 py-2"
@@ -75,7 +92,12 @@ export function SupportCaseCreateForm() {
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium" htmlFor="support-description">What happened?</label>
+        <label
+          className="mb-1 block text-sm font-medium"
+          htmlFor="support-description"
+        >
+          What happened?
+        </label>
         <textarea
           id="support-description"
           className="min-h-32 w-full rounded-md border bg-background px-3 py-2"
@@ -85,7 +107,10 @@ export function SupportCaseCreateForm() {
           maxLength={8000}
           required
         />
-        <p className="mt-1 text-xs text-muted-foreground">Do not include passwords, payment-card details, or authentication secrets.</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Do not include passwords, payment-card details, or authentication
+          secrets.
+        </p>
       </div>
       <button
         className="rounded-md bg-primary px-4 py-2 text-primary-foreground disabled:opacity-60"
@@ -94,7 +119,11 @@ export function SupportCaseCreateForm() {
       >
         {busy ? "Submitting…" : "Open support case"}
       </button>
-      {message ? <p aria-live="polite" role="status" className="text-sm">{message}</p> : null}
+      {message ? (
+        <p aria-live="polite" role="status" className="text-sm">
+          {message}
+        </p>
+      ) : null}
     </form>
   );
 }
