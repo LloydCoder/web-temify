@@ -171,6 +171,21 @@ export const SettlementImportSchema = z
   })
   .strict()
   .superRefine((report, ctx) => {
+    let reportDateFormatter: Intl.DateTimeFormat | undefined;
+    try {
+      reportDateFormatter = new Intl.DateTimeFormat("en-CA", {
+        timeZone: report.reportTimezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    } catch {
+      ctx.addIssue({
+        code: "custom",
+        path: ["reportTimezone"],
+        message: "Report timezone must be a valid IANA timezone",
+      });
+    }
     if (report.reportPeriodStart > report.reportPeriodEnd) {
       ctx.addIssue({
         code: "custom",
@@ -195,10 +210,16 @@ export const SettlementImportSchema = z
           message: "Row currency must match report currency in contract v1",
         });
       }
-      const occurredDate = row.occurredAt.slice(0, 10);
+      const localDateParts = reportDateFormatter?.formatToParts(
+        new Date(row.occurredAt),
+      );
+      const localDate = localDateParts
+        ? `${localDateParts.find((part) => part.type === "year")?.value}-${localDateParts.find((part) => part.type === "month")?.value}-${localDateParts.find((part) => part.type === "day")?.value}`
+        : undefined;
       if (
-        occurredDate < report.reportPeriodStart ||
-        occurredDate > report.reportPeriodEnd
+        localDate &&
+        (localDate < report.reportPeriodStart ||
+          localDate > report.reportPeriodEnd)
       ) {
         ctx.addIssue({
           code: "custom",
