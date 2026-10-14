@@ -433,6 +433,7 @@ set search_path = ''
 as $function$
 declare
   job_row public.settlement_evidence_retention_jobs%rowtype;
+  locked_evidence_id uuid;
   retention_enabled boolean;
   has_active_hold boolean;
   has_unresolved_exception boolean;
@@ -440,6 +441,20 @@ begin
   if p_job_id is null or p_claim_token is null or p_request_id is null then
     raise exception using errcode = '23514', message = 'settlement evidence deletion authorization metadata failed validation';
   end if;
+
+  select job.evidence_id into locked_evidence_id
+  from public.settlement_evidence_retention_jobs job
+  where job.id = p_job_id
+    and job.status = 'claimed'
+    and job.claim_token = p_claim_token;
+
+  if locked_evidence_id is null then
+    return;
+  end if;
+
+  perform pg_advisory_xact_lock(
+    hashtext('settlement-evidence-retention:' || locked_evidence_id::text)
+  );
 
   select * into job_row
   from public.settlement_evidence_retention_jobs job
@@ -451,10 +466,6 @@ begin
   if job_row.id is null then
     return;
   end if;
-
-  perform pg_advisory_xact_lock(
-    hashtext('settlement-evidence-retention:' || job_row.evidence_id::text)
-  );
 
   select settings.enabled into retention_enabled
   from public.settlement_evidence_retention_settings settings
