@@ -114,10 +114,14 @@ select public.record_settlement_evidence_scan_result(
   '81200000-0000-4000-8000-000000000080', repeat('c',64), 'clean',
   'test-scanner', '1.0.0', gen_random_uuid()
 );
-select public.link_settlement_evidence(
+-- Seed an existing historical link: the row is expired now, but the link was
+-- established before its retention deadline. This models legacy linked evidence.
+insert into public.settlement_evidence_links (
+  evidence_id, import_id, source_sha256, linked_by, request_id
+) values (
   '81200000-0000-4000-8000-000000000080',
   (select import_id from phase4d2_retention_imports where label = 'linked'),
-  '80200000-0000-4000-8000-000000000080', gen_random_uuid()
+  repeat('c',64), '80200000-0000-4000-8000-000000000080', gen_random_uuid()
 );
 
 select is(
