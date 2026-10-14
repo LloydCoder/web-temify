@@ -1,5 +1,5 @@
 begin;
-select plan(212);
+select plan(214);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -1357,18 +1357,24 @@ select lives_ok(
   join public.order_proceeds_allocations opa on opa.order_id = (
     select rr.order_id from public.refund_reversal_requests rr
     join phase4d1_misassigned_request_ids req on req.request_id = rr.id
-  );
-  insert into public.financial_journal_entries (
+  )$sql$,
+  'deliberately misassigned seller payable entry is stored in a draft batch'
+);
+select lives_ok(
+  $sql$insert into public.financial_journal_entries (
     batch_id, account, side, amount_minor, currency, memo
   )
   select batch_id, 'platform_revenue', 'debit', 10, 'USD', 'Commission reversal'
-  from phase4d1_bad_seller_batch_ids;
-  insert into public.financial_journal_entries (
+  from phase4d1_bad_seller_batch_ids$sql$,
+  'platform commission debit is inserted into the draft reversal batch'
+);
+select lives_ok(
+  $sql$insert into public.financial_journal_entries (
     batch_id, account, side, amount_minor, currency, memo
   )
   select batch_id, 'unallocated_order_liability', 'credit', 100, 'USD', 'Gross reversal'
   from phase4d1_bad_seller_batch_ids$sql$,
-  'balanced reversal entries are inserted before posting validation'
+  'gross liability credit balances the deliberately misassigned draft batch'
 );
 select throws_ok(
   $sql$update public.financial_journal_batches set status = 'posted'
