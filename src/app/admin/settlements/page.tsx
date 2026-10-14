@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { UrlObject } from "url";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { getAdminContext } from "@/server/admin/authorization";
@@ -63,13 +64,15 @@ function formatTimestamp(value: string) {
   })} UTC`;
 }
 
-function nextPageHref(item: QueueItem) {
-  const params = new URLSearchParams({
-    cursorAt: item.result_created_at,
-    cursorRunId: item.run_id,
-    cursorRowId: item.row_id,
-  });
-  return `/admin/settlements?${params.toString()}`;
+function nextPageHref(item: QueueItem): UrlObject {
+  return {
+    pathname: "/admin/settlements",
+    query: {
+      cursorAt: item.result_created_at,
+      cursorRunId: item.run_id,
+      cursorRowId: item.row_id,
+    },
+  };
 }
 
 type PageProps = {
