@@ -65,7 +65,7 @@ function fakeClamd(scanReply = "stream: OK") {
         command = buffer.subarray(0, terminator).toString("utf8");
         buffer = buffer.subarray(terminator + 1);
         if (command === "zVERSION") {
-          socket.end(Buffer.from("ClamAV 1.5.4/test\0"));
+          socket.end(Buffer.from("ClamAV 1.5.4/12345/Wed Oct 14 12:30:00 2026\0"));
           return;
         }
         if (command !== "zINSTREAM") {
