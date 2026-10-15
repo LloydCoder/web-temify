@@ -205,3 +205,355 @@ grant execute on function public.record_settlement_evidence_scan_result(uuid, te
 
 comment on column public.settlement_evidence_scan_results.signature_updated_at is
   'Timestamp reported by the scanner for its signature database. Evidence linkage requires a non-null timestamp no older than 48 hours and no more than five minutes in the future.';
+
+
+-- Recheck scanner signature freshness at journal-post time, not only when evidence was linked.
+create or replace function public.guard_financial_journal_batch()
+returns trigger
+language plpgsql
+set search_path = ''
+as $function$
+declare
+  entry_count bigint;
+  debit_total numeric;
+  credit_total numeric;
+  mismatched_currency boolean;
+  source_amount bigint;
+  source_subtotal bigint;
+  source_tax bigint;
+  source_item_count bigint;
+  allocation_count bigint;
+  allocation_gross numeric;
+  allocation_fee numeric;
+  allocation_net numeric;
+  allocation_tax numeric;
+  fee_bps integer;
+  settlement_posting public.settlement_journal_postings%rowtype;
+  settlement_import public.settlement_imports%rowtype;
+  settlement_row public.settlement_import_rows%rowtype;
+  settlement_evidence_lock_id uuid;
+begin
+  if tg_op = 'INSERT' then
+    if new.status <> 'draft' or new.posted_at is not null then
+      raise exception using errcode = '23514', message = 'financial batches must begin as drafts';
+    end if;
+    return new;
+  end if;
+
+  if tg_op = 'DELETE' then
+    raise exception using errcode = '23514', message = 'financial journal batches are immutable';
+  end if;
+
+  if old.status <> 'draft'
+    or new.status <> 'posted'
+    or new.id is distinct from old.id
+    or new.source_type is distinct from old.source_type
+    or new.source_key is distinct from old.source_key
+    or new.idempotency_key is distinct from old.idempotency_key
+    or new.order_id is distinct from old.order_id
+    or new.payment_attempt_id is distinct from old.payment_attempt_id
+    or new.refund_id is distinct from old.refund_id
+    or new.provider is distinct from old.provider
+    or new.provider_reference is distinct from old.provider_reference
+    or new.currency is distinct from old.currency
+    or new.evidence_sha256 is distinct from old.evidence_sha256
+    or new.created_at is distinct from old.created_at
+    or new.posted_at is distinct from old.posted_at then
+    raise exception using errcode = '23514', message = 'only a draft-to-posted transition is permitted for a financial batch';
+  end if;
+
+  select count(*),
+         coalesce(sum(e.amount_minor) filter (where e.side = 'debit'), 0),
+         coalesce(sum(e.amount_minor) filter (where e.side = 'credit'), 0),
+         coalesce(bool_or(e.currency <> new.currency), false)
+    into entry_count, debit_total, credit_total, mismatched_currency
+  from public.financial_journal_entries e
+  where e.batch_id = new.id;
+
+  if entry_count < 2 or debit_total <= 0 or debit_total <> credit_total or mismatched_currency then
+    raise exception using errcode = '23514', message = 'financial batch must contain balanced entries in one currency before posting';
+  end if;
+
+  if new.source_type = 'payment' then
+    select lt.amount_minor into source_amount
+    from public.ledger_transactions lt
+    where lt.source_type = 'payment' and lt.order_id = new.order_id
+      and lt.payment_attempt_id = new.payment_attempt_id
+      and lt.reference_key = replace(new.source_key, 'legacy-ledger:payment:', '')
+      and lt.currency = new.currency;
+    if source_amount is null
+      or not exists (
+        select 1 from public.payment_webhook_events we
+        where we.order_id = new.order_id and we.payment_attempt_id = new.payment_attempt_id
+          and we.provider = new.provider and we.event_type = 'payment.succeeded'
+          and we.signature_verified and we.processing_status in ('processing', 'processed')
+          and we.payload_sha256 = new.evidence_sha256 and we.provider_reference = new.provider_reference
+      )
+      or entry_count <> 2
+      or not exists (select 1 from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'provider_clearing' and e.side = 'debit' and e.amount_minor = source_amount)
+      or not exists (select 1 from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'unallocated_order_liability' and e.side = 'credit' and e.amount_minor = source_amount) then
+      raise exception using errcode = '23514', message = 'payment journal must match an immutable ledger posting and verified provider event';
+    end if;
+
+  elsif new.source_type = 'refund' then
+    select lt.amount_minor into source_amount
+    from public.ledger_transactions lt
+    where lt.source_type = 'refund' and lt.order_id = new.order_id
+      and lt.payment_attempt_id = new.payment_attempt_id and lt.refund_id = new.refund_id
+      and lt.reference_key = replace(new.source_key, 'legacy-ledger:refund:', '')
+      and lt.currency = new.currency;
+    if source_amount is null
+      or (exists (select 1 from public.order_proceeds_allocations opa where opa.order_id = new.order_id)
+        and not exists (
+          select 1 from public.financial_journal_batches rb
+          join public.financial_journal_entries re on re.batch_id = rb.id
+          where rb.source_type = 'refund_reversal' and rb.refund_id = new.refund_id
+            and rb.status = 'posted' and re.account = 'unallocated_order_liability'
+            and re.side = 'credit' and re.amount_minor = source_amount
+        ))
+      or not exists (
+        select 1 from public.payment_webhook_events we
+        where we.order_id = new.order_id and we.payment_attempt_id = new.payment_attempt_id
+          and we.refund_id = new.refund_id and we.provider = new.provider
+          and we.event_type = 'refund.succeeded' and we.signature_verified
+          and we.processing_status in ('processing', 'processed')
+          and we.payload_sha256 = new.evidence_sha256 and we.provider_reference = new.provider_reference
+      )
+      or entry_count <> 2
+      or not exists (select 1 from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'unallocated_order_liability' and e.side = 'debit' and e.amount_minor = source_amount)
+      or not exists (select 1 from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'provider_clearing' and e.side = 'credit' and e.amount_minor = source_amount) then
+      raise exception using errcode = '23514', message = 'refund journal must match verified refund evidence and an approved reversal when proceeds were allocated';
+    end if;
+
+  elsif new.source_type = 'refund_reversal' then
+    select r.amount_minor into source_amount
+    from public.refunds r
+    where r.id = new.refund_id and r.order_id = new.order_id
+      and r.payment_attempt_id = new.payment_attempt_id and r.currency = new.currency
+      and r.status in ('requested', 'pending');
+    select count(*), coalesce(sum(rl.gross_refund_minor),0),
+           coalesce(sum(rl.platform_fee_reversal_minor),0),
+           coalesce(sum(rl.seller_payable_reversal_minor),0),
+           coalesce(sum(rl.tax_reversal_minor),0)
+      into allocation_count, allocation_gross, allocation_fee, allocation_net, allocation_tax
+    from public.refund_reversal_lines rl
+    join public.refund_reversal_requests rr on rr.id = rl.request_id
+    where rr.refund_id = new.refund_id and rr.status = 'approved';
+    if source_amount is null or allocation_count = 0 or allocation_gross <> source_amount
+      or allocation_fee + allocation_net + allocation_tax <> source_amount
+      or not exists (
+        select 1 from public.refund_reversal_requests rr
+        where rr.refund_id = new.refund_id and rr.status = 'approved'
+          and rr.order_id = new.order_id and rr.amount_minor = source_amount
+          and rr.currency = new.currency
+      )
+      or not exists (
+        select 1 from public.payment_webhook_events we
+        where we.refund_id = new.refund_id and we.order_id = new.order_id
+          and we.payment_attempt_id = new.payment_attempt_id and we.provider = new.provider
+          and we.event_type = 'refund.succeeded' and we.signature_verified
+          and we.processing_status in ('processing', 'processed')
+          and we.payload_sha256 = new.evidence_sha256 and we.provider_reference = new.provider_reference
+      )
+      or (select coalesce(sum(e.amount_minor),0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'seller_payable' and e.side = 'debit') <> allocation_net
+      or (select coalesce(sum(e.amount_minor),0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'platform_revenue' and e.side = 'debit') <> allocation_fee
+      or (select coalesce(sum(e.amount_minor),0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'tax_payable' and e.side = 'debit') <> allocation_tax
+      or exists (
+        select 1
+        from public.refund_reversal_lines rl
+        join public.refund_reversal_requests rr on rr.id = rl.request_id
+        where rr.refund_id = new.refund_id and rr.status = 'approved'
+        group by rl.seller_id
+        having coalesce(sum(rl.seller_payable_reversal_minor),0) <>
+          coalesce((
+            select sum(e.amount_minor) from public.financial_journal_entries e
+            where e.batch_id = new.id and e.account = 'seller_payable'
+              and e.side = 'debit' and e.seller_id = rl.seller_id
+          ),0)
+      )
+      or exists (
+        select 1 from public.financial_journal_entries e
+        where e.batch_id = new.id and e.account = 'seller_payable' and e.side = 'debit'
+          and not exists (
+            select 1 from public.refund_reversal_lines rl
+            join public.refund_reversal_requests rr on rr.id = rl.request_id
+            where rr.refund_id = new.refund_id and rr.status = 'approved' and rl.seller_id = e.seller_id
+          )
+      )
+      or (select coalesce(sum(e.amount_minor),0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'unallocated_order_liability' and e.side = 'credit') <> source_amount
+      or exists (
+        select 1 from public.financial_journal_entries e
+        where e.batch_id = new.id and not (
+          (e.account in ('seller_payable','platform_revenue','tax_payable') and e.side = 'debit')
+          or (e.account = 'unallocated_order_liability' and e.side = 'credit')
+        )
+      ) then
+      raise exception using errcode = '23514', message = 'refund reversal journal must reconcile to approved item-level reversal lines and verified provider evidence';
+    end if;
+
+  elsif new.source_type = 'proceeds_allocation' then
+    select o.total_minor, o.subtotal_minor, o.tax_minor
+      into source_amount, source_subtotal, source_tax
+    from public.orders o
+    where o.id = new.order_id and o.status in ('paid','partially_refunded') and o.currency = new.currency;
+    select count(*) into source_item_count from public.order_items oi where oi.order_id = new.order_id;
+    select count(*), coalesce(sum(opa.gross_minor), 0), coalesce(sum(opa.platform_fee_minor), 0), coalesce(sum(opa.seller_net_minor), 0)
+      into allocation_count, allocation_gross, allocation_fee, allocation_net
+    from public.order_proceeds_allocations opa where opa.journal_batch_id = new.id;
+    if source_amount is null or allocation_count <> source_item_count or allocation_count = 0
+      or allocation_gross <> source_subtotal or allocation_fee + allocation_net <> allocation_gross
+      or (select count(*) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'unallocated_order_liability' and e.side = 'debit' and e.amount_minor = source_amount) <> 1
+      or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'seller_payable' and e.side = 'credit') <> allocation_net
+      or exists (
+        select 1
+        from public.order_proceeds_allocations opa
+        where opa.journal_batch_id = new.id
+        group by opa.seller_id
+        having coalesce(sum(opa.seller_net_minor),0) <>
+          coalesce((
+            select sum(e.amount_minor) from public.financial_journal_entries e
+            where e.batch_id = new.id and e.account = 'seller_payable'
+              and e.side = 'credit' and e.seller_id = opa.seller_id
+          ),0)
+      )
+      or exists (
+        select 1 from public.financial_journal_entries e
+        where e.batch_id = new.id and e.account = 'seller_payable' and e.side = 'credit'
+          and not exists (
+            select 1 from public.order_proceeds_allocations opa
+            where opa.journal_batch_id = new.id and opa.seller_id = e.seller_id
+          )
+      )
+      or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'platform_revenue' and e.side = 'credit') <> allocation_fee
+      or (select coalesce(sum(e.amount_minor), 0) from public.financial_journal_entries e where e.batch_id = new.id and e.account = 'tax_payable' and e.side = 'credit') <> source_tax
+      or exists (select 1 from public.financial_journal_entries e where e.batch_id = new.id and not ((e.account = 'unallocated_order_liability' and e.side = 'debit') or (e.account in ('seller_payable','platform_revenue','tax_payable') and e.side = 'credit'))) then
+      raise exception using errcode = '23514', message = 'proceeds allocation journal must reconcile to paid order, item allocations, approved fees and tax';
+    end if;
+  elsif new.source_type = 'provider_fee' then
+    select * into settlement_posting
+    from public.settlement_journal_postings
+    where journal_batch_id = new.id;
+
+    if settlement_posting.id is null then
+      raise exception using errcode = '23514', message = 'provider fee posting requires immutable settlement posting evidence';
+    end if;
+
+    select * into settlement_import
+    from public.settlement_imports
+    where id = settlement_posting.import_id;
+
+    select * into settlement_row
+    from public.settlement_import_rows
+    where import_id = settlement_posting.import_id
+      and row_id = settlement_posting.row_id;
+
+    select link.evidence_id into settlement_evidence_lock_id
+    from public.settlement_evidence_links link
+    where link.import_id = settlement_posting.import_id
+      and link.source_sha256 = settlement_import.source_sha256
+    limit 1;
+
+    if settlement_evidence_lock_id is not null then
+      perform pg_advisory_xact_lock(hashtext('settlement-evidence-scan:' || settlement_evidence_lock_id::text));
+    end if;
+
+    if settlement_import.id is null
+      or settlement_row.import_id is null
+      or settlement_posting.posting_type <> 'provider_fee'
+      or settlement_import.provider <> 'sandbox'
+      or settlement_import.source_authentication_method <> 'sandbox_fixture'
+      or settlement_import.source_sha256 <> settlement_posting.evidence_sha256
+      or settlement_import.source_sha256 <> new.evidence_sha256
+      or settlement_row.row_type <> 'fee'
+      or settlement_row.exception_code is not null
+      or settlement_row.gross_minor <> 0
+      or settlement_row.fee_minor <= 0
+      or settlement_row.net_minor <> -settlement_row.fee_minor
+      or settlement_row.currency <> settlement_import.currency
+      or settlement_row.currency <> new.currency
+      or new.provider <> settlement_import.provider
+      or new.order_id is not null
+      or new.payment_attempt_id is not null
+      or new.refund_id is not null
+      or new.provider_reference <> coalesce(settlement_row.provider_reference, settlement_row.row_id)
+      or new.source_key <> 'settlement-fee:' || settlement_posting.import_id::text || ':' || settlement_posting.row_id
+      or new.idempotency_key <> 'settlement-fee:' || settlement_posting.import_id::text || ':' || settlement_posting.row_id
+      or entry_count <> 2
+      or debit_total <> settlement_row.fee_minor
+      or credit_total <> settlement_row.fee_minor
+      or mismatched_currency
+      or not exists (
+        select 1
+        from (
+          select scan.verdict, scan.source_sha256, scan.signature_updated_at
+          from public.settlement_evidence_scan_results scan
+          join public.settlement_evidence evidence on evidence.id = scan.evidence_id
+          where evidence.id = (
+            select link.evidence_id
+            from public.settlement_evidence_links link
+            where link.import_id = settlement_posting.import_id
+              and link.source_sha256 = settlement_import.source_sha256
+            limit 1
+          )
+          order by scan.scanned_at desc, scan.id desc
+          limit 1
+        ) latest_scan
+        where latest_scan.verdict = 'clean'
+          and latest_scan.source_sha256 = settlement_import.source_sha256
+          and latest_scan.signature_updated_at >= clock_timestamp() - interval '48 hours'
+          and latest_scan.signature_updated_at <= clock_timestamp() + interval '5 minutes'
+      )
+      or not exists (
+        select 1
+        from public.settlement_evidence_links link
+        join public.settlement_evidence evidence on evidence.id = link.evidence_id
+        where link.import_id = settlement_posting.import_id
+          and link.source_sha256 = settlement_import.source_sha256
+          and evidence.source_sha256 = settlement_import.source_sha256
+          and link.linked_by <> settlement_posting.posted_by
+          and evidence.uploaded_by <> settlement_posting.posted_by
+      )
+      or not exists (
+        select 1
+        from public.user_roles ur
+        where ur.user_id = settlement_posting.posted_by
+          and ur.role = 'admin'::public.app_role
+      )
+      or settlement_posting.posted_by = settlement_import.imported_by
+      or not exists (
+        select 1
+        from public.settlement_reconciliation_runs run
+        where run.id = settlement_posting.reconciliation_run_id
+          and run.import_id = settlement_posting.import_id
+          and run.reconciled_by = settlement_posting.posted_by
+      )
+      or (select count(*) from public.financial_journal_entries e
+          where e.batch_id = new.id
+            and e.account = 'provider_fee_expense'
+            and e.side = 'debit'
+            and e.amount_minor = settlement_row.fee_minor) <> 1
+      or (select count(*) from public.financial_journal_entries e
+          where e.batch_id = new.id
+            and e.account = 'provider_clearing'
+            and e.side = 'credit'
+            and e.amount_minor = settlement_row.fee_minor) <> 1
+      or exists (
+        select 1 from public.financial_journal_entries e
+        where e.batch_id = new.id
+          and not (
+            (e.account = 'provider_fee_expense' and e.side = 'debit')
+            or (e.account = 'provider_clearing' and e.side = 'credit')
+          )
+      )
+    then
+      raise exception using errcode = '23514', message = 'provider fee journal must match linked sandbox evidence and balanced fee-row amounts';
+    end if;
+
+  else
+    raise exception using errcode = '23514', message = 'financial posting source has no approved posting workflow';
+  end if;
+
+  new.posted_at := coalesce(new.posted_at, now());
+  return new;
+end;
+$function$;
