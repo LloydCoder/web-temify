@@ -101,11 +101,16 @@ function clamdRequest({ host, port, command, bytes, timeoutMs }) {
 
 function parseSignatureUpdatedAt(versionResponse) {
   const match = versionResponse.match(
-    /\\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s+\\d{1,2}\\s+\\d{2}:\\d{2}:\\d{2}\\s+\\d{4}\\b/,
+    /\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}\s+\d{4}\b/,
   );
-  if (!match) throw new Error("clamd version response omitted signature database timestamp");
+  if (!match) {
+    throw new Error("clamd version response omitted signature database timestamp");
+  }
   const parsed = new Date(match[0]);
-  if (!Number.isFinite(parsed.getTime()) || parsed.getTime() > Date.now() + 5 * 60_000) {
+  if (
+    !Number.isFinite(parsed.getTime()) ||
+    parsed.getTime() > Date.now() + 5 * 60_000
+  ) {
     throw new Error("clamd signature database timestamp is invalid");
   }
   return parsed.toISOString();
@@ -135,16 +140,31 @@ export async function scanWithClamd(
   });
 
   if (/:\s*OK$/i.test(scanResponse)) {
-    return { verdict: "clean", scannerName: "clamav", scannerVersion, signatureUpdatedAt };
+    return {
+      verdict: "clean",
+      scannerName: "clamav",
+      scannerVersion,
+      signatureUpdatedAt,
+    };
   }
   if (/\bFOUND$/i.test(scanResponse)) {
-    return { verdict: "infected", scannerName: "clamav", scannerVersion, signatureUpdatedAt };
+    return {
+      verdict: "infected",
+      scannerName: "clamav",
+      scannerVersion,
+      signatureUpdatedAt,
+    };
   }
   if (
     /\bERROR$/i.test(scanResponse) ||
     /size limit exceeded/i.test(scanResponse)
   ) {
-    return { verdict: "error", scannerName: "clamav", scannerVersion, signatureUpdatedAt };
+    return {
+      verdict: "error",
+      scannerName: "clamav",
+      scannerVersion,
+      signatureUpdatedAt,
+    };
   }
   throw new Error("clamd returned an unrecognized scan response");
 }
