@@ -35,6 +35,10 @@ The forward migration `20261014070000_phase4d2_global_journal_match_guard.sql` r
 
 The follow-up migrations `20261014080000_phase4d2_classify_duplicate_journal_matches.sql` and `20261014090000_phase4d2_preserve_currency_and_replay_guards.sql` classify cross-import replays as immutable `duplicate_reference` exceptions instead of aborting the reconciliation transaction. Candidate journal batches are locked in deterministic UUID order using transaction-scoped advisory locks to reduce concurrent double-match and deadlock risk; the global unique index remains the final integrity backstop. Dedicated concurrent-race tests, broader matched-refund edge cases, provider-authenticated ingress, settlement/fee posting, retention, malware scanning, escalation/expiry, and external onboarding remain open. Live-provider processing remains disabled.
 
+## Cross-import replay regression coverage
+
+The settlement pgTAP suite now exercises a second USD report that references the same posted payment journal already matched by the first report. The second report remains immutable evidence, while reconciliation must record `duplicate_reference` with a null `journal_batch_id`; it must not abort the run or create a second accounting match. This regression protects sequential cross-import replay behavior. It is **not** a substitute for a two-session concurrent-race test: lock interleavings, transaction timing, and the unique-index conflict path still require a dedicated multi-connection harness and verified CI evidence.
+
 ## Sandbox-only provider-fee journal posting (partial implementation)
 
 Migration `20261014130000_phase4d2_sandbox_fee_journal_posting.sql` adds a narrowly scoped provider-fee journal path to the independent reconciliation workflow.
