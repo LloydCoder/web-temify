@@ -103,9 +103,7 @@ function parseSignatureUpdatedAt(versionResponse) {
   const match = versionResponse.match(
     /\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}\s+\d{4}\b/,
   );
-  if (!match) {
-    throw new Error("clamd version response omitted signature database timestamp");
-  }
+  if (!match) throw new Error("clamd version response omitted signature database timestamp");
   const parsed = new Date(match[0]);
   if (
     !Number.isFinite(parsed.getTime()) ||
