@@ -93,8 +93,11 @@ POST /v1/scan
 - Requires Content-Type: application/octet-stream and X-Evidence-SHA256 with
   64 lowercase hex characters.
 - Body is the raw file bytes, capped at 5 MiB.
-- A successful HTTP 200 response contains verdict (clean, infected, or error),
-  scannerName, scannerVersion, and the gateway-computed sha256.
+- A successful HTTP 200 response contains verdict, scannerName, scannerVersion,
+  the signature database update time parsed from ClamAV VERSION, and the
+  gateway-computed sha256. Missing or invalid timestamps fail closed. Stale
+  signature definitions may be retained for audit but cannot authorize linkage
+  or journal posting.
 - A digest mismatch is HTTP 422. Invalid requests are rejected. Scanner outages
   return HTTP 503 without a clean verdict.
 - The caller must compare the returned digest with its own expected digest
