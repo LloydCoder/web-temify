@@ -147,6 +147,7 @@ export async function POST(request: Request) {
         p_verdict: scan.status,
         p_scanner_name: scan.scannerName,
         p_scanner_version: scan.scannerVersion,
+        p_signature_updated_at: scan.signatureUpdatedAt,
         p_request_id: requestId,
       },
     );
