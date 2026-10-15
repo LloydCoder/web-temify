@@ -319,7 +319,7 @@ select ok(
   'reconciliation serializes cross-import journal matching in a transaction'
 );
 select ok(
-  position('where prior.journal_batch_id = candidate_batch_id' in pg_get_functiondef('public.reconcile_settlement_import(uuid,uuid)'::regprocedure)) > 0,
+  position('where prior.journal_batch_id=candidate_batch_id' in pg_get_functiondef('public.reconcile_settlement_import(uuid,uuid)'::regprocedure)) > 0,
   'reconciliation checks prior matches across all runs, not only the current run'
 );
 
