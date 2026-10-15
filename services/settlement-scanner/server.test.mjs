@@ -293,6 +293,16 @@ describe("settlement scanner service", () => {
     await expect(response.json()).resolves.toEqual({ ok: false });
   });
 
+  it("reports unready when ClamAV omits its signature timestamp", async () => {
+    const fake = fakeClamd("stream: OK", "ClamAV 1.5.4/test");
+    const clamdPort = await listen(fake.server);
+    const port = await listen(startGateway({ clamdPort }));
+    const response = await fetch(`http://127.0.0.1:${port}/readyz`);
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({ ok: false });
+  });
+
   it("fails closed when ClamAV omits its signature database timestamp", async () => {
     const fake = fakeClamd("stream: OK", "ClamAV 1.5.4/test");
     const port = await listen(fake.server);
