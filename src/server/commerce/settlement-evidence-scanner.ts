@@ -6,6 +6,7 @@ export type SettlementEvidenceScanResult =
       status: SettlementEvidenceScanVerdict;
       scannerName: string;
       scannerVersion: string;
+      signatureUpdatedAt: string;
       sha256: string;
     };
 
@@ -68,6 +69,7 @@ function parseScannerResponse(
   const verdict = value.verdict;
   const scannerName = value.scannerName;
   const scannerVersion = value.scannerVersion;
+  const signatureUpdatedAt = value.signatureUpdatedAt;
   const sha256 = value.sha256;
 
   if (
@@ -78,6 +80,9 @@ function parseScannerResponse(
     typeof scannerVersion !== "string" ||
     scannerVersion.trim().length < 1 ||
     scannerVersion.trim().length > MAX_SCANNER_VERSION_LENGTH ||
+    typeof signatureUpdatedAt !== "string" ||
+    !Number.isFinite(Date.parse(signatureUpdatedAt)) ||
+    Date.parse(signatureUpdatedAt) > Date.now() + 5 * 60_000 ||
     typeof sha256 !== "string" ||
     !DIGEST_PATTERN.test(sha256) ||
     sha256 !== expectedSha256
@@ -89,6 +94,7 @@ function parseScannerResponse(
     status: verdict,
     scannerName: scannerName.trim(),
     scannerVersion: scannerVersion.trim(),
+    signatureUpdatedAt: new Date(signatureUpdatedAt).toISOString(),
     sha256,
   };
 }
