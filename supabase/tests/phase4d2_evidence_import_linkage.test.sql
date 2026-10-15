@@ -78,7 +78,7 @@ insert into public.settlement_evidence (
 
 select public.record_settlement_evidence_scan_result(
   '8b000000-0000-4000-8000-00000000008b',
-  repeat('a',64), 'clean', 'test-scanner', '1.0.0', gen_random_uuid()
+  repeat('a',64), 'clean', 'test-scanner', '1.0.0', current_timestamp, gen_random_uuid()
 );
 
 -- Scanner signature freshness is supplied by the test fixture.
