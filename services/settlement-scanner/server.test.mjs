@@ -273,7 +273,9 @@ describe("settlement scanner service", () => {
 
     await expect(
       scanWithClamd(bytes, { host: "127.0.0.1", port, timeoutMs: 2000 }),
-    ).rejects.toThrow("clamd version response omitted signature database timestamp");
+    ).rejects.toThrow(
+      "clamd version response omitted signature database timestamp",
+    );
   });
 
   it("recognizes an infected ClamAV response", async () => {
