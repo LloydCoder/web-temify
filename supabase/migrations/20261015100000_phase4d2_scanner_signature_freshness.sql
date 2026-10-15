@@ -28,7 +28,6 @@ begin
     or p_scanner_name is null or char_length(btrim(p_scanner_name)) not between 1 and 120
     or p_scanner_version is null or char_length(btrim(p_scanner_version)) not between 1 and 80
     or p_signature_updated_at is null
-    or p_signature_updated_at < clock_timestamp() - interval '48 hours'
     or p_signature_updated_at > clock_timestamp() + interval '5 minutes'
   then
     raise exception using errcode = '23514', message = 'settlement evidence scan result metadata failed validation';
