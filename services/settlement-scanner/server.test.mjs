@@ -270,7 +270,7 @@ describe("settlement scanner service", () => {
   it("reports ready only when ClamAV signature definitions are fresh", async () => {
     const fake = fakeClamd(
       "stream: OK",
-      `ClamAV 1.5.4/12345/${new Date().toDateString()} ${new Date().toTimeString().slice(0, 8)} ${new Date().getFullYear()}`,
+      `ClamAV 1.5.4/12345/${new Date().toDateString().split(" ").slice(0, 3).join(" ")} ${new Date().toTimeString().slice(0, 8)} ${new Date().getFullYear()}`,
     );
     const clamdPort = await listen(fake.server);
     const port = await listen(startGateway({ clamdPort }));
