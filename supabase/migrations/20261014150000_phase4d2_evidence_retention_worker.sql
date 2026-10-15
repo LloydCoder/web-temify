@@ -99,7 +99,7 @@ begin
       evidence_row.byte_size, 'processing', 1, now() + interval '15 minutes',
       null, null, p_request_id
     )
-    on conflict (evidence_id) do update
+    on conflict on constraint settlement_evidence_retention_jobs_pkey do update
     set storage_path = excluded.storage_path,
         source_sha256 = excluded.source_sha256,
         byte_size = excluded.byte_size,
