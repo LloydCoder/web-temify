@@ -105,10 +105,7 @@ function parseSignatureUpdatedAt(versionResponse) {
   );
   if (!match) throw new Error("clamd version response omitted signature database timestamp");
   const parsed = new Date(match[0]);
-  if (
-    !Number.isFinite(parsed.getTime()) ||
-    parsed.getTime() > Date.now() + 5 * 60_000
-  ) {
+  if (!Number.isFinite(parsed.getTime()) || parsed.getTime() > Date.now() + 5 * 60_000) {
     throw new Error("clamd signature database timestamp is invalid");
   }
   return parsed.toISOString();
