@@ -284,7 +284,7 @@ select lives_ok(
 
 select public.record_settlement_evidence_scan_result(
   '8c000000-0000-4000-8000-00000000008c',
-  repeat('b',64), 'clean', 'test-scanner', '1.0.0', gen_random_uuid()
+  repeat('b',64), 'clean', 'test-scanner', '1.0.0', statement_timestamp(), gen_random_uuid()
 );
 select lives_ok(
   $sql$
