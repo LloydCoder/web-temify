@@ -253,9 +253,15 @@ export function createScannerServer({
           command: "VERSION",
           timeoutMs,
         });
-        sendJson(response, version.startsWith("ClamAV ") ? 200 : 503, {
-          ok: version.startsWith("ClamAV "),
-        });
+        const validEngine = version.startsWith("ClamAV ");
+        const signatureUpdatedAt = validEngine
+          ? Date.parse(parseSignatureUpdatedAt(version))
+          : Number.NaN;
+        const signaturesFresh =
+          Number.isFinite(signatureUpdatedAt) &&
+          signatureUpdatedAt >= Date.now() - 48 * 60 * 60_000;
+        const ready = validEngine && signaturesFresh;
+        sendJson(response, ready ? 200 : 503, { ok: ready });
       } catch {
         sendJson(response, 503, { ok: false });
       }
