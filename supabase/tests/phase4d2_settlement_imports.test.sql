@@ -1,5 +1,5 @@
 begin;
-select plan(123);
+select plan(127);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -395,6 +395,54 @@ select is(
    and rr.row_id = 'currency-mismatch-row-01'),
   'currency_mismatch',
   'matching provider reference in another currency is classified as currency mismatch'
+);
+
+-- A second report must not claim a journal batch already matched by an earlier import.
+create temporary table phase4d2_duplicate_import_ids(import_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_duplicate_import_ids
+    select public.import_settlement_report(
+      'sandbox', 'sandbox-account-01', 'settlement-duplicate-journal-2026-10-13',
+      '2026-10-13', '2026-10-13', 'UTC', repeat('3',64), true,
+      'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
+      jsonb_build_array(jsonb_build_object(
+        'rowId','duplicate-journal-row-01', 'rowType','payment',
+        'providerReference','phase4d2-provider-payment-match-01',
+        'paymentReference','phase4d2-order-payment-match-01',
+        'occurredAt','2026-10-13T10:00:00Z', 'currency','USD',
+        'grossMinor',1299, 'feeMinor',39, 'netMinor',1260
+      ))
+    )
+  $sql$,
+  'a second settlement report with the same provider reference imports as separate immutable evidence'
+);
+create temporary table phase4d2_duplicate_run_ids(run_id uuid primary key) on commit drop;
+select lives_ok(
+  $sql$
+    insert into phase4d2_duplicate_run_ids
+    select public.reconcile_settlement_import(
+      (select import_id from phase4d2_duplicate_import_ids),
+      '89200000-0000-4000-8000-000000000089'
+    )
+  $sql$,
+  'cross-import replay is recorded as a reconciliation exception instead of aborting'
+);
+select is(
+  (select rr.result_code
+   from public.settlement_reconciliation_results rr
+   where rr.run_id = (select run_id from phase4d2_duplicate_run_ids)
+     and rr.row_id = 'duplicate-journal-row-01'),
+  'duplicate_reference',
+  'a journal batch matched by an earlier import cannot be matched again'
+);
+select is(
+  (select rr.journal_batch_id is null
+   from public.settlement_reconciliation_results rr
+   where rr.run_id = (select run_id from phase4d2_duplicate_run_ids)
+     and rr.row_id = 'duplicate-journal-row-01'),
+  true,
+  'cross-import duplicate exceptions do not retain a journal batch link'
 );
 
 create temporary table phase4d2_reconciliation_ids(run_id uuid primary key) on commit drop;
