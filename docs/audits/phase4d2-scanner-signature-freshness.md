@@ -1,6 +1,6 @@
 # Phase 4D2 scanner-signature freshness — implementation audit
 
-**Disposition:** Implementation candidate; exact-head CI and production scanner operations must be verified before merge/activation. This slice does not close Phase 4D2.
+**Disposition:** PASS for the scanner-signature-freshness implementation slice; NOT a Phase 4D2 completion or production activation approval. PR [#57](https://github.com/LloydCoder/web-temify/pull/57) merged as `5e0acdfc84046ee674634ade0173549bfb9f526d`; reviewed implementation head `1842f85f26b11e11ab2227ada38ed90633166fe9` passed Foundation CI run [38732109726](https://github.com/LloydCoder/web-temify/actions/runs/38732109726) and Security/dependency governance run [38732109750](https://github.com/LloydCoder/web-temify/actions/runs/38732109750). The merge commit's post-merge workflow status must be checked separately.
 
 ## Scope
 
@@ -16,6 +16,12 @@
 - The database retains stale scan attestations but requires the latest digest-matched clean scan to have signature definitions updated within 48 hours; timestamps more than five minutes in the future are not accepted.
 - The malware-gate pgTAP suite covers stale-signature denial and fresh-rescan recovery; gateway tests cover parsing and missing-timestamp fail-closed behavior.
 
+## Verification and files reviewed
+
+- Foundation CI exact-head run `38732109726` succeeded through frozen install, foundation/domain tests, typecheck, lint, format, empty-database migration reset, schema lint, database/RLS tests, Playwright E2E, production build, and cleanup.
+- Security/dependency governance exact-head run `38732109750` succeeded for production dependency-license policy, high/critical dependency audit, and full-history Gitleaks scan.
+- Reviewed implementation files include `supabase/migrations/20261015100000_phase4d2_scanner_signature_freshness.sql`, `supabase/tests/phase4d2_evidence_malware_gate.test.sql`, `services/settlement-scanner/server.mjs`, `services/settlement-scanner/server.test.mjs`, `src/server/commerce/settlement-evidence-scanner.ts`, `src/app/api/admin/settlements/evidence/route.ts`, and the scanner contract/roadmap/commerce documentation.
+
 ## Security invariants
 
 1. A recent scan event is not sufficient when the scanner signature database itself is stale.
@@ -26,7 +32,7 @@
 
 ## Remaining gates
 
-- Exact-head Foundation CI and Security/dependency governance.
+- Post-merge `main` CI verification for merge commit `5e0acdfc84046ee674634ade0173549bfb9f526d`.
 - Production scanner deployment, HTTPS endpoint and secret provisioning, external freshness monitoring/alerting, and live smoke tests. `/readyz` exposes stale signatures as not-ready but does not itself prove production alert delivery.
 - Provider-authenticated ingress, provider settlement/payout posting, concurrent-race integration tests, retention-worker operational verification/alerting, escalation/expiry, external provider onboarding, and legal/jurisdiction approval.
 
