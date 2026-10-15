@@ -187,7 +187,7 @@ describe("settlement scanner service", () => {
         verdict,
         scannerName: "clamav",
         scannerVersion: "ClamAV 1.5.4",
-      signatureUpdatedAt: "2026-10-14T12:30:00.000Z",
+        signatureUpdatedAt: "2026-10-14T12:30:00.000Z",
       }));
       const port = await listen(startGateway({ scan }));
       const response = await fetch(`http://127.0.0.1:${port}/v1/scan`, {
@@ -229,7 +229,7 @@ describe("settlement scanner service", () => {
           verdict: "clean",
           scannerName: "clamav",
           scannerVersion: "ClamAV test",
-      signatureUpdatedAt: "2026-10-14T12:30:00.000Z",
+          signatureUpdatedAt: "2026-10-14T12:30:00.000Z",
         }),
       }),
     );
