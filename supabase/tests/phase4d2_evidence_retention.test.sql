@@ -108,7 +108,7 @@ insert into public.settlement_evidence (
 
 select public.record_settlement_evidence_scan_result(
   '81000000-0000-4000-8000-000000000080', repeat('a',64), 'clean',
-  'test-scanner', '1.0.0', gen_random_uuid()
+  'test-scanner', '1.0.0', current_timestamp, gen_random_uuid()
 );
 select public.record_settlement_evidence_scan_result(
   '81200000-0000-4000-8000-000000000080', repeat('c',64), 'clean',
