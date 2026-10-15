@@ -267,6 +267,32 @@ describe("settlement scanner service", () => {
     expect(fake.streamed[0]).toEqual(bytes);
   });
 
+  it("reports ready only when ClamAV signature definitions are fresh", async () => {
+    const fake = fakeClamd(
+      "stream: OK",
+      `ClamAV 1.5.4/12345/${new Date().toDateString()} ${new Date().toTimeString().slice(0, 8)} ${new Date().getFullYear()}`,
+    );
+    const clamdPort = await listen(fake.server);
+    const port = await listen(startGateway({ clamdPort }));
+    const response = await fetch(`http://127.0.0.1:${port}/readyz`);
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({ ok: true });
+  });
+
+  it("reports unready when ClamAV signature definitions are stale", async () => {
+    const fake = fakeClamd(
+      "stream: OK",
+      "ClamAV 1.5.4/12345/Mon Oct 12 12:30:00 2026",
+    );
+    const clamdPort = await listen(fake.server);
+    const port = await listen(startGateway({ clamdPort }));
+    const response = await fetch(`http://127.0.0.1:${port}/readyz`);
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({ ok: false });
+  });
+
   it("fails closed when ClamAV omits its signature database timestamp", async () => {
     const fake = fakeClamd("stream: OK", "ClamAV 1.5.4/test");
     const port = await listen(fake.server);
