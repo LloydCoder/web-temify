@@ -79,6 +79,37 @@ export async function GET(
     );
   }
 
+  const { data: retention, error: retentionError } = await adminContext.admin
+    .from("settlement_evidence_retention_jobs")
+    .select("status")
+    .eq("evidence_id", parsedId.data)
+    .maybeSingle();
+
+  if (retentionError) {
+    return NextResponse.json(
+      { error: "settlement_evidence_retention_unavailable", requestId },
+      { status: 503 },
+    );
+  }
+  if (retention?.status === "deleted") {
+    return NextResponse.json(
+      { error: "settlement_evidence_expired", requestId },
+      { status: 410 },
+    );
+  }
+  if (retention?.status === "processing") {
+    return NextResponse.json(
+      { error: "settlement_evidence_retention_in_progress", requestId },
+      { status: 423 },
+    );
+  }
+  if (retention?.status === "blocked") {
+    return NextResponse.json(
+      { error: "settlement_evidence_retention_requires_review", requestId },
+      { status: 503 },
+    );
+  }
+
   const { data: file, error: storageError } = await adminContext.admin.storage
     .from("settlement-evidence")
     .download(evidence.storage_path);
