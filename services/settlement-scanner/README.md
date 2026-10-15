@@ -20,8 +20,9 @@ can be updated independently.
    responses, or unavailable scanners leave the evidence pending.
 5. Web-Temify records the scanner verdict through the service-role-only
    record_settlement_evidence_scan_result RPC. Database guards require the
-   latest verdict to be clean for the exact evidence digest at both linkage and
-   journal-posting time.
+   latest verdict to be clean for the exact evidence digest and require the
+   signature database update timestamp to be within 48 hours at both linkage
+   and journal-posting time.
 
 A scan verdict is not proof of provider origin or report authenticity. The
 provider-ingress gate remains separate.
