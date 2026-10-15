@@ -231,6 +231,11 @@ select is(
   1,
   'a failed deletion is retried without reclaiming the completed tombstone'
 );
+-- Simulate a worker crash after the retry claim but before completion; the lease must expire before another worker can reclaim it.
+update public.settlement_evidence_retention_jobs
+set lease_expires_at = now() - interval '1 second'
+where evidence_id = '81100000-0000-4000-8000-000000000080'
+  and status = 'processing';
 select is(
   (select attempts from public.settlement_evidence_retention_jobs
    where evidence_id = '81100000-0000-4000-8000-000000000080'),
