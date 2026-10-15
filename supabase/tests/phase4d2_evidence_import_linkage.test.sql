@@ -81,6 +81,7 @@ select public.record_settlement_evidence_scan_result(
   repeat('a',64), 'clean', 'test-scanner', '1.0.0', gen_random_uuid()
 );
 
+-- Scanner signature freshness is supplied by the test fixture.
 create temporary table phase4d2_link_ids(link_id uuid primary key) on commit drop;
 select lives_ok(
   $sql$
