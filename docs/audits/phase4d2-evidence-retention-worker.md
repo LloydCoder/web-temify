@@ -35,7 +35,7 @@
 - No linked settlement evidence is automatically deleted; legal/accounting policy and any required holds have not been approved.
 - `vercel.json` declares a daily 03:15 UTC Vercel Cron schedule, but the production deployment does not provision `CRON_SECRET` or `SETTLEMENT_EVIDENCE_RETENTION_TOKEN` from this repository. The worker is not operational until the deployment, secret, least-privilege runtime configuration, smoke test, and alerting are verified.
 - Blocked jobs require an operational queue/runbook and a human disposition; this slice records the blocked state but does not send alerts.
-- Provider-authenticated ingress, provider settlement/payout posting, true concurrent integration tests, operational escalation/expiry, scanner signature freshness monitoring, external provider onboarding, and jurisdiction approval remain open.
+- Provider-authenticated ingress, provider settlement/payout posting, true concurrent integration tests, operational escalation/expiry, production scanner signature freshness monitoring/alerting, external provider onboarding, and jurisdiction approval remain open.
 - No live-provider processing, payout, escrow, or money movement is enabled.
 
 ## Verification required before merge

@@ -50,7 +50,10 @@ function authHeaders(digest = sha256) {
   };
 }
 
-function fakeClamd(scanReply = "stream: OK") {
+function fakeClamd(
+  scanReply = "stream: OK",
+  versionReply = "ClamAV 1.5.4/12345/Wed Oct 14 12:30:00 2026",
+) {
   const streamed = [];
   const server = createTcpServer((socket) => {
     let buffer = Buffer.alloc(0);
@@ -65,7 +68,7 @@ function fakeClamd(scanReply = "stream: OK") {
         command = buffer.subarray(0, terminator).toString("utf8");
         buffer = buffer.subarray(terminator + 1);
         if (command === "zVERSION") {
-          socket.end(Buffer.from("ClamAV 1.5.4/test\0"));
+          socket.end(Buffer.from(versionReply + String.fromCharCode(0)));
           return;
         }
         if (command !== "zINSTREAM") {
@@ -112,6 +115,7 @@ describe("settlement scanner service", () => {
       verdict: "clean",
       scannerName: "clamav",
       scannerVersion: "ClamAV test",
+      signatureUpdatedAt: "2026-10-14T12:30:00.000Z",
     }));
     const port = await listen(startGateway({ scan }));
     const response = await fetch(`http://127.0.0.1:${port}/v1/scan`, {
@@ -132,6 +136,7 @@ describe("settlement scanner service", () => {
       verdict: "clean",
       scannerName: "clamav",
       scannerVersion: "ClamAV test",
+      signatureUpdatedAt: "2026-10-14T12:30:00.000Z",
     }));
     const port = await listen(startGateway({ scan }));
     const baseUrl = `http://127.0.0.1:${port}/v1/scan`;
@@ -157,6 +162,7 @@ describe("settlement scanner service", () => {
       verdict: "clean",
       scannerName: "clamav",
       scannerVersion: "ClamAV 1.5.4",
+      signatureUpdatedAt: "2026-10-14T12:30:00.000Z",
     }));
     const port = await listen(startGateway({ scan }));
     const response = await fetch(`http://127.0.0.1:${port}/v1/scan`, {
@@ -170,6 +176,7 @@ describe("settlement scanner service", () => {
       verdict: "clean",
       scannerName: "clamav",
       scannerVersion: "ClamAV 1.5.4",
+      signatureUpdatedAt: "2026-10-14T12:30:00.000Z",
       sha256,
     });
     expect(scan).toHaveBeenCalledOnce();
@@ -183,6 +190,7 @@ describe("settlement scanner service", () => {
         verdict,
         scannerName: "clamav",
         scannerVersion: "ClamAV 1.5.4",
+        signatureUpdatedAt: "2026-10-14T12:30:00.000Z",
       }));
       const port = await listen(startGateway({ scan }));
       const response = await fetch(`http://127.0.0.1:${port}/v1/scan`, {
@@ -224,6 +232,7 @@ describe("settlement scanner service", () => {
           verdict: "clean",
           scannerName: "clamav",
           scannerVersion: "ClamAV test",
+          signatureUpdatedAt: "2026-10-14T12:30:00.000Z",
         }),
       }),
     );
@@ -251,10 +260,58 @@ describe("settlement scanner service", () => {
     ).resolves.toEqual({
       verdict: "clean",
       scannerName: "clamav",
-      scannerVersion: "ClamAV 1.5.4/test",
+      scannerVersion: "ClamAV 1.5.4/12345/Wed Oct 14 12:30:00 2026",
+      signatureUpdatedAt: "2026-10-14T12:30:00.000Z",
     });
     expect(fake.streamed).toHaveLength(1);
     expect(fake.streamed[0]).toEqual(bytes);
+  });
+
+  it("reports ready only when ClamAV signature definitions are fresh", async () => {
+    const fake = fakeClamd(
+      "stream: OK",
+      `ClamAV 1.5.4/12345/${new Date().toDateString().split(" ").slice(0, 3).join(" ")} ${new Date().toTimeString().slice(0, 8)} ${new Date().getFullYear()}`,
+    );
+    const clamdPort = await listen(fake.server);
+    const port = await listen(startGateway({ clamdPort }));
+    const response = await fetch(`http://127.0.0.1:${port}/readyz`);
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({ ok: true });
+  });
+
+  it("reports unready when ClamAV signature definitions are stale", async () => {
+    const fake = fakeClamd(
+      "stream: OK",
+      "ClamAV 1.5.4/12345/Mon Oct 12 12:30:00 2026",
+    );
+    const clamdPort = await listen(fake.server);
+    const port = await listen(startGateway({ clamdPort }));
+    const response = await fetch(`http://127.0.0.1:${port}/readyz`);
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({ ok: false });
+  });
+
+  it("reports unready when ClamAV omits its signature timestamp", async () => {
+    const fake = fakeClamd("stream: OK", "ClamAV 1.5.4/test");
+    const clamdPort = await listen(fake.server);
+    const port = await listen(startGateway({ clamdPort }));
+    const response = await fetch(`http://127.0.0.1:${port}/readyz`);
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({ ok: false });
+  });
+
+  it("fails closed when ClamAV omits its signature database timestamp", async () => {
+    const fake = fakeClamd("stream: OK", "ClamAV 1.5.4/test");
+    const port = await listen(fake.server);
+
+    await expect(
+      scanWithClamd(bytes, { host: "127.0.0.1", port, timeoutMs: 2000 }),
+    ).rejects.toThrow(
+      "clamd version response omitted signature database timestamp",
+    );
   });
 
   it("recognizes an infected ClamAV response", async () => {

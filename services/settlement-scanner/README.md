@@ -20,8 +20,9 @@ can be updated independently.
    responses, or unavailable scanners leave the evidence pending.
 5. Web-Temify records the scanner verdict through the service-role-only
    record_settlement_evidence_scan_result RPC. Database guards require the
-   latest verdict to be clean for the exact evidence digest at both linkage and
-   journal-posting time.
+   latest verdict to be clean for the exact evidence digest and require the
+   signature database update timestamp to be within 48 hours at both linkage
+   and journal-posting time.
 
 A scan verdict is not proof of provider origin or report authenticity. The
 provider-ingress gate remains separate.
@@ -92,8 +93,11 @@ POST /v1/scan
 - Requires Content-Type: application/octet-stream and X-Evidence-SHA256 with
   64 lowercase hex characters.
 - Body is the raw file bytes, capped at 5 MiB.
-- A successful HTTP 200 response contains verdict (clean, infected, or error),
-  scannerName, scannerVersion, and the gateway-computed sha256.
+- A successful HTTP 200 response contains verdict, scannerName, scannerVersion,
+  the signature database update time parsed from ClamAV VERSION, and the
+  gateway-computed sha256. Missing or invalid timestamps fail closed. Stale
+  signature definitions may be retained for audit but cannot authorize linkage
+  or journal posting.
 - A digest mismatch is HTTP 422. Invalid requests are rejected. Scanner outages
   return HTTP 503 without a clean verdict.
 - The caller must compare the returned digest with its own expected digest

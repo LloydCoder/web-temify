@@ -14,6 +14,7 @@ function scannerResponse(
       verdict,
       scannerName: "clamav",
       scannerVersion: "ClamAV 1.5.4",
+      signatureUpdatedAt: "2026-10-14T12:30:00.000Z",
       sha256,
     }),
     { status: 200, headers: { "content-type": "application/json" } },
@@ -86,6 +87,7 @@ describe("scanSettlementEvidence", () => {
       status: "clean",
       scannerName: "clamav",
       scannerVersion: "ClamAV 1.5.4",
+      signatureUpdatedAt: "2026-10-14T12:30:00.000Z",
       sha256: digest,
     });
 
