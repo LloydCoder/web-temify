@@ -109,7 +109,9 @@ function parseSignatureUpdatedAt(versionResponse) {
     );
   }
   const parsed = new Date(match[0]);
-  if (!Number.isFinite(parsed.getTime()) || parsed.getTime() > Date.now() + 5 * 60_000) {
+  const parsedTimestamp = parsed.getTime();
+  const futureLimit = Date.now() + 5 * 60_000;
+  if (!Number.isFinite(parsedTimestamp) || parsedTimestamp > futureLimit) {
     throw new Error("clamd signature database timestamp is invalid");
   }
   return parsed.toISOString();
