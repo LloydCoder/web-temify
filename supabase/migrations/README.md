@@ -27,6 +27,10 @@ Supabase SQL migrations are the sole authoritative schema history for Web-Temify
 - `20261014010000_phase4d2_currency_mismatch_classification.sql` — classify unique cross-currency provider-reference matches explicitly without posting journals or moving funds.
 - `20261014100000_phase4d2_provider_ingress_fail_closed.sql` — reject non-sandbox settlement imports until provider-specific authenticated ingress replaces the trusted boolean assertion.
 - `20261014110000_phase5_support_cases.sql` — server-managed support-case intake, idempotent create RPC, admin-only state transitions, append-only case events, and transactional audit evidence.
+- `20261014130000_phase4d2_sandbox_fee_journal_posting.sql` — sandbox-fixture-only balanced provider-fee journal posting with linked private evidence, independent review, idempotency, and audit evidence.
+- `20261014140000_phase4d2_evidence_malware_gate.sql` — immutable digest-bound malware scan attestations and fail-closed evidence-link/journal-post guards.
+- `20261014150000_phase4d2_evidence_retention_worker.sql` — service-only bounded retention queue and claim/finish RPCs for expired unlinked evidence; production scheduling remains an operational gate.
+- `20261015100000_phase4d2_scanner_signature_freshness.sql` — immutable scanner signature-database timestamps and 48-hour freshness enforcement at evidence-link and sandbox provider-fee journal-post time.
 - `20261014020000_phase4d2_exception_queue.sql` — bounded, read-only service-only RPC for an audited admin settlement-exception queue; validates the database-owned admin role, limits page size and cursor shape, and exposes normalized exception/triage fields only.
 
 - `docs/commerce/phase4d2-settlement-reconciliation.md` — versioned provider-neutral settlement import contract and remaining acceptance gates only; no settlement tables, reconciliation processor, or provider integration are implemented by this document.
