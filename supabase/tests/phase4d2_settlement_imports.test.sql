@@ -1,5 +1,5 @@
 begin;
-select plan(127);
+select plan(129);
 
 select has_table('public', 'settlement_imports', 'settlement report metadata is persisted');
 select has_table('public', 'settlement_import_rows', 'normalized settlement rows are persisted');
@@ -314,6 +314,14 @@ select has_table('public', 'settlement_reconciliation_results', 'row-level recon
 select ok(not has_table_privilege('authenticated', 'public.settlement_reconciliation_runs', 'SELECT'), 'authenticated clients cannot read reconciliation runs');
 select ok(has_function_privilege('service_role', 'public.reconcile_settlement_import(uuid,uuid)', 'EXECUTE'), 'trusted service role can call reconciliation RPC');
 select ok(not has_function_privilege('authenticated', 'public.reconcile_settlement_import(uuid,uuid)', 'EXECUTE'), 'authenticated clients cannot call reconciliation RPC');
+select ok(
+  position('settlement-reconcile:global-journal-match' in pg_get_functiondef('public.reconcile_settlement_import(uuid,uuid)'::regprocedure)) > 0,
+  'reconciliation serializes cross-import journal matching in a transaction'
+);
+select ok(
+  position('where prior.journal_batch_id = candidate_batch_id' in pg_get_functiondef('public.reconcile_settlement_import(uuid,uuid)'::regprocedure)) > 0,
+  'reconciliation checks prior matches across all runs, not only the current run'
+);
 
 -- Exact provider reference and amount must match a posted batch.
 create temporary table phase4d2_matched_import_ids(import_id uuid primary key) on commit drop;
