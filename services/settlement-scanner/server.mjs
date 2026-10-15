@@ -99,6 +99,18 @@ function clamdRequest({ host, port, command, bytes, timeoutMs }) {
   });
 }
 
+function parseSignatureUpdatedAt(versionResponse) {
+  const match = versionResponse.match(
+    /\\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s+\\d{1,2}\\s+\\d{2}:\\d{2}:\\d{2}\\s+\\d{4}\\b/,
+  );
+  if (!match) throw new Error("clamd version response omitted signature database timestamp");
+  const parsed = new Date(match[0]);
+  if (!Number.isFinite(parsed.getTime()) || parsed.getTime() > Date.now() + 5 * 60_000) {
+    throw new Error("clamd signature database timestamp is invalid");
+  }
+  return parsed.toISOString();
+}
+
 export async function scanWithClamd(
   bytes,
   { host = "clamav", port = 3310, timeoutMs = DEFAULT_TIMEOUT_MS } = {},
@@ -113,6 +125,7 @@ export async function scanWithClamd(
     throw new Error("clamd returned an invalid version response");
   }
   const scannerVersion = versionResponse.slice(0, 80);
+  const signatureUpdatedAt = parseSignatureUpdatedAt(versionResponse);
   const scanResponse = await clamdRequest({
     host,
     port,
@@ -122,16 +135,16 @@ export async function scanWithClamd(
   });
 
   if (/:\s*OK$/i.test(scanResponse)) {
-    return { verdict: "clean", scannerName: "clamav", scannerVersion };
+    return { verdict: "clean", scannerName: "clamav", scannerVersion, signatureUpdatedAt };
   }
   if (/\bFOUND$/i.test(scanResponse)) {
-    return { verdict: "infected", scannerName: "clamav", scannerVersion };
+    return { verdict: "infected", scannerName: "clamav", scannerVersion, signatureUpdatedAt };
   }
   if (
     /\bERROR$/i.test(scanResponse) ||
     /size limit exceeded/i.test(scanResponse)
   ) {
-    return { verdict: "error", scannerName: "clamav", scannerVersion };
+    return { verdict: "error", scannerName: "clamav", scannerVersion, signatureUpdatedAt };
   }
   throw new Error("clamd returned an unrecognized scan response");
 }
@@ -311,7 +324,10 @@ export function createScannerServer({
         !["clean", "infected", "error"].includes(result.verdict) ||
         result.scannerName !== "clamav" ||
         typeof result.scannerVersion !== "string" ||
-        result.scannerVersion.length < 1
+        result.scannerVersion.length < 1 ||
+        typeof result.signatureUpdatedAt !== "string" ||
+        !Number.isFinite(Date.parse(result.signatureUpdatedAt)) ||
+        Date.parse(result.signatureUpdatedAt) > Date.now() + 5 * 60_000
       ) {
         sendJson(response, 503, { error: "invalid_scanner_result" });
         return;
@@ -321,6 +337,7 @@ export function createScannerServer({
         verdict: result.verdict,
         scannerName: "clamav",
         scannerVersion: result.scannerVersion.slice(0, 80),
+        signatureUpdatedAt: new Date(result.signatureUpdatedAt).toISOString(),
         sha256,
       });
     } catch {
