@@ -404,7 +404,7 @@ select lives_ok(
     insert into phase4d2_duplicate_import_ids
     select public.import_settlement_report(
       'sandbox', 'sandbox-account-01', 'settlement-duplicate-journal-2026-10-13',
-      '2026-10-13', '2026-10-13', 'UTC', repeat('3',64), true,
+      '2026-10-13', '2026-10-13', 'UTC', repeat('4',32) || repeat('e',32), true,
       'sandbox_fixture', 'USD', '89000000-0000-4000-8000-000000000089',
       jsonb_build_array(jsonb_build_object(
         'rowId','duplicate-journal-row-01', 'rowType','payment',
