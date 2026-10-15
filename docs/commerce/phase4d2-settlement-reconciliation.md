@@ -101,7 +101,6 @@ Contract validation does not prove that netMinor = grossMinor - feeMinor: settle
 
 Do not check off the Phase 4D2 gate until implementation, adversarial tests, documentation, exact-head CI, forensic review, and external evidence agree. Passing the schema tests for this contract alone is not a settlement reconciliation approval.
 
-
 ## Cross-import concurrency hardening checkpoint (pending CI and forensic review)
 
 A forward migration, `20261015110000_phase4d2_global_reconciliation_serialization.sql`, adds a transaction-scoped global advisory lock around settlement journal matching. The reconciliation function now checks whether a candidate journal batch has already been linked by any prior reconciliation run, rather than checking only rows in the current run. This prevents concurrent calls to the same RPC from both passing the unmatched check before either records its result; it intentionally serializes reconciliation as a conservative financial-control trade-off.
