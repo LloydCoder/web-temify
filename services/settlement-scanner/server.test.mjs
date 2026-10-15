@@ -50,7 +50,10 @@ function authHeaders(digest = sha256) {
   };
 }
 
-function fakeClamd(scanReply = "stream: OK") {
+function fakeClamd(
+  scanReply = "stream: OK",
+  versionReply = "ClamAV 1.5.4/12345/Wed Oct 14 12:30:00 2026",
+) {
   const streamed = [];
   const server = createTcpServer((socket) => {
     let buffer = Buffer.alloc(0);
@@ -262,6 +265,15 @@ describe("settlement scanner service", () => {
     });
     expect(fake.streamed).toHaveLength(1);
     expect(fake.streamed[0]).toEqual(bytes);
+  });
+
+  it("fails closed when ClamAV omits its signature database timestamp", async () => {
+    const fake = fakeClamd("stream: OK", "ClamAV 1.5.4/test");
+    const port = await listen(fake.server);
+
+    await expect(
+      scanWithClamd(bytes, { host: "127.0.0.1", port, timeoutMs: 2000 }),
+    ).rejects.toThrow("clamd version response omitted signature database timestamp");
   });
 
   it("recognizes an infected ClamAV response", async () => {
