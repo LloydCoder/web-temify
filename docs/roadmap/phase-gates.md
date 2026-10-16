@@ -341,13 +341,13 @@ The worker is at-least-once delivery; a provider-accepted message with a lost re
 
 ### Phase 5G — Financial control requests and maker-checker payout holds (candidate implementation; CI pending)
 
-**Status: IMPLEMENTED ON BRANCH; NOT MERGED OR CI-VERIFIED.** Forensic record: `docs/audits/phase5g-financial-controls.md`.
+**Status: FOUNDATION CI AND SECURITY PASSED ON IMPLEMENTATION HEAD `8c096e0950e00c27eb0e1cf4b6cab1dbaa7cf784`; MERGE AND OPERATIONAL VERIFICATION PENDING.** See `docs/audits/phase5g-financial-controls.md` and runs [38971016846](https://github.com/LloydCoder/web-temify/actions/runs/38971016846) and [38971016857](https://github.com/LloydCoder/web-temify/actions/runs/38971016857).
 
 - [x] Add private financial control requests for manual-adjustment review, negative-balance review, payout-hold placement and payout-hold release.
 - [x] Require the maker to be distinct from reviewers and require two distinct database-authorized admins before a request is approved.
 - [x] Activate/release internal payout holds only after two approvals; preserve immutable hold evidence and append-only request/audit events.
 - [x] Validate negative-balance requests against the current posted seller-payable deficit and validate any order reference against seller and currency.
-- [ ] Pass exact-head Foundation CI and Security/dependency governance.
+- [x] Pass exact-head Foundation CI and Security/dependency governance.
 - [ ] Add a restricted admin API/UI, evidence object storage/verification, and operational monitoring.
 - [ ] Integrate active holds with an actual payout gate before any payout feature is enabled.
 - [ ] Implement provider-authenticated chargeback/dispute intake and lifecycle, and ledger posting for approved manual adjustments.
