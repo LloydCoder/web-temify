@@ -197,7 +197,13 @@ async function runWorker(request: Request) {
 
     if (finishError || typeof nextStatus !== "string") {
       return NextResponse.json(
-        { error: "support_notification_completion_failed", requestId, sent, retryable, blocked },
+        {
+          error: "support_notification_completion_failed",
+          requestId,
+          sent,
+          retryable,
+          blocked,
+        },
         { status: 503, headers: { "Cache-Control": "no-store" } },
       );
     }
@@ -217,7 +223,14 @@ async function runWorker(request: Request) {
   }
 
   return NextResponse.json(
-    { requestId, claimed: data.length, sent, retryable, blocked, maxBatchSize: MAX_BATCH_SIZE },
+    {
+      requestId,
+      claimed: data.length,
+      sent,
+      retryable,
+      blocked,
+      maxBatchSize: MAX_BATCH_SIZE,
+    },
     {
       status: retryable > 0 || blocked > 0 ? 503 : 200,
       headers: { "Cache-Control": "no-store" },
