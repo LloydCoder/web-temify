@@ -2,10 +2,16 @@ services:
   clamav:
     image: ${CLAMAV_IMAGE:-clamav/clamav:1.5.4-debian13-slim}
     restart: unless-stopped
+    environment:
+      CLAMAV_NO_FRESHCLAMD: ${CLAMAV_NO_FRESHCLAMD:-false}
     expose:
       - "3310"
     networks:
       - scanner-backend
+      # ClamAV needs outbound HTTPS to refresh signature databases. Keep that
+      # egress isolated to the engine; the API remains on the internal backend
+      # and neither service publishes ClamAV's TCP port.
+      - scanner-egress
 
   scanner-api:
     build:
@@ -21,9 +27,10 @@ services:
       SCANNER_TIMEOUT_MS: "20000"
       MAX_CONCURRENT_SCANS: "4"
     ports:
-      - "127.0.0.1:${SCANNER_API_PORT:-8088}:8080"
+      - "127.0.0.1:8088:8080"
     depends_on:
-      - clamav
+      clamav:
+        condition: service_healthy
     healthcheck:
       test:
         - CMD
@@ -42,4 +49,7 @@ networks:
   scanner-backend:
     internal: true
   scanner-edge:
+    driver: bridge
+    internal: true
+  scanner-egress:
     driver: bridge

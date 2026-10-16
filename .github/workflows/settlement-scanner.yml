@@ -1,0 +1,189 @@
+name: Settlement scanner CI
+
+on:
+  pull_request:
+    paths:
+      - "services/settlement-scanner/**"
+      - ".github/workflows/settlement-scanner.yml"
+  push:
+    branches: [main]
+    paths:
+      - "services/settlement-scanner/**"
+      - ".github/workflows/settlement-scanner.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: settlement-scanner-${{ github.ref }}
+  # New commits supersede stale scanner integration runs; prevent an old
+  # signature-readiness wait from blocking validation of the repaired head.
+  cancel-in-progress: true
+
+jobs:
+  scanner-integration:
+    name: ClamAV scanner integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Prepare ephemeral scanner token
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'SCANNER_BEARER_TOKEN=%s\n' "$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+
+      - name: Build and start isolated ClamAV scanner stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          CLAMAV_NO_FRESHCLAMD=true docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml up -d --build
+          docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml exec -T clamav freshclam --stdout
+          docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml exec -T clamav clamdscan --reload
+          docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml ps
+
+      - name: Assert scanner network isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          project="web-temify-scanner-ci"
+          test "$(docker network inspect "${project}_scanner-backend" --format '{{.Internal}}')" = "true"
+          test "$(docker network inspect "${project}_scanner-edge" --format '{{.Internal}}')" = "true"
+          test "$(docker network inspect "${project}_scanner-egress" --format '{{.Internal}}')" = "false"
+          scanner_networks="$(docker inspect "${project}-scanner-api-1" --format '{{json .NetworkSettings.Networks}}')"
+          clamav_networks="$(docker inspect "${project}-clamav-1" --format '{{json .NetworkSettings.Networks}}')"
+          if printf '%s' "$scanner_networks" | grep -q 'scanner-egress'; then
+            echo "Scanner API must not attach to the ClamAV egress network."
+            exit 1
+          fi
+          printf '%s' "$clamav_networks" | grep -q 'scanner-egress'
+          echo "Scanner API has no egress network; only ClamAV can reach outbound signature services."
+
+      - name: Wait for ClamAV signature readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Poll readiness directly: the gateway may be scheduled late while ClamAV
+          # initializes its signature database. A single bounded loop avoids a
+          # short liveness gate failing just before the API process starts.
+          ready=0
+          for attempt in $(seq 1 300); do
+            code="$(docker inspect --format '{{.State.Health.Status}}' web-temify-scanner-ci-scanner-api-1 2>/dev/null || true)"
+            if [ "$code" = "healthy" ]; then
+              ready=1
+              break
+            fi
+            if [ "$((attempt % 30))" -eq 0 ]; then
+              echo "ClamAV is not ready at attempt ${attempt}/300; collecting readiness diagnostics."
+              docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml logs --no-color --tail=80 clamav
+              if ! docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml exec -T scanner-api node --input-type=module - <<'NODE'
+          import { createConnection } from "node:net";
+
+          const version = await new Promise((resolve, reject) => {
+            const socket = createConnection({ host: "clamav", port: 3310 });
+            let response = Buffer.alloc(0);
+            const timer = setTimeout(() => {
+              socket.destroy();
+              reject(new Error("ClamAV VERSION diagnostic timed out"));
+            }, 5000);
+            socket.once("connect", () => socket.write(Buffer.concat([Buffer.from("zVERSION"), Buffer.from([0])])));
+            socket.on("error", (error) => {
+              clearTimeout(timer);
+              reject(error);
+            });
+            socket.on("data", (chunk) => {
+              response = Buffer.concat([response, chunk]);
+              const terminator = response.indexOf(0);
+              if (terminator >= 0) {
+                clearTimeout(timer);
+                socket.destroy();
+                resolve(response.subarray(0, terminator).toString("utf8"));
+              }
+            });
+          }).catch((error) => `unavailable: ${error.message}`);
+
+          console.log("ClamAV VERSION response:", version);
+          try {
+            const response = await fetch("http://127.0.0.1:8080/readyz", {
+              signal: AbortSignal.timeout(5000),
+            });
+            console.log(`Scanner /readyz HTTP ${response.status}:`, await response.text());
+          } catch (error) {
+            console.log("Scanner /readyz request failed:", error.message);
+          }
+          NODE
+              then
+                echo "Scanner API diagnostic is not available yet."
+              fi
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            echo "Scanner did not become ready with fresh signatures after 300 bounded readiness attempts."
+            docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml logs --no-color
+            exit 1
+          fi
+
+      - name: Verify clean, infected, authentication, and digest-mismatch paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml exec -T \
+            -e SCANNER_BEARER_TOKEN="${SCANNER_BEARER_TOKEN}" scanner-api node --input-type=module - <<'NODE'
+          import assert from "node:assert/strict";
+          import { createHash } from "node:crypto";
+
+          const baseUrl = "http://127.0.0.1:8080/v1/scan";
+          const token = process.env.SCANNER_BEARER_TOKEN;
+          const clean = Buffer.from("Web-Temify scanner CI clean sample");
+          const digest = (bytes) =>
+            createHash("sha256").update(bytes).digest("hex");
+          const scan = (bytes, expectedDigest, bearerToken = token) => {
+            const headers = {
+              "Content-Type": "application/octet-stream",
+              "X-Evidence-SHA256": expectedDigest,
+            };
+            if (bearerToken) headers.Authorization = `Bearer ${bearerToken}`;
+            return fetch(baseUrl, { method: "POST", headers, body: bytes });
+          };
+
+          let response = await scan(clean, digest(clean));
+          assert.equal(response.status, 200);
+          let result = await response.json();
+          assert.equal(result.verdict, "clean");
+          assert.equal(result.sha256, digest(clean));
+
+          // EICAR is a harmless industry-standard antivirus test signature.
+          const eicar = Buffer.from("X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*");
+          response = await scan(eicar, digest(eicar));
+          assert.equal(response.status, 200);
+          result = await response.json();
+          assert.equal(result.verdict, "infected");
+
+          response = await scan(clean, digest(clean), "invalid-token");
+          assert.equal(response.status, 401);
+
+          response = await scan(clean, "0".repeat(64));
+          assert.equal(response.status, 422);
+
+          console.log(
+            "Scanner integration checks passed: clean, EICAR infected, unauthorized token, digest mismatch.",
+          );
+          NODE
+
+      - name: Collect diagnostics on failure
+        if: failure()
+        shell: bash
+        run: |
+          docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml ps || true
+          docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml logs --no-color || true
+
+      - name: Stop scanner stack
+        if: always()
+        shell: bash
+        run: docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml down --volumes --remove-orphans
