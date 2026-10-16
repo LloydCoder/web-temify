@@ -1,5 +1,5 @@
 begin;
-select plan(35);
+select plan(43);
 
 select has_table('public', 'financial_control_requests', 'financial control requests exist');
 select has_table('public', 'financial_control_approvals', 'approval evidence exists');
@@ -73,6 +73,29 @@ select lives_ok(
   'admin can submit an immutable manual adjustment request'
 );
 select is((select status from public.financial_control_requests where id = (select id from phase5g_manual_request)), 'requested', 'new request begins in requested state');
+select is(
+  public.create_financial_control_request(
+    '91000000-0000-4000-8000-000000000501',
+    'manual_adjustment', '94000000-0000-4000-8000-000000000504',
+    null, null, 2500, 'USD', repeat('a', 64),
+    'Manual adjustment requires independent financial review.',
+    'phase5g-manual-adjustment-0001', 'a1100000-0000-4000-8000-000000000501'
+  ),
+  (select id from phase5g_manual_request),
+  'identical request replay returns the original request'
+);
+select throws_ok(
+  $sql$select public.create_financial_control_request(
+    '91000000-0000-4000-8000-000000000501',
+    'manual_adjustment', '94000000-0000-4000-8000-000000000504',
+    null, null, 2600, 'USD', repeat('a', 64),
+    'Manual adjustment requires independent financial review.',
+    'phase5g-manual-adjustment-0001', 'a1200000-0000-4000-8000-000000000501'
+  )$sql$,
+  '23505',
+  'financial control idempotency key reused with conflicting content',
+  'idempotency key cannot be reused for different financial content'
+);
 select throws_ok(
   $sql$select public.review_financial_control_request(
     (select id from phase5g_manual_request),
@@ -103,6 +126,28 @@ select is(
   'second distinct approval approves the request'
 );
 select is((select status from public.financial_control_requests where id = (select id from phase5g_manual_request)), 'approved', 'approved status is set only after two distinct admins');
+create temporary table phase5g_rejected_request(id uuid primary key) on commit drop;
+insert into phase5g_rejected_request
+select public.create_financial_control_request(
+  '91000000-0000-4000-8000-000000000501',
+  'manual_adjustment', '94000000-0000-4000-8000-000000000504',
+  null, null, 3300, 'USD', repeat('f', 64),
+  'Adjustment rejected after independent review.',
+  'phase5g-rejected-adjustment-0001', 'a1300000-0000-4000-8000-000000000501'
+);
+select is(
+  public.review_financial_control_request((select id from phase5g_rejected_request), '92000000-0000-4000-8000-000000000502', 'approve', 'First review approval recorded.', 'a1400000-0000-4000-8000-000000000501'),
+  'under_review',
+  'first approval moves rejected-test request into review'
+);
+select is(
+  public.review_financial_control_request((select id from phase5g_rejected_request), '93000000-0000-4000-8000-000000000503', 'reject', 'Second reviewer rejects the request.', 'a1500000-0000-4000-8000-000000000501'),
+  'rejected',
+  'a second reviewer can reject after one approval'
+);
+select is((select status from public.financial_control_requests where id = (select id from phase5g_rejected_request)), 'rejected', 'rejection is terminal');
+select is((select count(*)::integer from public.financial_control_approvals where request_id = (select id from phase5g_rejected_request)), 2, 'approval and rejection decisions are both preserved');
+
 select throws_ok(
   $sql$select public.create_financial_control_request(
     '91000000-0000-4000-8000-000000000501',
@@ -170,6 +215,20 @@ select is(
   'two distinct admins approve hold release'
 );
 select is((select count(*)::integer from public.seller_payout_holds where source_request_id = (select id from phase5g_hold_request) and released_at is not null), 1, 'approved release closes the hold exactly once');
+select throws_ok(
+  $sql$select public.create_financial_control_request(
+    '91000000-0000-4000-8000-000000000501',
+    'payout_hold_release', '94000000-0000-4000-8000-000000000504',
+    null, (select id from public.seller_payout_holds where source_request_id = (select id from phase5g_hold_request)),
+    5000, 'USD', repeat('d', 64),
+    'Try to release the already released payout hold.',
+    'phase5g-payout-hold-release-duplicate-0001', 'ac000000-0000-4000-8000-000000000501'
+  )$sql$,
+  '22023',
+  'payout hold release must match an active hold exactly',
+  'a released hold cannot be released a second time'
+);
+select is((select count(*)::integer from public.financial_journal_batches where source_type = 'manual_adjustment'), 0, 'approval workflow never posts a manual adjustment journal');
 select ok((select count(*) >= 11 from public.financial_control_events), 'all request and hold transitions have immutable event evidence');
 select ok((select count(*) >= 8 from public.audit_events where action like 'financial_control.%'), 'financial control actions append audit events');
 
