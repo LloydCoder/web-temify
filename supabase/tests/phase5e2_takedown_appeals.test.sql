@@ -1,5 +1,5 @@
 begin;
-select plan(37);
+select plan(48);
 
 select has_table('public', 'listing_moderation_enforcements', 'takedown enforcement records exist');
 select has_table('public', 'listing_moderation_appeal_policy', 'appeal response policy exists');
@@ -228,7 +228,7 @@ select is((select status from public.listing_moderation_appeals where id = (sele
 select is((select status from public.products where id = 'b6000000-0000-4000-8000-000000000006'), 'published', 'reversal restores publication only after independent rights and release checks pass');
 select is((select status from public.listing_moderation_enforcements where id = (select enforcement_id from phase5e2_ids where product_id = 'b6000000-0000-4000-8000-000000000006')), 'reversed', 'enforcement records its reversal');
 select ok((select publication_restored from public.listing_moderation_enforcements where id = (select enforcement_id from phase5e2_ids where product_id = 'b6000000-0000-4000-8000-000000000006')), 'enforcement records whether publication was restored');
-select is((select count(*)::integer from public.listing_moderation_appeal_events where appeal_id in (select appeal_id from phase5e2_ids)), 5, 'appeal event history records submission and review outcomes');
+select is((select count(*)::integer from public.listing_moderation_appeal_events where appeal_id in (select appeal_id from phase5e2_ids)), 6, 'appeal event history records submission and review outcomes');
 select is((select count(*)::integer from public.audit_events where entity_type = 'listing_moderation_appeal'), 6, 'appeal submission, policy configuration and decisions leave audit evidence');
 select throws_ok(
   $sql$select public.admin_transition_listing_moderation_appeal(
