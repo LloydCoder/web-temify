@@ -404,9 +404,11 @@ $function$;
 revoke all on function public.admin_configure_listing_moderation_appeal_policy(uuid, integer, text, text, text, uuid) from public, anon, authenticated, service_role;
 grant execute on function public.admin_configure_listing_moderation_appeal_policy(uuid, integer, text, text, text, uuid) to service_role;
 
+
 -- Phase 5E2: an already-issued grant must not bypass a listing takedown.
--- Lock the product row in shared mode so concurrent takedown updates serialize
--- against grant consumption; the takedown transaction's row lock wins or waits.
+-- Preserve Phase 4B's order -> entitlement -> grant lock order so refunds still
+-- serialize correctly, then share-lock the product to serialize consumption
+-- against a concurrent moderation takedown.
 create or replace function public.consume_download_grant(target_grant_id uuid)
 returns boolean
 language plpgsql
@@ -414,58 +416,79 @@ security definer
 set search_path = ''
 as $function$
 declare
+  v_customer_id uuid := (select auth.uid());
+  grant_hint public.download_grants%rowtype;
   grant_row public.download_grants%rowtype;
-  product_status text;
-  consumed boolean;
+  entitlement_row public.entitlements%rowtype;
+  v_order_id uuid;
+  order_row public.orders%rowtype;
+  release_row public.product_versions%rowtype;
+  product_row public.products%rowtype;
 begin
-  if (select auth.uid()) is null then return false; end if;
+  if v_customer_id is null then return false; end if;
 
-  select dg.* into grant_row
-  from public.download_grants dg
-  where dg.id = target_grant_id
-    and dg.customer_id = (select auth.uid())
-    and dg.revoked_at is null
-    and dg.expires_at > now()
-    and dg.downloads_used < dg.max_downloads
-  for update;
+  select * into grant_hint
+  from public.download_grants
+  where id = target_grant_id and customer_id = v_customer_id;
   if not found then return false; end if;
 
-  select p.status into product_status
-  from public.product_versions pv
-  join public.products p on p.id = pv.product_id
-  where pv.id = grant_row.product_version_id
-  for share of p;
-  if not found or product_status <> 'published' then return false; end if;
+  select oi.order_id into v_order_id
+  from public.entitlements e
+  join public.order_items oi on oi.id = e.order_item_id
+  where e.id = grant_hint.entitlement_id and e.customer_id = v_customer_id;
+  if not found then return false; end if;
 
-  update public.download_grants dg
+  select * into order_row from public.orders where id = v_order_id for update;
+  if not found or order_row.customer_id <> v_customer_id
+    or order_row.status not in ('paid', 'partially_refunded') then
+    return false;
+  end if;
+
+  select * into entitlement_row
+  from public.entitlements
+  where id = grant_hint.entitlement_id
+  for update;
+  if not found or entitlement_row.customer_id <> v_customer_id
+    or entitlement_row.status <> 'active'
+    or (entitlement_row.expires_at is not null and entitlement_row.expires_at <= now()) then
+    return false;
+  end if;
+
+  select * into grant_row
+  from public.download_grants
+  where id = target_grant_id
+  for update;
+  if not found or grant_row.customer_id <> v_customer_id
+    or grant_row.revoked_at is not null or grant_row.expires_at <= now()
+    or grant_row.downloads_used >= grant_row.max_downloads
+    or grant_row.entitlement_id <> entitlement_row.id
+    or grant_row.product_version_id <> entitlement_row.product_version_id then
+    return false;
+  end if;
+
+  select * into release_row
+  from public.product_versions
+  where id = grant_row.product_version_id;
+  if not found or release_row.release_state <> 'released'
+    or release_row.artifact_sha256 <> grant_row.artifact_sha256
+    or release_row.artifact_storage_path is null
+    or release_row.released_at is null then
+    return false;
+  end if;
+
+  select * into product_row
+  from public.products
+  where id = release_row.product_id
+  for share;
+  if not found or product_row.status <> 'published'
+    or product_row.id <> entitlement_row.product_id then
+    return false;
+  end if;
+
+  update public.download_grants
   set downloads_used = downloads_used + 1
-  where dg.id = grant_row.id
-    and dg.customer_id = (select auth.uid())
-    and dg.revoked_at is null
-    and dg.expires_at > now()
-    and dg.downloads_used < dg.max_downloads
-    and exists (
-      select 1
-      from public.entitlements e
-      join public.order_items oi on oi.id = e.order_item_id
-      join public.orders o on o.id = oi.order_id
-      join public.product_versions pv on pv.id = dg.product_version_id
-      join public.products p on p.id = pv.product_id
-      where e.id = dg.entitlement_id
-        and e.customer_id = dg.customer_id
-        and e.product_version_id = dg.product_version_id
-        and e.status = 'active'
-        and (e.expires_at is null or e.expires_at > now())
-        and o.customer_id = dg.customer_id
-        and o.status = 'paid'
-        and pv.release_state = 'released'
-        and pv.artifact_sha256 = dg.artifact_sha256
-        and pv.artifact_storage_path is not null
-        and pv.released_at is not null
-        and p.status = 'published'
-    )
-  returning true into consumed;
-  return coalesce(consumed, false);
+  where id = grant_row.id;
+  return true;
 end;
 $function$;
 revoke all on function public.consume_download_grant(uuid) from public, anon, service_role;
