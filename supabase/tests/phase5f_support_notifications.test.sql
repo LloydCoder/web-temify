@@ -1,5 +1,5 @@
 begin;
-select plan(24);
+select plan(25);
 select has_table('public', 'support_notification_jobs', 'support notification outbox exists');
 select ok((select relrowsecurity from pg_class where oid = 'public.support_notification_jobs'::regclass), 'notification outbox RLS is enabled');
 select ok(not has_table_privilege('authenticated', 'public.support_notification_jobs', 'SELECT'), 'customers cannot read notification jobs');
