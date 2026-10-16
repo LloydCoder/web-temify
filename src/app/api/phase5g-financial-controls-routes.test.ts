@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
     order: vi.fn(),
     limit: vi.fn(),
     in: vi.fn(),
+    then: vi.fn(),
   },
 }));
 
@@ -57,8 +58,9 @@ describe("Phase 5G financial control API", () => {
     mocks.query.limit.mockReturnValue(mocks.query);
     mocks.query.in.mockReturnValue(mocks.query);
     mocks.queryResult.mockResolvedValue({ data: [], error: null });
-    mocks.query.then = (resolve: (value: unknown) => unknown) =>
-      mocks.queryResult().then(resolve);
+    mocks.query.then.mockImplementation((resolve: (value: unknown) => unknown) =>
+      mocks.queryResult().then(resolve),
+    );
     mocks.from.mockReturnValue(mocks.query);
     mocks.getAdminContext.mockResolvedValue({
       userId: adminId,
