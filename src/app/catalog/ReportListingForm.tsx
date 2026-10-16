@@ -48,9 +48,7 @@ export function ReportListingForm({ productId }: ReportListingFormProps) {
 
       setDescription("");
       setIdempotencyKey("");
-      setMessage(
-        `Report ${result.caseId ?? ""} was submitted for review.`,
-      );
+      setMessage(`Report ${result.caseId ?? ""} was submitted for review.`);
     } catch {
       setMessage("The moderation service is temporarily unavailable.");
     } finally {
@@ -74,7 +72,9 @@ export function ReportListingForm({ productId }: ReportListingFormProps) {
           onChange={(event) => setReasonCode(event.target.value)}
         >
           <option value="ip_rights">Intellectual property or rights</option>
-          <option value="fraud_misrepresentation">Fraud or misrepresentation</option>
+          <option value="fraud_misrepresentation">
+            Fraud or misrepresentation
+          </option>
           <option value="malware_security">Malware or security concern</option>
           <option value="prohibited_content">Prohibited content</option>
           <option value="privacy">Privacy concern</option>
