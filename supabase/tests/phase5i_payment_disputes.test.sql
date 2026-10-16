@@ -44,7 +44,7 @@ where id = 'b1000000-0000-4000-8000-000000000101';
 
 insert into public.payment_webhook_events (
   id, provider, provider_event_id, event_type, payload_sha256, signature_verified,
-  order_id, payment_attempt_id, amount_minor, currency, amount_minor, currency, provider_reference
+  order_id, payment_attempt_id, amount_minor, currency, provider_reference
 ) values (
   'c1000000-0000-4000-8000-000000000100', 'sandbox', 'phase5i-payment-succeeded-001',
   'payment.succeeded', repeat('9', 64), true,
@@ -83,7 +83,7 @@ where id = 'a1000000-0000-4000-8000-000000000101';
 
 insert into public.payment_webhook_events (
   id, provider, provider_event_id, event_type, payload_sha256, signature_verified,
-  order_id, payment_attempt_id
+  order_id, payment_attempt_id, amount_minor, currency
 ) values
   ('c1000000-0000-4000-8000-000000000101', 'sandbox', 'phase5i-event-open-001',
    'charge.dispute.created', repeat('a', 64), true,
