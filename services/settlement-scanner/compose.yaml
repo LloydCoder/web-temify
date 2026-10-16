@@ -25,7 +25,7 @@ services:
       SCANNER_TIMEOUT_MS: "20000"
       MAX_CONCURRENT_SCANS: "4"
     ports:
-      - "127.0.0.1:${SCANNER_API_PORT:-8088}:8080"
+      - "127.0.0.1:8088:8080"
     depends_on:
       clamav:
         condition: service_healthy
