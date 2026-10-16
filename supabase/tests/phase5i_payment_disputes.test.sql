@@ -1,5 +1,5 @@
 begin;
-select plan(31);
+select plan(32);
 
 select has_table('public', 'payment_disputes', 'private payment dispute records exist');
 select has_table('public', 'payment_dispute_events', 'payment dispute event history exists');
@@ -74,10 +74,31 @@ insert into public.payment_webhook_events (
    'charge.dispute.closed', repeat('3', 64), true,
    'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101');
 
+-- A verified signature is necessary but not sufficient: dispute processing must
+-- also own an active webhook-inbox lease or be replaying an already processed event.
+update public.payment_webhook_events
+set processing_status = 'processing'
+where provider = 'sandbox'
+  and provider_event_id like 'phase5i-event-%';
+
 create temporary table phase5i_dispute_fixture (
   dispute_id uuid primary key,
   status text not null
 ) on commit drop;
+
+select throws_ok(
+  $sql$select * from public.apply_verified_payment_dispute_event(
+    'sandbox', 'phase5i-event-open-001', 'sandbox-dispute-001',
+    'charge.dispute.created', 'opened',
+    'a1000000-0000-4000-8000-000000000101',
+    'b1000000-0000-4000-8000-000000000101',
+    7500, 'USD', now() + interval '5 days', 'needs_response',
+    'd1000000-0000-4000-8000-000000000115'
+  )$sql$,
+  '42501',
+  'payment dispute requires a matching verified webhook event',
+  'signature-verified but unclaimed inbox event cannot mutate disputes'
+);
 
 select lives_ok(
   $sql$insert into phase5i_dispute_fixture
