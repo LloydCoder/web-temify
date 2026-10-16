@@ -189,6 +189,7 @@ describe("Phase 5G financial control API", () => {
     expect(invalid.status).toBe(400);
     expect(mocks.rpc).not.toHaveBeenCalled();
 
+    mocks.rpc.mockResolvedValueOnce({ data: "under_review", error: null });
     const response = await review(request(
       `/api/admin/financial-controls/${requestId}/review`,
       { decision: "approve", note: "Independent review evidence recorded." },
