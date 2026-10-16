@@ -53,6 +53,8 @@ Define a provider-neutral settlement evidence contract and idempotent reconcilia
 
 Admin authorization and audit trail; independent rights review; bounded audit explorer; support cases; listing moderation/takedowns/appeals; financial reconciliation and exception queues; disputes/chargebacks; audited sensitive actions; dual approval for high-risk financial actions; safe break-glass policy. Metrics must distinguish gross orders, refunds, provider settlement, platform fees, seller payable and tax liabilities.
 
+**Current execution:** Phase 5E1 is underway on a separate branch for authenticated listing-moderation case intake and audited admin transitions. It is not complete until exact-head CI and forensic review pass; actual listing suppression and creator appeals remain separate required slices. Phase 4D2 production/provider launch gates remain fail-closed but do not block this independent admin workflow.
+
 ### Phase 6 — Seller system and product factory
 
 Seller onboarding and evidence-based verification; product submissions and version replacement; artifact quarantine/malware scanning; isolated build/test/preview; content-addressed artifacts; manifests, SBOM/provenance, release signatures and product-specific CI; payout eligibility, reserves/holds, fraud review, fees, refunds and chargeback reconciliation. The separate `LloydCoder/web-temify-products` repository remains the canonical product source/inventory owner. Never advertise planned products as available.
