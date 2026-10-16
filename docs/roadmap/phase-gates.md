@@ -267,6 +267,7 @@ Least-privilege admin controls, moderation queues, support, audit review, financ
 
 ### Phase 5 overall exit gates (not satisfied by the read-only console or audit explorer alone)
 
+- [ ] Support-case events are delivered through a durable notification outbox with bounded retries, audit evidence, and an operationally verified sender, staffed mailbox, and escalation owner.
 - [ ] Moderation, takedown, appeal and support-case workflows have scoped authorization, evidence retention, reason codes and audit events.
 - [ ] Financial reconciliation distinguishes gross orders, refunds, provider settlement, platform fees, seller payable, reserves and tax liabilities.
 - [ ] Disputes, chargebacks, payout holds, negative balances and manual adjustments have reviewed state machines and dual approval for high-risk actions.
@@ -321,6 +322,22 @@ Forensic record: `docs/audits/phase5e-moderation-cases.md`. The current case que
 - [ ] Verify production preview/configuration, operational/legal policy approval, and notification/escalation arrangements before production rollout.
 
 Forensic record: `docs/audits/phase5e2-takedown-appeals.md`. Keep all financial/provider processing disabled. Phase 5 remains incomplete until its other admin, support, trust, dispute, and dual-approval gates are separately satisfied.
+
+### Phase 5F — Durable support notification outbox (candidate implementation; verification pending)
+
+**Status: CODE AND SECURITY CI PASS ON IMPLEMENTATION HEAD `74d671314a3f71094ccb382628a293e34ba1a0fd`; MERGE AND OPERATIONAL VERIFICATION PENDING.** Foundation CI run [38968331694](https://github.com/LloydCoder/web-temify/actions/runs/38968331694) and Security/dependency governance run [38968331727](https://github.com/LloydCoder/web-temify/actions/runs/38968331727) passed. Vercel preview is not verified because the account hit its daily deployment/API limit; this is not an overall Phase 5 exit pass.
+
+- [x] Add a private transactional outbox for support-case events with separate requester and operations recipients.
+- [x] Keep notification payloads privacy-minimal: case reference, event, and status only; do not copy descriptions, private notes, payment details, credentials, or user-supplied recipient addresses.
+- [x] Add service-only claim/finish RPCs with bounded batches, row locking, ten-minute leases, request-ID ownership, five-attempt ceiling, exponential retry, and audited delivery failures.
+- [x] Add a token-protected Resend worker endpoint and a GitHub Actions scheduled invocation (not a Vercel Cron, because the connected Vercel team is on Hobby).
+- [x] Add pgTAP checks for outbox existence, RLS, least-privilege grants, and enqueue behavior on case creation.
+- [ ] Review worker route and migration; add adversarial tests for lease expiry, provider timeouts, duplicate delivery, exhausted retries, and completion failures.
+- [ ] Pass Foundation CI and Security/dependency governance on the exact PR head and merge commit.
+- [ ] Configure and verify the GitHub Actions repository secret, production worker token, Resend key, sender identity, operations mailbox, Supabase service key, scheduled execution, and alerting.
+- [ ] Confirm human escalation ownership and approve notification metadata retention/deletion policy.
+
+The worker is at-least-once delivery; a provider-accepted message with a lost response may be sent again. No legal SLA deadline is assigned. A scheduled job declaration does not prove delivery is operational. Phase 5 remains incomplete.
 
 ## Phase 6 — Seller system and product factory
 

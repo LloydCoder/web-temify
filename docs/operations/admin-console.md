@@ -48,3 +48,9 @@ This slice does not send customer email, run scheduled SLA/escalation jobs, staf
 ## Known limits
 
 This is not a complete operations centre. Product-publication moderation beyond rights review, financial reconciliation, dispute/chargeback handling, backup restoration, incident-response automation, alert delivery, and break-glass procedures remain separate gates. A dashboard count is operational visibility, not proof of settlement or production readiness.
+
+## Support notification outbox (Phase 5F candidate; verification pending)
+
+Support-case event creation now has a candidate transactional outbox and a token-protected internal worker using Resend. The outbox intentionally excludes case descriptions and private notes. Delivery uses bounded batches, leases, a five-attempt ceiling, retry backoff, and audited failures. The worker resolves customer addresses from Supabase Auth by the stored requester ID; operations recipients come from server configuration.
+
+This branch is not yet CI-verified or merged. The connected Vercel team is on Hobby, so scheduling is declared through GitHub Actions instead of a 15-minute Vercel Cron. Scheduled workflows run only from the default branch and require the repository secret. Production delivery requires `SUPPORT_NOTIFICATION_WORKER_TOKEN` or `CRON_SECRET`, `RESEND_API_KEY`, a verified `SUPPORT_FROM_EMAIL`, a staffed `SUPPORT_OPERATIONS_EMAIL`, Supabase service credentials, a valid site URL, a verified scheduled invocation, and alerting for retryable/blocked jobs. Delivery is at-least-once and may duplicate an email if the provider accepts it but the worker loses the response. No legal SLA deadline is inferred, and an email outbox is not an incident paging service.
