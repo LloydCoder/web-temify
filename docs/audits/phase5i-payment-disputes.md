@@ -5,7 +5,7 @@
 ## Implemented boundary
 
 - Private `payment_disputes` records are linked to order, payment attempt, provider dispute ID, amount/currency and evidence deadline/status metadata.
-- The service-only RPC requires an existing `payment_webhook_events` record with `signature_verified = true`, matching provider event ID/type, order and payment attempt; the payment attempt provider, currency and maximum amount are checked.
+- The service-only RPC requires an existing `payment_webhook_events` record with `signature_verified = true`, matching provider event ID/type, order and payment attempt, and an inbox status of `processing` or `processed`; a merely received/unclaimed event cannot mutate disputes. The payment attempt provider, currency and maximum amount are checked.
 - State transitions are constrained to opened, needs evidence, evidence submitted, won/lost and closed; final outcomes cannot be rewritten, while a final won/lost result can be closed with a separate verified event.
 - A provider webhook event may be applied only once. Exact replay returns the existing dispute as duplicate; conflicting reuse is rejected.
 - Event history is append-only, tables have RLS and no customer grants, and each applied event creates an audit event with payload digest and request trace.
@@ -22,6 +22,7 @@
 ## Required verification
 
 - [ ] Empty-database migration reset and schema lint.
+- [x] Forensic hardening: reject verified but unclaimed webhook inbox events; tests explicitly cover the `received`-state rejection.
 - [ ] pgTAP/RLS test suite.
 - [ ] Typecheck, lint, formatting, E2E, concurrency test and production build.
 - [ ] Security/dependency governance on the exact PR head.
