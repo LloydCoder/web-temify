@@ -99,7 +99,7 @@ create table public.listing_moderation_appeal_events (
   id bigint generated always as identity primary key,
   appeal_id uuid not null references public.listing_moderation_appeals(id) on delete restrict,
   actor_id uuid not null references auth.users(id) on delete restrict,
-  event_type text not null check (event_type in ('submitted', 'triaged', 'upheld', 'reversed', 'rejected', 'withdrawn')),
+  event_type text not null check (event_type in ('submitted', 'triaged', 'upheld', 'reversed', 'rejected')),
   from_status text check (from_status is null or from_status in ('submitted', 'under_review', 'upheld', 'reversed', 'rejected')),
   to_status text not null check (to_status in ('submitted', 'under_review', 'upheld', 'reversed', 'rejected')),
   note text check (note is null or char_length(note) <= 2000),
