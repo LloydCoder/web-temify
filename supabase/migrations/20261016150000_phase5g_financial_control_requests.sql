@@ -100,6 +100,35 @@ grant select on public.financial_control_approvals to service_role;
 grant select on public.financial_control_events to service_role;
 grant select on public.seller_payout_holds to service_role;
 
+create function public.guard_financial_control_approval()
+returns trigger
+language plpgsql
+set search_path = ''
+as $function$
+declare
+  control_request public.financial_control_requests%rowtype;
+begin
+  select * into control_request
+  from public.financial_control_requests
+  where id = new.request_id
+  for update;
+  if not found or control_request.status not in ('requested', 'under_review')
+    or control_request.requested_by = new.approver_id
+    or not exists (
+      select 1 from public.user_roles ur
+      where ur.user_id = new.approver_id and ur.role = 'admin'::public.app_role
+    )
+  then
+    raise exception using errcode = '42501', message = 'financial control approval requires a distinct admin reviewer';
+  end if;
+  return new;
+end;
+$function$;
+revoke all on function public.guard_financial_control_approval() from public, anon, authenticated, service_role;
+create trigger financial_control_approval_guard
+before insert on public.financial_control_approvals
+for each row execute function public.guard_financial_control_approval();
+
 create function public.guard_financial_control_request()
 returns trigger
 language plpgsql
@@ -298,6 +327,8 @@ begin
     end if;
   end if;
 
+  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(p_idempotency_key, 0));
+
   select * into existing_request
   from public.financial_control_requests
   where idempotency_key = p_idempotency_key
@@ -451,6 +482,57 @@ end;
 $function$;
 revoke all on function public.review_financial_control_request(uuid, uuid, text, text, uuid) from public, anon, authenticated, service_role;
 grant execute on function public.review_financial_control_request(uuid, uuid, text, text, uuid) to service_role;
+
+
+create function public.cancel_financial_control_request(
+  p_request_id uuid,
+  p_actor_id uuid,
+  p_note text,
+  p_request_trace_id uuid
+)
+returns text
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  control_request public.financial_control_requests%rowtype;
+begin
+  if p_request_id is null or p_actor_id is null or p_request_trace_id is null
+    or p_note is null or char_length(btrim(p_note)) not between 10 and 1000
+  then
+    raise exception using errcode = '22023', message = 'financial control cancellation failed validation';
+  end if;
+
+  select * into control_request from public.financial_control_requests
+  where id = p_request_id for update;
+  if not found then
+    raise exception using errcode = 'P0002', message = 'financial control request not found';
+  end if;
+  if control_request.requested_by <> p_actor_id
+    or control_request.status <> 'requested'
+    or exists (select 1 from public.financial_control_approvals a where a.request_id = p_request_id)
+  then
+    raise exception using errcode = '42501', message = 'only the maker can cancel a request before review begins';
+  end if;
+
+  update public.financial_control_requests
+  set status = 'cancelled', updated_at = now()
+  where id = p_request_id;
+
+  insert into public.financial_control_events
+    (request_id, actor_id, event_type, from_status, to_status, note, request_trace_id)
+  values (p_request_id, p_actor_id, 'cancelled', control_request.status, 'cancelled', btrim(p_note), p_request_trace_id);
+
+  insert into public.audit_events (actor_id, action, entity_type, entity_id, request_id, metadata)
+  values (p_actor_id, 'financial_control.cancelled', 'financial_control_request', p_request_id::text, p_request_trace_id,
+    jsonb_build_object('request_type', control_request.request_type, 'status', 'cancelled'));
+
+  return 'cancelled';
+end;
+$function$;
+revoke all on function public.cancel_financial_control_request(uuid, uuid, text, uuid) from public, anon, authenticated, service_role;
+grant execute on function public.cancel_financial_control_request(uuid, uuid, text, uuid) to service_role;
 
 comment on table public.financial_control_requests is
   'Internal maker-checker workflow for manual adjustments, negative-balance reviews, and payout holds. Approval alone never posts journal entries or moves provider funds.';
