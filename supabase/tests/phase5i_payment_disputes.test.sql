@@ -1,5 +1,5 @@
 begin;
-select plan(32);
+select plan(33);
 
 select has_table('public', 'payment_disputes', 'private payment dispute records exist');
 select has_table('public', 'payment_dispute_events', 'payment dispute event history exists');
@@ -44,7 +44,7 @@ where id = 'b1000000-0000-4000-8000-000000000101';
 
 insert into public.payment_webhook_events (
   id, provider, provider_event_id, event_type, payload_sha256, signature_verified,
-  order_id, payment_attempt_id, amount_minor, currency, provider_reference
+  order_id, payment_attempt_id, amount_minor, currency, amount_minor, currency, provider_reference
 ) values (
   'c1000000-0000-4000-8000-000000000100', 'sandbox', 'phase5i-payment-succeeded-001',
   'payment.succeeded', repeat('9', 64), true,
@@ -87,37 +87,40 @@ insert into public.payment_webhook_events (
 ) values
   ('c1000000-0000-4000-8000-000000000101', 'sandbox', 'phase5i-event-open-001',
    'charge.dispute.created', repeat('a', 64), true,
-   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 7500, 'USD'),
   ('c1000000-0000-4000-8000-000000000102', 'sandbox', 'phase5i-event-needs-evidence-001',
    'charge.dispute.updated', repeat('b', 64), true,
-   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 7500, 'USD'),
   ('c1000000-0000-4000-8000-000000000103', 'sandbox', 'phase5i-event-evidence-submitted-001',
    'charge.dispute.updated', repeat('c', 64), true,
-   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 7500, 'USD'),
   ('c1000000-0000-4000-8000-000000000104', 'sandbox', 'phase5i-event-won-001',
    'charge.dispute.closed', repeat('d', 64), true,
-   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 7500, 'USD'),
   ('c1000000-0000-4000-8000-000000000105', 'sandbox', 'phase5i-event-close-001',
    'charge.dispute.closed', repeat('e', 64), true,
-   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 7500, 'USD'),
   ('c1000000-0000-4000-8000-000000000106', 'sandbox', 'phase5i-event-open-002',
    'charge.dispute.created', repeat('f', 64), true,
-   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 2500, 'USD'),
   ('c1000000-0000-4000-8000-000000000107', 'sandbox', 'phase5i-event-lost-002',
    'charge.dispute.closed', repeat('1', 64), true,
-   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 2500, 'USD'),
   ('c1000000-0000-4000-8000-000000000108', 'sandbox', 'phase5i-event-close-002',
    'charge.dispute.closed', repeat('2', 64), true,
-   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 2500, 'USD'),
   ('c1000000-0000-4000-8000-000000000109', 'sandbox', 'phase5i-event-lost-after-close-002',
    'charge.dispute.closed', repeat('3', 64), true,
-   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 2500, 'USD'),
   ('c1000000-0000-4000-8000-000000000110', 'sandbox', 'phase5i-event-open-over-amount',
    'charge.dispute.created', repeat('4', 64), true,
-   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 20000, 'USD'),
   ('c1000000-0000-4000-8000-000000000111', 'sandbox', 'phase5i-event-lost-new-after-close-002',
    'charge.dispute.closed', repeat('5', 64), true,
-   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101');
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 2500, 'USD'),
+  ('c1000000-0000-4000-8000-000000000112', 'sandbox', 'phase5i-event-mismatched-amount',
+   'charge.dispute.updated', repeat('6', 64), true,
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 7000, 'USD');
 
 
 create temporary table phase5i_dispute_fixture (
@@ -145,6 +148,21 @@ update public.payment_webhook_events
 set processing_status = 'processing'
 where provider = 'sandbox'
   and provider_event_id like 'phase5i-event-%';
+
+select throws_ok(
+  $sql$select * from public.apply_verified_payment_dispute_event(
+    'sandbox', 'phase5i-event-mismatched-amount', 'sandbox-dispute-mismatch-amount',
+    'charge.dispute.updated', 'needs_evidence',
+    'a1000000-0000-4000-8000-000000000101',
+    'b1000000-0000-4000-8000-000000000101',
+    7500, 'USD', null, 'needs_response',
+    'd1000000-0000-4000-8000-000000000116'
+  )$sql$,
+  '42501',
+  'payment dispute requires a matching verified webhook event',
+  'dispute amount must match the normalized verified event amount'
+);
+
 
 select lives_ok(
   $sql$insert into phase5i_dispute_fixture
