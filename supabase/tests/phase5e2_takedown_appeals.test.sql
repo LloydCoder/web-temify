@@ -1,5 +1,5 @@
 begin;
-select plan(48);
+select plan(51);
 
 select has_table('public', 'listing_moderation_enforcements', 'takedown enforcement records exist');
 select has_table('public', 'listing_moderation_appeal_policy', 'appeal response policy exists');
@@ -132,6 +132,42 @@ select lives_ok(
 );
 select is((select status from public.listing_moderation_appeals where id = (select appeal_id from phase5e2_ids where product_id = 'b5000000-0000-4000-8000-000000000005')), 'submitted', 'appeal starts submitted');
 select is((select response_due_at from public.listing_moderation_appeals where id = (select appeal_id from phase5e2_ids where product_id = 'b5000000-0000-4000-8000-000000000005')), null::timestamptz, 'no response deadline is invented before the policy is approved');
+
+select is(
+  (public.create_listing_moderation_appeal(
+    'b1000000-0000-4000-8000-000000000001',
+    (select enforcement_id from phase5e2_ids where product_id = 'b5000000-0000-4000-8000-000000000005'),
+    'The creator requests independent reconsideration and supplies ownership evidence.',
+    'private-evidence://phase5e2-appeal-one', 'phase5e2-appeal-key-00001',
+    'c7000000-0000-4000-8000-000000000017'
+  )).id,
+  (select appeal_id from phase5e2_ids where product_id = 'b5000000-0000-4000-8000-000000000005'),
+  'idempotent replay returns the original appeal'
+);
+select throws_ok(
+  $sql$select public.create_listing_moderation_appeal(
+    'b1000000-0000-4000-8000-000000000001',
+    (select enforcement_id from phase5e2_ids where product_id = 'b5000000-0000-4000-8000-000000000005'),
+    'The creator changes the statement after using the same idempotency key.',
+    'private-evidence://phase5e2-appeal-one', 'phase5e2-appeal-key-00001',
+    'c8000000-0000-4000-8000-000000000018'
+  )$sql$,
+  '23505',
+  'appeal idempotency key reused with conflicting content',
+  'idempotency key reuse with conflicting content is rejected'
+);
+select throws_ok(
+  $sql$select public.create_listing_moderation_appeal(
+    'b4000000-0000-4000-8000-000000000004',
+    (select enforcement_id from phase5e2_ids where product_id = 'b5000000-0000-4000-8000-000000000005'),
+    'An unrelated user attempts to appeal this creator listing.',
+    'private-evidence://phase5e2-non-owner', 'phase5e2-nonowner-key-00001',
+    'c9000000-0000-4000-8000-000000000019'
+  )$sql$,
+  '42501',
+  'only the product creator can appeal this active takedown',
+  'a non-owner cannot appeal another creator listing'
+);
 
 select lives_ok(
   $sql$select public.admin_configure_listing_moderation_appeal_policy(
