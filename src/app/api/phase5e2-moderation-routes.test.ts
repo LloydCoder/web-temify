@@ -191,23 +191,20 @@ describe("Phase 5E2 moderation API routes", () => {
     ["42501", 403, "forbidden"],
     ["22023", 409, "takedown_not_allowed"],
     ["23505", 409, "takedown_already_recorded"],
-  ])(
-    "maps takedown RPC error %s safely",
-    async (code, status, error) => {
-      mocks.rpc.mockResolvedValueOnce({
-        data: null,
-        error: { code, message: "sensitive database detail" },
-      });
-      const response = await applyTakedown(
-        request(`/api/admin/moderation-cases/${caseId}/takedown`, {
-          note: "Apply the reviewed rights takedown to this listing.",
-        }),
-        { params: Promise.resolve({ caseId }) },
-      );
-      expect(response.status).toBe(status);
-      expect((await response.json()).error).toBe(error);
-    },
-  );
+  ])("maps takedown RPC error %s safely", async (code, status, error) => {
+    mocks.rpc.mockResolvedValueOnce({
+      data: null,
+      error: { code, message: "sensitive database detail" },
+    });
+    const response = await applyTakedown(
+      request(`/api/admin/moderation-cases/${caseId}/takedown`, {
+        note: "Apply the reviewed rights takedown to this listing.",
+      }),
+      { params: Promise.resolve({ caseId }) },
+    );
+    expect(response.status).toBe(status);
+    expect((await response.json()).error).toBe(error);
+  });
 
   it("validates and forwards appeal transitions through the admin RPC", async () => {
     const invalid = await transitionAppeal(
