@@ -18,7 +18,7 @@
 - A takedown cannot be applied to a non-published listing, an open/under-review/dismissed case, or a case without an action-required resolution.
 - Appeal reversal never blindly republishes a product: publication requires the existing Phase 3 independent-rights and released-artifact checks.
 - Case and appeal histories are append-only; all state transitions and policy approval write audit evidence transactionally.
-- Public catalogue visibility continues to depend on product status and existing Phase 3 release-evidence gates. The new takedown transition sets status to `archived`.
+- Public catalogue and detail pages filter to `published` products. Takedown changes the product status to `archived`, and the Phase 5E2 migration now locks/checks that product row when consuming an already-issued download grant so a stale grant cannot bypass the takedown.
 
 ## Verification required
 

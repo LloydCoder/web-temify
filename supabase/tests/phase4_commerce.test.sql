@@ -1,5 +1,5 @@
 begin;
-select plan(215);
+select plan(218);
 
 select has_table('public', 'orders', 'orders table exists');
 select has_table('public', 'order_items', 'immutable order item snapshots exist');
@@ -593,6 +593,36 @@ select is(
   true, 'active entitlement remains downloadable after a partial refund'
 );
 reset role;
+
+-- A takedown must invalidate existing grants at consumption time, not just
+-- prevent new grants from being issued.
+update public.products set status = 'archived'
+where id = '86000000-0000-4000-8000-000000000086';
+select throws_ok(
+  $sql$select * from public.issue_download_grant(
+    '82000000-0000-4000-8000-000000000082',
+    (select e.id from public.entitlements e
+     join public.order_items oi on oi.id = e.order_item_id
+     join phase4b_checkout_order_ids t on t.order_id = oi.order_id)
+  )$sql$,
+  '23514',
+  'released artifact or verified product rights are unavailable',
+  'archived listing cannot receive a new download grant'
+);
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '82000000-0000-4000-8000-000000000082', true);
+select is(
+  public.consume_download_grant((select grant_id from phase4b_download_grant_ids)),
+  false, 'a pre-existing download grant cannot be consumed after takedown'
+);
+reset role;
+select is(
+  (select dg.downloads_used from public.download_grants dg
+   join phase4b_download_grant_ids t on t.grant_id = dg.id),
+  1, 'blocked takedown download does not consume the allowance'
+);
+update public.products set status = 'published'
+where id = '86000000-0000-4000-8000-000000000086';
 
 -- A full refund revokes entitlements and grants and prevents any new download consumption.
 select lives_ok(

@@ -403,3 +403,70 @@ end;
 $function$;
 revoke all on function public.admin_configure_listing_moderation_appeal_policy(uuid, integer, text, text, text, uuid) from public, anon, authenticated, service_role;
 grant execute on function public.admin_configure_listing_moderation_appeal_policy(uuid, integer, text, text, text, uuid) to service_role;
+
+-- Phase 5E2: an already-issued grant must not bypass a listing takedown.
+-- Lock the product row in shared mode so concurrent takedown updates serialize
+-- against grant consumption; the takedown transaction's row lock wins or waits.
+create or replace function public.consume_download_grant(target_grant_id uuid)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  grant_row public.download_grants%rowtype;
+  product_status text;
+  consumed boolean;
+begin
+  if (select auth.uid()) is null then return false; end if;
+
+  select dg.* into grant_row
+  from public.download_grants dg
+  where dg.id = target_grant_id
+    and dg.customer_id = (select auth.uid())
+    and dg.revoked_at is null
+    and dg.expires_at > now()
+    and dg.downloads_used < dg.max_downloads
+  for update;
+  if not found then return false; end if;
+
+  select p.status into product_status
+  from public.product_versions pv
+  join public.products p on p.id = pv.product_id
+  where pv.id = grant_row.product_version_id
+  for share of p;
+  if not found or product_status <> 'published' then return false; end if;
+
+  update public.download_grants dg
+  set downloads_used = downloads_used + 1
+  where dg.id = grant_row.id
+    and dg.customer_id = (select auth.uid())
+    and dg.revoked_at is null
+    and dg.expires_at > now()
+    and dg.downloads_used < dg.max_downloads
+    and exists (
+      select 1
+      from public.entitlements e
+      join public.order_items oi on oi.id = e.order_item_id
+      join public.orders o on o.id = oi.order_id
+      join public.product_versions pv on pv.id = dg.product_version_id
+      join public.products p on p.id = pv.product_id
+      where e.id = dg.entitlement_id
+        and e.customer_id = dg.customer_id
+        and e.product_version_id = dg.product_version_id
+        and e.status = 'active'
+        and (e.expires_at is null or e.expires_at > now())
+        and o.customer_id = dg.customer_id
+        and o.status = 'paid'
+        and pv.release_state = 'released'
+        and pv.artifact_sha256 = dg.artifact_sha256
+        and pv.artifact_storage_path is not null
+        and pv.released_at is not null
+        and p.status = 'published'
+    )
+  returning true into consumed;
+  return coalesce(consumed, false);
+end;
+$function$;
+revoke all on function public.consume_download_grant(uuid) from public, anon, service_role;
+grant execute on function public.consume_download_grant(uuid) to authenticated;
