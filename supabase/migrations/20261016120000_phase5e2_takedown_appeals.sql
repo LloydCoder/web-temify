@@ -338,7 +338,7 @@ begin
 
   insert into public.listing_moderation_appeal_events
     (appeal_id, actor_id, event_type, from_status, to_status, note, request_id)
-  values (appeal.id, p_actor_id, next_status, case when next_status = 'under_review' then 'submitted' else 'under_review' end, next_status, btrim(p_note), p_request_id);
+  values (appeal.id, p_actor_id, case when next_status = 'under_review' then 'triaged' else next_status end, case when next_status = 'under_review' then 'submitted' else 'under_review' end, next_status, btrim(p_note), p_request_id);
 
   insert into public.listing_moderation_case_events
     (case_id, actor_id, event_type, from_status, to_status, reason_code, note, request_id)
