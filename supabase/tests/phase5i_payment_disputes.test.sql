@@ -35,8 +35,29 @@ insert into public.payment_attempts (
 ) values (
   'b1000000-0000-4000-8000-000000000101',
   'a1000000-0000-4000-8000-000000000101',
-  'sandbox', 'succeeded', 10000, 'USD', 'phase5i-dispute-payment-key-001', 'sandbox-payment-dispute-001'
+  'sandbox', 'created', 10000, 'USD', 'phase5i-dispute-payment-key-001', null
 );
+
+update public.payment_attempts
+set status = 'pending'
+where id = 'b1000000-0000-4000-8000-000000000101';
+
+insert into public.payment_webhook_events (
+  id, provider, provider_event_id, event_type, payload_sha256, signature_verified,
+  order_id, payment_attempt_id
+) values (
+  'c1000000-0000-4000-8000-000000000100', 'sandbox', 'phase5i-payment-succeeded-001',
+  'payment.succeeded', repeat('9', 64), true,
+  'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'
+);
+
+update public.payment_webhook_events
+set processing_status = 'processing'
+where id = 'c1000000-0000-4000-8000-000000000100';
+
+update public.payment_attempts
+set status = 'succeeded', provider_reference = 'sandbox-payment-dispute-001'
+where id = 'b1000000-0000-4000-8000-000000000101';
 
 update public.orders
 set status = 'paid'
