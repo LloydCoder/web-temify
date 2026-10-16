@@ -1,5 +1,5 @@
 begin;
-select plan(31);
+select plan(30);
 
 select has_table('public', 'payment_disputes', 'private payment dispute records exist');
 select has_table('public', 'payment_dispute_events', 'payment dispute event history exists');
