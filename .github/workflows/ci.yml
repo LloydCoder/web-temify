@@ -56,6 +56,10 @@ jobs:
         run: supabase db lint --local
       - name: Run database and RLS tests
         run: supabase test db
+      - name: Install Chromium for browser tests
+        run: pnpm exec playwright install --with-deps chromium
+      - name: End-to-end tests
+        run: pnpm test:e2e
       - name: Install pinned PostgreSQL concurrency-test client
         run: npm ci --prefix scripts/phase4d2-concurrency
       - name: Run true two-session settlement reconciliation race test
@@ -64,10 +68,6 @@ jobs:
           db_url="$(supabase status -o env | sed -n 's/^DB_URL="\(.*\)"$/\1/p')"
           test -n "$db_url"
           SUPABASE_DB_URL="$db_url" node scripts/test-phase4d2-reconciliation-concurrency.mjs
-      - name: Install Chromium for browser tests
-        run: pnpm exec playwright install --with-deps chromium
-      - name: End-to-end tests
-        run: pnpm test:e2e
       - name: Production build
         run: pnpm build
         env:
