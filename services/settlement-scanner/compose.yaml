@@ -27,7 +27,8 @@ services:
     ports:
       - "127.0.0.1:${SCANNER_API_PORT:-8088}:8080"
     depends_on:
-      - clamav
+      clamav:
+        condition: service_healthy
     healthcheck:
       test:
         - CMD
