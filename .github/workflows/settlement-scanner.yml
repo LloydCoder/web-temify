@@ -62,12 +62,24 @@ jobs:
           printf '%s' "$clamav_networks" | grep -q 'scanner-egress'
           echo "Scanner API has no egress network; only ClamAV can reach outbound signature services."
 
-      - name: Diagnose scanner readiness inputs
-        continue-on-error: true
+      - name: Wait for ClamAV signature readiness
         shell: bash
         run: |
           set -euo pipefail
-          docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml exec -T scanner-api node --input-type=module - <<'NODE'
+          # Poll readiness directly: the gateway may be scheduled late while ClamAV
+          # initializes its signature database. A single bounded loop avoids a
+          # short liveness gate failing just before the API process starts.
+          ready=0
+          for attempt in $(seq 1 1800); do
+            code="$(docker inspect --format '{{.State.Health.Status}}' web-temify-scanner-ci-scanner-api-1 2>/dev/null || true)"
+            if [ "$code" = "healthy" ]; then
+              ready=1
+              break
+            fi
+            if [ "$((attempt % 60))" -eq 0 ]; then
+              echo "ClamAV is not ready at attempt ${attempt}/1800; collecting readiness diagnostics."
+              docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml logs --no-color --tail=80 clamav
+              if ! docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml exec -T scanner-api node --input-type=module - <<'NODE'
           import { createConnection } from "node:net";
 
           const version = await new Promise((resolve, reject) => {
@@ -103,24 +115,9 @@ jobs:
             console.log("Scanner /readyz request failed:", error.message);
           }
           NODE
-
-      - name: Wait for ClamAV signature readiness
-        shell: bash
-        run: |
-          set -euo pipefail
-          # Poll readiness directly: the gateway may be scheduled late while ClamAV
-          # initializes its signature database. A single bounded loop avoids a
-          # short liveness gate failing just before the API process starts.
-          ready=0
-          for attempt in $(seq 1 1800); do
-            code="$(docker inspect --format '{{.State.Health.Status}}' web-temify-scanner-ci-scanner-api-1 2>/dev/null || true)"
-            if [ "$code" = "healthy" ]; then
-              ready=1
-              break
-            fi
-            if [ "$((attempt % 60))" -eq 0 ]; then
-              echo "ClamAV is not ready at attempt ${attempt}/1800; collecting signature-update diagnostics."
-              docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml logs --no-color --tail=80 clamav
+              then
+                echo "Scanner API diagnostic is not available yet."
+              fi
             fi
             sleep 1
           done
