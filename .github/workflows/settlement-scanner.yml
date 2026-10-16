@@ -17,7 +17,9 @@ permissions:
 
 concurrency:
   group: settlement-scanner-${{ github.ref }}
-  cancel-in-progress: false
+  # New commits supersede stale scanner integration runs; prevent an old
+  # signature-readiness wait from blocking validation of the repaired head.
+  cancel-in-progress: true
 
 jobs:
   scanner-integration:
