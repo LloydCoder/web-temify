@@ -29,7 +29,7 @@ jobs:
       - name: Dispatch worker
         env:
           SUPPORT_NOTIFICATION_WORKER_TOKEN: ${{ secrets.SUPPORT_NOTIFICATION_WORKER_TOKEN }}
-          WORKER_URL: https://web-temify.com/api/internal/support-notifications
+          WORKER_URL: https://web-temify.vercel.app/api/internal/support-notifications
         run: |
           set -euo pipefail
           curl --fail-with-body --silent --show-error \
