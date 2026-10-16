@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getAdminContext } from "@/server/admin/authorization";
 import { ModerationCaseActionForm } from "./ModerationCaseActionForm";
+import { ModerationCaseTakedownForm } from "./ModerationCaseTakedownForm";
 
 export const dynamic = "force-dynamic";
 
@@ -115,6 +116,11 @@ export default async function AdminModerationPage() {
                 status={item.status}
                 resolutionCode={item.resolution_code}
               />
+              {item.status === "action_required" &&
+              item.resolution_code &&
+              ["listing_review_required", "rights_review_required", "security_review_required"].includes(item.resolution_code) ? (
+                <ModerationCaseTakedownForm caseId={item.id} />
+              ) : null}
             </li>
           ))}
         </ul>
