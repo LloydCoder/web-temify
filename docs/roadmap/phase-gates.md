@@ -300,7 +300,7 @@ Least-privilege admin controls, moderation queues, support, audit review, financ
 
 - [ ] Apply the new moderation case/event migration from an empty database and pass schema lint and pgTAP.
 - [ ] Pass exact-head Foundation CI, E2E, production build, formatting and security/dependency governance.
-- [ ] Review the product-detail report form, authenticated report intake/idempotency, database-owned admin transitions, append-only event history, and transactional audit evidence.
+- [ ] Review the product-detail report form, admin queue/action controls, authenticated report intake/idempotency, database-owned transitions, append-only event history, and transactional audit evidence.
 - [ ] Add enforcement that suppresses public visibility when a reviewed takedown is required; verify every public read path and RLS policy.
 - [ ] Implement creator appeal/counter-notice intake, independent review, evidence retention, deadlines, and audited outcomes before treating moderation as complete.
 
