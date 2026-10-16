@@ -55,6 +55,10 @@ update public.payment_webhook_events
 set processing_status = 'processing'
 where id = 'c1000000-0000-4000-8000-000000000100';
 
+update public.payment_webhook_events
+set processing_status = 'processed'
+where id = 'c1000000-0000-4000-8000-000000000100';
+
 update public.payment_attempts
 set status = 'succeeded', provider_reference = 'sandbox-payment-dispute-001'
 where id = 'b1000000-0000-4000-8000-000000000101';
