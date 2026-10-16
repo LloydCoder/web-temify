@@ -8,7 +8,7 @@
 - `supabase/tests/phase5e_listing_moderation_cases.test.sql`: pgTAP checks for table/RLS/grant/function boundaries, idempotent report creation, conflicting key rejection, legal state transitions, admin denial, invalid transition rejection, append-only history, audit records, and non-implicit publication changes.
 - `src/app/api/moderation/reports/route.ts`: authenticated report intake, same-origin and JSON checks, 8 KiB streaming request cap, strict Zod validation, server-derived reporter identity, request correlation, no-store response, and bounded error mapping.
 - `src/app/catalog/ReportListingForm.tsx` and `src/app/catalog/[slug]/page.tsx`: user-facing report form on the published product detail page with bounded fields, idempotency key reuse for retries, accessible status feedback, and an explicit warning that reports do not automatically remove listings.
-- `src/app/api/admin/moderation-cases/[caseId]/transition/route.ts`: audited admin context, same-origin and JSON checks, bounded body, strict action/resolution validation, and narrow database RPC calls.
+- `src/app/api/admin/moderation-cases/[caseId]/transition/route.ts` and `src/app/admin/moderation/ModerationCaseActionForm.tsx`: audited admin context, same-origin and JSON checks, bounded body, strict action/resolution validation, and visible admin action controls.
 - `src/app/admin/moderation/page.tsx`: audited, server-rendered, oldest-first queue capped at 50 records; explicit statement that this case queue does not itself unpublish listings.
 
 ## Invariants and limitations
