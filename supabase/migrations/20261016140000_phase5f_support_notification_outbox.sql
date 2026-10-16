@@ -101,14 +101,27 @@ begin
     raise exception using errcode = '22023', message = 'support notification claim limit or request id is invalid';
   end if;
 
-  update public.support_notification_jobs j
-  set status = 'blocked',
-      lease_expires_at = null,
-      last_error_code = 'worker_lease_exhausted',
-      updated_at = now()
-  where j.status = 'processing'
-    and j.lease_expires_at <= now()
-    and j.attempts >= 5;
+  with exhausted as (
+    update public.support_notification_jobs j
+    set status = 'blocked',
+        lease_expires_at = null,
+        last_error_code = 'worker_lease_exhausted',
+        updated_at = now(),
+        last_request_id = p_request_id
+    where j.status = 'processing'
+      and j.lease_expires_at <= now()
+      and j.attempts >= 5
+    returning j.id, j.case_id, j.recipient_kind, j.attempts
+  )
+  insert into public.audit_events
+    (actor_id, action, entity_type, entity_id, request_id, metadata)
+  select null, 'support.notification.delivery_failed', 'support_notification_job',
+    exhausted.id::text, p_request_id,
+    jsonb_build_object('case_id', exhausted.case_id,
+      'recipient_kind', exhausted.recipient_kind,
+      'attempt', exhausted.attempts, 'status', 'blocked',
+      'error_code', 'worker_lease_exhausted')
+  from exhausted;
 
   return query
   with candidates as (
