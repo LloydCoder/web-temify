@@ -47,5 +47,6 @@ networks:
     internal: true
   scanner-edge:
     driver: bridge
+    internal: true
   scanner-egress:
     driver: bridge
