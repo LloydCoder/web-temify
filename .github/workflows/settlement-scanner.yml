@@ -62,6 +62,48 @@ jobs:
           printf '%s' "$clamav_networks" | grep -q 'scanner-egress'
           echo "Scanner API has no egress network; only ClamAV can reach outbound signature services."
 
+      - name: Diagnose scanner readiness inputs
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml exec -T scanner-api node --input-type=module - <<'NODE'
+          import { createConnection } from "node:net";
+
+          const version = await new Promise((resolve, reject) => {
+            const socket = createConnection({ host: "clamav", port: 3310 });
+            let response = Buffer.alloc(0);
+            const timer = setTimeout(() => {
+              socket.destroy();
+              reject(new Error("ClamAV VERSION diagnostic timed out"));
+            }, 5000);
+            socket.once("connect", () => socket.write(Buffer.from("zVERSION\\0")));
+            socket.on("error", (error) => {
+              clearTimeout(timer);
+              reject(error);
+            });
+            socket.on("data", (chunk) => {
+              response = Buffer.concat([response, chunk]);
+              const terminator = response.indexOf(0);
+              if (terminator >= 0) {
+                clearTimeout(timer);
+                socket.destroy();
+                resolve(response.subarray(0, terminator).toString("utf8"));
+              }
+            });
+          }).catch((error) => `unavailable: ${error.message}`);
+
+          console.log("ClamAV VERSION response:", version);
+          try {
+            const response = await fetch("http://127.0.0.1:8080/readyz", {
+              signal: AbortSignal.timeout(5000),
+            });
+            console.log(`Scanner /readyz HTTP ${response.status}:`, await response.text());
+          } catch (error) {
+            console.log("Scanner /readyz request failed:", error.message);
+          }
+          NODE
+
       - name: Wait for ClamAV signature readiness
         shell: bash
         run: |
