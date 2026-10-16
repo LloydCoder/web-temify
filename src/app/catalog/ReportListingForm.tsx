@@ -69,7 +69,10 @@ export function ReportListingForm({ productId }: ReportListingFormProps) {
           id="moderation-reason"
           className="w-full rounded-md border bg-background px-3 py-2"
           value={reasonCode}
-          onChange={(event) => setReasonCode(event.target.value)}
+          onChange={(event) => {
+            setReasonCode(event.target.value);
+            setIdempotencyKey("");
+          }}
         >
           <option value="ip_rights">Intellectual property or rights</option>
           <option value="fraud_misrepresentation">
@@ -92,7 +95,10 @@ export function ReportListingForm({ productId }: ReportListingFormProps) {
           id="moderation-description"
           className="min-h-32 w-full rounded-md border bg-background px-3 py-2"
           value={description}
-          onChange={(event) => setDescription(event.target.value)}
+          onChange={(event) => {
+            setDescription(event.target.value);
+            setIdempotencyKey("");
+          }}
           minLength={20}
           maxLength={4000}
           required
