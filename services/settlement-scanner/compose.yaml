@@ -2,6 +2,8 @@ services:
   clamav:
     image: ${CLAMAV_IMAGE:-clamav/clamav:1.5.4-debian13-slim}
     restart: unless-stopped
+    environment:
+      CLAMAV_NO_FRESHCLAMD: ${CLAMAV_NO_FRESHCLAMD:-false}
     expose:
       - "3310"
     networks:
