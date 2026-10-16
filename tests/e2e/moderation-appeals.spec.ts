@@ -18,9 +18,9 @@ test("creator appeal center reveals no case data before sign-in", async ({
   ).toHaveCount(0);
 });
 
-test("creator appeal intake requires authentication after same-origin validation", async ({
-  page,
-}) => {
+test(
+  "creator appeal intake requires authentication after same-origin validation",
+  async ({ page }) => {
   const response = await page.request.post("/api/moderation/appeals", {
     headers: {
       Origin: "http://127.0.0.1:3000",
@@ -34,32 +34,34 @@ test("creator appeal intake requires authentication after same-origin validation
       idempotencyKey: "phase5e2-e2e-auth-check-0001",
     },
   });
-  expect(response.status()).toBe(401);
-  await expect(response.json()).resolves.toEqual({
-    error: "authentication_required",
-  });
-});
+    expect(response.status()).toBe(401);
+    await expect(response.json()).resolves.toEqual({
+      error: "authentication_required",
+    });
+  },
+);
 
-test("moderation and appeal administration pages deny unauthenticated visitors", async ({
-  page,
-}) => {
+test(
+  "moderation and appeal administration pages deny unauthenticated visitors",
+  async ({ page }) => {
   for (const route of ["/admin/moderation", "/admin/moderation-appeals"]) {
     await page.goto(route);
-    await expect(page.getByText("404 — Not found")).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Wrong turn." }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", {
-        name: /listing moderation|creator takedown appeals/i,
-      }),
-    ).toHaveCount(0);
-  }
-});
+        await expect(page.getByText("404 — Not found")).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "Wrong turn." }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("heading", {
+          name: /listing moderation|creator takedown appeals/i,
+        }),
+      ).toHaveCount(0);
+    }
+  },
+);
 
-test("moderation takedown, appeal transition, and policy mutations deny unauthenticated visitors", async ({
-  page,
-}) => {
+test(
+  "moderation takedown, appeal transition, and policy mutations deny unauthenticated visitors",
+  async ({ page }) => {
   const requests = [
     {
       url: "/api/admin/moderation-cases/b5000000-0000-4000-8000-000000000005/takedown",
@@ -90,7 +92,8 @@ test("moderation takedown, appeal transition, and policy mutations deny unauthen
     const response = await page.request.post(request.url, {
       data: request.data,
     });
-    expect(response.status()).toBe(404);
-    await expect(response.json()).resolves.toEqual({ error: "not_found" });
-  }
-});
+      expect(response.status()).toBe(404);
+      await expect(response.json()).resolves.toEqual({ error: "not_found" });
+    }
+  },
+);
