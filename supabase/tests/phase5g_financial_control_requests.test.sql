@@ -1,5 +1,5 @@
 begin;
-select plan(43);
+select plan(44);
 
 select has_table('public', 'financial_control_requests', 'financial control requests exist');
 select has_table('public', 'financial_control_approvals', 'approval evidence exists');
@@ -215,6 +215,18 @@ select is(
   'two distinct admins approve hold release'
 );
 select is((select count(*)::integer from public.seller_payout_holds where source_request_id = (select id from phase5g_hold_request) and released_at is not null), 1, 'approved release closes the hold exactly once');
+select is(
+  public.create_financial_control_request(
+    '91000000-0000-4000-8000-000000000501',
+    'payout_hold_release', '94000000-0000-4000-8000-000000000504',
+    null, (select id from public.seller_payout_holds where source_request_id = (select id from phase5g_hold_request)),
+    5000, 'USD', repeat('d', 64),
+    'Release hold after the underlying risk was reviewed.',
+    'phase5g-payout-hold-release-0001', 'ad000000-0000-4000-8000-000000000501'
+  ),
+  (select id from phase5g_release_request),
+  'successful hold-release replay returns the original request after the hold is released'
+);
 select throws_ok(
   $sql$select public.create_financial_control_request(
     '91000000-0000-4000-8000-000000000501',
