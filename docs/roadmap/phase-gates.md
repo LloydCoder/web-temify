@@ -348,20 +348,23 @@ The worker is at-least-once delivery; a provider-accepted message with a lost re
 - [x] Activate/release internal payout holds only after two approvals; preserve immutable hold evidence and append-only request/audit events.
 - [x] Validate negative-balance requests against the current posted seller-payable deficit and validate any order reference against seller and currency.
 - [x] Pass exact-head Foundation CI and Security/dependency governance and merge the database workflow in PR #78.
-- [ ] Add restricted admin API/UI, evidence object storage/verification, and operational monitoring.
+- [x] Add restricted admin API/UI in PR #79; evidence object storage/verification and operational monitoring remain open.
 - [ ] Integrate active holds with an actual payout gate before any payout feature is enabled.
 - [ ] Implement provider-authenticated chargeback/dispute intake and lifecycle, and ledger posting for approved manual adjustments.
 - [ ] Approve financial control policy, retention, approval thresholds, and operational ownership.
 
 Approved manual adjustments remain requests only; no journal entries or provider money movement are executed. Phase 5 remains incomplete.
 
-### Phase 5H — Restricted financial controls API and admin interface (implementation candidate; CI pending)
+### Phase 5H — Restricted financial controls API and admin interface (merged; code gates passed)
+
+**Status: MERGED in PR [#79](https://github.com/LloydCoder/web-temify/pull/79).** Foundation CI run [38973476047](https://github.com/LloydCoder/web-temify/actions/runs/38973476047) and Security/dependency governance run [38973476065](https://github.com/LloydCoder/web-temify/actions/runs/38973476065) passed on exact reviewed head `0f65229c27252e78cc1bb72f3da05c4f65081028`. Vercel preview remains unverified due to the connected team's build-rate limit.
 
 - [x] Add an admin-only, no-store queue capped at 50 requests with strict status filters and a minimal response projection.
 - [x] Add same-origin, bounded JSON request creation and review endpoints; actor IDs come only from the validated admin context.
 - [x] Add a restricted admin page for request creation and maker/checker review, linked from the operations console.
 - [x] Add route-level tests for unauthorised access, strict input validation, safe RPC error mapping, queue bounds, and actor binding.
-- [ ] Pass Foundation CI and Security/dependency governance on the exact PR head and merge commit.
+- [x] Pass Foundation CI and Security/dependency governance on the exact PR head and merge PR #79.
+- [x] Add E2E denial coverage for the admin page and unauthenticated queue/create/review endpoints.
 - [ ] Add adversarial UI/E2E coverage, evidence-object storage and digest verification, monitoring/alerting, and operational approval.
 - [ ] Keep live payout execution disabled until a payout service checks active holds and seller-payable ledger state.
 
