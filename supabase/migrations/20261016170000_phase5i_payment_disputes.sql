@@ -165,6 +165,8 @@ begin
     or webhook_event.event_type <> p_event_type
     or webhook_event.order_id is distinct from p_order_id
     or webhook_event.payment_attempt_id is distinct from p_payment_attempt_id
+    or webhook_event.amount_minor is distinct from p_amount_minor
+    or webhook_event.currency is distinct from p_currency
     or webhook_event.processing_status not in ('processing', 'processed')
   then
     raise exception using errcode = '42501', message = 'payment dispute requires a matching verified webhook event';
