@@ -143,6 +143,10 @@ begin
     or p_event_action is null or p_event_action not in (
       'opened', 'needs_evidence', 'evidence_submitted', 'won', 'lost', 'closed'
     )
+    or (p_event_action = 'opened' and p_event_type !~* '(dispute|chargeback).*(created|opened)')
+    or (p_event_action = 'needs_evidence' and p_event_type !~* '(dispute|chargeback).*(updated|needs_response|evidence_due|evidence_required)')
+    or (p_event_action = 'evidence_submitted' and p_event_type !~* '(dispute|chargeback).*(updated|evidence_submitted|evidence_sent)')
+    or (p_event_action in ('won', 'lost', 'closed') and p_event_type !~* '(dispute|chargeback).*(closed|won|lost)')
     or p_order_id is null or p_payment_attempt_id is null
     or p_amount_minor is null or p_amount_minor <= 0
     or p_currency is null or p_currency !~ '^[A-Z]{3}$'
