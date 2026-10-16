@@ -1,0 +1,12 @@
+begin;
+select plan(8);
+select has_table('public', 'support_notification_jobs', 'support notification outbox exists');
+select ok((select relrowsecurity from pg_class where oid = 'public.support_notification_jobs'::regclass), 'notification outbox RLS is enabled');
+select ok(not has_table_privilege('authenticated', 'public.support_notification_jobs', 'SELECT'), 'customers cannot read notification jobs');
+select ok(not has_table_privilege('authenticated', 'public.support_notification_jobs', 'INSERT'), 'customers cannot enqueue notifications');
+select ok(has_table_privilege('service_role', 'public.support_notification_jobs', 'SELECT'), 'worker can inspect notification job state');
+select ok(not has_table_privilege('service_role', 'public.support_notification_jobs', 'UPDATE'), 'worker cannot directly mutate job state');
+select ok(has_function_privilege('service_role', 'public.claim_support_notification_jobs(integer,uuid)', 'EXECUTE'), 'worker can claim jobs');
+select ok(has_function_privilege('service_role', 'public.finish_support_notification_job(uuid,uuid,boolean,text)', 'EXECUTE'), 'worker can finish jobs');
+select * from finish();
+rollback;
