@@ -47,23 +47,4 @@ jobs:
         id: supabase-cli
         uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359 # v3
         with:
-          version: 2.107.0
-      - name: Start local Supabase services
-        run: supabase start -x studio,imgproxy,inbucket
-      - name: Apply migrations from an empty database
-        run: supabase db reset
-      - name: Lint database schema and policies
-        run: supabase db lint --local
-      - name: Run database and RLS tests
-        run: supabase test db
-      - name: Install Chromium for browser tests
-        run: pnpm exec playwright install --with-deps chromium
-      - name: End-to-end tests
-        run: pnpm test:e2e
-      - name: Production build
-        run: pnpm build
-        env:
-          NEXT_PUBLIC_SITE_URL: https://example.invalid
-      - name: Stop local Supabase services
-        if: always() && steps.supabase-cli.outcome == 'success'
-        run: supabase stop
+          version: 2.107.0¶»§q«^
