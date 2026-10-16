@@ -2,11 +2,6 @@ services:
   clamav:
     image: ${CLAMAV_IMAGE:-clamav/clamav:1.5.4-debian13-slim}
     restart: unless-stopped
-    environment:
-      # The versioned image ships with signature databases. CI validates that
-      # baked-in signatures are fresh enough; it must not spend the test window
-      # downloading a full database on every ephemeral runner.
-      CLAMAV_NO_FRESHCLAMD: "true"
     expose:
       - "3310"
     networks:
