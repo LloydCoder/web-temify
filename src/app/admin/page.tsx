@@ -94,7 +94,10 @@ export default async function AdminOperationsPage() {
           <Link className="button button-secondary" href="/admin/settlements">
             Settlement exceptions
           </Link>
-          <Link className="button button-secondary" href="/admin/financial-controls">
+          <Link
+            className="button button-secondary"
+            href="/admin/financial-controls"
+          >
             Financial controls
           </Link>
           <Link className="button button-secondary" href="/">
