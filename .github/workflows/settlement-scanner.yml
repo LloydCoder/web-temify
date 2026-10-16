@@ -42,7 +42,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml up -d --build
+          CLAMAV_NO_FRESHCLAMD=true docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml up -d --build
+          docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml exec -T clamav freshclam --stdout
+          docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml exec -T clamav clamdscan --reload
           docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml ps
 
       - name: Assert scanner network isolation
