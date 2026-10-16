@@ -23,4 +23,6 @@
 
 ## Verification
 
-CI evidence is pending until Foundation CI, migration reset/schema lint/pgTAP, E2E, build, formatting and security/dependency governance pass on the exact reviewed PR head. Do not mark Phase 5E1 or Phase 5 overall complete before that evidence and review are recorded.
+On implementation head `4afd50d29609b1f43c21d97b0369f6dbb6b5e738`, [Foundation CI run 38888892585](https://github.com/LloydCoder/web-temify/actions/runs/38888892585) and [Security/dependency governance run 38888892674](https://github.com/LloydCoder/web-temify/actions/runs/38888892674) passed. Foundation CI covered typecheck, lint, formatting, empty-database migration reset, schema/policy lint, database/RLS tests including the Phase 5E1 assertions, E2E, two-session settlement reconciliation concurrency, production build, and service cleanup.
+
+This evidence applies only to that exact head. Re-run all required checks after any subsequent code or documentation commit and before merge. Phase 5E1 remains a bounded slice, not a Phase 5 exit pass.
