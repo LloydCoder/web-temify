@@ -56,13 +56,26 @@ update public.payment_webhook_events
 set processing_status = 'processing'
 where id = 'c1000000-0000-4000-8000-000000000100';
 
+update public.payment_attempts
+set status = 'succeeded'
+where id = 'b1000000-0000-4000-8000-000000000101';
+update public.payment_attempts
+set provider_reference = 'sandbox-payment-dispute-001'
+where id = 'b1000000-0000-4000-8000-000000000101';
+
+insert into public.ledger_transactions (
+  order_id, payment_attempt_id, source_type, debit_account, credit_account,
+  amount_minor, currency, reference_key
+) values (
+  'a1000000-0000-4000-8000-000000000101',
+  'b1000000-0000-4000-8000-000000000101',
+  'payment', 'provider_clearing', 'platform_cash', 10000, 'USD',
+  'phase5i-dispute-payment-ledger-001'
+);
+
 update public.payment_webhook_events
 set processing_status = 'processed', processed_at = now()
 where id = 'c1000000-0000-4000-8000-000000000100';
-
-update public.payment_attempts
-set status = 'succeeded', provider_reference = 'sandbox-payment-dispute-001'
-where id = 'b1000000-0000-4000-8000-000000000101';
 
 update public.orders
 set status = 'paid'
