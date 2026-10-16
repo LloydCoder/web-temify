@@ -89,7 +89,7 @@ jobs:
               socket.destroy();
               reject(new Error("ClamAV VERSION diagnostic timed out"));
             }, 5000);
-            socket.once("connect", () => socket.write(Buffer.from("zVERSION\\0")));
+            socket.once("connect", () => socket.write(Buffer.concat([Buffer.from("zVERSION"), Buffer.from([0]))));
             socket.on("error", (error) => {
               clearTimeout(timer);
               reject(error);
