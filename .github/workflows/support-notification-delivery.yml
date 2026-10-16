@@ -16,7 +16,7 @@ jobs:
   dispatch:
     name: Dispatch support notification outbox
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
     steps:
       - name: Validate required secret
         env:
