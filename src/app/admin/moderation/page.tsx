@@ -62,11 +62,8 @@ export default async function AdminModerationPage() {
             <li key={item.id} className="rounded-xl border p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                  <h2 className="text-lg font-semibold">
                     {reasonLabels[item.reason_code] ?? "Report"}
-                  </p>
-                  <h2 className="mt-1 text-lg font-semibold">
-                    {item.status.replaceAll("_", " ")}
                   </h2>
                 </div>
                 <span className="rounded-full border px-3 py-1 text-xs">
