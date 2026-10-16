@@ -73,21 +73,20 @@ jobs:
           # initializes its signature database. A single bounded loop avoids a
           # short liveness gate failing just before the API process starts.
           ready=0
-          for attempt in $(seq 1 1200); do
-            code="$(curl --connect-timeout 1 --max-time 1 --silent --output /tmp/scanner-ready.json --write-out '%{http_code}' http://127.0.0.1:8088/readyz || true)"
+          for attempt in $(seq 1 1800); do
+            code="$(docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml exec -T scanner-api node -e "fetch('http://127.0.0.1:8080/readyz').then((r) => process.stdout.write(String(r.status))).catch(() => process.stdout.write('000'))" 2>/dev/null || true)"
             if [ "$code" = "200" ]; then
               ready=1
               break
             fi
             if [ "$((attempt % 60))" -eq 0 ]; then
-              echo "ClamAV is not ready at attempt ${attempt}/1200; collecting signature-update diagnostics."
+              echo "ClamAV is not ready at attempt ${attempt}/1800; collecting signature-update diagnostics."
               docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml logs --no-color --tail=80 clamav
-              if [ -f /tmp/scanner-ready.json ]; then cat /tmp/scanner-ready.json; fi
             fi
             sleep 1
           done
           if [ "$ready" -ne 1 ]; then
-            echo "Scanner did not become ready with fresh signatures after 1200 bounded readiness attempts."
+            echo "Scanner did not become ready with fresh signatures after 1800 bounded readiness attempts."
             docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml logs --no-color
             exit 1
           fi
@@ -96,47 +95,48 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base_url="http://127.0.0.1:8088/v1/scan"
+          docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml exec -T \
+            -e SCANNER_BEARER_TOKEN="${SCANNER_BEARER_TOKEN}" scanner-api node --input-type=module - <<'NODE'
+          import assert from "node:assert/strict";
+          import { createHash } from "node:crypto";
 
-          printf '%s' 'Web-Temify scanner CI clean sample' > /tmp/scanner-clean.txt
-          clean_digest="$(sha256sum /tmp/scanner-clean.txt | cut -d ' ' -f 1)"
-          clean_status="$(curl --silent --show-error --max-time 30 --output /tmp/scanner-clean.json --write-out '%{http_code}' \
-            -H "Authorization: Bearer ${SCANNER_BEARER_TOKEN}" \
-            -H 'Content-Type: application/octet-stream' \
-            -H "X-Evidence-SHA256: ${clean_digest}" \
-            --data-binary @/tmp/scanner-clean.txt "$base_url")"
-          test "$clean_status" = "200"
-          grep -q '"verdict":"clean"' /tmp/scanner-clean.json
-          grep -q "\"sha256\":\"$clean_digest\"" /tmp/scanner-clean.json
+          const baseUrl = "http://127.0.0.1:8080/v1/scan";
+          const token = process.env.SCANNER_BEARER_TOKEN;
+          const clean = Buffer.from("Web-Temify scanner CI clean sample");
+          const digest = (bytes) =>
+            createHash("sha256").update(bytes).digest("hex");
+          const scan = (bytes, expectedDigest, bearerToken = token) => {
+            const headers = {
+              "Content-Type": "application/octet-stream",
+              "X-Evidence-SHA256": expectedDigest,
+            };
+            if (bearerToken) headers.Authorization = `Bearer ${bearerToken}`;
+            return fetch(baseUrl, { method: "POST", headers, body: bytes });
+          };
 
-          # EICAR is a harmless industry-standard antivirus test signature, not live malware.
-          printf '%s' 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > /tmp/scanner-eicar.txt
-          eicar_digest="$(sha256sum /tmp/scanner-eicar.txt | cut -d ' ' -f 1)"
-          eicar_status="$(curl --silent --show-error --max-time 30 --output /tmp/scanner-eicar.json --write-out '%{http_code}' \
-            -H "Authorization: Bearer ${SCANNER_BEARER_TOKEN}" \
-            -H 'Content-Type: application/octet-stream' \
-            -H "X-Evidence-SHA256: ${eicar_digest}" \
-            --data-binary @/tmp/scanner-eicar.txt "$base_url")"
-          test "$eicar_status" = "200"
-          grep -q '"verdict":"infected"' /tmp/scanner-eicar.json
+          let response = await scan(clean, digest(clean));
+          assert.equal(response.status, 200);
+          let result = await response.json();
+          assert.equal(result.verdict, "clean");
+          assert.equal(result.sha256, digest(clean));
 
-          invalid_token='invalid-token'
-          unauthorized_header="$(printf 'Authorization: Bearer %s' "$invalid_token")"
-          unauthorized_status="$(curl --silent --show-error --max-time 10 --output /tmp/scanner-unauthorized.json --write-out '%{http_code}' \
-            -H "$unauthorized_header" \
-            -H 'Content-Type: application/octet-stream' \
-            -H "X-Evidence-SHA256: ${clean_digest}" \
-            --data-binary @/tmp/scanner-clean.txt "$base_url")"
-          test "$unauthorized_status" = "401"
+          // EICAR is a harmless industry-standard antivirus test signature.
+          const eicar = Buffer.from("X5O!P%@AP[4\\\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*");
+          response = await scan(eicar, digest(eicar));
+          assert.equal(response.status, 200);
+          result = await response.json();
+          assert.equal(result.verdict, "infected");
 
-          mismatch_status="$(curl --silent --show-error --max-time 10 --output /tmp/scanner-mismatch.json --write-out '%{http_code}' \
-            -H "Authorization: Bearer ${SCANNER_BEARER_TOKEN}" \
-            -H 'Content-Type: application/octet-stream' \
-            -H "X-Evidence-SHA256: 0000000000000000000000000000000000000000000000000000000000000000" \
-            --data-binary @/tmp/scanner-clean.txt "$base_url")"
-          test "$mismatch_status" = "422"
+          response = await scan(clean, digest(clean), "invalid-token");
+          assert.equal(response.status, 401);
 
-          echo "Scanner integration checks passed: clean, EICAR infected, unauthorized token, digest mismatch."
+          response = await scan(clean, "0".repeat(64));
+          assert.equal(response.status, 422);
+
+          console.log(
+            "Scanner integration checks passed: clean, EICAR infected, unauthorized token, digest mismatch.",
+          );
+          NODE
 
       - name: Collect diagnostics on failure
         if: failure()
