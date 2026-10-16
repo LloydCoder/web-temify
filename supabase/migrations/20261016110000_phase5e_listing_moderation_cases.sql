@@ -130,6 +130,7 @@ as $function$
 declare
   target public.listing_moderation_cases%rowtype;
   next_status text;
+  previous_status text;
 begin
   if p_case_id is null or p_actor_id is null or p_request_id is null
     or p_action is null or p_action not in ('triage', 'require_action', 'dismiss', 'close')
@@ -143,6 +144,8 @@ begin
 
   select * into target from public.listing_moderation_cases where id = p_case_id for update;
   if not found then raise exception using errcode = 'P0002', message = 'moderation case not found'; end if;
+
+  previous_status := target.status;
 
   if p_action = 'triage' and target.status = 'open' then
     next_status := 'under_review';
@@ -172,12 +175,12 @@ begin
     (case_id, actor_id, event_type, from_status, to_status, reason_code, note, request_id)
   values (target.id, p_actor_id,
     case next_status when 'under_review' then 'triaged' when 'action_required' then 'action_required' when 'dismissed' then 'dismissed' else 'closed' end,
-    case p_action when 'triage' then 'open' else target.status end,
+    previous_status,
     next_status, coalesce(p_resolution_code, target.reason_code), btrim(p_note), p_request_id);
 
   insert into public.audit_events (actor_id, action, entity_type, entity_id, request_id, metadata)
   values (p_actor_id, 'listing.moderation.' || p_action, 'listing_moderation_case', target.id::text, p_request_id,
-    jsonb_build_object('fromStatus', target.status, 'toStatus', next_status, 'resolutionCode', p_resolution_code));
+    jsonb_build_object('fromStatus', previous_status, 'toStatus', next_status, 'resolutionCode', p_resolution_code));
   return target;
 end;
 $function$;
