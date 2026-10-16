@@ -44,8 +44,8 @@ export default async function AdminModerationPage() {
         </h1>
         <p className="max-w-3xl text-muted-foreground">
           Review reported listings with reason-coded, audited case transitions.
-          This queue does not itself unpublish listings. Takedown enforcement and
-          creator appeals remain separate required workflows.
+          This queue does not itself unpublish listings. Takedown enforcement
+          and creator appeals remain separate required workflows.
         </p>
       </header>
       {error ? (
