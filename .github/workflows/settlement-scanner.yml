@@ -108,7 +108,7 @@ jobs:
           invalid_token='invalid-token'
           unauthorized_header="$(printf 'Authorization: Bearer %s' "$invalid_token")"
           unauthorized_status="$(curl --silent --show-error --max-time 10 --output /tmp/scanner-unauthorized.json --write-out '%{http_code}' \
-            -H "$unauthorized_header" \\
+            -H "$unauthorized_header" \
             -H 'Content-Type: application/octet-stream' \
             -H "X-Evidence-SHA256: ${clean_digest}" \
             --data-binary @/tmp/scanner-clean.txt "$base_url")"
