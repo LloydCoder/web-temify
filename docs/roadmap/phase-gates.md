@@ -294,6 +294,19 @@ Least-privilege admin controls, moderation queues, support, audit review, financ
 - **Residual limits:** the workflow does not deliver outbound support notifications, automated SLA/escalation jobs, or staff an on-call rota. It does not implement the broader takedown/appeal workflow, financial reconciliation, disputes/chargebacks, backup restoration, incident-response automation, alert delivery, or break-glass controls. Retention/deletion policy and a staffed support communications process still require explicit operational/legal decisions. The service-role customer-history query relies on server-side ownership filtering and therefore warrants continued regression coverage; direct database access remains denied. No production provider, legal/tax, penetration-test, full WCAG 2.2 AA, or deployment-readiness claim is made.
 - **Gate decision:** Phase 5D passes for its implemented workflow scope after the exact-head green CI runs above. Phase 5 overall remains in progress and cannot advance to Phase 6 until the remaining Phase 4 and Phase 5 gates are satisfied.
 
+
+### Phase 5E1 — Listing moderation case intake (implementation pending CI)
+
+**Status: IN PROGRESS.** This is the first bounded slice for moderation operations, not a full takedown/appeal workflow.
+
+- [ ] Apply the new moderation case/event migration from an empty database and pass schema lint and pgTAP.
+- [ ] Pass exact-head Foundation CI, E2E, production build, formatting and security/dependency governance.
+- [ ] Review authenticated report intake, idempotency, database-owned admin transitions, append-only event history, and transactional audit evidence.
+- [ ] Add enforcement that suppresses public visibility when a reviewed takedown is required; verify every public read path and RLS policy.
+- [ ] Implement creator appeal/counter-notice intake, independent review, evidence retention, deadlines, and audited outcomes before treating moderation as complete.
+
+Forensic record: `docs/audits/phase5e-moderation-cases.md`. The current case queue does not itself unpublish a product or implement appeals. Phase 5 remains incomplete; live payment/provider processing stays disabled.
+
 ## Phase 6 — Seller system and product factory
 
 **Status: NOT COMPLETE.** This phase builds the trusted supply side and a repeatable, evidence-backed product release pipeline. The dedicated source monorepo is [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products); its inventory is planning input, not evidence that products have been built or released. Keep product source code, manifests, build/test contracts and immutable release evidence in that repository; keep commercial listing state and marketplace transactions in this repository.
