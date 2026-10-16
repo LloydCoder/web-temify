@@ -389,6 +389,7 @@ declare
   prior_status text;
   next_status text;
   hold_id uuid;
+  seller_net numeric;
 begin
   if p_request_id is null or p_actor_id is null or p_request_trace_id is null
     or p_decision is null or p_decision not in ('approve', 'reject')
@@ -410,6 +411,20 @@ begin
   end if;
   if control_request.status not in ('requested', 'under_review') then
     raise exception using errcode = '22023', message = 'financial control request is not reviewable';
+  end if;
+
+  if p_decision = 'approve' and control_request.request_type = 'negative_balance_review' then
+    select coalesce(sum(case when e.side = 'credit' then e.amount_minor else -e.amount_minor end), 0)
+      into seller_net
+    from public.financial_journal_entries e
+    join public.financial_journal_batches b on b.id = e.batch_id
+    where e.account = 'seller_payable'
+      and e.seller_id = control_request.seller_id
+      and e.currency = control_request.currency
+      and b.status = 'posted';
+    if seller_net >= 0 or abs(seller_net) <> control_request.amount_minor then
+      raise exception using errcode = '22023', message = 'negative seller-payable deficit changed since request creation';
+    end if;
   end if;
 
   insert into public.financial_control_approvals
