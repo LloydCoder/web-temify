@@ -71,8 +71,8 @@ jobs:
           # short liveness gate failing just before the API process starts.
           ready=0
           for attempt in $(seq 1 1800); do
-            code="$(docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml exec -T scanner-api node -e "fetch('http://127.0.0.1:8080/readyz').then((r) => process.stdout.write(String(r.status))).catch(() => process.stdout.write('000'))" 2>/dev/null || true)"
-            if [ "$code" = "200" ]; then
+            code="$(docker inspect --format '{{.State.Health.Status}}' web-temify-scanner-ci-scanner-api-1 2>/dev/null || true)"
+            if [ "$code" = "healthy" ]; then
               ready=1
               break
             fi
