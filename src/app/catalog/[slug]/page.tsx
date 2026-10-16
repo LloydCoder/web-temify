@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { ReportListingForm } from "../ReportListingForm";
 
 export const dynamic = "force-dynamic";
 
@@ -130,6 +131,14 @@ export default async function ProductDetailPage({
             </a>
           )}
         </div>
+        <section className="mt-8 space-y-3" aria-labelledby="report-listing-title">
+          <h2 id="report-listing-title">Report this listing</h2>
+          <p className="text-sm text-muted-foreground">
+            Report a potential rights, security, privacy, or policy concern for
+            review. Submitting a report does not automatically remove the listing.
+          </p>
+          <ReportListingForm productId={product.id} />
+        </section>
       </article>
       <footer className="site-footer">
         <span>© {new Date().getFullYear()} Web-Temify LTD.</span>
