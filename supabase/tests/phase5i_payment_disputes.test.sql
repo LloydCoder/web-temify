@@ -65,6 +65,9 @@ insert into public.payment_webhook_events (
    'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
   ('c1000000-0000-4000-8000-000000000108', 'sandbox', 'phase5i-event-close-002',
    'charge.dispute.closed', repeat('2', 64), true,
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
+  ('c1000000-0000-4000-8000-000000000109', 'sandbox', 'phase5i-event-lost-after-close-002',
+   'charge.dispute.closed', repeat('3', 64), true,
    'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101');
 
 create temporary table phase5i_dispute_fixture (
@@ -202,7 +205,7 @@ select lives_ok(
 );
 select lives_ok(
   $sql$select * from public.apply_verified_payment_dispute_event(
-    'sandbox', 'phase5i-event-lost-002', 'sandbox-dispute-002',
+    'sandbox', 'phase5i-event-lost-after-close-002', 'sandbox-dispute-002',
     'charge.dispute.closed', 'lost',
     'a1000000-0000-4000-8000-000000000101',
     'b1000000-0000-4000-8000-000000000101',
