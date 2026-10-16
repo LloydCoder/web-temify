@@ -25,7 +25,7 @@ jobs:
   scanner-integration:
     name: ClamAV scanner integration
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -66,17 +66,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # Compose starts the gateway before its HTTP listener is guaranteed to accept requests.
+          # ClamAV's first signature-database initialization can temporarily starve
+          # the small gateway container on a 2-core CI runner. Health must not fail
+          # simply because the API process is scheduled late during engine startup.
           health=0
-          for attempt in $(seq 1 30); do
-            if curl --connect-timeout 2 --max-time 5 --fail --silent http://127.0.0.1:8088/healthz >/dev/null; then
+          for attempt in $(seq 1 300); do
+            if curl --connect-timeout 1 --max-time 2 --fail --silent http://127.0.0.1:8088/healthz >/dev/null; then
               health=1
               break
             fi
             sleep 2
           done
           if [ "$health" -ne 1 ]; then
-            echo "Scanner gateway did not become live."
+            echo "Scanner gateway did not become live after 300 bounded health probes."
             docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml logs --no-color
             exit 1
           fi
