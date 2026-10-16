@@ -1,5 +1,5 @@
 begin;
-select plan(33);
+select plan(34);
 
 select has_table('public', 'payment_disputes', 'private payment dispute records exist');
 select has_table('public', 'payment_dispute_events', 'payment dispute event history exists');
@@ -120,7 +120,10 @@ insert into public.payment_webhook_events (
    'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 2500, 'USD'),
   ('c1000000-0000-4000-8000-000000000112', 'sandbox', 'phase5i-event-mismatched-amount',
    'charge.dispute.updated', repeat('6', 64), true,
-   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 7000, 'USD');
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 7000, 'USD'),
+  ('c1000000-0000-4000-8000-000000000113', 'sandbox', 'phase5i-event-mismatched-currency',
+   'charge.dispute.updated', repeat('7', 64), true,
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101', 7500, 'EUR');
 
 
 create temporary table phase5i_dispute_fixture (
@@ -161,6 +164,20 @@ select throws_ok(
   '42501',
   'payment dispute requires a matching verified webhook event',
   'dispute amount must match the normalized verified event amount'
+);
+
+select throws_ok(
+  $sql$select * from public.apply_verified_payment_dispute_event(
+    'sandbox', 'phase5i-event-mismatched-currency', 'sandbox-dispute-mismatch-currency',
+    'charge.dispute.updated', 'needs_evidence',
+    'a1000000-0000-4000-8000-000000000101',
+    'b1000000-0000-4000-8000-000000000101',
+    7500, 'USD', null, 'needs_response',
+    'd1000000-0000-4000-8000-000000000117'
+  )$sql$,
+  '42501',
+  'payment dispute requires a matching verified webhook event',
+  'dispute currency must match the normalized verified event currency'
 );
 
 
