@@ -1,13 +1,13 @@
 # Phase 5G — financial control requests and payout holds
 
-**Status: IMPLEMENTED ON BRANCH; FOUNDATION CI AND SECURITY REVIEW PENDING.** This is a database workflow candidate, not an authorization to move money or enable payouts.
+**Status: FOUNDATION CI AND SECURITY PASSED ON IMPLEMENTATION HEAD `8c096e0950e00c27eb0e1cf4b6cab1dbaa7cf784`; MERGE AND OPERATIONAL VERIFICATION PENDING.** Foundation CI [run 38971016846](https://github.com/LloydCoder/web-temify/actions/runs/38971016846) and Security/dependency governance [run 38971016857](https://github.com/LloydCoder/web-temify/actions/runs/38971016857) passed on the exact implementation head. This is a database workflow candidate, not an authorization to move money or enable payouts.
 
 ## Delivered in this candidate
 
 - Server-only requests for manual adjustment review, negative-balance review, payout-hold placement, and payout-hold release.
 - Maker-checker approvals: the requester cannot approve their own request, two distinct database-authorized administrators must approve, and approval evidence is append-only.
 - A payout hold becomes active only after two approvals. Release requires a new request matching the active hold's seller, amount, and currency, followed by two distinct approvals.
-- Negative-balance review requests must match the current posted seller-payable deficit; order-linked requests must reference an order containing an item for that seller and currency.
+- Negative-balance review requests must match the current posted seller-payable deficit at creation and at each approval; order-linked requests must reference an order containing an item for that seller and currency.
 - Private tables, RLS, no public/authenticated table grants, service-only RPCs, immutable request identity/evidence, append-only event history, and audit events.
 - Idempotent request creation is serialized by an advisory transaction lock.
 - Requests may be cancelled by their maker only before review begins.
