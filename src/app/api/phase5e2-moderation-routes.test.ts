@@ -30,7 +30,11 @@ const caseId = "b5000000-0000-4000-8000-000000000005";
 const appealId = "b6000000-0000-4000-8000-000000000006";
 const enforcementId = "b7000000-0000-4000-8000-000000000007";
 
-function request(path: string, body: unknown, headers: Record<string, string> = {}) {
+function request(
+  path: string,
+  body: unknown,
+  headers: Record<string, string> = {},
+) {
   return new Request(new URL(path, origin), {
     method: "POST",
     headers: {
@@ -44,7 +48,8 @@ function request(path: string, body: unknown, headers: Record<string, string> = 
 
 const creatorAppealBody = {
   enforcementId,
-  statement: "I am appealing this takedown and can provide evidence of my rights.",
+  statement:
+    "I am appealing this takedown and can provide evidence of my rights.",
   evidenceReference: null,
   idempotencyKey: "appeal-route-test-key-0001",
 };
@@ -126,7 +131,9 @@ describe("Phase 5E2 moderation API routes", () => {
     ["22023", 400, "invalid_moderation_appeal"],
     ["23505", 409, "appeal_conflict"],
     ["XX000", 503, "moderation_appeal_unavailable"],
-  ])("maps creator appeal RPC error %s to a safe response", async (code, status, error) => {
+  ])(
+    "maps creator appeal RPC error %s to a safe response",
+    async (code, status, error) => {
     mocks.rpc.mockResolvedValueOnce({
       data: null,
       error: { code, message: "sensitive database detail" },
@@ -183,7 +190,9 @@ describe("Phase 5E2 moderation API routes", () => {
     ["42501", 403, "forbidden"],
     ["22023", 409, "takedown_not_allowed"],
     ["23505", 409, "takedown_already_recorded"],
-  ])("maps takedown RPC error %s safely", async (code, status, error) => {
+  ])(
+    "maps takedown RPC error %s safely",
+    async (code, status, error) => {
     mocks.rpc.mockResolvedValueOnce({
       data: null,
       error: { code, message: "sensitive database detail" },
@@ -252,7 +261,10 @@ describe("Phase 5E2 moderation API routes", () => {
     expect(body.error).toBe("appeal_policy_unavailable");
     expect(JSON.stringify(body)).not.toContain("sensitive database detail");
 
-    mocks.rpc.mockResolvedValueOnce({ data: { is_approved: true }, error: null });
+    mocks.rpc.mockResolvedValueOnce({
+      data: { is_approved: true },
+      error: null,
+    });
     const success = await configureAppealPolicy(
       request("/api/admin/moderation-appeal-policy", policyBody),
     );
