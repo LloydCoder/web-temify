@@ -30,7 +30,7 @@
 - [ ] Production Vercel preview for the exact final PR head was not verified: the deployment check hit the account's daily API deployment limit. The preceding app-code deployment was READY at `d380e86604314c46106de0cec697ccd71f005ab0`; the final PR commit changed only the E2E request host. Production environment configuration and moderation staffing remain separate gates.
 - [ ] Operational/legal policy approval and notification/escalation arrangements remain unverified. Do not assign appeal deadlines until the recorded legal review and internal policy approval are real and authorized.
 
-**Post-merge verification:** Security/dependency governance passed on merge commit `c7e587585fad5b26b573fa2c9469ce8915097960` in run [38954515716](https://github.com/LloydCoder/web-temify/actions/runs/38954515716). Post-merge Foundation CI run [38954515697](https://github.com/LloydCoder/web-temify/actions/runs/38954515697) was still running when this record was prepared; update this record with its final outcome before treating the post-merge gate as complete.
+**Post-merge verification:** Foundation CI passed on merge commit `c7e587585fad5b26b573fa2c9469ce8915097960` in run [38954515697](https://github.com/LloydCoder/web-temify/actions/runs/38954515697). Security/dependency governance also passed on that merge commit in run [38954515716](https://github.com/LloydCoder/web-temify/actions/runs/38954515716).
 
 ## Non-claims / release gates
 
