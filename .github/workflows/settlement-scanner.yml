@@ -47,7 +47,21 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          curl --fail --silent --show-error http://127.0.0.1:8088/healthz
+          # Compose starts the gateway before its HTTP listener is guaranteed to accept requests.
+          health=0
+          for attempt in $(seq 1 30); do
+            if curl --connect-timeout 2 --max-time 5 --fail --silent http://127.0.0.1:8088/healthz >/dev/null; then
+              health=1
+              break
+            fi
+            sleep 2
+          done
+          if [ "$health" -ne 1 ]; then
+            echo "Scanner gateway did not become live."
+            docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml logs --no-color
+            exit 1
+          fi
+
           ready=0
           for attempt in $(seq 1 240); do
             code="$(curl --silent --output /tmp/scanner-ready.json --write-out '%{http_code}' http://127.0.0.1:8088/readyz || true)"
