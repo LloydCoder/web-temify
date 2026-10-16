@@ -53,7 +53,7 @@ Define a provider-neutral settlement evidence contract and idempotent reconcilia
 
 Admin authorization and audit trail; independent rights review; bounded audit explorer; support cases; listing moderation/takedowns/appeals; financial reconciliation and exception queues; disputes/chargebacks; audited sensitive actions; dual approval for high-risk financial actions; safe break-glass policy. Metrics must distinguish gross orders, refunds, provider settlement, platform fees, seller payable and tax liabilities.
 
-**Current execution:** Phase 5E1 is underway on a separate branch for authenticated listing-moderation case intake and audited admin transitions. It is not complete until exact-head CI and forensic review pass; actual listing suppression and creator appeals remain separate required slices. Phase 4D2 production/provider launch gates remain fail-closed but do not block this independent admin workflow.
+**Current execution:** Phase 5E1 authenticated listing-moderation case intake and audited admin transitions is merged (PR #71). Phase 5E2 now implements explicit listing suppression and creator appeals on a follow-up branch; its exact-head CI and forensic review are pending. Phase 4D2 production/provider launch gates remain fail-closed but do not block independent admin/moderation work.
 
 ### Phase 6 — Seller system and product factory
 
