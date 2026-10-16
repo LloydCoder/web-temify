@@ -1,7 +1,16 @@
 import { notFound } from "next/navigation";
 import { getAdminContext } from "@/server/admin/authorization";
+import { ModerationCaseActionForm } from "./ModerationCaseActionForm";
 
 export const dynamic = "force-dynamic";
+
+type ResolutionCode =
+  | "listing_review_required"
+  | "rights_review_required"
+  | "security_review_required"
+  | "no_violation_found"
+  | "duplicate_report"
+  | "insufficient_evidence";
 
 type ModerationCase = {
   id: string;
@@ -10,7 +19,7 @@ type ModerationCase = {
   reason_code: string;
   description: string;
   status: string;
-  resolution_code: string | null;
+  resolution_code: ResolutionCode | null;
   created_at: string;
 };
 
@@ -101,6 +110,11 @@ export default async function AdminModerationPage() {
                   </div>
                 )}
               </dl>
+              <ModerationCaseActionForm
+                caseId={item.id}
+                status={item.status}
+                resolutionCode={item.resolution_code}
+              />
             </li>
           ))}
         </ul>
