@@ -298,8 +298,8 @@ Least-privilege admin controls, moderation queues, support, audit review, financ
 
 **Status: IN PROGRESS.** This is the first bounded slice for moderation operations, not a full takedown/appeal workflow.
 
-- [ ] Apply the new moderation case/event migration from an empty database and pass schema lint and pgTAP.
-- [ ] Pass exact-head Foundation CI, E2E, production build, formatting and security/dependency governance.
+- [x] Apply the new moderation case/event migration from an empty database and pass schema lint and pgTAP (Foundation CI run [38888000913](https://github.com/LloydCoder/web-temify/actions/runs/38888000913)).
+- [x] Pass Foundation CI, E2E, production build, formatting and security/dependency governance on implementation head `7135c9694cc9c401a28f4f0415d1d70fcc4bf392` (runs [38888000913](https://github.com/LloydCoder/web-temify/actions/runs/38888000913), [38888000681](https://github.com/LloydCoder/web-temify/actions/runs/38888000681)); re-run after any subsequent code changes.
 - [ ] Review the product-detail report form, admin queue/action controls, authenticated report intake/idempotency, database-owned transitions, append-only event history, and transactional audit evidence.
 - [ ] Add enforcement that suppresses public visibility when a reviewed takedown is required; verify every public read path and RLS policy.
 - [ ] Implement creator appeal/counter-notice intake, independent review, evidence retention, deadlines, and audited outcomes before treating moderation as complete.
