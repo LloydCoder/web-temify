@@ -65,13 +65,13 @@ jobs:
           fi
 
           ready=0
-          for attempt in $(seq 1 300); do
+          for attempt in $(seq 1 120); do
             code="$(curl --silent --output /tmp/scanner-ready.json --write-out '%{http_code}' http://127.0.0.1:8088/readyz || true)"
             if [ "$code" = "200" ]; then
               ready=1
               break
             fi
-            if [ "$((attempt % 60))" -eq 0 ]; then
+            if [ "$((attempt % 12))" -eq 0 ]; then
               echo "ClamAV is not ready after $((attempt * 5 / 60)) minutes; collecting signature-update diagnostics."
               docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml logs --no-color --tail=80 clamav
               if [ -f /tmp/scanner-ready.json ]; then cat /tmp/scanner-ready.json; fi
@@ -79,7 +79,7 @@ jobs:
             sleep 5
           done
           if [ "$ready" -ne 1 ]; then
-            echo "Scanner did not become ready with fresh signatures within 20 minutes."
+            echo "Scanner did not become ready with fresh signatures within 10 minutes."
             docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml logs --no-color
             exit 1
           fi
