@@ -93,6 +93,12 @@ insert into public.payment_webhook_events (
    'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
   ('c1000000-0000-4000-8000-000000000109', 'sandbox', 'phase5i-event-lost-after-close-002',
    'charge.dispute.closed', repeat('3', 64), true,
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
+  ('c1000000-0000-4000-8000-000000000110', 'sandbox', 'phase5i-event-open-over-amount',
+   'charge.dispute.created', repeat('4', 64), true,
+   'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'),
+  ('c1000000-0000-4000-8000-000000000111', 'sandbox', 'phase5i-event-lost-new-after-close-002',
+   'charge.dispute.closed', repeat('5', 64), true,
    'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101');
 
 
@@ -177,7 +183,7 @@ select throws_ok(
 );
 select throws_ok(
   $sql$select * from public.apply_verified_payment_dispute_event(
-    'sandbox', 'phase5i-event-open-001', 'sandbox-dispute-001',
+    'sandbox', 'phase5i-event-open-over-amount', 'sandbox-dispute-over-amount',
     'charge.dispute.created', 'opened',
     'a1000000-0000-4000-8000-000000000101',
     'b1000000-0000-4000-8000-000000000101',
@@ -287,7 +293,7 @@ select lives_ok(
 );
 select throws_ok(
   $sql$select * from public.apply_verified_payment_dispute_event(
-    'sandbox', 'phase5i-event-lost-002', 'sandbox-dispute-002',
+    'sandbox', 'phase5i-event-lost-new-after-close-002', 'sandbox-dispute-002',
     'charge.dispute.closed', 'lost',
     'a1000000-0000-4000-8000-000000000101',
     'b1000000-0000-4000-8000-000000000101',
