@@ -21,7 +21,7 @@ test("creator appeal center reveals no case data before sign-in", async ({
 test("creator appeal intake requires authentication after same-origin validation", async ({
   page,
 }) => {
-  await page.goto("/creator/moderation-appeals");
+  await page.goto("http://localhost:3000/creator/moderation-appeals");
   const requestUrl = new URL("/api/moderation/appeals", page.url());
   const response = await page.request.post(requestUrl.toString(), {
     headers: {
