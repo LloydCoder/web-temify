@@ -1,5 +1,5 @@
 begin;
-select plan(30);
+select plan(31);
 
 select has_table('public', 'payment_disputes', 'private payment dispute records exist');
 select has_table('public', 'payment_dispute_events', 'payment dispute event history exists');
@@ -142,6 +142,19 @@ select throws_ok(
   'dispute amount cannot exceed the original successful payment'
 );
 
+select throws_ok(
+  $sql$select * from public.apply_verified_payment_dispute_event(
+    'sandbox', 'phase5i-event-close-002', 'sandbox-dispute-002',
+    'charge.dispute.closed', 'opened',
+    'a1000000-0000-4000-8000-000000000101',
+    'b1000000-0000-4000-8000-000000000101',
+    2500, 'USD', null, 'closed',
+    'd1000000-0000-4000-8000-000000000114'
+  )$sql$,
+  '22023',
+  'payment dispute event metadata failed validation',
+  'a terminal provider event type cannot be mapped to an open action'
+);
 select lives_ok(
   $sql$select * from public.apply_verified_payment_dispute_event(
     'sandbox', 'phase5i-event-needs-evidence-001', 'sandbox-dispute-001',
