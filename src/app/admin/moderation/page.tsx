@@ -1,8 +1,8 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getAdminContext } from "@/server/admin/authorization";
 
 export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
 
 type ModerationCase = {
   id: string;
@@ -12,11 +12,7 @@ type ModerationCase = {
   description: string;
   status: string;
   resolution_code: string | null;
-  resolution_note: string | null;
   created_at: string;
-  updated_at: string;
-  decided_by: string | null;
-  decided_at: string | null;
 };
 
 const reasonLabels: Record<string, string> = {
@@ -29,112 +25,105 @@ const reasonLabels: Record<string, string> = {
 };
 
 export default async function AdminModerationPage() {
-  const adminContext = await getAdminContext("listing_moderation_queue");
-  if (!adminContext) {
-    return (
-      <main className="mx-auto max-w-4xl px-6 py-12">
-        <h1 className="text-2xl font-semibold">
-          Moderation queue unavailable
-        </h1>
-        <p className="mt-3 text-sm">
-          An authorized administrator session is required.
-        </p>
-      </main>
-    );
-  }
+  const context = await getAdminContext("listing_moderation_queue");
+  if (!context) notFound();
 
-  const { data, error } = await adminContext.admin
+  const { data, error } = await context.admin
     .from("listing_moderation_cases")
     .select(
-      "id,product_id,reporter_id,reason_code,description,status,resolution_code,resolution_note,created_at,updated_at,decided_by,decided_at",
+      "id,product_id,reporter_id,reason_code,description,status,resolution_code,created_at",
     )
     .order("created_at", { ascending: true })
     .limit(50);
 
-  if (error) {
-    return (
-      <main className="mx-auto max-w-4xl px-6 py-12">
-        <h1 className="text-2xl font-semibold">
-          Moderation queue unavailable
-        </h1>
-        <p className="mt-3 text-sm">
-          The queue could not be loaded. No underlying database details are
-          exposed.
-        </p>
-      </main>
-    );
-  }
-
-  const cases = (data ?? []) as ModerationCase[];
   return (
-    <main className="mx-auto max-w-6xl px-6 py-10">
-      <nav className="mb-6 text-sm">
+    <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-10">
+      <nav className="text-sm">
         <Link href="/admin" className="underline">
           Admin console
         </Link>{" "}
         / Moderation
       </nav>
-      <header className="mb-8">
-        <h1 className="text-3xl font-semibold">Listing moderation</h1>
-        <p className="mt-2 max-w-3xl text-sm text-neutral-600">
-          Review reported listings with reason-coded, audited case transitions.
-          This queue records moderation decisions; it does not itself unpublish
-          or takedown a listing. Use the rights-review and security workflows
-          for the required enforcement action.
+      <header className="space-y-2">
+        <p className="text-sm text-muted-foreground">Operations · Phase 5E1</p>
+        <h1 className="text-3xl font-semibold tracking-tight">
+          Listing moderation
+        </h1>
+        <p className="max-w-3xl text-muted-foreground">
+          Review reports with reason-coded, audited case transitions. This
+          queue records moderation decisions; it does not itself unpublish a
+          listing. Public takedown enforcement and creator appeals remain
+          separate required workflows.
         </p>
       </header>
-      {cases.length === 0 ? (
-        <section className="rounded-lg border p-6">
-          <h2 className="font-medium">No reports yet</h2>
-          <p className="mt-1 text-sm text-neutral-600">
-            New authenticated reports will appear here.
-          </p>
-        </section>
+      {error ? (
+        <p role="status" className="rounded-lg border p-4 text-sm">
+          The moderation queue is temporarily unavailable. Database details are
+          not exposed.
+        </p>
+      ) : !data?.length ? (
+        <p className="rounded-lg border p-4 text-sm text-muted-foreground">
+          No moderation reports have been submitted.
+        </p>
       ) : (
-        <ol className="space-y-4">
-          {cases.map((item) => (
-            <li key={item.id} className="rounded-lg border p-5">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <h2 className="font-semibold">
-                  {reasonLabels[item.reason_code] ?? "Report"}
-                </h2>
-                <span className="rounded border px-2 py-1 text-xs">
-                  {item.status.replaceAll("_", " ")}
+        <ul className="grid gap-4 md:grid-cols-2">
+          {(data as ModerationCase[]).map((moderationCase) => (
+            <li key={moderationCase.id} className="rounded-xl border p-5">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                    {reasonLabels[moderationCase.reason_code] ?? "Report"}
+                  </p>
+                  <h2 className="mt-1 text-lg font-semibold">
+                    {moderationCase.status.replaceAll("_", " ")}
+                  </h2>
+                </div>
+                <span className="rounded-full border px-3 py-1 text-xs">
+                  {moderationCase.status.replaceAll("_", " ")}
                 </span>
               </div>
               <p className="mt-3 whitespace-pre-wrap text-sm">
-                {item.description}
+                {moderationCase.description}
               </p>
-              <dl className="mt-4 grid gap-2 text-xs text-neutral-600 sm:grid-cols-2">
+              <dl className="mt-3 space-y-1 text-xs text-muted-foreground">
                 <div>
-                  <dt className="font-medium">Case</dt>
-                  <dd className="break-all">{item.id}</dd>
+                  <dt className="inline">Case: </dt>
+                  <dd className="inline break-all">{moderationCase.id}</dd>
                 </div>
                 <div>
-                  <dt className="font-medium">Product ID</dt>
-                  <dd className="break-all">{item.product_id}</dd>
+                  <dt className="inline">Product: </dt>
+                  <dd className="inline break-all">
+                    {moderationCase.product_id}
+                  </dd>
                 </div>
                 <div>
-                  <dt className="font-medium">Reporter ID</dt>
-                  <dd className="break-all">{item.reporter_id}</dd>
+                  <dt className="inline">Reporter: </dt>
+                  <dd className="inline break-all">
+                    {moderationCase.reporter_id}
+                  </dd>
                 </div>
                 <div>
-                  <dt className="font-medium">Received</dt>
-                  <dd>{new Date(item.created_at).toISOString()}</dd>
+                  <dt className="inline">Received: </dt>
+                  <dd className="inline">
+                    {new Date(moderationCase.created_at).toLocaleString()}
+                  </dd>
                 </div>
+                {moderationCase.resolution_code && (
+                  <div>
+                    <dt className="inline">Resolution: </dt>
+                    <dd className="inline">
+                      {moderationCase.resolution_code.replaceAll("_", " ")}
+                    </dd>
+                  </div>
+                )}
               </dl>
-              {item.resolution_code && (
-                <p className="mt-3 text-sm">
-                  Resolution: {item.resolution_code.replaceAll("_", " ")}
-                </p>
-              )}
             </li>
           ))}
-        </ol>
+        </ul>
       )}
-      <p className="mt-8 text-xs text-neutral-500">
-        Showing at most 50 oldest cases. Actions require the audited admin
-        transition API and a reasoned decision.
+      <p className="text-xs text-muted-foreground">
+        Showing at most 50 oldest cases. Decisions require the audited admin
+        transition API and a reasoned outcome.
       </p>
     </main>
   );
