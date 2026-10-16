@@ -134,18 +134,19 @@ describe("Phase 5E2 moderation API routes", () => {
   ])(
     "maps creator appeal RPC error %s to a safe response",
     async (code, status, error) => {
-    mocks.rpc.mockResolvedValueOnce({
-      data: null,
-      error: { code, message: "sensitive database detail" },
-    });
-    const response = await submitAppeal(
-      request("/api/moderation/appeals", creatorAppealBody),
-    );
-    expect(response.status).toBe(status);
-    const body = await response.json();
-    expect(body.error).toBe(error);
-    expect(JSON.stringify(body)).not.toContain("sensitive database detail");
-  });
+      mocks.rpc.mockResolvedValueOnce({
+        data: null,
+        error: { code, message: "sensitive database detail" },
+      });
+      const response = await submitAppeal(
+        request("/api/moderation/appeals", creatorAppealBody),
+      );
+      expect(response.status).toBe(status);
+      const body = await response.json();
+      expect(body.error).toBe(error);
+      expect(JSON.stringify(body)).not.toContain("sensitive database detail");
+    },
+  );
 
   it("requires an admin context and rejects malformed takedown requests before the RPC", async () => {
     mocks.getAdminContext.mockResolvedValueOnce(null);
@@ -193,19 +194,20 @@ describe("Phase 5E2 moderation API routes", () => {
   ])(
     "maps takedown RPC error %s safely",
     async (code, status, error) => {
-    mocks.rpc.mockResolvedValueOnce({
-      data: null,
-      error: { code, message: "sensitive database detail" },
-    });
-    const response = await applyTakedown(
-      request(`/api/admin/moderation-cases/${caseId}/takedown`, {
-        note: "Apply the reviewed rights takedown to this listing.",
-      }),
-      { params: Promise.resolve({ caseId }) },
-    );
-    expect(response.status).toBe(status);
-    expect((await response.json()).error).toBe(error);
-  });
+      mocks.rpc.mockResolvedValueOnce({
+        data: null,
+        error: { code, message: "sensitive database detail" },
+      });
+      const response = await applyTakedown(
+        request(`/api/admin/moderation-cases/${caseId}/takedown`, {
+          note: "Apply the reviewed rights takedown to this listing.",
+        }),
+        { params: Promise.resolve({ caseId }) },
+      );
+      expect(response.status).toBe(status);
+      expect((await response.json()).error).toBe(error);
+    },
+  );
 
   it("validates and forwards appeal transitions through the admin RPC", async () => {
     const invalid = await transitionAppeal(
