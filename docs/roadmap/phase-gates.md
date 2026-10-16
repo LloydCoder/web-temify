@@ -371,6 +371,21 @@ Approved manual adjustments remain requests only; no journal entries or provider
 
 The UI's evidence digest field is a reference only; it does not upload or validate an evidence object. This candidate does not post manual adjustments to the journal, run a provider chargeback workflow, or move money. Phase 5 remains incomplete.
 
+### Phase 5I — Verified payment-dispute state machine (implementation candidate; CI pending)
+
+- [x] Add private dispute records linked to order, payment attempt, and a signature-verified webhook event.
+- [x] Require matching provider, webhook event type, order, payment attempt, amount and currency before applying a transition.
+- [x] Add idempotent event replay protection, immutable event history, private RLS/grants, and audit evidence.
+- [x] Add state transitions for opened, evidence-needed, evidence-submitted, won, lost, and closed outcomes.
+- [x] Add pgTAP coverage for authorization, mismatched/missing verified events, replay conflicts, financial bounds, state transitions, terminal outcomes, and immutable history.
+- [ ] Pass Foundation CI and Security/dependency governance on the exact PR head and merge commit.
+- [ ] Map each enabled provider's signed webhook payloads to normalized dispute actions and add provider-specific signature fixtures.
+- [ ] Add provider evidence upload/submission, deadline monitoring/alerts, and tested integration against the selected provider sandbox.
+- [ ] Integrate dispute outcomes with refund/journal policy and payout holds only after separate accounting review.
+- [ ] Approve dispute handling policy, evidence retention, escalation owner, and incident response.
+
+This candidate adds the database state machine only. It does not enable a live provider adapter; the current payment webhook route is sandbox-only. Phase 5 remains incomplete.
+
 ## Phase 6 — Seller system and product factory
 
 **Status: NOT COMPLETE.** This phase builds the trusted supply side and a repeatable, evidence-backed product release pipeline. The dedicated source monorepo is [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products); its inventory is planning input, not evidence that products have been built or released. Keep product source code, manifests, build/test contracts and immutable release evidence in that repository; keep commercial listing state and marketplace transactions in this repository.
