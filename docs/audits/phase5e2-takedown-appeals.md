@@ -1,6 +1,6 @@
 # Phase 5E2 forensic audit — listing takedown enforcement and creator appeals
 
-**Disposition:** IMPLEMENTED ON BRANCH; CI AND REVIEW PENDING. Do not treat this slice as accepted until the final PR head passes the full workflow.
+**Disposition:** PASS for the Phase 5E2 code and CI scope. PR #72 is merged as `c7e587585fad5b26b573fa2c9469ce8915097960`. This is not Phase 5 completion or production moderation readiness.
 
 ## Scope implemented
 
@@ -20,13 +20,17 @@
 - Case and appeal histories are append-only; all state transitions and policy approval write audit evidence transactionally.
 - Public catalogue and detail pages filter to `published` products. Takedown changes the product status to `archived`, and the Phase 5E2 migration now locks/checks that product row when consuming an already-issued download grant so a stale grant cannot bypass the takedown.
 
-## Verification required
+## Verification record
 
-- [ ] Full Foundation CI on the exact PR head: frozen install, typecheck, lint, formatting, empty-database migration reset, schema/policy lint, all database/RLS tests, E2E, two-session reconciliation test, and production build.
-- [ ] Security/dependency governance passes on the same head.
-- [ ] Review SQL function grants, creator ownership filter, case transition preconditions, deadline policy snapshots, and conditional republishing.
-- [ ] Verify route behavior for unauthenticated, non-owner, non-admin, invalid body, replay/conflict, and stale state.
-- [ ] Record residual legal/operational approval requirements before production rollout.
+- [x] Exact PR-head Foundation CI passed on `ef4611f6e3d57edb97352124661286c2d30efbbf`: [run 38898002442](https://github.com/LloydCoder/web-temify/actions/runs/38898002442). This included frozen install, typecheck, lint, formatting, empty-database migrations, schema/policy lint, database/RLS tests, E2E, two-session settlement reconciliation, and production build.
+- [x] Exact PR-head Security/dependency governance passed on the same SHA: [run 38898002455](https://github.com/LloydCoder/web-temify/actions/runs/38898002455).
+- [x] Reviewed SQL grants, moderator/admin role checks, creator ownership filtering, case/enforcement/appeal transitions, idempotency locking, policy snapshots, append-only events, and conditional republishing. The download-consumption override preserves Phase 4B's order → entitlement → grant lock order, then share-locks the product so takedown and consumption serialize.
+- [x] pgTAP covers direct-table privileges, database role enforcement, eligible/ineligible case states, creator ownership, replay/conflict behavior, appeal decisions, audit history, and conditional restoration. E2E covers unauthenticated creator/admin access and mutation denial.
+- [ ] No authenticated HTTP-level route test currently exercises the complete creator/admin flows or malformed-body/error mapping; those wrappers were reviewed, while their database invariants are tested through pgTAP. Add route-level coverage before expanding these flows.
+- [ ] Production Vercel preview for the exact final PR head was not verified: the deployment check hit the account's daily API deployment limit. The preceding app-code deployment was READY at `d380e86604314c46106de0cec697ccd71f005ab0`; the final PR commit changed only the E2E request host. Production environment configuration and moderation staffing remain separate gates.
+- [ ] Operational/legal policy approval and notification/escalation arrangements remain unverified. Do not assign appeal deadlines until the recorded legal review and internal policy approval are real and authorized.
+
+**Post-merge verification:** Foundation CI passed on merge commit `c7e587585fad5b26b573fa2c9469ce8915097960` in run [38954515697](https://github.com/LloydCoder/web-temify/actions/runs/38954515697). Security/dependency governance also passed on that merge commit in run [38954515716](https://github.com/LloydCoder/web-temify/actions/runs/38954515716).
 
 ## Non-claims / release gates
 

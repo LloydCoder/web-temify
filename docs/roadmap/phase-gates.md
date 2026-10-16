@@ -306,17 +306,19 @@ Least-privilege admin controls, moderation queues, support, audit review, financ
 
 Forensic record: `docs/audits/phase5e-moderation-cases.md`. The current case queue does not itself unpublish a product or implement appeals. Phase 5 remains incomplete; live payment/provider processing stays disabled.
 
-### Phase 5E2 — Listing takedown enforcement and creator appeals (CI pending)
+### Phase 5E2 — Listing takedown enforcement and creator appeals (merged; implementation gate passed)
 
-**Status: IN PROGRESS.** This slice follows the merged Phase 5E1 report/case workflow. It is not a Phase 5 exit pass.
+**Status: PASS for the tested implementation scope; NOT a Phase 5 exit pass or production moderation approval.** PR [#72](https://github.com/LloydCoder/web-temify/pull/72) merged as `c7e587585fad5b26b573fa2c9469ce8915097960`.
 
 - [x] Add database-owned takedown enforcement with admin-role validation, eligible case-state checks, transactional product archival, case-event history, and audit evidence.
 - [x] Add creator appeal intake bound to product ownership, idempotency, one appeal per enforcement, and private append-only appeal events.
 - [x] Add audited appeal review decisions; reversal restores publication only when independent rights verification and released-artifact evidence still pass.
 - [x] Add configurable internal response target with approval note and legal-review reference. No deadline is assigned before a policy is approved; the target is an internal SLA, not a statutory deadline.
-- [ ] Pass full Foundation CI and Security/dependency governance on the exact reviewed PR head.
-- [ ] Review the migration, route authorization, creator scoping, append-only event history, idempotency, appeal deadline snapshots, and conditional publication restoration.
-- [ ] Verify operational/legal policy approval and notification/escalation arrangements before production launch.
+- [x] Exact-head Foundation CI passed on `ef4611f6e3d57edb97352124661286c2d30efbbf`: [run 38898002442](https://github.com/LloydCoder/web-temify/actions/runs/38898002442).
+- [x] Exact-head Security/dependency governance passed on the same SHA: [run 38898002455](https://github.com/LloydCoder/web-temify/actions/runs/38898002455).
+- [x] Review migration grants, role/state checks, creator scoping, immutable events, idempotency, response-deadline snapshots, conditional republishing, and download lock ordering.
+- [ ] Add authenticated route-level tests for creator/admin flows and invalid-body/error mapping; current E2E covers unauthenticated denial and pgTAP covers the database invariants.
+- [ ] Verify production preview/configuration, operational/legal policy approval, and notification/escalation arrangements before production rollout.
 
 Forensic record: `docs/audits/phase5e2-takedown-appeals.md`. Keep all financial/provider processing disabled. Phase 5 remains incomplete until its other admin, support, trust, dispute, and dual-approval gates are separately satisfied.
 
