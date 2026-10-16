@@ -91,7 +91,11 @@ begin
     or new.currency is distinct from old.currency
     or new.opened_at is distinct from old.opened_at
     or new.created_at is distinct from old.created_at
-    or old.status in ('won', 'lost', 'closed')
+    or old.status = 'closed'
+    or (
+      old.status in ('won', 'lost')
+      and not (new.status = 'closed' and new.closed_at is not null)
+    )
   then
     raise exception using errcode = '55000', message = 'payment dispute identity is immutable or already terminal';
   end if;
@@ -170,6 +174,10 @@ begin
     if dispute.provider_dispute_id <> p_provider_dispute_id
       or prior_event.event_action <> p_event_action
       or prior_event.provider_event_type <> p_event_type
+      or dispute.order_id <> p_order_id
+      or dispute.payment_attempt_id <> p_payment_attempt_id
+      or dispute.amount_minor <> p_amount_minor
+      or dispute.currency <> p_currency
     then
       raise exception using errcode = '23505', message = 'verified provider event was reused with conflicting dispute data';
     end if;
