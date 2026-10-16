@@ -131,11 +131,15 @@ export default async function ProductDetailPage({
             </a>
           )}
         </div>
-        <section className="mt-8 space-y-3" aria-labelledby="report-listing-title">
+        <section
+          className="mt-8 space-y-3"
+          aria-labelledby="report-listing-title"
+        >
           <h2 id="report-listing-title">Report this listing</h2>
           <p className="text-sm text-muted-foreground">
             Report a potential rights, security, privacy, or policy concern for
-            review. Submitting a report does not automatically remove the listing.
+            review. Submitting a report does not automatically remove the
+            listing.
           </p>
           <ReportListingForm productId={product.id} />
         </section>
