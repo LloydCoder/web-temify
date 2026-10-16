@@ -3,10 +3,6 @@
     {
       "path": "/api/internal/settlements/evidence-retention",
       "schedule": "15 3 * * *"
-    },
-    {
-      "path": "/api/internal/support-notifications",
-      "schedule": "*/15 * * * *"
     }
   ]
 }
