@@ -161,10 +161,31 @@ returns trigger
 language plpgsql
 set search_path = ''
 as $function$
+declare
+  control_request public.financial_control_requests%rowtype;
 begin
   if tg_op = 'DELETE' then
     raise exception using errcode = '55000', message = 'payout holds cannot be deleted';
   end if;
+
+  if tg_op = 'INSERT' then
+    select * into control_request
+    from public.financial_control_requests
+    where id = new.source_request_id;
+    if not found or control_request.request_type <> 'payout_hold'
+      or control_request.status <> 'approved'
+      or control_request.seller_id <> new.seller_id
+      or control_request.amount_minor <> new.amount_minor
+      or control_request.currency <> new.currency
+      or control_request.evidence_sha256 <> new.evidence_sha256
+      or control_request.reason <> new.reason
+      or new.released_at is not null or new.release_request_id is not null
+    then
+      raise exception using errcode = '55000', message = 'payout hold requires a matching two-person-approved request';
+    end if;
+    return new;
+  end if;
+
   if new.id is distinct from old.id
     or new.source_request_id is distinct from old.source_request_id
     or new.seller_id is distinct from old.seller_id
@@ -180,12 +201,25 @@ begin
   then
     raise exception using errcode = '55000', message = 'payout hold may only transition once from active to released';
   end if;
+
+  select * into control_request
+  from public.financial_control_requests
+  where id = new.release_request_id;
+  if not found or control_request.request_type <> 'payout_hold_release'
+    or control_request.status <> 'approved'
+    or control_request.target_hold_id <> old.id
+    or control_request.seller_id <> old.seller_id
+    or control_request.amount_minor <> old.amount_minor
+    or control_request.currency <> old.currency
+  then
+    raise exception using errcode = '55000', message = 'payout hold release requires a matching two-person-approved request';
+  end if;
   return new;
 end;
 $function$;
 revoke all on function public.guard_seller_payout_hold() from public, anon, authenticated, service_role;
 create trigger seller_payout_hold_guard
-before update or delete on public.seller_payout_holds
+before insert or update or delete on public.seller_payout_holds
 for each row execute function public.guard_seller_payout_hold();
 
 create function public.create_financial_control_request(
@@ -210,9 +244,10 @@ declare
   existing_request public.financial_control_requests%rowtype;
   new_id uuid;
   target_hold public.seller_payout_holds%rowtype;
+  seller_net numeric;
 begin
   if p_actor_id is null or p_seller_id is null or p_request_id is null
-    or p_request_type not in ('manual_adjustment', 'negative_balance_review', 'payout_hold', 'payout_hold_release')
+    or p_request_type is null or p_request_type not in ('manual_adjustment', 'negative_balance_review', 'payout_hold', 'payout_hold_release')
     or p_amount_minor is null or p_amount_minor <= 0
     or p_currency is null or p_currency !~ '^[A-Z]{3}$'
     or p_evidence_sha256 is null or p_evidence_sha256 !~ '^[a-f0-9]{64}$'
@@ -228,6 +263,28 @@ begin
   end if;
   if not exists (select 1 from auth.users u where u.id = p_seller_id) then
     raise exception using errcode = '42501', message = 'financial control seller does not exist';
+  end if;
+
+  if p_order_id is not null and not exists (
+    select 1 from public.orders o
+    join public.order_items oi on oi.order_id = o.id
+    where o.id = p_order_id and oi.seller_id = p_seller_id and o.currency = p_currency
+  ) then
+    raise exception using errcode = '22023', message = 'financial control order must belong to the seller and currency';
+  end if;
+
+  if p_request_type = 'negative_balance_review' then
+    select coalesce(sum(case when e.side = 'credit' then e.amount_minor else -e.amount_minor end), 0)
+      into seller_net
+    from public.financial_journal_entries e
+    join public.financial_journal_batches b on b.id = e.batch_id
+    where e.account = 'seller_payable'
+      and e.seller_id = p_seller_id
+      and e.currency = p_currency
+      and b.status = 'posted';
+    if seller_net >= 0 or abs(seller_net) <> p_amount_minor then
+      raise exception using errcode = '22023', message = 'negative-balance review must match the current posted seller-payable deficit';
+    end if;
   end if;
 
   if p_request_type = 'payout_hold_release' then
@@ -303,7 +360,7 @@ declare
   hold_id uuid;
 begin
   if p_request_id is null or p_actor_id is null or p_request_trace_id is null
-    or p_decision not in ('approve', 'reject')
+    or p_decision is null or p_decision not in ('approve', 'reject')
     or p_note is null or char_length(btrim(p_note)) not between 10 and 1000
   then
     raise exception using errcode = '22023', message = 'financial control review failed validation';
