@@ -6,6 +6,10 @@ services:
       - "3310"
     networks:
       - scanner-backend
+      # ClamAV needs outbound HTTPS to refresh signature databases. Keep that
+      # egress isolated to the engine; the API remains on the internal backend
+      # and neither service publishes ClamAV's TCP port.
+      - scanner-egress
 
   scanner-api:
     build:
@@ -42,4 +46,6 @@ networks:
   scanner-backend:
     internal: true
   scanner-edge:
+    driver: bridge
+  scanner-egress:
     driver: bridge
