@@ -81,7 +81,7 @@ jobs:
           grep -q "\"sha256\":\"$clean_digest\"" /tmp/scanner-clean.json
 
           # EICAR is a harmless industry-standard antivirus test signature, not live malware.
-          printf '%s' 'X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > /tmp/scanner-eicar.txt
+          printf '%s' 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > /tmp/scanner-eicar.txt
           eicar_digest="$(sha256sum /tmp/scanner-eicar.txt | cut -d ' ' -f 1)"
           eicar_status="$(curl --silent --show-error --max-time 30 --output /tmp/scanner-eicar.json --write-out '%{http_code}' \
             -H "Authorization: Bearer ${SCANNER_BEARER_TOKEN}" \
