@@ -9,7 +9,7 @@
 - Service-only claim/finish RPCs use bounded batches, row-lock skipping, a ten-minute lease, a five-attempt ceiling, exponential retry backoff, and a request-ID lease check.
 - Delivery failures create an audit event. The worker sends short text-only messages through Resend, resolves requester addresses from Supabase Auth by the stored user ID, and uses deployment configuration for the operations address.
 - The internal worker endpoint requires a 32-character-or-longer bearer token, uses a 10-job batch, returns no-store responses, and exposes only generic delivery error codes.
-- Vercel Cron is configured to invoke the worker every 15 minutes. This declaration alone does not prove the production token, sender domain, Resend key, operations mailbox, Supabase service key, cron execution, or alerting are configured.
+- A GitHub Actions scheduled workflow is configured to invoke the worker every 15 minutes, avoiding the Vercel Hobby plan's cron-frequency limitation. Scheduled workflows run only from the default branch, and the repository secret must be configured before delivery can work. This declaration alone does not prove the production token, sender domain, Resend key, operations mailbox, Supabase service key, cron execution, or alerting are configured.
 
 ## Required runtime configuration
 
