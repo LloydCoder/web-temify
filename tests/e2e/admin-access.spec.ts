@@ -49,6 +49,7 @@ test("admin audit and rights-review pages deny unauthenticated visitors", async 
     "/admin/reviews",
     "/admin/settlements",
     "/admin/support",
+    "/admin/financial-controls",
   ]) {
     await page.goto(route);
     await expect(page.getByText("404 — Not found")).toBeVisible();
@@ -57,7 +58,7 @@ test("admin audit and rights-review pages deny unauthenticated visitors", async 
     ).toBeVisible();
     await expect(
       page.getByRole("heading", {
-        name: /audit explorer|product rights review|settlement exceptions|support case queue/i,
+        name: /audit explorer|product rights review|settlement exceptions|support case queue|financial control requests/i,
       }),
     ).toHaveCount(0);
     await expect(
@@ -135,6 +136,39 @@ test("admin support-case mutation denies unauthenticated visitors", async ({
   );
   expect(response.status()).toBe(404);
   await expect(response.json()).resolves.toEqual({ error: "not_found" });
+});
+
+test("financial control API denies unauthenticated queue and mutation access", async ({
+  page,
+}) => {
+  const queue = await page.request.get("/api/admin/financial-controls");
+  expect(queue.status()).toBe(404);
+  await expect(queue.json()).resolves.toEqual({ error: "not_found" });
+
+  const create = await page.request.post("/api/admin/financial-controls", {
+    headers: { "Content-Type": "application/json" },
+    data: {
+      requestType: "manual_adjustment",
+      sellerId: "a2000000-0000-4000-8000-000000000002",
+      amountMinor: "2500",
+      currency: "USD",
+      evidenceSha256: "a".repeat(64),
+      reason: "Unauthenticated request must not be created.",
+      idempotencyKey: "phase5g-unauthenticated-test-0001",
+    },
+  });
+  expect(create.status()).toBe(404);
+  await expect(create.json()).resolves.toEqual({ error: "not_found" });
+
+  const review = await page.request.post(
+    "/api/admin/financial-controls/a3000000-0000-4000-8000-000000000003/review",
+    {
+      headers: { "Content-Type": "application/json" },
+      data: { decision: "approve", note: "Unauthenticated approval attempt." },
+    },
+  );
+  expect(review.status()).toBe(404);
+  await expect(review.json()).resolves.toEqual({ error: "not_found" });
 });
 
 test("customer support-case history requires authentication", async ({

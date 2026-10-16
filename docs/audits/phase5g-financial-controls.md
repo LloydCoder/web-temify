@@ -18,8 +18,8 @@ This migration does **not** post a financial journal batch, debit/credit a ledge
 
 ## Verification required
 
-- [ ] Foundation CI: migration reset, schema lint, pgTAP/RLS, E2E, formatting, typecheck, lint, and production build on exact PR head.
-- [ ] Security/dependency governance on the exact PR head.
+- [x] Foundation CI: migration reset, schema lint, pgTAP/RLS, E2E, formatting, typecheck, lint, and production build passed on exact PR head `89633d471eb7003f579cf732544b1231c1c1fe11`.
+- [x] Security/dependency governance passed on the same exact PR head.
 - [ ] Adversarial tests for concurrent idempotent creates, duplicate approvers, rejection after one approval, repeated hold-release attempts, incorrect seller/order links, negative-balance drift, and audit rollback.
 - [ ] Add a restricted admin API/UI and operational evidence display before exposing these workflows to staff.
 - [ ] Keep live payout execution disabled until the payout service enforces active holds and checks available seller payable against the journal.

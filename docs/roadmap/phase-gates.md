@@ -323,9 +323,9 @@ Forensic record: `docs/audits/phase5e-moderation-cases.md`. The current case que
 
 Forensic record: `docs/audits/phase5e2-takedown-appeals.md`. Keep all financial/provider processing disabled. Phase 5 remains incomplete until its other admin, support, trust, dispute, and dual-approval gates are separately satisfied.
 
-### Phase 5F — Durable support notification outbox (candidate implementation; verification pending)
+### Phase 5F — Durable support notification outbox (merged; code gates passed, operational verification pending)
 
-**Status: CODE AND SECURITY CI PASS ON IMPLEMENTATION HEAD `74d671314a3f71094ccb382628a293e34ba1a0fd`; MERGE AND OPERATIONAL VERIFICATION PENDING.** Foundation CI run [38968331694](https://github.com/LloydCoder/web-temify/actions/runs/38968331694) and Security/dependency governance run [38968331727](https://github.com/LloydCoder/web-temify/actions/runs/38968331727) passed. Vercel preview is not verified because the account hit its daily deployment/API limit; this is not an overall Phase 5 exit pass.
+**Status: MERGED in PR [#77](https://github.com/LloydCoder/web-temify/pull/77).** Foundation CI and Security/dependency governance passed on the reviewed PR head. Vercel preview was not verified because the account hit its daily deployment/API limit. Foundation CI run [38968331694](https://github.com/LloydCoder/web-temify/actions/runs/38968331694) and Security/dependency governance run [38968331727](https://github.com/LloydCoder/web-temify/actions/runs/38968331727) passed. Vercel preview is not verified because the account hit its daily deployment/API limit; this is not an overall Phase 5 exit pass.
 
 - [x] Add a private transactional outbox for support-case events with separate requester and operations recipients.
 - [x] Keep notification payloads privacy-minimal: case reference, event, and status only; do not copy descriptions, private notes, payment details, credentials, or user-supplied recipient addresses.
@@ -333,27 +333,39 @@ Forensic record: `docs/audits/phase5e2-takedown-appeals.md`. Keep all financial/
 - [x] Add a token-protected Resend worker endpoint and a GitHub Actions scheduled invocation (not a Vercel Cron, because the connected Vercel team is on Hobby).
 - [x] Add pgTAP checks for outbox existence, RLS, least-privilege grants, and enqueue behavior on case creation.
 - [ ] Review worker route and migration; add adversarial tests for lease expiry, provider timeouts, duplicate delivery, exhausted retries, and completion failures.
-- [ ] Pass Foundation CI and Security/dependency governance on the exact PR head and merge commit.
+- [x] Pass Foundation CI and Security/dependency governance on the reviewed PR head and merge the implementation in PR #77.
 - [ ] Configure and verify the GitHub Actions repository secret, production worker token, Resend key, sender identity, operations mailbox, Supabase service key, scheduled execution, and alerting.
 - [ ] Confirm human escalation ownership and approve notification metadata retention/deletion policy.
 
 The worker is at-least-once delivery; a provider-accepted message with a lost response may be sent again. No legal SLA deadline is assigned. A scheduled job declaration does not prove delivery is operational. Phase 5 remains incomplete.
 
-### Phase 5G — Financial control requests and maker-checker payout holds (candidate implementation; CI pending)
+### Phase 5G — Financial control requests and maker-checker payout holds (merged; database workflow verified)
 
-**Status: FOUNDATION CI AND SECURITY PASSED ON IMPLEMENTATION HEAD `8c096e0950e00c27eb0e1cf4b6cab1dbaa7cf784`; MERGE AND OPERATIONAL VERIFICATION PENDING.** See `docs/audits/phase5g-financial-controls.md` and runs [38971016846](https://github.com/LloydCoder/web-temify/actions/runs/38971016846) and [38971016857](https://github.com/LloydCoder/web-temify/actions/runs/38971016857).
+**Status: MERGED in PR [#78](https://github.com/LloydCoder/web-temify/pull/78).** Foundation CI and Security/dependency governance passed on the exact reviewed head `89633d471eb7003f579cf732544b1231c1c1fe11`; Vercel preview remains unverified because of the team's build-rate limit. See `docs/audits/phase5g-financial-controls.md`.
 
 - [x] Add private financial control requests for manual-adjustment review, negative-balance review, payout-hold placement and payout-hold release.
 - [x] Require the maker to be distinct from reviewers and require two distinct database-authorized admins before a request is approved.
 - [x] Activate/release internal payout holds only after two approvals; preserve immutable hold evidence and append-only request/audit events.
 - [x] Validate negative-balance requests against the current posted seller-payable deficit and validate any order reference against seller and currency.
-- [x] Pass exact-head Foundation CI and Security/dependency governance.
-- [ ] Add a restricted admin API/UI, evidence object storage/verification, and operational monitoring.
+- [x] Pass exact-head Foundation CI and Security/dependency governance and merge the database workflow in PR #78.
+- [ ] Add restricted admin API/UI, evidence object storage/verification, and operational monitoring.
 - [ ] Integrate active holds with an actual payout gate before any payout feature is enabled.
 - [ ] Implement provider-authenticated chargeback/dispute intake and lifecycle, and ledger posting for approved manual adjustments.
 - [ ] Approve financial control policy, retention, approval thresholds, and operational ownership.
 
 Approved manual adjustments remain requests only; no journal entries or provider money movement are executed. Phase 5 remains incomplete.
+
+### Phase 5H — Restricted financial controls API and admin interface (implementation candidate; CI pending)
+
+- [x] Add an admin-only, no-store queue capped at 50 requests with strict status filters and a minimal response projection.
+- [x] Add same-origin, bounded JSON request creation and review endpoints; actor IDs come only from the validated admin context.
+- [x] Add a restricted admin page for request creation and maker/checker review, linked from the operations console.
+- [x] Add route-level tests for unauthorised access, strict input validation, safe RPC error mapping, queue bounds, and actor binding.
+- [ ] Pass Foundation CI and Security/dependency governance on the exact PR head and merge commit.
+- [ ] Add adversarial UI/E2E coverage, evidence-object storage and digest verification, monitoring/alerting, and operational approval.
+- [ ] Keep live payout execution disabled until a payout service checks active holds and seller-payable ledger state.
+
+The UI's evidence digest field is a reference only; it does not upload or validate an evidence object. This candidate does not post manual adjustments to the journal, run a provider chargeback workflow, or move money. Phase 5 remains incomplete.
 
 ## Phase 6 — Seller system and product factory
 
