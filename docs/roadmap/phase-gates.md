@@ -325,7 +325,7 @@ Forensic record: `docs/audits/phase5e2-takedown-appeals.md`. Keep all financial/
 
 ### Phase 5F — Durable support notification outbox (candidate implementation; verification pending)
 
-**Status: IMPLEMENTED ON BRANCH; NOT MERGED OR CI-VERIFIED.**
+**Status: CODE AND SECURITY CI PASS ON IMPLEMENTATION HEAD `74d671314a3f71094ccb382628a293e34ba1a0fd`; MERGE AND OPERATIONAL VERIFICATION PENDING.** Foundation CI run [38968331694](https://github.com/LloydCoder/web-temify/actions/runs/38968331694) and Security/dependency governance run [38968331727](https://github.com/LloydCoder/web-temify/actions/runs/38968331727) passed. Vercel preview is not verified because the account hit its daily deployment/API limit; this is not an overall Phase 5 exit pass.
 
 - [x] Add a private transactional outbox for support-case events with separate requester and operations recipients.
 - [x] Keep notification payloads privacy-minimal: case reference, event, and status only; do not copy descriptions, private notes, payment details, credentials, or user-supplied recipient addresses.
