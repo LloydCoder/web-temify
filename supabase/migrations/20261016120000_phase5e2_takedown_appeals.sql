@@ -56,7 +56,7 @@ create table public.listing_moderation_appeals (
   statement text not null check (char_length(btrim(statement)) between 20 and 4000),
   evidence_reference text check (evidence_reference is null or char_length(evidence_reference) <= 2048),
   idempotency_key text not null check (char_length(idempotency_key) between 16 and 200),
-  status text not null default 'submitted' check (status in ('submitted', 'under_review', 'upheld', 'reversed', 'rejected', 'withdrawn')),
+  status text not null default 'submitted' check (status in ('submitted', 'under_review', 'upheld', 'reversed', 'rejected')),
   response_due_at timestamptz,
   deadline_policy_version text,
   submitted_at timestamptz not null default now(),
@@ -68,7 +68,7 @@ create table public.listing_moderation_appeals (
   unique (creator_id, idempotency_key),
   constraint listing_moderation_appeal_decision_consistency check (
     (status in ('submitted', 'under_review') and decided_by is null and decided_at is null and decision_note is null)
-    or (status in ('upheld', 'reversed', 'rejected', 'withdrawn') and decided_by is not null and decided_at is not null and decision_note is not null)
+    or (status in ('upheld', 'reversed', 'rejected') and decided_by is not null and decided_at is not null and decision_note is not null)
   ),
   constraint listing_moderation_appeal_deadline_consistency check (
     (response_due_at is null and deadline_policy_version is null)
@@ -100,8 +100,8 @@ create table public.listing_moderation_appeal_events (
   appeal_id uuid not null references public.listing_moderation_appeals(id) on delete restrict,
   actor_id uuid not null references auth.users(id) on delete restrict,
   event_type text not null check (event_type in ('submitted', 'triaged', 'upheld', 'reversed', 'rejected', 'withdrawn')),
-  from_status text check (from_status is null or from_status in ('submitted', 'under_review', 'upheld', 'reversed', 'rejected', 'withdrawn')),
-  to_status text not null check (to_status in ('submitted', 'under_review', 'upheld', 'reversed', 'rejected', 'withdrawn')),
+  from_status text check (from_status is null or from_status in ('submitted', 'under_review', 'upheld', 'reversed', 'rejected')),
+  to_status text not null check (to_status in ('submitted', 'under_review', 'upheld', 'reversed', 'rejected')),
   note text check (note is null or char_length(note) <= 2000),
   request_id uuid not null,
   created_at timestamptz not null default now()
@@ -369,7 +369,7 @@ declare
   configured public.listing_moderation_appeal_policy%rowtype;
 begin
   if p_actor_id is null or p_request_id is null
-    or p_response_target_hours not between 24 and 720
+    or p_response_target_hours is null or p_response_target_hours not between 24 and 720
     or p_policy_version is null or char_length(btrim(p_policy_version)) not between 1 and 80
     or p_approval_note is null or char_length(btrim(p_approval_note)) not between 10 and 2000
     or p_legal_review_reference is null or char_length(btrim(p_legal_review_reference)) not between 5 and 2048
