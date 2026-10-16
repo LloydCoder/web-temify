@@ -1,11 +1,11 @@
 import { randomUUID, timingSafeEqual } from "node:crypto";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const MAX_BATCH_SIZE = 10;
+const MAX_BATCH_SIZE = 3;
 const MIN_TOKEN_LENGTH = 32;
 
 type NotificationJob = {
@@ -63,7 +63,7 @@ function eventLabel(eventType: string) {
 
 async function sendNotification(
   job: NotificationJob,
-  client: ReturnType<typeof createWorkerClient> & {},
+  client: SupabaseClient,
   apiKey: string,
   from: string,
   operationsEmail: string,
