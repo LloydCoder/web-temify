@@ -74,12 +74,6 @@ insert into public.payment_webhook_events (
    'charge.dispute.closed', repeat('3', 64), true,
    'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101');
 
--- A verified signature is necessary but not sufficient: dispute processing must
--- also own an active webhook-inbox lease or be replaying an already processed event.
-update public.payment_webhook_events
-set processing_status = 'processing'
-where provider = 'sandbox'
-  and provider_event_id like 'phase5i-event-%';
 
 create temporary table phase5i_dispute_fixture (
   dispute_id uuid primary key,
@@ -99,6 +93,13 @@ select throws_ok(
   'payment dispute requires a matching verified webhook event',
   'signature-verified but unclaimed inbox event cannot mutate disputes'
 );
+
+-- Claim the remaining verified fixtures through the same inbox state transition
+-- a real worker uses before applying their normalized events.
+update public.payment_webhook_events
+set processing_status = 'processing'
+where provider = 'sandbox'
+  and provider_event_id like 'phase5i-event-%';
 
 select lives_ok(
   $sql$insert into phase5i_dispute_fixture
