@@ -1,5 +1,5 @@
 begin;
-select plan(33);
+select plan(35);
 
 select has_table('public', 'financial_control_requests', 'financial control requests exist');
 select has_table('public', 'financial_control_approvals', 'approval evidence exists');
@@ -34,6 +34,31 @@ values
   ('91000000-0000-4000-8000-000000000501', 'admin'::public.app_role),
   ('92000000-0000-4000-8000-000000000502', 'admin'::public.app_role),
   ('93000000-0000-4000-8000-000000000503', 'admin'::public.app_role);
+
+create temporary table phase5g_cancel_request(id uuid primary key) on commit drop;
+insert into phase5g_cancel_request
+select public.create_financial_control_request(
+  '91000000-0000-4000-8000-000000000501',
+  'manual_adjustment', '94000000-0000-4000-8000-000000000504',
+  null, null, 1800, 'USD', repeat('e', 64),
+  'Request cancelled before any reviewer acted.',
+  'phase5g-cancel-adjustment-0001', 'a0000000-0000-4000-8000-000000000501'
+);
+select is(
+  public.cancel_financial_control_request(
+    (select id from phase5g_cancel_request),
+    '91000000-0000-4000-8000-000000000501',
+    'Maker cancels before review starts.',
+    'a0100000-0000-4000-8000-000000000501'
+  ),
+  'cancelled',
+  'maker can cancel only before review begins'
+);
+select is(
+  (select status from public.financial_control_requests where id = (select id from phase5g_cancel_request)),
+  'cancelled',
+  'cancellation is persisted as an immutable state transition'
+);
 
 create temporary table phase5g_manual_request(id uuid primary key) on commit drop;
 select lives_ok(
