@@ -22,4 +22,19 @@
 
 ## Existing evidence
 
-- Phase 2 migration, ident¶»§q«^
+- Phase 2 migration, identity/RLS tests, homepage E2E and foundation checks passed in CI run 38364828400.
+- The lockfile is committed and the web platform CI uses frozen-lockfile installation.
+- The dedicated product-source monorepo is being bootstrapped independently; its catalogue validator must not promote planned entries to released products.
+
+## Phase 3 additions
+
+- SQL migration replay from an empty database.
+- Rights evidence is private; creators may submit declarations but cannot self-approve.
+- Public catalogue query is restricted to published, rights-verified products with artifact SHA-256 evidence.
+- Product versions are visible publicly only when released with artifact digest and release timestamp.
+- Shared Zod contracts reject invalid lifecycle values, unverified catalogue items and malformed artifact digests.
+- Playwright validates the catalogue empty state and prevents unreleased slugs from being presented as live.
+
+## Release evidence
+
+Every phase audit must record the exact commit SHA, CI run and job conclusions, migration result, test counts, E2E results, code/document paths reviewed, security invariants, unresolved risks and explicit exit-gate disposition. If any mandatory check is absent, skipped, inconclusive or run against a different SHA, the phase remains open.

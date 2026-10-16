@@ -1,0 +1,5 @@
+# Phase 4D2 multi-session concurrency regression
+
+The `scripts/test-phase4d2-reconciliation-concurrency.mjs` harness runs against the local Supabase/PostgreSQL 17 database in Foundation CI. It creates a legitimate posted sandbox payment through the verified webhook RPC, imports two distinct reports referencing that same journal, and races reconciliation through independent PostgreSQL backend sessions. Repeated rounds alternate launch order and assert exactly one `matched_payment` retains the journal link while the other immutable result is `duplicate_reference` with a null link. Retries must return the original run IDs, both workers must complete, and both connections must remain usable after commit.
+
+CI installs the test-only `pg` client from the dedicated pinned npm lockfile under `scripts/phase4d2-concurrency/`; this does not change the application's root dependency graph. This test is sandbox-only and does not authorize live-provider processing, settlement posting, or payouts. The gate remains open until exact-head CI passes and independent operational/provider controls are verified.
