@@ -44,6 +44,9 @@ jobs:
           set -euo pipefail
           docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml up -d --build
           docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml ps
+          published_port="$(docker port web-temify-scanner-ci-scanner-api-1 8080/tcp)"
+          printf 'Scanner API loopback mapping: %s\n' "$published_port"
+          grep -Fxq '127.0.0.1:8088' <<< "$published_port"
 
       - name: Assert scanner network isolation
         shell: bash
