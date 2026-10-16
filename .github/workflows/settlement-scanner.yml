@@ -45,6 +45,23 @@ jobs:
           docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml up -d --build
           docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml ps
 
+      - name: Assert scanner network isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          project="web-temify-scanner-ci"
+          test "$(docker network inspect "${project}_scanner-backend" --format '{{.Internal}}')" = "true"
+          test "$(docker network inspect "${project}_scanner-edge" --format '{{.Internal}}')" = "true"
+          test "$(docker network inspect "${project}_scanner-egress" --format '{{.Internal}}')" = "false"
+          scanner_networks="$(docker inspect "${project}-scanner-api-1" --format '{{json .NetworkSettings.Networks}}')"
+          clamav_networks="$(docker inspect "${project}-clamav-1" --format '{{json .NetworkSettings.Networks}}')"
+          if printf '%s' "$scanner_networks" | grep -q 'scanner-egress'; then
+            echo "Scanner API must not attach to the ClamAV egress network."
+            exit 1
+          fi
+          printf '%s' "$clamav_networks" | grep -q 'scanner-egress'
+          echo "Scanner API has no egress network; only ClamAV can reach outbound signature services."
+
       - name: Wait for ClamAV signature readiness
         shell: bash
         run: |
