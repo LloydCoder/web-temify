@@ -41,29 +41,6 @@ jobs:
         run: pnpm typecheck
       - name: Lint
         run: pnpm lint
-      - name: Print Prettier-formatted Phase 5E2 files for repair
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-          files=(
-            src/app/admin/moderation-appeals/AppealPolicyForm.tsx
-            src/app/admin/moderation-appeals/ModerationAppealActionForm.tsx
-            src/app/admin/moderation-appeals/page.tsx
-            src/app/admin/moderation/ModerationCaseTakedownForm.tsx
-            src/app/admin/moderation/page.tsx
-            src/app/api/admin/moderation-appeal-policy/route.ts
-            'src/app/api/admin/moderation-appeals/[appealId]/transition/route.ts'
-            'src/app/api/admin/moderation-cases/[caseId]/takedown/route.ts'
-            src/app/api/moderation/appeals/route.ts
-            src/app/creator/moderation-appeals/CreatorAppealForm.tsx
-            src/app/creator/moderation-appeals/page.tsx
-          )
-          for file in "${files[@]}"; do
-            echo "FORMAT_START:$file"
-            pnpm exec prettier "$file"
-            echo "FORMAT_END:$file"
-          done
       - name: Formatting check
         run: pnpm format:check
       - name: Install Supabase CLI

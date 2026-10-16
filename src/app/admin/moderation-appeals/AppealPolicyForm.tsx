@@ -35,7 +35,7 @@ export function AppealPolicyForm({
           legalReviewReference: legalReference,
         }),
       });
-      const result = (await response.json()) as { error?: string };
+      await response.json();
       if (!response.ok) {
         setMessage(
           "Policy was not saved. Check the response target and legal-review reference.",
