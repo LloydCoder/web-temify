@@ -229,8 +229,8 @@ async function prepareRace(setup, iteration) {
            'sandbox', $1, $2, $3::date, $3::date, 'UTC', $4, true,
            'sandbox_fixture', 'USD', $5::uuid,
            jsonb_build_array(jsonb_build_object(
-             'rowId', $6, 'rowType', 'payment', 'providerReference', $7,
-             'paymentReference', $8, 'occurredAt', $9, 'currency', 'USD',
+             'rowId', $6::text, 'rowType', 'payment', 'providerReference', $7::text,
+             'paymentReference', $8::text, 'occurredAt', $9::text, 'currency', 'USD',
              'grossMinor', 1299, 'feeMinor', 39, 'netMinor', 1260
            ))
          ) as import_id`,
