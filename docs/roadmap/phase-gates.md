@@ -330,11 +330,11 @@ Forensic record: `docs/audits/phase5e2-takedown-appeals.md`. Keep all financial/
 - [x] Add a private transactional outbox for support-case events with separate requester and operations recipients.
 - [x] Keep notification payloads privacy-minimal: case reference, event, and status only; do not copy descriptions, private notes, payment details, credentials, or user-supplied recipient addresses.
 - [x] Add service-only claim/finish RPCs with bounded batches, row locking, ten-minute leases, request-ID ownership, five-attempt ceiling, exponential retry, and audited delivery failures.
-- [x] Add a token-protected Resend worker endpoint and a scheduled invocation declaration.
+- [x] Add a token-protected Resend worker endpoint and a GitHub Actions scheduled invocation (not a Vercel Cron, because the connected Vercel team is on Hobby).
 - [x] Add pgTAP checks for outbox existence, RLS, least-privilege grants, and enqueue behavior on case creation.
 - [ ] Review worker route and migration; add adversarial tests for lease expiry, provider timeouts, duplicate delivery, exhausted retries, and completion failures.
 - [ ] Pass Foundation CI and Security/dependency governance on the exact PR head and merge commit.
-- [ ] Configure and verify production worker token, Resend key, sender identity, operations mailbox, Supabase service key, scheduled execution, and alerting.
+- [ ] Configure and verify the GitHub Actions repository secret, production worker token, Resend key, sender identity, operations mailbox, Supabase service key, scheduled execution, and alerting.
 - [ ] Confirm human escalation ownership and approve notification metadata retention/deletion policy.
 
 The worker is at-least-once delivery; a provider-accepted message with a lost response may be sent again. No legal SLA deadline is assigned. A scheduled job declaration does not prove delivery is operational. Phase 5 remains incomplete.
