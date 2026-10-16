@@ -294,6 +294,28 @@ begin
     raise exception using errcode = '42501', message = 'financial control seller does not exist';
   end if;
 
+  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(p_idempotency_key, 0));
+
+  select * into existing_request
+  from public.financial_control_requests
+  where idempotency_key = p_idempotency_key
+  for update;
+  if found then
+    if existing_request.requested_by is distinct from p_actor_id
+      or existing_request.request_type is distinct from p_request_type
+      or existing_request.seller_id is distinct from p_seller_id
+      or existing_request.order_id is distinct from p_order_id
+      or existing_request.target_hold_id is distinct from p_target_hold_id
+      or existing_request.amount_minor is distinct from p_amount_minor
+      or existing_request.currency is distinct from p_currency
+      or existing_request.evidence_sha256 is distinct from p_evidence_sha256
+      or existing_request.reason is distinct from btrim(p_reason)
+    then
+      raise exception using errcode = '23505', message = 'financial control idempotency key reused with conflicting content';
+    end if;
+    return existing_request.id;
+  end if;
+
   if p_order_id is not null and not exists (
     select 1 from public.orders o
     join public.order_items oi on oi.order_id = o.id
@@ -325,28 +347,6 @@ begin
     then
       raise exception using errcode = '22023', message = 'payout hold release must match an active hold exactly';
     end if;
-  end if;
-
-  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(p_idempotency_key, 0));
-
-  select * into existing_request
-  from public.financial_control_requests
-  where idempotency_key = p_idempotency_key
-  for update;
-  if found then
-    if existing_request.requested_by is distinct from p_actor_id
-      or existing_request.request_type is distinct from p_request_type
-      or existing_request.seller_id is distinct from p_seller_id
-      or existing_request.order_id is distinct from p_order_id
-      or existing_request.target_hold_id is distinct from p_target_hold_id
-      or existing_request.amount_minor is distinct from p_amount_minor
-      or existing_request.currency is distinct from p_currency
-      or existing_request.evidence_sha256 is distinct from p_evidence_sha256
-      or existing_request.reason is distinct from btrim(p_reason)
-    then
-      raise exception using errcode = '23505', message = 'financial control idempotency key reused with conflicting content';
-    end if;
-    return existing_request.id;
   end if;
 
   insert into public.financial_control_requests (
@@ -526,6 +526,10 @@ begin
   end if;
   if control_request.requested_by <> p_actor_id
     or control_request.status <> 'requested'
+    or not exists (
+      select 1 from public.user_roles ur
+      where ur.user_id = p_actor_id and ur.role = 'admin'::public.app_role
+    )
     or exists (select 1 from public.financial_control_approvals a where a.request_id = p_request_id)
   then
     raise exception using errcode = '42501', message = 'only the maker can cancel a request before review begins';
