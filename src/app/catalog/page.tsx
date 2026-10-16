@@ -145,6 +145,7 @@ export default async function CataloguePage({
       <footer className="site-footer">
         <span>© {new Date().getFullYear()} Web-Temify LTD.</span>
         <span>Published only with evidence.</span>
+        <Link href="/creator/moderation-appeals">Creator takedown appeals</Link>
       </footer>
     </main>
   );
