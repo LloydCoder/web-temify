@@ -1,0 +1,7 @@
+title = "Web-Temify Gitleaks configuration"
+
+[allowlist]
+description = "Exact false positive: intentionally invalid bearer token in the scanner's 401 integration test; not a credential."
+fingerprints = [
+  "ff534d99497f4ef7757efeb9c52830d8369f4eaa:.github/workflows/settlement-scanner.yml:curl-auth-header:94",
+]
