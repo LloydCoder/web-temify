@@ -70,14 +70,14 @@ jobs:
           # initializes its signature database. A single bounded loop avoids a
           # short liveness gate failing just before the API process starts.
           ready=0
-          for attempt in $(seq 1 1800); do
+          for attempt in $(seq 1 300); do
             code="$(docker inspect --format '{{.State.Health.Status}}' web-temify-scanner-ci-scanner-api-1 2>/dev/null || true)"
             if [ "$code" = "healthy" ]; then
               ready=1
               break
             fi
-            if [ "$((attempt % 60))" -eq 0 ]; then
-              echo "ClamAV is not ready at attempt ${attempt}/1800; collecting readiness diagnostics."
+            if [ "$((attempt % 30))" -eq 0 ]; then
+              echo "ClamAV is not ready at attempt ${attempt}/300; collecting readiness diagnostics."
               docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml logs --no-color --tail=80 clamav
               if ! docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml exec -T scanner-api node --input-type=module - <<'NODE'
           import { createConnection } from "node:net";
@@ -122,7 +122,7 @@ jobs:
             sleep 1
           done
           if [ "$ready" -ne 1 ]; then
-            echo "Scanner did not become ready with fresh signatures after 1800 bounded readiness attempts."
+            echo "Scanner did not become ready with fresh signatures after 300 bounded readiness attempts."
             docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml logs --no-color
             exit 1
           fi
