@@ -52,8 +52,13 @@ export function ModerationCaseActionForm({
 }) {
   const actions = useMemo(() => allowedActions(status), [status]);
   const [action, setAction] = useState<Action>(actions[0] ?? "triage");
-  const [selectedResolution, setSelectedResolution] =
-    useState<ResolutionCode | null>(resolutionCode);
+  const [selectedResolution, setSelectedResolution] = useState<
+    ResolutionCode | null
+  >(() => {
+    if (actions[0] === "require_action") return "rights_review_required";
+    if (actions[0] === "dismiss") return "no_violation_found";
+    return resolutionCode;
+  });
   const [note, setNote] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
