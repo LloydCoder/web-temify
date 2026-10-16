@@ -1,0 +1,40 @@
+name: Support notification delivery
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: support-notification-delivery
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    name: Dispatch support notification outbox
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Validate required secret
+        env:
+          SUPPORT_NOTIFICATION_WORKER_TOKEN: ${{ secrets.SUPPORT_NOTIFICATION_WORKER_TOKEN }}
+        run: |
+          if [ -z "$SUPPORT_NOTIFICATION_WORKER_TOKEN" ] || [ "${#SUPPORT_NOTIFICATION_WORKER_TOKEN}" -lt 32 ]; then
+            echo "::error::SUPPORT_NOTIFICATION_WORKER_TOKEN must be configured as a repository secret and contain at least 32 characters."
+            exit 1
+          fi
+      - name: Dispatch worker
+        env:
+          SUPPORT_NOTIFICATION_WORKER_TOKEN: ${{ secrets.SUPPORT_NOTIFICATION_WORKER_TOKEN }}
+          WORKER_URL: https://web-temify.com/api/internal/support-notifications
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            --max-time 60 --retry 2 --retry-delay 2 \
+            -X POST \
+            -H "Authorization: Bearer ${SUPPORT_NOTIFICATION_WORKER_TOKEN}" \
+            -H "Accept: application/json" \
+            "${WORKER_URL}"
