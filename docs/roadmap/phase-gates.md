@@ -306,6 +306,20 @@ Least-privilege admin controls, moderation queues, support, audit review, financ
 
 Forensic record: `docs/audits/phase5e-moderation-cases.md`. The current case queue does not itself unpublish a product or implement appeals. Phase 5 remains incomplete; live payment/provider processing stays disabled.
 
+### Phase 5E2 — Listing takedown enforcement and creator appeals (CI pending)
+
+**Status: IN PROGRESS.** This slice follows the merged Phase 5E1 report/case workflow. It is not a Phase 5 exit pass.
+
+- [x] Add database-owned takedown enforcement with admin-role validation, eligible case-state checks, transactional product archival, case-event history, and audit evidence.
+- [x] Add creator appeal intake bound to product ownership, idempotency, one appeal per enforcement, and private append-only appeal events.
+- [x] Add audited appeal review decisions; reversal restores publication only when independent rights verification and released-artifact evidence still pass.
+- [x] Add configurable internal response target with approval note and legal-review reference. No deadline is assigned before a policy is approved; the target is an internal SLA, not a statutory deadline.
+- [ ] Pass full Foundation CI and Security/dependency governance on the exact reviewed PR head.
+- [ ] Review the migration, route authorization, creator scoping, append-only event history, idempotency, appeal deadline snapshots, and conditional publication restoration.
+- [ ] Verify operational/legal policy approval and notification/escalation arrangements before production launch.
+
+Forensic record: `docs/audits/phase5e2-takedown-appeals.md`. Keep all financial/provider processing disabled. Phase 5 remains incomplete until its other admin, support, trust, dispute, and dual-approval gates are separately satisfied.
+
 ## Phase 6 — Seller system and product factory
 
 **Status: NOT COMPLETE.** This phase builds the trusted supply side and a repeatable, evidence-backed product release pipeline. The dedicated source monorepo is [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products); its inventory is planning input, not evidence that products have been built or released. Keep product source code, manifests, build/test contracts and immutable release evidence in that repository; keep commercial listing state and marketplace transactions in this repository.
