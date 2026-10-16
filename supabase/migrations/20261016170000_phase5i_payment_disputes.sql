@@ -237,7 +237,8 @@ begin
       when 'closed' then 'closed'
     end;
 
-    if previous_status in ('won', 'lost', 'closed')
+    if previous_status = 'closed'
+      or (previous_status in ('won', 'lost') and p_event_action <> 'closed')
       or (p_event_action = 'opened' and previous_status <> 'open')
       or (p_event_action = 'needs_evidence' and previous_status not in ('open', 'needs_evidence', 'evidence_submitted'))
       or (p_event_action = 'evidence_submitted' and previous_status not in ('open', 'needs_evidence', 'evidence_submitted'))
