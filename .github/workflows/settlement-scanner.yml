@@ -72,7 +72,7 @@ jobs:
               break
             fi
             if [ "$((attempt % 12))" -eq 0 ]; then
-              echo "ClamAV is not ready after $((attempt * 5 / 60)) minutes; collecting signature-update diagnostics."
+              echo "ClamAV is not ready at attempt ${attempt}/120; collecting signature-update diagnostics."
               docker compose --project-name web-temify-scanner-ci -f services/settlement-scanner/compose.yaml logs --no-color --tail=80 clamav
               if [ -f /tmp/scanner-ready.json ]; then cat /tmp/scanner-ready.json; fi
             fi
