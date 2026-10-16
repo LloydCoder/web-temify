@@ -118,7 +118,11 @@ export default async function AdminModerationPage() {
               />
               {item.status === "action_required" &&
               item.resolution_code &&
-              ["listing_review_required", "rights_review_required", "security_review_required"].includes(item.resolution_code) ? (
+              [
+                "listing_review_required",
+                "rights_review_required",
+                "security_review_required",
+              ].includes(item.resolution_code) ? (
                 <ModerationCaseTakedownForm caseId={item.id} />
               ) : null}
             </li>
