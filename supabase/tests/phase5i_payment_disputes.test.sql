@@ -44,11 +44,12 @@ where id = 'b1000000-0000-4000-8000-000000000101';
 
 insert into public.payment_webhook_events (
   id, provider, provider_event_id, event_type, payload_sha256, signature_verified,
-  order_id, payment_attempt_id
+  order_id, payment_attempt_id, amount_minor, currency, provider_reference
 ) values (
   'c1000000-0000-4000-8000-000000000100', 'sandbox', 'phase5i-payment-succeeded-001',
   'payment.succeeded', repeat('9', 64), true,
-  'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101'
+  'a1000000-0000-4000-8000-000000000101', 'b1000000-0000-4000-8000-000000000101',
+  10000, 'USD', 'sandbox-payment-dispute-001'
 );
 
 update public.payment_webhook_events
@@ -56,7 +57,7 @@ set processing_status = 'processing'
 where id = 'c1000000-0000-4000-8000-000000000100';
 
 update public.payment_webhook_events
-set processing_status = 'processed'
+set processing_status = 'processed', processed_at = now()
 where id = 'c1000000-0000-4000-8000-000000000100';
 
 update public.payment_attempts
