@@ -45,9 +45,9 @@ jobs:
         if: always()
         shell: bash
         run: |
-          echo "FORMAT_START:tests/e2e/moderation-appeals.spec.ts"
-          pnpm exec prettier tests/e2e/moderation-appeals.spec.ts
-          echo "FORMAT_END:tests/e2e/moderation-appeals.spec.ts"
+          echo "FORMAT_START:src/app/api/phase5e2-moderation-routes.test.ts"
+          pnpm exec prettier src/app/api/phase5e2-moderation-routes.test.ts
+          echo "FORMAT_END:src/app/api/phase5e2-moderation-routes.test.ts"
       - name: Formatting check
         run: pnpm format:check
       - name: Install Supabase CLI
