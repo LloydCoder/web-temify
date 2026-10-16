@@ -27,7 +27,7 @@ insert into public.orders (
 ) values (
   'a1000000-0000-4000-8000-000000000101',
   '91000000-0000-4000-8000-000000000191',
-  'paid', 'USD', 10000, 0, 'phase5i-dispute-order-key-001'
+  'pending_payment', 'USD', 10000, 0, 'phase5i-dispute-order-key-001'
 );
 
 insert into public.payment_attempts (
@@ -37,6 +37,10 @@ insert into public.payment_attempts (
   'a1000000-0000-4000-8000-000000000101',
   'sandbox', 'succeeded', 10000, 'USD', 'phase5i-dispute-payment-key-001', 'sandbox-payment-dispute-001'
 );
+
+update public.orders
+set status = 'paid'
+where id = 'a1000000-0000-4000-8000-000000000101';
 
 insert into public.payment_webhook_events (
   id, provider, provider_event_id, event_type, payload_sha256, signature_verified,
