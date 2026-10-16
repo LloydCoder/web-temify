@@ -170,6 +170,14 @@ begin
     raise exception using errcode = '42501', message = 'payment dispute requires a matching verified webhook event';
   end if;
 
+  -- Serialize same-event replay and different events for the same dispute identity.
+  perform pg_catalog.pg_advisory_xact_lock(
+    pg_catalog.hashtextextended('payment-dispute-event:' || p_provider || ':' || p_provider_event_id, 0)
+  );
+  perform pg_catalog.pg_advisory_xact_lock(
+    pg_catalog.hashtextextended('payment-dispute-id:' || p_provider || ':' || p_provider_dispute_id, 0)
+  );
+
   select * into prior_event
   from public.payment_dispute_events
   where provider_webhook_event_id = webhook_event.id;
