@@ -28,7 +28,7 @@ function request(token = workerToken) {
     "https://web-temify.test/api/internal/support-notifications",
     {
       method: "POST",
-      headers: { Authorization: `*** },
+      headers: { Authorization: `Bearer ${token}` },
     },
   );
 }
