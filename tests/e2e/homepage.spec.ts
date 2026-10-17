@@ -45,6 +45,9 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   await expect(page.locator("#newsletter-status")).toContainText(
     /no email is collected/i,
   );
+  await expect(page.getByText("Payment adapter concept", { exact: true })).toBeVisible();
+  await expect(page.getByText("Paystack Ready", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Stripe Billing", { exact: true })).toHaveCount(0);
   const ecosystem = page.locator("#ecosystem");
   await expect(ecosystem.getByRole("article")).toHaveCount(9);
   for (const href of [
@@ -109,8 +112,10 @@ test("mobile navigation opens and closes accessibly", async ({ page }) => {
   const toggle = page.getByRole("button", { name: /navigation/i });
   const navigation = page.locator("#primary-navigation");
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(toggle).toHaveAccessibleName("Open navigation");
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  await expect(toggle).toHaveAccessibleName("Close navigation");
   await expect(
     navigation.getByRole("link", { name: "Templates" }),
   ).toBeVisible();
