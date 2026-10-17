@@ -865,7 +865,7 @@ export default function HomePage() {
             <div className="step">
               <div className="step-num">02</div>
               <span className="step-icon">⚡</span>
-              <h3>Download & Deploy</h3>
+              <h3>Release delivery planned</h3>
               <p>
                 Secure downloads and setup guides are planned for released
                 products. Payment providers will be announced after integration
@@ -1380,7 +1380,7 @@ export default function HomePage() {
               <div className="price-features">
                 <div className="pf-item">
                   <div className="pf-check">✓</div>
-                  Free templates
+                  Planned free releases
                 </div>
                 <div className="pf-item">
                   <div className="pf-check">✓</div>
@@ -1388,15 +1388,15 @@ export default function HomePage() {
                 </div>
                 <div className="pf-item">
                   <div className="pf-check">✓</div>
-                  Community forum
+                  Community features planned
                 </div>
                 <div className="pf-item pf-off">
                   <div className="pf-check">✗</div>
-                  Premium templates
+                  Premium releases planned
                 </div>
                 <div className="pf-item pf-off">
                   <div className="pf-check">✗</div>
-                  Scripts & kits
+                  Scripts & kits planned
                 </div>
               </div>
               <div className="price-footer">
