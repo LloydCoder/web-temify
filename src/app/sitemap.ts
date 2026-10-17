@@ -15,7 +15,7 @@ const publicRoutes = [
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = (
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://web-temify.com"
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://web-temify.vercel.app"
   ).replace(/\/$/, "");
   const lastModified = new Date();
 
