@@ -149,48 +149,51 @@ describe("Phase 5K dispute evidence upload", () => {
     expect(mocks.rpc).not.toHaveBeenCalled();
   });
 
-  it("uploads private evidence and records a digest-matched clean scan", async () => {
-    const response = await POST(request({ filename: "../../chargeback.pdf" }), {
-      params: Promise.resolve({ disputeId }),
-    });
-    const body = await response.json();
+  it(
+    "uploads private evidence and records a digest-matched clean scan",
+    async () => {
+      const response = await POST(request({ filename: "../../chargeback.pdf" }), {
+        params: Promise.resolve({ disputeId }),
+      });
+      const body = await response.json();
 
-    expect(response.status).toBe(201);
-    expect(body).toMatchObject({
-      disputeId,
-      scanStatus: "clean",
-      providerSubmission: "not_submitted",
-      sourceAuthenticity: "not_verified",
-      filename: "_.._chargeback.pdf",
-    });
-    expect(body.sha256).toMatch(/^[a-f0-9]{64}$/);
-    expect(mocks.storageUpload).toHaveBeenCalledWith(
-      expect.stringMatching(
-        new RegExp(`^${disputeId}/[0-9a-f-]{36}/${body.sha256}$`),
-      ),
-      evidenceBytes,
-      expect.objectContaining({ upsert: false, cacheControl: "0" }),
-    );
-    expect(mocks.rpc).toHaveBeenNthCalledWith(
-      1,
-      "record_payment_dispute_evidence",
-      expect.objectContaining({
-        p_dispute_id: disputeId,
-        p_source_sha256: body.sha256,
-        p_uploaded_by: userId,
-      }),
-    );
-    expect(mocks.rpc).toHaveBeenNthCalledWith(
-      2,
-      "record_payment_dispute_evidence_scan_result",
-      expect.objectContaining({
-        p_evidence_id: body.id,
-        p_source_sha256: body.sha256,
-        p_verdict: "clean",
-        p_signature_updated_at: "2026-10-17T00:00:00.000Z",
-      }),
-    );
-  });
+      expect(response.status).toBe(201);
+      expect(body).toMatchObject({
+        disputeId,
+        scanStatus: "clean",
+        providerSubmission: "not_submitted",
+        sourceAuthenticity: "not_verified",
+        filename: "_.._chargeback.pdf",
+      });
+      expect(body.sha256).toMatch(/^[a-f0-9]{64}$/);
+      expect(mocks.storageUpload).toHaveBeenCalledWith(
+        expect.stringMatching(
+          new RegExp(`^${disputeId}/[0-9a-f-]{36}/${body.sha256}$`),
+        ),
+        evidenceBytes,
+        expect.objectContaining({ upsert: false, cacheControl: "0" }),
+      );
+      expect(mocks.rpc).toHaveBeenNthCalledWith(
+        1,
+        "record_payment_dispute_evidence",
+        expect.objectContaining({
+          p_dispute_id: disputeId,
+          p_source_sha256: body.sha256,
+          p_uploaded_by: userId,
+        }),
+      );
+      expect(mocks.rpc).toHaveBeenNthCalledWith(
+        2,
+        "record_payment_dispute_evidence_scan_result",
+        expect.objectContaining({
+          p_evidence_id: body.id,
+          p_source_sha256: body.sha256,
+          p_verdict: "clean",
+          p_signature_updated_at: "2026-10-17T00:00:00.000Z",
+        }),
+      );
+    },
+  );
 
   it("keeps evidence pending if the scanner is unavailable", async () => {
     mocks.scanSettlementEvidence.mockResolvedValue({ status: "unavailable" });
