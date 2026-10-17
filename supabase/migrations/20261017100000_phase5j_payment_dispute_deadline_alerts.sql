@@ -189,7 +189,7 @@ begin
       'payment.dispute.deadline_alert_failed',
       'payment_dispute_alert_job',
       p_job_id::text,
-      p_request_id,
+      p_request_id::text,
       jsonb_build_object('error_code', p_error_code, 'attempts', job.attempts, 'final_status', next_status)
     );
   end if;
