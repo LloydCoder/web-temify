@@ -6,7 +6,18 @@ export default function robots(): MetadataRoute.Robots {
   ).replace(/\/$/, "");
 
   return {
-    rules: [{ userAgent: "*", allow: "/" }],
+    rules: {
+      userAgent: "*",
+      allow: "/",
+      disallow: [
+        "/admin/",
+        "/account/",
+        "/checkout/",
+        "/api/",
+        "/internal/",
+        "/creator/",
+      ],
+    },
     sitemap: `${baseUrl}/sitemap.xml`,
   };
 }
