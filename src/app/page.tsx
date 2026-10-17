@@ -1649,7 +1649,7 @@ export default function HomePage() {
             <a href="#templates" className="btn btn-white btn-big">
               Browse Templates →
             </a>
-            <a href="#services" className="btn btn-outline-white btn-big">
+            <a href="#services" className="btn btn-outline-ink btn-big">
               Talk to us
             </a>
           </div>
