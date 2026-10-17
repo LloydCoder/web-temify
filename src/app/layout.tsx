@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Web-Temify — From Idea to Deployable Web Product in Hours",
+  title: {
+    default: "Web-Temify — Templates, Tools & the Web Product Ecosystem",
+    template: "%s | Web-Temify",
+  },
   description:
-    "Discover website templates, launch kits, digital products, and tools for turning ideas into deployable web products.",
+    "Explore verified digital-product releases and the Web-Temify ecosystem roadmap for hosting, AI site building, automation, specialist suppliers, and implementation services. Planned capabilities are clearly identified.",
 };
 
 export default function RootLayout({

@@ -1,46 +1,52 @@
 # V3 homepage implementation audit
 
-**Audit date:** 2026-10-14  
-**Implementation branch:** `feat/implement-canonical-v3-design`  
-**Scope:** Homepage visual restoration and truthful preview behaviour only. This is not an overall roadmap phase-completion claim.
+**Audit date:** 2026-10-17  
+**Implementation branch:** `feat/native-v3-nextjs-homepage`  
+**Scope:** Native V3 homepage integration and user-facing preview accuracy. This audit does not claim completion of the wider enterprise roadmap or production launch.
 
-## Canonical source and runtime
+## Canonical design and implementation
 
-- Canonical design source: `docs/web-temify-v3.html` (retained unchanged).
-- Served runtime asset: `public/web-temify-v3.html`.
-- Homepage entry point: `src/app/page.tsx`, which mounts the runtime asset in a titled, full-viewport iframe.
-- Global viewport rules: `src/app/globals.css`.
-- Document metadata: `src/app/layout.tsx`.
-- Browser coverage: `tests/e2e/homepage.spec.ts`.
+- Canonical design reference: `docs/web-temify-v3.html`, reconciled with the legacy visual reference and extended with the nine-area ecosystem section, status disclosures, and destination links.
+- Legacy public runtime copy: `public/web-temify-v3.html`; it is not embedded by the homepage and is being kept aligned with truthful preview messaging.
+- Native homepage entry point: `src/app/page.tsx`, a Server Component that renders V3 markup as React/JSX rather than an iframe. Responsive navigation, directory filtering, prompt suggestions, and reveal effects are isolated into small client components.
+- Scoped V3 stylesheet: `src/app/v3-home.css`; selectors are scoped under `.v3-app` to avoid leaking into catalogue, account, checkout, and admin routes.
+- Shared application metadata: `src/app/layout.tsx`.
+- Destination route template: `src/app/ecosystem-destination.tsx` and `src/app/ecosystem-destination.css`.
+- Dedicated destination routes: `/hosting`, `/ai-site-builder`, `/directory`, `/automations`, `/specialists`, `/implementation`, `/platform`, and `/tech-hub`; the marketplace card links to the existing `/catalog` route.
+- Browser coverage: `tests/e2e/homepage.spec.ts` and `tests/e2e/ecosystem-routes.spec.ts`.
 
-The runtime keeps the source composition, layout, typography, colour system, section order and responsive design. It deliberately changes illustrative legacy content that could otherwise be mistaken for live inventory or real customer evidence.
+The native implementation preserves the V3 visual language: warm cream background, near-black typography and borders, coral/yellow/mint accents, Cabinet Grotesk and Instrument Serif, editorial section composition, offset shadows, and responsive layouts. The global CSS and other route styles are not replaced by the homepage stylesheet.
 
-## Corrections applied to runtime content
+## Frontend behaviour and accessibility
 
-- Replaced unsupported template/tool/business counts and sales/rating claims.
-- Replaced illustrative customer names, quotes and star ratings with explicit preview/roadmap language.
-- Removed displayed product, launch-kit and service prices from illustrative cards.
-- Clarified that catalogue purchases, seller onboarding, subscriptions, payment providers and secure delivery are not live.
-- Routed catalogue discovery actions to the existing `/catalog` route, which fails closed and shows only verified published products.
-- Routed named directory tools to their official public sites.
-- Routed custom-engineering service requests to Tinlance's public website.
-- Replaced unsupported account, vendor, social and content destinations with non-interactive “not live yet” labels instead of dead `#` links.
-- Kept the canonical design reference file unchanged so it remains the design baseline.
+- Adds a keyboard-accessible skip link and responsive mobile navigation with `aria-expanded` state.
+- Keeps internal catalogue navigation on Next.js links.
+- Makes directory category tabs filter the visible external-tool cards and expose selection through `aria-pressed`.
+- Makes AI prompt suggestions keyboard-operable and fills the input as a prototype interaction.
+- Respects `prefers-reduced-motion` and provides visible focus styling.
+- Keeps the AI Site Builder generation control disabled and labels the capability as planned/not live.
+- Removes invented category inventory counts and unsupported payment/download claims from the user-facing preview.
+- Uses explicit preview language for illustrative content, rather than implying real sales, customers, published inventory, or active checkout.
+- Adds an ecosystem overview covering all nine agreed areas, with dedicated destination routes and status labels; shared enterprise platform is framed as a cross-cutting layer rather than a storefront.
+- Avoids placeholder `href="#" ` links and checks same-page fragment targets.
 
-## Verification requirements
+## Verification required before merge
 
-The PR must not merge until the exact head SHA has green results for:
+The integration must not be merged until the exact head SHA has green results for:
 
-- Frozen dependency install, foundation/domain tests, TypeScript, lint and formatting.
-- Supabase empty-database migration reset, schema lint and pgTAP/RLS tests.
-- Playwright at mobile and desktop widths, including iframe load, semantic heading, preview disclaimer, absence of placeholder `href="#"` actions, and horizontal overflow.
+- Frozen dependency installation, foundation/domain tests, TypeScript, ESLint, and Prettier.
+- Supabase empty-database migration reset, schema lint, pgTAP/RLS tests, and the existing concurrent reconciliation test.
+- Playwright checks for native rendering without an iframe, all nine ecosystem cards and route destinations, route-level availability notices, semantic content, no unresolved anchors, mobile/desktop overflow, mobile navigation, directory filtering, and AI-preview behaviour.
 - Production build and service cleanup.
 - Production dependency/license policy and full-history secret scan.
+- Preview deployment and visual comparison where Vercel deployment quota permits.
+
+At the time this audit file is updated, CI/formatting and browser verification are still being iterated on; this document is not evidence that those gates have passed.
 
 ## Explicit limits and non-claims
 
-- The iframe approach is a visual restoration step, not the final native React/component integration.
-- The catalogue remains backed by the existing verified-release rules; no real products are assumed to be published.
-- Checkout, live payment-provider processing, subscriptions, seller onboarding, automated delivery, directory submission and supplier/implementation transactions remain disabled or not implemented.
-- No production launch, legal/tax readiness, full WCAG 2.2 AA compliance, penetration-test completion, or completion of Phases 0–20 is claimed by this homepage work.
-- Follow-on work must proceed through the canonical roadmap and phase gates, serially, with exact-head CI and a phase-specific forensic audit.
+- This is a native rendering integration, not a claim that the marketplace is fully implemented.
+- The catalogue must continue to show only products backed by verified release and rights evidence.
+- AI generation, hosting provisioning, checkout, live payment-provider processing, subscriptions, seller onboarding, automated delivery, directory submissions, and supplier/implementation transactions must not be presented as live unless their implementation and release evidence are verified.
+- Payment processing, payout execution, settlement posting, and live money movement remain subject to the separate Phase 4D2/Phase 5 operational, provider, legal, accounting, security, and staffing gates.
+- No production launch, legal/tax readiness, full WCAG 2.2 AA conformance, penetration-test completion, or completion of Phases 0–20 is claimed by this frontend work.
