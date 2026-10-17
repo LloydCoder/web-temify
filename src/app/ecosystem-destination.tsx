@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import "./ecosystem-destination.css";
 
 type AreaKey =
   | "hosting"
