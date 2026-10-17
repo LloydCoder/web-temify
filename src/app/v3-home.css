@@ -1987,3 +1987,7 @@
     font-size: 1.15rem;
   }
 }
+
+.v3-app .ai-builder-status {
+  text-align: center;
+}
