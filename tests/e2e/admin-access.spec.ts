@@ -49,6 +49,8 @@ test("admin audit and rights-review pages deny unauthenticated visitors", async 
     "/admin/reviews",
     "/admin/settlements",
     "/admin/support",
+    "/admin/moderation",
+    "/admin/moderation-appeals",
     "/admin/financial-controls",
   ]) {
     await page.goto(route);

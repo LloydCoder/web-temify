@@ -100,6 +100,18 @@ export default async function AdminOperationsPage() {
           >
             Financial controls
           </Link>
+          <Link className="button button-secondary" href="/admin/support">
+            Support queue
+          </Link>
+          <Link className="button button-secondary" href="/admin/moderation">
+            Moderation
+          </Link>
+          <Link
+            className="button button-secondary"
+            href="/admin/moderation-appeals"
+          >
+            Creator appeals
+          </Link>
           <Link className="button button-secondary" href="/">
             Public site
           </Link>
