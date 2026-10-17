@@ -48,9 +48,6 @@ jobs:
           echo "FORMAT_START:tests/e2e/moderation-appeals.spec.ts"
           pnpm exec prettier tests/e2e/moderation-appeals.spec.ts
           echo "FORMAT_END:tests/e2e/moderation-appeals.spec.ts"
-          echo "FORMAT_START:src/app/api/internal/payment-dispute-alerts/route.ts"
-          pnpm exec prettier src/app/api/internal/payment-dispute-alerts/route.ts
-          echo "FORMAT_END:src/app/api/internal/payment-dispute-alerts/route.ts"
       - name: Formatting check
         run: pnpm format:check
       - name: Install Supabase CLI
