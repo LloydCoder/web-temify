@@ -20,6 +20,22 @@ Web-Temify is a planned global-first digital-product marketplace and product fac
 - Legacy reconciliation: [docs/governance/legacy-reconciliation.md](docs/governance/legacy-reconciliation.md)
 - Product source monorepo and canonical planned inventory: [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products)
 
+## Public ecosystem map
+
+The homepage presents nine agreed platform areas with explicit capability status and destination routes:
+
+1. Template & Script Marketplace — existing /catalog route; only verified published releases are eligible to appear.
+2. Web Hosting & Deployment — /hosting (planned; provisioning and billing are not operational).
+3. AI Site Builder — /ai-site-builder (planned; generation is disabled).
+4. Tech Directory Hub — /directory (homepage preview only; submissions and paid placements are not live).
+5. Verified Automation Marketplace — /automations (planned; transactions disabled).
+6. Specialist Supplier Directory — /specialists (planned; onboarding not available).
+7. Outcome-Based AI Implementation Marketplace — /implementation (planned; contracts and milestone payments disabled).
+8. Shared Enterprise Platform — /platform (cross-cutting foundation, not a standalone storefront).
+9. Tech Hub & Advertising Engine — /tech-hub (planned; publishing and monetization workflows not enabled).
+
+The canonical visual/design reference is docs/web-temify-v3.html. The homepage is implemented as native Next.js/React markup; the public HTML copy is retained as a design/legacy reference, not embedded by the homepage. These UI disclosures are not proof of production readiness. Phase 4D2/Phase 5 provider, financial, legal, security, staffing and operational gates remain independent launch requirements.
+
 ## Canonical technology stack
 
 - TypeScript strict mode, Next.js App Router, React.
