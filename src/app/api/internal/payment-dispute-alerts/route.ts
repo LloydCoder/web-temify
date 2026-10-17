@@ -85,7 +85,12 @@ async function sendAlert(
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ from, to: [operationsEmail], subject, text: body }),
+      body: JSON.stringify({
+        from,
+        to: [operationsEmail],
+        subject,
+        text: body,
+      }),
       signal: AbortSignal.timeout(12_000),
     });
     return response.ok ? null : "email_provider_rejected";
