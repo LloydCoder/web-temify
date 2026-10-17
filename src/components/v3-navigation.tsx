@@ -38,18 +38,6 @@ export default function V3Navigation() {
         <span />
         <span />
       </button>
-      <div className="nav-actions">
-        <span
-          className="btn btn-ghost"
-          aria-disabled="true"
-          title="Account access is not live yet"
-        >
-          Accounts not live yet
-        </span>
-        <a href="#templates" className="btn btn-fill">
-          Browse previews →
-        </a>
-      </div>
       <ul
         className={`nav-links${mobileMenuOpen ? " is-open" : ""}`}
         id="primary-navigation"
@@ -80,6 +68,18 @@ export default function V3Navigation() {
           <a href="#ecosystem">Platform</a>
         </li>
       </ul>
+      <div className="nav-actions">
+        <span
+          className="btn btn-ghost"
+          aria-disabled="true"
+          title="Account access is not live yet"
+        >
+          Accounts not live yet
+        </span>
+        <a href="#templates" className="btn btn-fill">
+          Browse previews →
+        </a>
+      </div>
     </nav>
   );
 }
