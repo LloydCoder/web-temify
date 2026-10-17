@@ -20,6 +20,13 @@ export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDirectory, setActiveDirectory] = useState("All Tools");
 
+  const fillAiPrompt = (prompt: string) => {
+    const input = rootRef.current?.querySelector<HTMLInputElement>(".ai-input");
+    if (!input) return;
+    input.value = `${prompt} website`;
+    input.focus();
+  };
+
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
@@ -63,49 +70,6 @@ export default function HomePage() {
     });
   }, [activeDirectory]);
 
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const input = root.querySelector<HTMLInputElement>(".ai-input");
-    const chips = root.querySelectorAll<HTMLElement>(".ai-chip");
-    const handlers = new Map<HTMLElement, () => void>();
-    const keyboardHandlers = new Map<
-      HTMLElement,
-      (event: KeyboardEvent) => void
-    >();
-    chips.forEach((chip) => {
-      const activate = () => {
-        if (!input) return;
-        input.value = `${chip.textContent?.trim() ?? ""} website`;
-        input.focus();
-      };
-      const clickHandler = () => activate();
-      const keyHandler = (event: KeyboardEvent) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          activate();
-        }
-      };
-      handlers.set(chip, clickHandler);
-      keyboardHandlers.set(chip, keyHandler);
-      chip.addEventListener("click", clickHandler);
-      chip.addEventListener("keydown", keyHandler);
-      chip.setAttribute("role", "button");
-      chip.setAttribute("tabindex", "0");
-      chip.setAttribute(
-        "aria-label",
-        `Use ${chip.textContent?.trim() ?? "suggestion"} prompt`,
-      );
-    });
-    return () => {
-      handlers.forEach((handler, chip) =>
-        chip.removeEventListener("click", handler),
-      );
-      keyboardHandlers.forEach((handler, chip) =>
-        chip.removeEventListener("keydown", handler),
-      );
-    };
-  }, []);
 
   return (
     <div className="v3-app" ref={rootRef}>
@@ -673,21 +637,21 @@ export default function HomePage() {
               >
                 Coming soon
               </button>
-              <p
-                id="ai-builder-status"
-                className="ai-builder-status"
-                role="status"
-              >
-                AI generation is not live yet.
-              </p>
             </div>
+            <p
+              id="ai-builder-status"
+              className="ai-builder-status"
+              role="status"
+            >
+              AI generation is not live yet.
+            </p>
             <div className="ai-chips">
-              <span className="ai-chip">Logistics company</span>
-              <span className="ai-chip">NFT marketplace</span>
-              <span className="ai-chip">Loan app Nigeria</span>
-              <span className="ai-chip">SaaS dashboard</span>
-              <span className="ai-chip">Crypto exchange</span>
-              <span className="ai-chip">Real estate agency</span>
+              <button className="ai-chip" type="button" aria-label="Use Logistics company prompt" onClick={() => fillAiPrompt("Logistics company")}>Logistics company</button>
+              <button className="ai-chip" type="button" aria-label="Use NFT marketplace prompt" onClick={() => fillAiPrompt("NFT marketplace")}>NFT marketplace</button>
+              <button className="ai-chip" type="button" aria-label="Use Loan app Nigeria prompt" onClick={() => fillAiPrompt("Loan app Nigeria")}>Loan app Nigeria</button>
+              <button className="ai-chip" type="button" aria-label="Use SaaS dashboard prompt" onClick={() => fillAiPrompt("SaaS dashboard")}>SaaS dashboard</button>
+              <button className="ai-chip" type="button" aria-label="Use Crypto exchange prompt" onClick={() => fillAiPrompt("Crypto exchange")}>Crypto exchange</button>
+              <button className="ai-chip" type="button" aria-label="Use Real estate agency prompt" onClick={() => fillAiPrompt("Real estate agency")}>Real estate agency</button>
             </div>
           </div>
         </section>
