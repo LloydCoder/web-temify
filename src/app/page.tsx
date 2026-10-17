@@ -428,7 +428,7 @@ export default function HomePage() {
                 <span className="kit-item">Landing Page</span>
                 <span className="kit-item">Auth System</span>
                 <span className="kit-item">Dashboard UI</span>
-                <span className="kit-item">Stripe Billing</span>
+                <span className="kit-item">Billing UI concept</span>
                 <span className="kit-item">Admin Panel</span>
               </div>
               <div className="kit-footer">
@@ -454,11 +454,11 @@ export default function HomePage() {
                 dashboard, and NFT components. Not available yet.
               </div>
               <div className="kit-items">
-                <span className="kit-item">Wallet Connect</span>
-                <span className="kit-item">Smart Contract UI</span>
-                <span className="kit-item">NFT Gallery</span>
-                <span className="kit-item">DAO Governance</span>
-                <span className="kit-item">Mint Page</span>
+                <span className="kit-item">Wallet UI concept</span>
+                <span className="kit-item">Contract UI concept</span>
+                <span className="kit-item">NFT gallery concept</span>
+                <span className="kit-item">DAO UI concept</span>
+                <span className="kit-item">Mint page concept</span>
               </div>
               <div className="kit-footer">
                 <div>
@@ -480,8 +480,8 @@ export default function HomePage() {
               <div className="kit-items">
                 <span className="kit-item">Banking Template</span>
                 <span className="kit-item">Loan Calculator</span>
-                <span className="kit-item">KYC Flow</span>
-                <span className="kit-item">Paystack Ready</span>
+                <span className="kit-item">KYC UI concept</span>
+                <span className="kit-item">Payment adapter concept</span>
                 <span className="kit-item">Admin Dashboard</span>
               </div>
               <div className="kit-footer">
@@ -786,8 +786,7 @@ export default function HomePage() {
               <div className="dir-info">
                 <div className="dir-name">Figma</div>
                 <div className="dir-desc">
-                  Collaborative UI/UX design tool used by millions of teams
-                  worldwide
+                  Collaborative UI/UX design and prototyping tool
                 </div>
                 <div className="dir-pills">
                   <span className="dir-pill">Design</span>
