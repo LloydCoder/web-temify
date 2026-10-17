@@ -3,7 +3,8 @@ import EcosystemDestination from "../ecosystem-destination";
 
 export const metadata: Metadata = {
   title: "AI Site Builder",
-  description: "AI website generation is planned and disabled until implemented.",
+  description:
+    "AI website generation is planned and disabled until implemented.",
 };
 
 export default function AiSiteBuilderPage() {
