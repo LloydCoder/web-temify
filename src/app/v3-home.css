@@ -787,9 +787,13 @@
   justify-content: space-between;
 }
 .v3-app .kit-price {
+  color: var(--ink);
   font-size: 1.6rem;
   font-weight: 900;
   letter-spacing: -0.04em;
+}
+.v3-app .kit-card.dark .kit-price {
+  color: var(--yellow);
 }
 .v3-app .kit-was {
   font-size: 0.8rem;
