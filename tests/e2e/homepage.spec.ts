@@ -348,9 +348,9 @@ test("unknown routes return a noindex 404 with specific metadata", async ({
   const response = await page.goto("/forensic-audit-route-that-does-not-exist");
   expect(response?.status()).toBe(404);
   await expect(page).toHaveTitle("Page not found | Web-Temify");
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+  await expect(page.locator('head meta[name="robots"]')).toHaveAttribute(
     "content",
-    "noindex, follow",
+    "noindex",
   );
 });
 
