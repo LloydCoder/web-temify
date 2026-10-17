@@ -19,8 +19,7 @@ type NotificationJob = {
 };
 
 function isAuthorized(request: Request) {
-  const expectedToken =
-    process.env.SUPPORT_NOTIFICATION_WORKER_TOKEN || process.env.CRON_SECRET;
+  const expectedToken = process.env.SUPPORT_NOTIFICATION_WORKER_TOKEN;
   const authorization = request.headers.get("authorization");
   const supplied = authorization?.match(/^Bearer\s+(\S+)$/i)?.[1];
 

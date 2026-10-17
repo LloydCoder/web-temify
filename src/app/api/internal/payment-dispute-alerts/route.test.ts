@@ -68,6 +68,19 @@ describe("Phase 5J payment dispute deadline alert worker", () => {
     expect(mocks.rpc).not.toHaveBeenCalled();
   });
 
+  it.each(["SUPPORT_NOTIFICATION_WORKER_TOKEN", "CRON_SECRET"])(
+    "does not accept %s as a substitute for its dedicated token",
+    async (tokenName) => {
+      vi.stubEnv(tokenName, workerToken);
+
+      const response = await POST(request());
+
+      expect(response.status).toBe(401);
+      expect(mocks.createClient).not.toHaveBeenCalled();
+      expect(mocks.rpc).not.toHaveBeenCalled();
+    },
+  );
+
   it("fails closed when worker configuration is missing", async () => {
     vi.stubEnv("PAYMENT_DISPUTE_ALERT_WORKER_TOKEN", workerToken);
     const response = await POST(request());

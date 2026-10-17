@@ -74,6 +74,16 @@ describe("Phase 5F support notification worker", () => {
     expect(mocks.rpc).not.toHaveBeenCalled();
   });
 
+  it("does not accept the shared CRON_SECRET as a substitute for its dedicated token", async () => {
+    vi.stubEnv("CRON_SECRET", workerToken);
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(401);
+    expect(mocks.createClient).not.toHaveBeenCalled();
+    expect(mocks.rpc).not.toHaveBeenCalled();
+  });
+
   it("fails closed when production worker configuration is incomplete", async () => {
     vi.stubEnv("SUPPORT_NOTIFICATION_WORKER_TOKEN", workerToken);
     const response = await POST(request());

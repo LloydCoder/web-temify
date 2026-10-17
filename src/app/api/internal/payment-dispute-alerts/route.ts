@@ -20,10 +20,7 @@ type DisputeAlertJob = {
 };
 
 function isAuthorized(request: Request) {
-  const expectedToken =
-    process.env.PAYMENT_DISPUTE_ALERT_WORKER_TOKEN ||
-    process.env.SUPPORT_NOTIFICATION_WORKER_TOKEN ||
-    process.env.CRON_SECRET;
+  const expectedToken = process.env.PAYMENT_DISPUTE_ALERT_WORKER_TOKEN;
   const supplied = request.headers
     .get("authorization")
     ?.match(/^Bearer\s+(\S+)$/i)?.[1];
