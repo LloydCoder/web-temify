@@ -41,13 +41,20 @@ jobs:
         run: pnpm typecheck
       - name: Lint
         run: pnpm lint
-      - name: Print Prettier output for moderation appeal E2E test
+      - name: Print Prettier output for formatting diagnostics
         if: always()
         shell: bash
         run: |
-          echo "FORMAT_START:tests/e2e/moderation-appeals.spec.ts"
-          pnpm exec prettier tests/e2e/moderation-appeals.spec.ts
-          echo "FORMAT_END:tests/e2e/moderation-appeals.spec.ts"
+          for file in \
+            tests/e2e/moderation-appeals.spec.ts \
+            'src/app/api/admin/payment-disputes/[disputeId]/evidence/route.ts' \
+            'src/app/api/admin/payment-disputes/[disputeId]/evidence/route.test.ts' \
+            'src/app/api/admin/payment-disputes/[disputeId]/evidence/[evidenceId]/route.ts' \
+            'src/app/api/admin/payment-disputes/[disputeId]/evidence/[evidenceId]/route.test.ts'; do
+            echo "FORMAT_START:$file"
+            pnpm exec prettier "$file"
+            echo "FORMAT_END:$file"
+          done
       - name: Formatting check
         run: pnpm format:check
       - name: Install Supabase CLI
