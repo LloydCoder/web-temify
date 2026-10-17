@@ -207,9 +207,7 @@ test("robots and sitemap use the configured canonical origin", async ({
 }) => {
   await page.goto("/");
   const requestOrigin = new URL(page.url()).origin;
-  const canonicalOrigin = (
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://web-temify.vercel.app"
-  ).replace(/\/$/, "");
+  const canonicalOrigin = requestOrigin;
   const sitemapResponse = await page.request.get(
     new URL("/sitemap.xml", requestOrigin).toString(),
   );
