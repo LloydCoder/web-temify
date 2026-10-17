@@ -3,7 +3,8 @@ import EcosystemDestination from "../ecosystem-destination";
 
 export const metadata: Metadata = {
   title: "Tech Hub & Advertising Engine",
-  description: "Editorial publishing, SEO and advertising workflows are planned, not enabled.",
+  description:
+    "Editorial publishing, SEO and advertising workflows are planned, not enabled.",
 };
 
 export default function TechHubPage() {
