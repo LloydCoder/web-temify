@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = (
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://web-temify.com"
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://web-temify.vercel.app"
   ).replace(/\/$/, "");
 
   return {
