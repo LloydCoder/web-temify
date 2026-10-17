@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Outcome-Based AI Implementation",
   description:
     "Scoped AI implementation marketplace workflows are planned; contracts and milestone payments are disabled.",
+  alternates: { canonical: "/implementation" },
 };
 
 export default function ImplementationPage() {

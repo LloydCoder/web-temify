@@ -8,7 +8,7 @@ const directoryFilters: Record<string, string[]> = {
   "Web3 & Blockchain": ["web3", "blockchain", "crypto", "nft", "wallet"],
   "Hosting & Infra": ["hosting", "infra", "cloud", "deploy"],
   "Design Tools": ["design", "creative", "ui", "ux"],
-  "No-Code": ["no"],
+  "No-Code": ["no-code", "visual", "builder"],
   "Dev Tools": ["dev", "coding", "developer", "api", "git"],
   "Freelancer Resources": ["freelancer", "resources", "client", "invoice"],
 };

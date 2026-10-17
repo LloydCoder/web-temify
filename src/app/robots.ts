@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = (
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://web-temify.com"
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://web-temify.vercel.app"
   ).replace(/\/$/, "");
 
   return {
@@ -10,12 +10,13 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
       disallow: [
-        "/admin/",
-        "/account/",
-        "/checkout/",
-        "/api/",
-        "/internal/",
-        "/creator/",
+        "/admin",
+        "/account",
+        "/checkout",
+        "/api",
+        "/internal",
+        "/creator",
+        "/seller",
       ],
     },
     sitemap: `${baseUrl}/sitemap.xml`,

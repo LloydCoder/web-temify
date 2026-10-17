@@ -1,3 +1,5 @@
+import { cache } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -32,27 +34,56 @@ function formatPrice(amountMinor: number, currency: string) {
   }
 }
 
+const loadPublishedProduct = cache(
+  async (slug: string): Promise<Product | null> => {
+    try {
+      const supabase = await createSupabaseServerClient();
+      const { data, error } = await supabase
+        .from("products")
+        .select(
+          "id,slug,name,summary,description,product_type,price_minor,currency,license_type,release_version,compatibility,tech_stack,docs_url,demo_url",
+        )
+        .eq("slug", slug)
+        .eq("status", "published")
+        .maybeSingle();
+      if (error || !data) return null;
+      return data as Product;
+    } catch {
+      return null;
+    }
+  },
+);
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await loadPublishedProduct(slug);
+  if (!product) {
+    return {
+      title: "Product not found",
+      description:
+        "This product is not currently published in the Web-Temify catalogue.",
+    };
+  }
+
+  return {
+    title: product.name,
+    alternates: { canonical: `/catalog/${encodeURIComponent(slug)}` },
+    description:
+      product.summary || `Verified digital product release: ${product.name}.`,
+  };
+}
+
 export default async function ProductDetailPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  let product: Product | null = null;
-  try {
-    const supabase = await createSupabaseServerClient();
-    const { data, error } = await supabase
-      .from("products")
-      .select(
-        "id,slug,name,summary,description,product_type,price_minor,currency,license_type,release_version,compatibility,tech_stack,docs_url,demo_url",
-      )
-      .eq("slug", slug)
-      .eq("status", "published")
-      .maybeSingle();
-    if (!error && data) product = data as Product;
-  } catch {
-    product = null;
-  }
+  const product = await loadPublishedProduct(slug);
   if (!product) notFound();
 
   return (

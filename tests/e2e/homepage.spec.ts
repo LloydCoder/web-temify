@@ -10,13 +10,17 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: /your website, ready in minutes/i,
+      name: /your next website starts here/i,
     }),
   ).toBeVisible();
   await expect(
     page.getByText(/no products are available for purchase/i),
   ).toBeVisible();
   await expect(page.locator("iframe")).toHaveCount(0);
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute(
+    "href",
+    /icon\.svg/,
+  );
   await expect(page.locator(".cat-card").first()).toHaveAttribute(
     "href",
     /\/catalog\?q=/,
@@ -28,6 +32,28 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   await expect(page.locator('a[href="#"]')).toHaveCount(0);
   await expect(page.locator(".ai-input-row button")).toBeDisabled();
   await expect(page.getByText(/AI generation is not live yet/i)).toBeVisible();
+  await expect(
+    page.getByRole("textbox", {
+      name: /website description/i,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("textbox", {
+      name: /email address for future web-temify updates/i,
+    }),
+  ).toBeDisabled();
+  await expect(page.locator("#newsletter-status")).toContainText(
+    /no email is collected/i,
+  );
+  await expect(
+    page.getByText("Payment adapter concept", { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("Paystack Ready", { exact: true })).toHaveCount(
+    0,
+  );
+  await expect(page.getByText("Stripe Billing", { exact: true })).toHaveCount(
+    0,
+  );
   const ecosystem = page.locator("#ecosystem");
   await expect(ecosystem.getByRole("article")).toHaveCount(9);
   for (const href of [
@@ -56,6 +82,14 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   expect(unresolvedAnchorTargets).toEqual([]);
 });
 
+test("catalogue uses a page-specific SEO title", async ({ page }) => {
+  await page.goto("/catalog");
+  await expect(page).toHaveTitle(/Product Catalogue \| Web-Temify/);
+  await expect(
+    page.getByRole("heading", { name: "Product catalogue" }),
+  ).toBeVisible();
+});
+
 test("homepage has no horizontal overflow on mobile or desktop", async ({
   page,
 }) => {
@@ -81,14 +115,20 @@ test("homepage has no horizontal overflow on mobile or desktop", async ({
 test("mobile navigation opens and closes accessibly", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  const toggle = page.getByRole("button", { name: /toggle navigation/i });
+  const toggle = page.getByRole("button", { name: /navigation/i });
   const navigation = page.locator("#primary-navigation");
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(toggle).toHaveAccessibleName("Open navigation");
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  await expect(toggle).toHaveAccessibleName("Close navigation");
   await expect(
     navigation.getByRole("link", { name: "Templates" }),
   ).toBeVisible();
+  await page.keyboard.press("Tab");
+  await expect(
+    navigation.getByRole("link", { name: "Templates" }),
+  ).toBeFocused();
   await navigation.getByRole("link", { name: "Templates" }).click();
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
 });
@@ -98,7 +138,7 @@ test("mobile navigation closes on Escape and restores focus to the toggle", asyn
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  const toggle = page.getByRole("button", { name: /toggle navigation/i });
+  const toggle = page.getByRole("button", { name: /navigation/i });
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-expanded", "true");
   await page.keyboard.press("Escape");
@@ -135,6 +175,21 @@ test("directory tabs filter the visible external tool cards", async ({
     .toBe(allCount);
 });
 
+test("No-Code and Freelancer Resources directory filters return matching tools", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const cards = page.locator(".dir-card");
+  const visibleCardCount = () =>
+    cards.evaluateAll(
+      (items) => items.filter((item) => !item.hasAttribute("hidden")).length,
+    );
+  for (const label of ["No-Code", "Freelancer Resources"]) {
+    await page.getByRole("button", { name: label }).click();
+    await expect.poll(visibleCardCount).toBeGreaterThan(0);
+  }
+});
+
 test("native AI prompt buttons populate the planned builder input without implying generation is live", async ({
   page,
 }) => {
@@ -145,4 +200,169 @@ test("native AI prompt buttons populate the planned builder input without implyi
     .click();
   await expect(input).toHaveValue("Logistics company website");
   await expect(page.locator(".ai-input-row button")).toBeDisabled();
+});
+
+test("robots and sitemap use the configured canonical origin", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const requestOrigin = new URL(page.url()).origin;
+  const canonicalOrigin = requestOrigin;
+  const sitemapResponse = await page.request.get(
+    new URL("/sitemap.xml", requestOrigin).toString(),
+  );
+  expect(sitemapResponse.ok()).toBe(true);
+  const sitemap = await sitemapResponse.text();
+  const sitemapOrigins = sitemap
+    .split("<loc>")
+    .slice(1)
+    .map((entry) => new URL(entry.split("</loc>")[0]).origin);
+  expect(sitemapOrigins.length).toBeGreaterThan(0);
+  expect([...new Set(sitemapOrigins)]).toEqual([canonicalOrigin]);
+
+  const robotsResponse = await page.request.get(
+    new URL("/robots.txt", requestOrigin).toString(),
+  );
+  expect(robotsResponse.ok()).toBe(true);
+  const robots = await robotsResponse.text();
+  expect(robots).toContain(`Sitemap: ${canonicalOrigin}/sitemap.xml`);
+  for (const path of [
+    "/admin",
+    "/account",
+    "/checkout",
+    "/api",
+    "/internal",
+    "/creator",
+    "/seller",
+  ]) {
+    expect(robots).toContain(`Disallow: ${path}`);
+  }
+});
+
+test("header and hero respond correctly across desktop and mobile layouts", async ({
+  page,
+}) => {
+  const navigation = page.getByRole("navigation", {
+    name: "Primary navigation",
+  });
+  const toggle = page.getByRole("button", { name: /navigation/i });
+  const links = page.locator("#primary-navigation");
+  const hero = page.locator(".hero");
+  const heroVisual = page.locator(".hero-right");
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await expect(navigation).toBeVisible();
+  await expect(toggle).toBeVisible();
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(links).toBeHidden();
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.locator(".hero-cta .btn-fill")).toHaveText(
+    "Explore previews",
+  );
+  await expect(heroVisual).toBeVisible();
+  await expect(heroVisual).toHaveCSS("grid-template-columns", /^\d+px$/);
+  await toggle.focus();
+  await page.keyboard.press("Tab");
+  await expect(page.locator(".nav-actions .btn-fill")).toBeFocused();
+  await expect(hero).toHaveCSS("grid-template-columns", /^\d+px$/);
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(toggle).toBeHidden();
+  await expect(links).toBeVisible();
+  await expect(links.getByRole("link", { name: "Templates" })).toBeVisible();
+  await expect(heroVisual).toBeVisible();
+});
+
+test("mobile header opens, closes with Escape, and restores focus", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto("/");
+  const toggle = page.getByRole("button", { name: "Open navigation" });
+  await expect(toggle).toBeVisible();
+  await toggle.click();
+  const closeToggle = page.getByRole("button", { name: "Close navigation" });
+  await expect(closeToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(
+    page.locator("#primary-navigation").getByRole("link", {
+      name: "Launch Kits",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  const openToggle = page.getByRole("button", { name: "Open navigation" });
+  await expect(openToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(openToggle).toBeFocused();
+});
+
+test("hero preview cards remain visible on tablet and mobile", async ({
+  page,
+}) => {
+  for (const viewport of [
+    { width: 320, height: 800 },
+    { width: 390, height: 844 },
+    { width: 768, height: 1024 },
+    { width: 1024, height: 900 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    await expect(page.locator(".hero")).toBeVisible();
+    await expect(page.locator(".hero-right .preview-card")).toHaveCount(3);
+    await expect(
+      page.locator(".hero-right .preview-card").first(),
+    ).toBeVisible();
+    const overflow = await page.evaluate(
+      () =>
+        document.documentElement.scrollWidth >
+        document.documentElement.clientWidth,
+    );
+    expect(overflow, `horizontal overflow at ${viewport.width}px`).toBe(false);
+  }
+});
+
+test("mobile navigation keeps visual and keyboard focus order aligned", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Open navigation" }).click();
+  const navigation = page.locator("#primary-navigation");
+  const lastNavLink = navigation.getByRole("link", {
+    name: "Platform",
+    exact: true,
+  });
+  const previewCta = page.locator(".nav-actions .btn-fill");
+  await expect(lastNavLink).toBeVisible();
+  await expect(previewCta).toBeVisible();
+  const lastLinkBox = await lastNavLink.boundingBox();
+  const ctaBox = await previewCta.boundingBox();
+  expect(lastLinkBox).not.toBeNull();
+  expect(ctaBox).not.toBeNull();
+  expect(ctaBox!.y).toBeGreaterThan(lastLinkBox!.y + lastLinkBox!.height);
+});
+
+test("unknown routes return a noindex 404 with specific metadata", async ({
+  page,
+}) => {
+  const response = await page.goto("/forensic-audit-route-that-does-not-exist");
+  expect(response?.status()).toBe(404);
+  await expect(page).toHaveTitle("Page not found | Web-Temify");
+  await expect(page.locator('head meta[name="robots"]')).toHaveAttribute(
+    "content",
+    "noindex",
+  );
+  await expect(page.locator('meta[name="robots"]')).toHaveCount(1);
+});
+
+test("static V3 reference is excluded from search indexing", async ({
+  page,
+}) => {
+  const response = await page.request.get("/web-temify-v3.html");
+  expect(response.ok()).toBe(true);
+  const html = await response.text();
+  expect(html).toContain('<meta name="robots" content="noindex,follow" />');
+  expect(html).not.toContain("Ready-to-sell storefronts");
+  expect(html).not.toContain("Paystack Ready");
+  expect(html).toContain("Marketplace updates and tool discoveries");
 });

@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Tech Hub & Advertising Engine",
   description:
     "Editorial publishing, SEO and advertising workflows are planned, not enabled.",
+  alternates: { canonical: "/tech-hub" },
 };
 
 export default function TechHubPage() {

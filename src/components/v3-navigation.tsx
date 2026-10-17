@@ -21,10 +21,23 @@ export default function V3Navigation() {
   }, [mobileMenuOpen]);
 
   return (
-    <nav>
+    <nav aria-label="Primary navigation">
       <Link href="/" className="logo">
         Web-Temify <span className="logo-dot"></span>
       </Link>
+      <button
+        ref={toggleRef}
+        className="mobile-menu-toggle"
+        type="button"
+        aria-label={mobileMenuOpen ? "Close navigation" : "Open navigation"}
+        aria-controls="primary-navigation"
+        aria-expanded={mobileMenuOpen}
+        onClick={() => setMobileMenuOpen((open) => !open)}
+      >
+        <span />
+        <span />
+        <span />
+      </button>
       <ul
         className={`nav-links${mobileMenuOpen ? " is-open" : ""}`}
         id="primary-navigation"
@@ -55,29 +68,16 @@ export default function V3Navigation() {
           <a href="#ecosystem">Platform</a>
         </li>
       </ul>
-      <button
-        ref={toggleRef}
-        className="mobile-menu-toggle"
-        type="button"
-        aria-label="Toggle navigation"
-        aria-controls="primary-navigation"
-        aria-expanded={mobileMenuOpen}
-        onClick={() => setMobileMenuOpen((open) => !open)}
-      >
-        <span />
-        <span />
-        <span />
-      </button>
       <div className="nav-actions">
         <span
           className="btn btn-ghost"
           aria-disabled="true"
           title="Account access is not live yet"
         >
-          Account access soon
+          Accounts not live yet
         </span>
         <a href="#templates" className="btn btn-fill">
-          Browse Templates →
+          Browse previews →
         </a>
       </div>
     </nav>

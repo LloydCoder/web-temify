@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&display=swap");
-
 .ecosystem-destination {
   --ed-bg: #fffbf4;
   --ed-ink: #0f0d0a;
@@ -144,7 +142,7 @@
   padding: 0.8rem 1.1rem;
   background: var(--ed-coral);
   border: 2px solid var(--ed-coral);
-  color: #fff !important;
+  color: var(--ed-ink) !important;
   font-weight: 900;
   text-decoration: none;
 }
