@@ -301,7 +301,7 @@ export default function HomePage() {
           <div className="templates-grid reveal">
             <div className="tpl-card">
               <div className="tpl-preview" style={{ background: "#fff5f0" }}>
-                <span className="tpl-badge badge-hot">🔥 Hot</span>🏦
+                <span className="tpl-badge badge-hot">Preview</span>🏦
               </div>
               <div className="tpl-body">
                 <div className="tpl-name">NeoBank Pro Template</div>
@@ -331,7 +331,7 @@ export default function HomePage() {
             </div>
             <div className="tpl-card">
               <div className="tpl-preview" style={{ background: "#fff8e1" }}>
-                <span className="tpl-badge badge-new">✨ New</span>🚚
+                <span className="tpl-badge badge-new">Preview</span>🚚
               </div>
               <div className="tpl-body">
                 <div className="tpl-name">Courier & Logistics Pro</div>
@@ -346,7 +346,7 @@ export default function HomePage() {
             </div>
             <div className="tpl-card">
               <div className="tpl-preview" style={{ background: "#f5f0ff" }}>
-                <span className="tpl-badge badge-hot">🔥 Hot</span>💱
+                <span className="tpl-badge badge-hot">Preview</span>💱
               </div>
               <div className="tpl-body">
                 <div className="tpl-name">P2P Trading Script</div>
@@ -361,7 +361,7 @@ export default function HomePage() {
             </div>
             <div className="tpl-card">
               <div className="tpl-preview" style={{ background: "#f0fff8" }}>
-                <span className="tpl-badge badge-new">✨ New</span>🏘️
+                <span className="tpl-badge badge-new">Preview</span>🏘️
               </div>
               <div className="tpl-body">
                 <div className="tpl-name">Real Estate Listings Pro</div>
@@ -376,7 +376,7 @@ export default function HomePage() {
             </div>
             <div className="tpl-card">
               <div className="tpl-preview" style={{ background: "#fff5f0" }}>
-                <span className="tpl-badge badge-top">⭐ Top</span>💰
+                <span className="tpl-badge badge-top">Preview</span>💰
               </div>
               <div className="tpl-body">
                 <div className="tpl-name">Loan Management System</div>
@@ -418,7 +418,7 @@ export default function HomePage() {
           <div className="kits-grid reveal">
             <div className="kit-card dark">
               <div className="kit-watermark">🚀</div>
-              <div className="kit-tag">⚡ Most Popular</div>
+              <div className="kit-tag">SaaS concept preview</div>
               <div className="kit-name">SaaS Starter Kit</div>
               <div className="kit-desc">
                 Concept preview: a future SaaS starter bundle may include auth,
@@ -681,8 +681,7 @@ export default function HomePage() {
                   Claude by Anthropic <span className="star">★ Featured</span>
                 </div>
                 <div className="dir-desc">
-                  Most capable AI assistant for coding, writing, and complex
-                  analysis tasks
+                  AI assistant for coding, writing, and complex analysis tasks
                 </div>
                 <div className="dir-pills">
                   <span className="dir-pill">AI</span>
@@ -704,8 +703,7 @@ export default function HomePage() {
                   Vercel <span className="star">★ Featured</span>
                 </div>
                 <div className="dir-desc">
-                  Deploy web projects instantly — the fastest frontend cloud
-                  platform available
+                  Deploy web projects with preview deployments and frontend hosting
                 </div>
                 <div className="dir-pills">
                   <span className="dir-pill">Hosting</span>
@@ -1149,8 +1147,8 @@ export default function HomePage() {
               <span className="svc-icon">🚀</span>
               <div className="svc-name">SaaS MVP Build</div>
               <div className="svc-desc">
-                Full-stack SaaS with auth, billing, and dashboards —
-                production-ready in weeks.
+                Full-stack SaaS with authentication, billing, and dashboards, scoped to
+                your launch requirements.
               </div>
               <div className="svc-price">Scope-based quote</div>
             </div>
@@ -1158,8 +1156,8 @@ export default function HomePage() {
               <span className="svc-icon">🏦</span>
               <div className="svc-name">Fintech Solutions</div>
               <div className="svc-desc">
-                Payment systems, loan platforms, and Paystack integrations for
-                African markets.
+                Payment systems, loan platforms, and payment integrations for global and
+                regional markets, subject to provider and jurisdiction support.
               </div>
               <div className="svc-price">Scope-based quote</div>
             </div>
@@ -1455,7 +1453,7 @@ export default function HomePage() {
             </div>
             <div className="price-card featured">
               <div className="price-top">
-                <div className="price-label">Pro ⭐ Most Popular</div>
+                <div className="price-label">Pro · Planned</div>
                 <div className="price-amount">Preview</div>
                 <div className="price-period">Not available yet</div>
               </div>
@@ -1584,7 +1582,7 @@ export default function HomePage() {
                 className="section-title"
                 style={{ fontSize: "clamp(1.4rem, 2.5vw, 2rem)" }}
               >
-                New templates every week.
+                New releases.
                 <br />
                 <span className="serif">Dev tips. Tool discoveries.</span>
               </h2>
@@ -1818,7 +1816,7 @@ export default function HomePage() {
           </Link>
           <p>
             Premium templates, scripts, Web3 kits, and dev tools for builders
-            across Africa and beyond. No code, no stress.
+            for builders worldwide. No code, no stress.
           </p>
           <div className="footer-badges-row">
             <span className="f-badge">🇳🇬 Nigeria</span>
