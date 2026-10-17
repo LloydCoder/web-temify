@@ -44,7 +44,7 @@ export default function HomePage() {
             </p>
             <div className="hero-cta">
               <a href="#templates" className="btn btn-fill btn-big">
-                Browse Templates
+                Explore previews
               </a>
               <a href="#how" className="btn btn-ghost btn-big">
                 See how it works
