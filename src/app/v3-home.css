@@ -201,7 +201,7 @@
   top: -10px;
   right: -10px;
   background: var(--coral);
-  color: #fff;
+  color: var(--ink);
   font-size: 0.48rem;
   font-weight: 900;
   padding: 2px 5px;
@@ -473,7 +473,7 @@
   color: #fff;
 }
 .v3-app .strip-inner span {
-  color: var(--yellow);
+  color: var(--ink);
   font-size: 1rem;
 }
 @keyframes scroll {
@@ -637,17 +637,17 @@
 }
 .v3-app .badge-hot {
   background: var(--coral);
-  color: #fff;
+  color: var(--ink);
   border-color: var(--coral);
 }
 .v3-app .badge-new {
   background: var(--mint);
-  color: #fff;
+  color: var(--ink);
   border-color: var(--mint);
 }
 .v3-app .badge-web3 {
   background: var(--sky);
-  color: #fff;
+  color: var(--ink);
   border-color: var(--sky);
 }
 .v3-app .badge-top {
@@ -909,10 +909,10 @@
 }
 .v3-app .web3-card:hover {
   background: var(--sky);
-  color: #fff;
+  color: var(--ink);
 }
 .v3-app .web3-card:hover .web3-desc {
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--ink);
 }
 .v3-app .web3-icon {
   font-size: 2rem;
@@ -954,7 +954,7 @@
 .v3-app .dir-tab.active,
 .v3-app .dir-tab:hover {
   background: var(--coral);
-  color: #fff;
+  color: var(--ink);
   border-color: var(--coral);
 }
 .v3-app .dir-grid {
@@ -1582,7 +1582,7 @@
 .v3-app .cta-section h2 {
   font-size: clamp(2.5rem, 5vw, 4.5rem);
   font-weight: 900;
-  color: #fff;
+  color: var(--ink);
   letter-spacing: -0.03em;
   line-height: 1.05;
   margin-bottom: 1.2rem;
@@ -1713,7 +1713,7 @@
 }
 .v3-app .social-btn:hover {
   background: var(--coral);
-  color: #fff;
+  color: var(--ink);
   border-color: var(--coral);
 }
 
