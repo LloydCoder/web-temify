@@ -259,3 +259,107 @@ comment on table public.payment_dispute_evidence_scan_results is
   'Append-only scanner attestations bound to the exact private evidence digest. A missing or stale scan is not clean.';
 comment on column public.payment_dispute_evidence.retention_until is
   'Null until an approved legal retention policy is recorded. Automated dispute-evidence deletion is not implemented or enabled.';
+
+
+create function public.get_payment_dispute_evidence_for_admin(
+  p_dispute_id uuid,
+  p_evidence_id uuid,
+  p_actor_id uuid,
+  p_request_id uuid
+)
+returns table (
+  storage_path text,
+  source_sha256 text,
+  mime_type text,
+  byte_size bigint,
+  original_filename text,
+  scan_id uuid,
+  scanner_name text,
+  scanner_version text,
+  signature_updated_at timestamptz,
+  scanned_at timestamptz
+)
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  evidence_row public.payment_dispute_evidence%rowtype;
+  scan_row public.payment_dispute_evidence_scan_results%rowtype;
+  access_time timestamptz := clock_timestamp();
+begin
+  if p_dispute_id is null or p_evidence_id is null
+    or p_actor_id is null or p_request_id is null
+  then
+    raise exception using errcode = '23514', message = 'payment dispute evidence access metadata failed validation';
+  end if;
+
+  if not exists (
+    select 1 from public.user_roles ur
+    where ur.user_id = p_actor_id and ur.role = 'admin'::public.app_role
+  ) then
+    raise exception using errcode = '42501', message = 'payment dispute evidence access requires an admin';
+  end if;
+
+  select * into evidence_row
+  from public.payment_dispute_evidence
+  where id = p_evidence_id and dispute_id = p_dispute_id
+  for share;
+
+  if evidence_row.id is null then
+    raise exception using errcode = 'P0002', message = 'payment dispute evidence was not found';
+  end if;
+
+  select * into scan_row
+  from public.payment_dispute_evidence_scan_results
+  where evidence_id = p_evidence_id
+  order by scanned_at desc, id desc
+  limit 1;
+
+  if scan_row.id is null
+    or scan_row.verdict <> 'clean'
+    or scan_row.source_sha256 <> evidence_row.source_sha256
+    or scan_row.signature_updated_at > access_time + interval '5 minutes'
+    or scan_row.signature_updated_at < access_time - interval '48 hours'
+  then
+    raise exception using errcode = '55000', message = 'payment dispute evidence is not eligible for access';
+  end if;
+
+  insert into public.audit_events (
+    actor_id, action, entity_type, entity_id, request_id, metadata
+  ) values (
+    p_actor_id,
+    'payment_dispute.evidence.accessed',
+    'payment_dispute_evidence',
+    p_evidence_id::text,
+    p_request_id::text,
+    jsonb_build_object(
+      'dispute_id', p_dispute_id,
+      'source_sha256', evidence_row.source_sha256,
+      'scan_result_id', scan_row.id,
+      'scanner_name', scan_row.scanner_name,
+      'scanner_version', scan_row.scanner_version
+    )
+  );
+
+  return query select
+    evidence_row.storage_path,
+    evidence_row.source_sha256,
+    evidence_row.mime_type,
+    evidence_row.byte_size,
+    evidence_row.original_filename,
+    scan_row.id,
+    scan_row.scanner_name,
+    scan_row.scanner_version,
+    scan_row.signature_updated_at,
+    scan_row.scanned_at;
+end;
+$function$;
+
+revoke all on function public.get_payment_dispute_evidence_for_admin(uuid, uuid, uuid, uuid)
+  from public, anon, authenticated, service_role;
+grant execute on function public.get_payment_dispute_evidence_for_admin(uuid, uuid, uuid, uuid)
+  to service_role;
+
+comment on function public.get_payment_dispute_evidence_for_admin(uuid, uuid, uuid, uuid) is
+  'Audits admin access and returns metadata only for digest-matched evidence with a current clean scanner attestation; the caller may issue a short-lived private-storage URL.';
