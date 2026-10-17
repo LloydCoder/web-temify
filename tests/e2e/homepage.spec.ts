@@ -93,7 +93,6 @@ test("mobile navigation opens and closes accessibly", async ({ page }) => {
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
 });
 
-
 test("mobile navigation closes on Escape and restores focus to the toggle", async ({
   page,
 }) => {
