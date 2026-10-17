@@ -410,7 +410,7 @@ export default function HomePage() {
                   maxWidth: "400px",
                 }}
               >
-                Planned launch kits will bundle a project's core pieces.
+                Planned launch kits will bundle a project&apos;s core pieces.
                 These cards are previews, not released products.
               </p>
             </div>
