@@ -286,7 +286,12 @@ test("mobile header opens, closes with Escape, and restores focus", async ({
   await toggle.click();
   const closeToggle = page.getByRole("button", { name: "Close navigation" });
   await expect(closeToggle).toHaveAttribute("aria-expanded", "true");
-  await expect(page.getByRole("link", { name: "Launch Kits" })).toBeVisible();
+  await expect(
+    page.locator("#primary-navigation").getByRole("link", {
+      name: "Launch Kits",
+      exact: true,
+    }),
+  ).toBeVisible();
   await page.keyboard.press("Escape");
   const openToggle = page.getByRole("button", { name: "Open navigation" });
   await expect(openToggle).toHaveAttribute("aria-expanded", "false");
@@ -324,8 +329,12 @@ test("mobile navigation keeps visual and keyboard focus order aligned", async ({
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await page.getByRole("button", { name: "Open navigation" }).click();
-  const lastNavLink = page.getByRole("link", { name: "Platform" });
-  const previewCta = page.getByRole("link", { name: "Browse previews" });
+  const navigation = page.locator("#primary-navigation");
+  const lastNavLink = navigation.getByRole("link", {
+    name: "Platform",
+    exact: true,
+  });
+  const previewCta = page.locator(".nav-actions .btn-fill");
   await expect(lastNavLink).toBeVisible();
   await expect(previewCta).toBeVisible();
   const lastLinkBox = await lastNavLink.boundingBox();
