@@ -425,11 +425,11 @@ export default function HomePage() {
                 available for purchase yet.
               </div>
               <div className="kit-items">
-                <span className="kit-item">Landing Page</span>
-                <span className="kit-item">Auth System</span>
-                <span className="kit-item">Dashboard UI</span>
+                <span className="kit-item">Landing page concept</span>
+                <span className="kit-item">Auth UI concept</span>
+                <span className="kit-item">Dashboard UI concept</span>
                 <span className="kit-item">Billing UI concept</span>
-                <span className="kit-item">Admin Panel</span>
+                <span className="kit-item">Admin UI concept</span>
               </div>
               <div className="kit-footer">
                 <div>
@@ -478,11 +478,11 @@ export default function HomePage() {
                 payment providers and jurisdictions for each market.
               </div>
               <div className="kit-items">
-                <span className="kit-item">Banking Template</span>
-                <span className="kit-item">Loan Calculator</span>
+                <span className="kit-item">Banking UI concept</span>
+                <span className="kit-item">Loan calculator concept</span>
                 <span className="kit-item">KYC UI concept</span>
                 <span className="kit-item">Payment adapter concept</span>
-                <span className="kit-item">Admin Dashboard</span>
+                <span className="kit-item">Admin dashboard concept</span>
               </div>
               <div className="kit-footer">
                 <div>
@@ -502,11 +502,11 @@ export default function HomePage() {
                 contact forms, and lead capture. Not available yet.
               </div>
               <div className="kit-items">
-                <span className="kit-item">Portfolio Pages</span>
-                <span className="kit-item">Services Layout</span>
-                <span className="kit-item">Case Studies</span>
-                <span className="kit-item">Lead Forms</span>
-                <span className="kit-item">Blog Engine</span>
+                <span className="kit-item">Portfolio concept</span>
+                <span className="kit-item">Services page concept</span>
+                <span className="kit-item">Case study concept</span>
+                <span className="kit-item">Lead capture concept</span>
+                <span className="kit-item">Blog UI concept</span>
               </div>
               <div className="kit-footer">
                 <div>
