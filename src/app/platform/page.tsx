@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Shared Enterprise Platform",
   description:
     "Learn about the cross-cutting platform foundation and feature-specific readiness gates.",
+  alternates: { canonical: "/platform" },
 };
 
 export default function PlatformPage() {
