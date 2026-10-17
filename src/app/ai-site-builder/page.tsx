@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "AI Site Builder",
   description:
     "AI website generation is planned and disabled until implemented.",
+  alternates: { canonical: "/ai-site-builder" },
 };
 
 export default function AiSiteBuilderPage() {
