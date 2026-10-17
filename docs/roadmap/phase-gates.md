@@ -383,7 +383,7 @@ The UI's evidence digest field is a reference only; it does not upload or valida
 - [x] Pass Foundation CI and Security/dependency governance on the exact PR head.
 - [ ] Map each enabled provider's signed webhook payloads to normalized dispute actions and add provider-specific signature fixtures.
 - [ ] Add provider evidence upload/submission and verify the workflow against the selected provider sandbox.
-- [x] Add a durable deadline-alert outbox and scheduled worker in Phase 5J; exact-head CI and merge remain pending for that implementation.
+- [x] Add a durable deadline-alert outbox and scheduled worker in Phase 5J; the implementation is merged and its exact-head CI passed.
 - [ ] Integrate dispute outcomes with reviewed refund/journal policy and payout holds.
 - [ ] Approve dispute handling policy, evidence retention, escalation owner, and incident response.
 
