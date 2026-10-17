@@ -156,7 +156,8 @@ export default function HomePage() {
             <span>✦</span> Web3 DApp Kits <span>✦</span> NFT Marketplace
             <span>✦</span> Courier Templates <span>✦</span> P2P Crypto Scripts
             <span>✦</span> Loan Management <span>✦</span> AI Page Generator
-            <span>✦</span> Tech Directory <span>✦</span> Payment providers pending verification <span>✦</span>
+            <span>✦</span> Tech Directory <span>✦</span> Payment providers
+            pending verification <span>✦</span>
           </div>
         </div>
 
@@ -249,8 +250,8 @@ export default function HomePage() {
               <span className="cat-emoji">🛒</span>
               <h3>E-commerce</h3>
               <p>
-                Planned storefront concepts for digital products,
-                subscriptions, and physical goods.
+                Planned storefront concepts for digital products, subscriptions,
+                and physical goods.
               </p>
             </Link>
             <Link
@@ -262,8 +263,8 @@ export default function HomePage() {
               <span className="cat-emoji">🏘️</span>
               <h3>Real Estate</h3>
               <p>
-                Planned concepts for property listings, agents, and
-                developer portfolios.
+                Planned concepts for property listings, agents, and developer
+                portfolios.
               </p>
             </Link>
             <Link
@@ -1552,8 +1553,8 @@ export default function HomePage() {
                   fontWeight: "500",
                 }}
               >
-                Marketplace updates and tool discoveries will be announced
-                when signup opens.
+                Marketplace updates and tool discoveries will be announced when
+                signup opens.
               </p>
             </div>
             <div>
@@ -1802,8 +1803,8 @@ export default function HomePage() {
               Tinlance Limited ↗
             </a>
             <br />
-            Tinlance offers scoped custom engineering separately;
-            Web-Temify marketplace-linked service requests are not live yet.
+            Tinlance offers scoped custom engineering separately; Web-Temify
+            marketplace-linked service requests are not live yet.
           </div>
         </div>
         <div className="footer-col">
