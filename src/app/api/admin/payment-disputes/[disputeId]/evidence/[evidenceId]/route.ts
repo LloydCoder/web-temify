@@ -34,6 +34,7 @@ function response(body: Record<string, unknown>, status: number) {
  * The database writes the access audit event before this route signs the URL.
  */
 export async function GET(request: Request, context: RouteContext) {
+  void request;
   const adminContext = await getAdminContext("payment_dispute_evidence_access");
   if (!adminContext) return response({ error: "not_found" }, 404);
 
