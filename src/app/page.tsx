@@ -177,7 +177,11 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="cat-grid reveal">
-            <Link href={`/catalog?q=${encodeURIComponent("Fintech & Banking")}`} className="cat-card cc-1" aria-label="Browse verified releases: Fintech & Banking">
+            <Link
+              href={`/catalog?q=${encodeURIComponent("Fintech & Banking")}`}
+              className="cat-card cc-1"
+              aria-label="Browse verified releases: Fintech & Banking"
+            >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🏦</span>
               <h3>Fintech & Banking</h3>
@@ -186,7 +190,11 @@ export default function HomePage() {
                 the African market.
               </p>
             </Link>
-            <Link href={`/catalog?q=${encodeURIComponent("Web3 & Blockchain")}`} className="cat-card cc-2" aria-label="Browse verified releases: Web3 & Blockchain">
+            <Link
+              href={`/catalog?q=${encodeURIComponent("Web3 & Blockchain")}`}
+              className="cat-card cc-2"
+              aria-label="Browse verified releases: Web3 & Blockchain"
+            >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">⛓️</span>
               <h3>Web3 & Blockchain</h3>
@@ -195,7 +203,11 @@ export default function HomePage() {
                 kits.
               </p>
             </Link>
-            <Link href={`/catalog?q=${encodeURIComponent("Logistics & Courier")}`} className="cat-card cc-3" aria-label="Browse verified releases: Logistics & Courier">
+            <Link
+              href={`/catalog?q=${encodeURIComponent("Logistics & Courier")}`}
+              className="cat-card cc-3"
+              aria-label="Browse verified releases: Logistics & Courier"
+            >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🚚</span>
               <h3>Logistics & Courier</h3>
@@ -204,7 +216,11 @@ export default function HomePage() {
                 fleet management.
               </p>
             </Link>
-            <Link href={`/catalog?q=${encodeURIComponent("SaaS & Startups")}`} className="cat-card cc-4" aria-label="Browse verified releases: SaaS & Startups">
+            <Link
+              href={`/catalog?q=${encodeURIComponent("SaaS & Startups")}`}
+              className="cat-card cc-4"
+              aria-label="Browse verified releases: SaaS & Startups"
+            >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🚀</span>
               <h3>SaaS & Startups</h3>
@@ -213,7 +229,11 @@ export default function HomePage() {
                 templates.
               </p>
             </Link>
-            <Link href={`/catalog?q=${encodeURIComponent("Agency & Portfolio")}`} className="cat-card cc-5" aria-label="Browse verified releases: Agency & Portfolio">
+            <Link
+              href={`/catalog?q=${encodeURIComponent("Agency & Portfolio")}`}
+              className="cat-card cc-5"
+              aria-label="Browse verified releases: Agency & Portfolio"
+            >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🎨</span>
               <h3>Agency & Portfolio</h3>
@@ -222,7 +242,11 @@ export default function HomePage() {
                 freelancers.
               </p>
             </Link>
-            <Link href={`/catalog?q=${encodeURIComponent("E-commerce")}`} className="cat-card cc-6" aria-label="Browse verified releases: E-commerce">
+            <Link
+              href={`/catalog?q=${encodeURIComponent("E-commerce")}`}
+              className="cat-card cc-6"
+              aria-label="Browse verified releases: E-commerce"
+            >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🛒</span>
               <h3>E-commerce</h3>
@@ -231,7 +255,11 @@ export default function HomePage() {
                 and physical goods.
               </p>
             </Link>
-            <Link href={`/catalog?q=${encodeURIComponent("Real Estate")}`} className="cat-card cc-7" aria-label="Browse verified releases: Real Estate">
+            <Link
+              href={`/catalog?q=${encodeURIComponent("Real Estate")}`}
+              className="cat-card cc-7"
+              aria-label="Browse verified releases: Real Estate"
+            >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🏘️</span>
               <h3>Real Estate</h3>
@@ -240,7 +268,11 @@ export default function HomePage() {
                 templates.
               </p>
             </Link>
-            <Link href={`/catalog?q=${encodeURIComponent("Scripts & Tools")}`} className="cat-card cc-8" aria-label="Browse verified releases: Scripts & Tools">
+            <Link
+              href={`/catalog?q=${encodeURIComponent("Scripts & Tools")}`}
+              className="cat-card cc-8"
+              aria-label="Browse verified releases: Scripts & Tools"
+            >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">⚡</span>
               <h3>Scripts & Tools</h3>
@@ -555,7 +587,11 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="web3-grid reveal">
-            <Link href={`/catalog?q=${encodeURIComponent("Wallet Auth UI")}`} className="web3-card" aria-label="Browse verified releases: Wallet Auth UI">
+            <Link
+              href={`/catalog?q=${encodeURIComponent("Wallet Auth UI")}`}
+              className="web3-card"
+              aria-label="Browse verified releases: Wallet Auth UI"
+            >
               <span className="web3-icon">👛</span>
               <div className="web3-name">Wallet Auth UI</div>
               <div className="web3-desc">
@@ -563,7 +599,11 @@ export default function HomePage() {
                 for any project
               </div>
             </Link>
-            <Link href={`/catalog?q=${encodeURIComponent("NFT Galleries")}`} className="web3-card" aria-label="Browse verified releases: NFT Galleries">
+            <Link
+              href={`/catalog?q=${encodeURIComponent("NFT Galleries")}`}
+              className="web3-card"
+              aria-label="Browse verified releases: NFT Galleries"
+            >
               <span className="web3-icon">🖼️</span>
               <div className="web3-name">NFT Galleries</div>
               <div className="web3-desc">
@@ -571,7 +611,11 @@ export default function HomePage() {
                 and tested
               </div>
             </Link>
-            <Link href={`/catalog?q=${encodeURIComponent("DeFi Dashboards")}`} className="web3-card" aria-label="Browse verified releases: DeFi Dashboards">
+            <Link
+              href={`/catalog?q=${encodeURIComponent("DeFi Dashboards")}`}
+              className="web3-card"
+              aria-label="Browse verified releases: DeFi Dashboards"
+            >
               <span className="web3-icon">📊</span>
               <div className="web3-name">DeFi Dashboards</div>
               <div className="web3-desc">
@@ -579,7 +623,11 @@ export default function HomePage() {
                 ready to download
               </div>
             </Link>
-            <Link href={`/catalog?q=${encodeURIComponent("DAO Governance")}`} className="web3-card" aria-label="Browse verified releases: DAO Governance">
+            <Link
+              href={`/catalog?q=${encodeURIComponent("DAO Governance")}`}
+              className="web3-card"
+              aria-label="Browse verified releases: DAO Governance"
+            >
               <span className="web3-icon">🏛️</span>
               <div className="web3-name">DAO Governance</div>
               <div className="web3-desc">
@@ -749,7 +797,9 @@ export default function HomePage() {
               </div>
             </a>
           </div>
-            <p className="dir-empty-state" role="status" hidden>No matching tools are included in this preview yet.</p>
+          <p className="dir-empty-state" role="status" hidden>
+            No matching tools are included in this preview yet.
+          </p>
         </section>
 
         <section className="section-dark" id="how">
@@ -1508,25 +1558,163 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="ecosystem-section" id="ecosystem" aria-labelledby="ecosystem-title">
+        <section
+          className="ecosystem-section"
+          id="ecosystem"
+          aria-labelledby="ecosystem-title"
+        >
           <div className="ecosystem-inner">
             <div className="ecosystem-heading">
               <p className="section-eyebrow">THE WEB-TEMIFY ECOSYSTEM</p>
-              <h2 id="ecosystem-title">One platform. <span className="serif">More ways to build.</span></h2>
-              <p>Explore the nine connected areas of Web-Temify. Each destination is explicit about what is available today and what remains in development.</p>
+              <h2 id="ecosystem-title">
+                One platform. <span className="serif">More ways to build.</span>
+              </h2>
+              <p>
+                Explore the nine connected areas of Web-Temify. Each destination
+                is explicit about what is available today and what remains in
+                development.
+              </p>
             </div>
             <div className="ecosystem-grid">
-              <article className="ecosystem-card ecosystem-card-live"><span className="ecosystem-number">01</span><p className="ecosystem-status">Existing route · verified catalogue rules</p><h3>Template &amp; Script Marketplace</h3><p>Browse the catalogue. Only products meeting the existing publication and release checks should be presented as purchasable.</p><Link className="btn btn-fill" href="/catalog">Browse catalogue →</Link></article>
-              <article className="ecosystem-card"><span className="ecosystem-number">02</span><p className="ecosystem-status">Planned · not operational</p><h3>Web Hosting &amp; Deployment</h3><p>Hosting plans, deployment automation, domains, SSL and site operations are planned; provisioning and billing are not available here.</p><Link className="ecosystem-link" href="/hosting">Explore hosting roadmap →</Link></article>
-              <article className="ecosystem-card"><span className="ecosystem-number">03</span><p className="ecosystem-status">Planned · generation disabled</p><h3>AI Site Builder</h3><p>Prompt-to-site creation is a roadmap capability. This page does not generate or deploy a website.</p><Link className="ecosystem-link" href="/ai-site-builder">Explore AI Site Builder →</Link></article>
-              <article className="ecosystem-card"><span className="ecosystem-number">04</span><p className="ecosystem-status">Preview · submissions not live</p><h3>Tech Directory Hub</h3><p>Explore selected external tools in the homepage preview. Listing submissions, paid placements and a managed directory are not enabled.</p><Link className="ecosystem-link" href="/directory">Explore directory status →</Link></article>
-              <article className="ecosystem-card"><span className="ecosystem-number">05</span><p className="ecosystem-status">Planned · transactions disabled</p><h3>Verified Automation Marketplace</h3><p>Automation discovery, verification, installation and managed updates are planned, not available as a live marketplace.</p><Link className="ecosystem-link" href="/automations">Explore automation roadmap →</Link></article>
-              <article className="ecosystem-card"><span className="ecosystem-number">06</span><p className="ecosystem-status">Planned · supplier onboarding closed</p><h3>Specialist Supplier Directory</h3><p>A verified supplier directory is planned. Supplier profiles, verification and marketplace enquiries are not yet operational.</p><Link className="ecosystem-link" href="/specialists">Explore supplier roadmap →</Link></article>
-              <article className="ecosystem-card"><span className="ecosystem-number">07</span><p className="ecosystem-status">Planned · milestone payments disabled</p><h3>Outcome-Based AI Implementation</h3><p>Scoped delivery, acceptance criteria and milestone-based engagement are planned. No marketplace contract or payment can be initiated here.</p><Link className="ecosystem-link" href="/implementation">Explore implementation roadmap →</Link></article>
-              <article className="ecosystem-card"><span className="ecosystem-number">08</span><p className="ecosystem-status">Shared foundation · not a storefront</p><h3>Shared Enterprise Platform</h3><p>Identity, policy, approvals, auditability, secure delivery and operational controls underpin the ecosystem. Their presence does not mean every product feature is enabled.</p><Link className="ecosystem-link" href="/platform">Understand the platform layer →</Link></article>
-              <article className="ecosystem-card"><span className="ecosystem-number">09</span><p className="ecosystem-status">Planned · monetization not enabled</p><h3>Tech Hub &amp; Advertising Engine</h3><p>Editorial content, SEO resources, affiliate disclosures, sponsored placements and newsletter sponsorships require dedicated publishing and commercial workflows.</p><Link className="ecosystem-link" href="/tech-hub">Explore Tech Hub roadmap →</Link></article>
+              <article className="ecosystem-card ecosystem-card-live">
+                <span className="ecosystem-number">01</span>
+                <p className="ecosystem-status">
+                  Existing route · verified catalogue rules
+                </p>
+                <h3>Template &amp; Script Marketplace</h3>
+                <p>
+                  Browse the catalogue. Only products meeting the existing
+                  publication and release checks should be presented as
+                  purchasable.
+                </p>
+                <Link className="btn btn-fill" href="/catalog">
+                  Browse catalogue →
+                </Link>
+              </article>
+              <article className="ecosystem-card">
+                <span className="ecosystem-number">02</span>
+                <p className="ecosystem-status">Planned · not operational</p>
+                <h3>Web Hosting &amp; Deployment</h3>
+                <p>
+                  Hosting plans, deployment automation, domains, SSL and site
+                  operations are planned; provisioning and billing are not
+                  available here.
+                </p>
+                <Link className="ecosystem-link" href="/hosting">
+                  Explore hosting roadmap →
+                </Link>
+              </article>
+              <article className="ecosystem-card">
+                <span className="ecosystem-number">03</span>
+                <p className="ecosystem-status">
+                  Planned · generation disabled
+                </p>
+                <h3>AI Site Builder</h3>
+                <p>
+                  Prompt-to-site creation is a roadmap capability. This page
+                  does not generate or deploy a website.
+                </p>
+                <Link className="ecosystem-link" href="/ai-site-builder">
+                  Explore AI Site Builder →
+                </Link>
+              </article>
+              <article className="ecosystem-card">
+                <span className="ecosystem-number">04</span>
+                <p className="ecosystem-status">
+                  Preview · submissions not live
+                </p>
+                <h3>Tech Directory Hub</h3>
+                <p>
+                  Explore selected external tools in the homepage preview.
+                  Listing submissions, paid placements and a managed directory
+                  are not enabled.
+                </p>
+                <Link className="ecosystem-link" href="/directory">
+                  Explore directory status →
+                </Link>
+              </article>
+              <article className="ecosystem-card">
+                <span className="ecosystem-number">05</span>
+                <p className="ecosystem-status">
+                  Planned · transactions disabled
+                </p>
+                <h3>Verified Automation Marketplace</h3>
+                <p>
+                  Automation discovery, verification, installation and managed
+                  updates are planned, not available as a live marketplace.
+                </p>
+                <Link className="ecosystem-link" href="/automations">
+                  Explore automation roadmap →
+                </Link>
+              </article>
+              <article className="ecosystem-card">
+                <span className="ecosystem-number">06</span>
+                <p className="ecosystem-status">
+                  Planned · supplier onboarding closed
+                </p>
+                <h3>Specialist Supplier Directory</h3>
+                <p>
+                  A verified supplier directory is planned. Supplier profiles,
+                  verification and marketplace enquiries are not yet
+                  operational.
+                </p>
+                <Link className="ecosystem-link" href="/specialists">
+                  Explore supplier roadmap →
+                </Link>
+              </article>
+              <article className="ecosystem-card">
+                <span className="ecosystem-number">07</span>
+                <p className="ecosystem-status">
+                  Planned · milestone payments disabled
+                </p>
+                <h3>Outcome-Based AI Implementation</h3>
+                <p>
+                  Scoped delivery, acceptance criteria and milestone-based
+                  engagement are planned. No marketplace contract or payment can
+                  be initiated here.
+                </p>
+                <Link className="ecosystem-link" href="/implementation">
+                  Explore implementation roadmap →
+                </Link>
+              </article>
+              <article className="ecosystem-card">
+                <span className="ecosystem-number">08</span>
+                <p className="ecosystem-status">
+                  Shared foundation · not a storefront
+                </p>
+                <h3>Shared Enterprise Platform</h3>
+                <p>
+                  Identity, policy, approvals, auditability, secure delivery and
+                  operational controls underpin the ecosystem. Their presence
+                  does not mean every product feature is enabled.
+                </p>
+                <Link className="ecosystem-link" href="/platform">
+                  Understand the platform layer →
+                </Link>
+              </article>
+              <article className="ecosystem-card">
+                <span className="ecosystem-number">09</span>
+                <p className="ecosystem-status">
+                  Planned · monetization not enabled
+                </p>
+                <h3>Tech Hub &amp; Advertising Engine</h3>
+                <p>
+                  Editorial content, SEO resources, affiliate disclosures,
+                  sponsored placements and newsletter sponsorships require
+                  dedicated publishing and commercial workflows.
+                </p>
+                <Link className="ecosystem-link" href="/tech-hub">
+                  Explore Tech Hub roadmap →
+                </Link>
+              </article>
             </div>
-            <p className="ecosystem-disclaimer">Availability is feature-specific. Planned cards are roadmap disclosures, not promises of launch dates. Payment processing, seller payouts and live money movement remain disabled until the required technical, legal, security and operational gates are verified.</p>
+            <p className="ecosystem-disclaimer">
+              Availability is feature-specific. Planned cards are roadmap
+              disclosures, not promises of launch dates. Payment processing,
+              seller payouts and live money movement remain disabled until the
+              required technical, legal, security and operational gates are
+              verified.
+            </p>
           </div>
         </section>
       </main>
