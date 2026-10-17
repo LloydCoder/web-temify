@@ -71,6 +71,7 @@ export async function generateMetadata({
 
   return {
     title: product.name,
+    alternates: { canonical: `/catalog/${encodeURIComponent(slug)}` },
     description:
       product.summary || `Verified digital product release: ${product.name}.`,
   };
