@@ -1802,7 +1802,8 @@ export default function HomePage() {
               Tinlance Limited ↗
             </a>
             <br />
-            Tinlance offers scoped custom engineering separately; Web-Temify marketplace-linked service requests are not live yet.
+            Tinlance offers scoped custom engineering separately;
+            Web-Temify marketplace-linked service requests are not live yet.
           </div>
         </div>
         <div className="footer-col">
