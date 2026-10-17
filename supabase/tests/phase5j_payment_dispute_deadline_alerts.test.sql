@@ -1,5 +1,5 @@
 begin;
-select plan(21);
+select plan(22);
 
 select has_table('public', 'payment_dispute_alert_jobs', 'payment dispute alert outbox exists');
 select ok((select relrowsecurity from pg_class where oid = 'public.payment_dispute_alert_jobs'::regclass), 'dispute alert outbox has RLS enabled');
