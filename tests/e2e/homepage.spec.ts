@@ -193,9 +193,9 @@ test("robots and sitemap use the configured canonical origin", async ({ page }) 
   const sitemapResponse = await page.request.get(new URL("/sitemap.xml", origin).toString());
   expect(sitemapResponse.ok()).toBe(true);
   const sitemap = await sitemapResponse.text();
-  const sitemapOrigins = [
-    ...sitemap.matchAll(/<loc>(https?:\\/\\/[^/]+)\\//g),
-  ].map((match) => match[1]);
+  const sitemapOrigins = [...sitemap.matchAll(/<loc>(.*?)<\\/loc>/g)].map(
+    (match) => new URL(match[1]).origin,
+  );
   expect(sitemapOrigins.length).toBeGreaterThan(0);
   expect([...new Set(sitemapOrigins)]).toEqual([origin]);
 
