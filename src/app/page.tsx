@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import "./v3-home.css";
 
@@ -92,7 +93,7 @@ export default function HomePage() {
     <div className="v3-app" ref={rootRef}>
       <a className="skip-link" href="#main-content">Skip to main content</a>
       <nav>
-      <a href="/" className="logo">Web-Temify <span className="logo-dot"></span></a>
+      <Link href="/" className="logo">Web-Temify <span className="logo-dot"></span></Link>
       <ul className={`nav-links${mobileMenuOpen ? " is-open" : ""}`} id="primary-navigation" onClick={() => setMobileMenuOpen(false)}>
         <li><a href="#templates">Templates</a></li>
         <li><a href="#templates">Scripts</a></li>
@@ -238,7 +239,7 @@ export default function HomePage() {
             Whatever your<br /><span className="serif">business needs</span>
           </h2>
         </div>
-        <a href="/catalog" className="btn btn-ghost">Browse catalogue →</a>
+        <Link href="/catalog" className="btn btn-ghost">Browse catalogue →</Link>
       </div>
       <div className="cat-grid reveal">
         <div className="cat-card cc-1">
@@ -323,7 +324,7 @@ export default function HomePage() {
             Template & script concepts<br /><span className="serif">& scripts</span>
           </h2>
         </div>
-        <a href="/catalog" className="btn btn-ghost">Browse catalogue →</a>
+        <Link href="/catalog" className="btn btn-ghost">Browse catalogue →</Link>
       </div>
       <div className="templates-grid reveal">
         <div className="tpl-card">
@@ -437,7 +438,7 @@ export default function HomePage() {
             <div>
               <span className="kit-price" style={{"color":"var(--yellow)"}}>Preview</span>
             </div>
-            <a href="/catalog" className="btn btn-yellow">Browse catalogue →</a>
+            <Link href="/catalog" className="btn btn-yellow">Browse catalogue →</Link>
           </div>
         </div>
         <div className="kit-card">
@@ -459,7 +460,7 @@ export default function HomePage() {
             <div>
               <span className="kit-price">Preview</span>
             </div>
-            <a href="/catalog" className="btn btn-fill">Browse catalogue →</a>
+            <Link href="/catalog" className="btn btn-fill">Browse catalogue →</Link>
           </div>
         </div>
         <div className="kit-card">
@@ -481,7 +482,7 @@ export default function HomePage() {
             <div>
               <span className="kit-price">Preview</span>
             </div>
-            <a href="/catalog" className="btn btn-fill">Browse catalogue →</a>
+            <Link href="/catalog" className="btn btn-fill">Browse catalogue →</Link>
           </div>
         </div>
         <div className="kit-card">
@@ -503,7 +504,7 @@ export default function HomePage() {
             <div>
               <span className="kit-price">Preview</span>
             </div>
-            <a href="/catalog" className="btn btn-fill">Browse catalogue →</a>
+            <Link href="/catalog" className="btn btn-fill">Browse catalogue →</Link>
           </div>
         </div>
       </div>
@@ -556,7 +557,7 @@ export default function HomePage() {
             internet.
           </p>
         </div>
-        <a href="/catalog" className="btn btn-ghost">Browse catalogue →</a>
+        <Link href="/catalog" className="btn btn-ghost">Browse catalogue →</Link>
       </div>
       <div className="web3-grid reveal">
         <div className="web3-card">
@@ -608,7 +609,7 @@ export default function HomePage() {
             Explore selected external tools. Directory submissions and featured listings are not available yet.
           </p>
         </div>
-        <a href="/catalog" className="btn btn-ghost">Browse catalogue →</a>
+        <Link href="/catalog" className="btn btn-ghost">Browse catalogue →</Link>
       </div>
       <div className="dir-tabs reveal">
         <button className="dir-tab active" type="button" onClick={() => setActiveDirectory("All Tools")}>All Tools</button>
@@ -690,7 +691,7 @@ export default function HomePage() {
           <div className="dir-info">
             <div className="dir-name">Paystack</div>
             <div className="dir-desc">
-              Africa's leading payment gateway — cards, bank transfers, USSD,
+              Africa&apos;s leading payment gateway — cards, bank transfers, USSD,
               mobile money
             </div>
             <div className="dir-pills">
@@ -759,7 +760,7 @@ export default function HomePage() {
     <section>
       <p className="eyebrow reveal">Why Web-Temify</p>
       <h2 className="section-title reveal">
-        Everything you need,<br /><span className="serif">nothing you don't</span>
+        Everything you need,<br /><span className="serif">nothing you don&apos;t</span>
       </h2>
       <div className="features-layout">
         <div className="feature-list reveal">
@@ -1087,7 +1088,7 @@ export default function HomePage() {
         <div className="testi-card tc-1">
           <div className="testi-stars">PREVIEW</div>
           <p className="testi-quote">
-            "Illustrative concept only. Verified customer reviews will be published after real transactions and consent."
+            “Illustrative concept only. Verified customer reviews will be published after real transactions and consent.”
           </p>
           <div className="testi-author">
             <div className="testi-avatar" style={{"background":"#ffd6c0"}}>👨🏾</div>
@@ -1100,7 +1101,7 @@ export default function HomePage() {
         <div className="testi-card tc-2">
           <div className="testi-stars">PREVIEW</div>
           <p className="testi-quote">
-            "Automation listings will disclose supported systems, required permissions, tests, and rollback guidance before publication."
+            “Automation listings will disclose supported systems, required permissions, tests, and rollback guidance before publication.”
           </p>
           <div className="testi-author">
             <div className="testi-avatar" style={{"background":"#c8f0e0"}}>👩🏾</div>
@@ -1113,7 +1114,7 @@ export default function HomePage() {
         <div className="testi-card tc-3">
           <div className="testi-stars">PREVIEW</div>
           <p className="testi-quote">
-            "Supplier and implementation listings will use evidence-backed profiles and explicit scope. No escrow or outcome guarantees are implied."
+            “Supplier and implementation listings will use evidence-backed profiles and explicit scope. No escrow or outcome guarantees are implied.”
           </p>
           <div className="testi-author">
             <div className="testi-avatar" style={{"background":"#fef9c3"}}>👨🏾</div>
@@ -1336,7 +1337,7 @@ export default function HomePage() {
       </main>
       <footer>
       <div className="footer-brand">
-        <a href="/" className="logo">Web-Temify <span className="logo-dot"></span></a>
+        <Link href="/" className="logo">Web-Temify <span className="logo-dot"></span></Link>
         <p>
           Premium templates, scripts, Web3 kits, and dev tools for builders
           across Africa and beyond. No code, no stress.
@@ -1350,28 +1351,28 @@ export default function HomePage() {
           style={{"marginTop":"1rem","fontSize":"0.7rem","fontWeight":"700","color":"var(--muted)","borderTop":"1.5px solid var(--ink)","paddingTop":"0.8rem"}}
         >
           A sister company of
-          <a href="https://tinlance.com" target="_blank" rel="noreferrer" style={{"color":"var(--coral)","fontWeight":"800"}}>Tinlance Limited ↗</a><br />Need a custom-built product? That's their lane.
+          <a href="https://tinlance.com" target="_blank" rel="noreferrer" style={{"color":"var(--coral)","fontWeight":"800"}}>Tinlance Limited ↗</a><br />Need a custom-built product? That&apos;s their lane.
         </div>
       </div>
       <div className="footer-col">
         <h5>Marketplace</h5>
         <ul>
-          <li><a href="/catalog">All Templates</a></li>
-          <li><a href="/catalog">Scripts</a></li>
-          <li><a href="/catalog">Launch Kits</a></li>
-          <li><a href="/catalog">Web3 Hub</a></li>
-          <li><a href="/catalog">Free Templates</a></li>
-          <li><a href="/catalog">New Arrivals</a></li>
+          <li><Link href="/catalog">All Templates</Link></li>
+          <li><Link href="/catalog">Scripts</Link></li>
+          <li><Link href="/catalog">Launch Kits</Link></li>
+          <li><Link href="/catalog">Web3 Hub</Link></li>
+          <li><Link href="/catalog">Free Templates</Link></li>
+          <li><Link href="/catalog">New Arrivals</Link></li>
         </ul>
       </div>
       <div className="footer-col">
         <h5>Directory</h5>
         <ul>
-          <li><a href="/catalog">All Tools</a></li>
-          <li><a href="/catalog">AI Tools</a></li>
-          <li><a href="/catalog">Web3 Tools</a></li>
-          <li><a href="/catalog">Hosting</a></li>
-          <li><a href="/catalog">Design Tools</a></li>
+          <li><Link href="/catalog">All Tools</Link></li>
+          <li><Link href="/catalog">AI Tools</Link></li>
+          <li><Link href="/catalog">Web3 Tools</Link></li>
+          <li><Link href="/catalog">Hosting</Link></li>
+          <li><Link href="/catalog">Design Tools</Link></li>
           <li><span aria-disabled="true" title="This destination is not live yet">Submit a Tool (coming soon)</span></li>
         </ul>
       </div>
