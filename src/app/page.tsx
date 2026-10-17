@@ -237,8 +237,8 @@ export default function HomePage() {
               <span className="cat-emoji">🎨</span>
               <h3>Agency & Portfolio</h3>
               <p>
-                Bold, conversion-focused designs for creative agencies and
-                freelancers.
+                Agency and freelancer portfolio concepts; outcomes are not
+                guaranteed.
               </p>
             </Link>
             <Link
@@ -250,8 +250,8 @@ export default function HomePage() {
               <span className="cat-emoji">🛒</span>
               <h3>E-commerce</h3>
               <p>
-                Ready-to-sell storefronts for digital products, subscriptions,
-                and physical goods.
+                Planned storefront concepts for digital products,
+                subscriptions, and physical goods.
               </p>
             </Link>
             <Link
@@ -263,8 +263,8 @@ export default function HomePage() {
               <span className="cat-emoji">🏘️</span>
               <h3>Real Estate</h3>
               <p>
-                Property listing, agent profiles, and developer portfolio
-                templates.
+                Planned concepts for property listings, agents, and
+                developer portfolios.
               </p>
             </Link>
             <Link
@@ -286,7 +286,7 @@ export default function HomePage() {
         <section className="section-alt" id="featured">
           <div className="section-head reveal">
             <div>
-              <p className="eyebrow">Featured Products</p>
+              <p className="eyebrow">Product Concepts</p>
               <h2 className="section-title">
                 Template & script previews
                 <br />
@@ -855,7 +855,7 @@ export default function HomePage() {
             <div className="step">
               <div className="step-num">01</div>
               <span className="step-icon">🔍</span>
-              <h3>Find Your Template</h3>
+              <h3>Explore template concepts</h3>
               <p>
                 Browse template, script, and Web3 concepts. Verified releases
                 and purchasing will appear here when ready; catalogue filters
@@ -897,7 +897,7 @@ export default function HomePage() {
               <div className="feat-item">
                 <div className="feat-icon">⚡</div>
                 <div className="feat-text">
-                  <h4>Lightning Fast Load Times</h4>
+                  <h4>Performance review planned</h4>
                   <p>
                     Released templates will be tested against published
                     performance targets before they are marked verified.
@@ -907,7 +907,7 @@ export default function HomePage() {
               <div className="feat-item">
                 <div className="feat-icon">📱</div>
                 <div className="feat-text">
-                  <h4>Mobile-First by Default</h4>
+                  <h4>Responsive review planned</h4>
                   <p>
                     Responsive behavior will be tested across phones, tablets,
                     and desktops before a release is marked verified.
@@ -917,7 +917,7 @@ export default function HomePage() {
               <div className="feat-item">
                 <div className="feat-icon">🔍</div>
                 <div className="feat-text">
-                  <h4>SEO Built In</h4>
+                  <h4>SEO review planned</h4>
                   <p>
                     SEO requirements, including metadata and structured data,
                     will be documented and tested for verified releases.
@@ -1227,7 +1227,7 @@ export default function HomePage() {
                   fontWeight: "700",
                 }}
               >
-                Free to join · No monthly fees
+                Seller onboarding planned · Fees and payout terms pending
               </div>
             </div>
           </div>
@@ -1553,7 +1553,8 @@ export default function HomePage() {
                   fontWeight: "500",
                 }}
               >
-                Join developers. No spam — only the good stuff.
+                Marketplace updates and tool discoveries will be announced
+                when signup opens.
               </p>
             </div>
             <div>
@@ -1821,10 +1822,10 @@ export default function HomePage() {
               <Link href="/catalog">Web3 Hub</Link>
             </li>
             <li>
-              <Link href="/catalog">Free Templates</Link>
+              <Link href="/catalog">Planned free releases</Link>
             </li>
             <li>
-              <Link href="/catalog">New Arrivals</Link>
+              <Link href="/catalog">Latest concepts</Link>
             </li>
           </ul>
         </div>
