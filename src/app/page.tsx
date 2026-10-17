@@ -243,8 +243,7 @@ export default function HomePage() {
       </div>
       <div className="cat-grid reveal">
         <div className="cat-card cc-1">
-          <span className="cat-count">24 products</span
-          ><span className="cat-emoji">🏦</span>
+          <span className="cat-count">Preview</span><span className="cat-emoji">🏦</span>
           <h3>Fintech & Banking</h3>
           <p>
             Banking UIs, loan platforms, and payment system templates for the
@@ -252,8 +251,7 @@ export default function HomePage() {
           </p>
         </div>
         <div className="cat-card cc-2">
-          <span className="cat-count">18 products</span
-          ><span className="cat-emoji">⛓️</span>
+          <span className="cat-count">Preview</span><span className="cat-emoji">⛓️</span>
           <h3>Web3 & Blockchain</h3>
           <p>
             NFT marketplaces, DeFi dashboards, DAO governance, and wallet UI
@@ -261,8 +259,7 @@ export default function HomePage() {
           </p>
         </div>
         <div className="cat-card cc-3">
-          <span className="cat-count">12 products</span
-          ><span className="cat-emoji">🚚</span>
+          <span className="cat-count">Preview</span><span className="cat-emoji">🚚</span>
           <h3>Logistics & Courier</h3>
           <p>
             Delivery company sites with rate calculators, tracking UI, and fleet
@@ -270,8 +267,7 @@ export default function HomePage() {
           </p>
         </div>
         <div className="cat-card cc-4">
-          <span className="cat-count">31 products</span
-          ><span className="cat-emoji">🚀</span>
+          <span className="cat-count">Preview</span><span className="cat-emoji">🚀</span>
           <h3>SaaS & Startups</h3>
           <p>
             Modern landing pages, app showcases, and product-led growth
@@ -279,8 +275,7 @@ export default function HomePage() {
           </p>
         </div>
         <div className="cat-card cc-5">
-          <span className="cat-count">22 products</span
-          ><span className="cat-emoji">🎨</span>
+          <span className="cat-count">Preview</span><span className="cat-emoji">🎨</span>
           <h3>Agency & Portfolio</h3>
           <p>
             Bold, conversion-focused designs for creative agencies and
@@ -288,8 +283,7 @@ export default function HomePage() {
           </p>
         </div>
         <div className="cat-card cc-6">
-          <span className="cat-count">19 products</span
-          ><span className="cat-emoji">🛒</span>
+          <span className="cat-count">Preview</span><span className="cat-emoji">🛒</span>
           <h3>E-commerce</h3>
           <p>
             Ready-to-sell storefronts for digital products, subscriptions, and
@@ -297,8 +291,7 @@ export default function HomePage() {
           </p>
         </div>
         <div className="cat-card cc-7">
-          <span className="cat-count">8 products</span
-          ><span className="cat-emoji">🏘️</span>
+          <span className="cat-count">Preview</span><span className="cat-emoji">🏘️</span>
           <h3>Real Estate</h3>
           <p>
             Property listing, agent profiles, and developer portfolio templates.
