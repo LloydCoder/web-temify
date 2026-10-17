@@ -296,7 +296,7 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="cat-grid reveal">
-            <div className="cat-card cc-1">
+            <Link href="/catalog" className="cat-card cc-1" aria-label="Browse verified releases: Fintech & Banking">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🏦</span>
               <h3>Fintech & Banking</h3>
@@ -304,8 +304,8 @@ export default function HomePage() {
                 Banking UIs, loan platforms, and payment system templates for
                 the African market.
               </p>
-            </div>
-            <div className="cat-card cc-2">
+            </Link>
+            <Link href="/catalog" className="cat-card cc-2" aria-label="Browse verified releases: Web3 & Blockchain">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">⛓️</span>
               <h3>Web3 & Blockchain</h3>
@@ -313,8 +313,8 @@ export default function HomePage() {
                 NFT marketplaces, DeFi dashboards, DAO governance, and wallet UI
                 kits.
               </p>
-            </div>
-            <div className="cat-card cc-3">
+            </Link>
+            <Link href="/catalog" className="cat-card cc-3" aria-label="Browse verified releases: Logistics & Courier">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🚚</span>
               <h3>Logistics & Courier</h3>
@@ -322,8 +322,8 @@ export default function HomePage() {
                 Delivery company sites with rate calculators, tracking UI, and
                 fleet management.
               </p>
-            </div>
-            <div className="cat-card cc-4">
+            </Link>
+            <Link href="/catalog" className="cat-card cc-4" aria-label="Browse verified releases: SaaS & Startups">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🚀</span>
               <h3>SaaS & Startups</h3>
@@ -331,8 +331,8 @@ export default function HomePage() {
                 Modern landing pages, app showcases, and product-led growth
                 templates.
               </p>
-            </div>
-            <div className="cat-card cc-5">
+            </Link>
+            <Link href="/catalog" className="cat-card cc-5" aria-label="Browse verified releases: Agency & Portfolio">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🎨</span>
               <h3>Agency & Portfolio</h3>
@@ -340,8 +340,8 @@ export default function HomePage() {
                 Bold, conversion-focused designs for creative agencies and
                 freelancers.
               </p>
-            </div>
-            <div className="cat-card cc-6">
+            </Link>
+            <Link href="/catalog" className="cat-card cc-6" aria-label="Browse verified releases: E-commerce">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🛒</span>
               <h3>E-commerce</h3>
@@ -349,8 +349,8 @@ export default function HomePage() {
                 Ready-to-sell storefronts for digital products, subscriptions,
                 and physical goods.
               </p>
-            </div>
-            <div className="cat-card cc-7">
+            </Link>
+            <Link href="/catalog" className="cat-card cc-7" aria-label="Browse verified releases: Real Estate">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🏘️</span>
               <h3>Real Estate</h3>
@@ -358,8 +358,8 @@ export default function HomePage() {
                 Property listing, agent profiles, and developer portfolio
                 templates.
               </p>
-            </div>
-            <div className="cat-card cc-8">
+            </Link>
+            <Link href="/catalog" className="cat-card cc-8" aria-label="Browse verified releases: Scripts & Tools">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">⚡</span>
               <h3>Scripts & Tools</h3>
@@ -367,7 +367,7 @@ export default function HomePage() {
                 Full-stack functional scripts — P2P trading, loan management,
                 banking, POS, and more.
               </p>
-            </div>
+            </Link>
           </div>
         </section>
 
@@ -723,38 +723,38 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="web3-grid reveal">
-            <div className="web3-card">
+            <Link href="/catalog" className="web3-card" aria-label="Browse verified releases: Wallet Auth UI">
               <span className="web3-icon">👛</span>
               <div className="web3-name">Wallet Auth UI</div>
               <div className="web3-desc">
                 MetaMask, WalletConnect, Coinbase — ready-made connection flows
                 for any project
               </div>
-            </div>
-            <div className="web3-card">
+            </Link>
+            <Link href="/catalog" className="web3-card" aria-label="Browse verified releases: NFT Galleries">
               <span className="web3-icon">🖼️</span>
               <div className="web3-name">NFT Galleries</div>
               <div className="web3-desc">
                 Collection displays, mint pages, and auction interfaces built
                 and tested
               </div>
-            </div>
-            <div className="web3-card">
+            </Link>
+            <Link href="/catalog" className="web3-card" aria-label="Browse verified releases: DeFi Dashboards">
               <span className="web3-icon">📊</span>
               <div className="web3-name">DeFi Dashboards</div>
               <div className="web3-desc">
                 Staking, liquidity pools, and yield farming — complete UI kits
                 ready to download
               </div>
-            </div>
-            <div className="web3-card">
+            </Link>
+            <Link href="/catalog" className="web3-card" aria-label="Browse verified releases: DAO Governance">
               <span className="web3-icon">🏛️</span>
               <div className="web3-name">DAO Governance</div>
               <div className="web3-desc">
                 Proposal voting, treasury management, and member portals for
                 your community
               </div>
-            </div>
+            </Link>
           </div>
         </section>
 
