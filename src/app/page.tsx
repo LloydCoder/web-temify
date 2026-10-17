@@ -540,7 +540,7 @@ export default function HomePage() {
               <input
                 type="text"
                 className="ai-input"
-                aria-label="Describe the website you want to build (preview only)"
+                aria-label="Website description (preview only)"
                 aria-describedby="ai-builder-status"
                 placeholder="e.g. A fintech app for Nigerian SMEs..."
               />
@@ -704,7 +704,8 @@ export default function HomePage() {
                   Vercel <span className="star">★ Featured</span>
                 </div>
                 <div className="dir-desc">
-                  Deploy web projects with preview deployments and frontend hosting
+                  Deploy web projects with preview deployments and
+                frontend hosting
                 </div>
                 <div className="dir-pills">
                   <span className="dir-pill">Hosting</span>
@@ -1148,8 +1149,8 @@ export default function HomePage() {
               <span className="svc-icon">🚀</span>
               <div className="svc-name">SaaS MVP Build</div>
               <div className="svc-desc">
-                Full-stack SaaS with authentication, billing, and dashboards, scoped to
-                your launch requirements.
+                Full-stack SaaS with authentication, billing, and
+                dashboards, scoped to your launch requirements.
               </div>
               <div className="svc-price">Scope-based quote</div>
             </div>
@@ -1157,8 +1158,9 @@ export default function HomePage() {
               <span className="svc-icon">🏦</span>
               <div className="svc-name">Fintech Solutions</div>
               <div className="svc-desc">
-                Payment systems, loan platforms, and payment integrations for global and
-                regional markets, subject to provider and jurisdiction support.
+                Payment systems, loan platforms, and payment integrations
+                for global and regional markets, subject to provider and
+                jurisdiction support.
               </div>
               <div className="svc-price">Scope-based quote</div>
             </div>
