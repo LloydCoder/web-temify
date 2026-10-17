@@ -41,11 +41,7 @@ export default function V3AiBuilderPreview() {
             Coming soon
           </button>
         </div>
-        <p
-          id="ai-builder-status"
-          className="ai-builder-status"
-          role="status"
-        >
+        <p id="ai-builder-status" className="ai-builder-status" role="status">
           AI generation is not live yet.
         </p>
         <V3PromptChips onSelect={setDescription} />
