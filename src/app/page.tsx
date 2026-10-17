@@ -30,7 +30,7 @@ export default function HomePage() {
           <div className="hero-left">
             <div className="hero-badge">Marketplace Preview</div>
             <h1>
-              Your next website,
+              Your next website
               <br />
               <span className="serif">starts</span>
               <br />
