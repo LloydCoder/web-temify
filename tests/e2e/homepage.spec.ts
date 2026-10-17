@@ -251,3 +251,41 @@ test("header and hero respond correctly across desktop and mobile layouts", asyn
   await expect(links.getByRole("link", { name: "Templates" })).toBeVisible();
   await expect(heroVisual).toBeVisible();
 });
+
+test("mobile header opens, closes with Escape, and restores focus", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto("/");
+  const toggle = page.getByRole("button", { name: "Open navigation" });
+  await expect(toggle).toBeVisible();
+  await toggle.click();
+  const closeToggle = page.getByRole("button", { name: "Close navigation" });
+  await expect(closeToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("link", { name: "Launch Kits" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  const openToggle = page.getByRole("button", { name: "Open navigation" });
+  await expect(openToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(openToggle).toBeFocused();
+});
+
+test("hero preview cards remain visible on tablet and mobile", async ({
+  page,
+}) => {
+  for (const viewport of [
+    { width: 320, height: 800 },
+    { width: 390, height: 844 },
+    { width: 768, height: 1024 },
+    { width: 1024, height: 900 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    await expect(page.locator(".hero")).toBeVisible();
+    await expect(page.locator(".hero-right .preview-card")).toHaveCount(3);
+    await expect(page.locator(".hero-right .preview-card").first()).toBeVisible();
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    );
+    expect(overflow, `horizontal overflow at ${viewport.width}px`).toBe(false);
+  }
+});
