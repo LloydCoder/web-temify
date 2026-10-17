@@ -2,6 +2,7 @@
   --bg: #fffbf4;
   --ink: #0f0d0a;
   --coral: #ff5733;
+  --coral-text: #a83218;
   --yellow: #ffd60a;
   --mint: #00c48c;
   --sky: #4f8ef7;
@@ -68,8 +69,8 @@
 }
 .v3-app .btn-fill {
   background: var(--coral);
-  color: #fff;
-  border-color: var(--coral);
+  color: var(--ink);
+  border-color: var(--coral-text);
 }
 .v3-app .btn-fill:hover {
   border-color: var(--ink);
@@ -80,7 +81,7 @@
 }
 .v3-app .btn-mint {
   background: var(--mint);
-  color: #fff;
+  color: var(--ink);
   border-color: var(--mint);
 }
 .v3-app .btn-mint:hover {
@@ -95,13 +96,13 @@
   color: var(--ink);
   border-color: var(--ink);
 }
-.v3-app .btn-outline-white {
+.v3-app .btn-outline-ink {
   background: transparent;
-  color: #fff;
-  border-color: #fff;
+  color: var(--ink);
+  border-color: var(--ink);
 }
-.v3-app .btn-outline-white:hover {
-  box-shadow: 4px 4px 0 rgba(255, 255, 255, 0.4);
+.v3-app .btn-outline-ink:hover {
+  box-shadow: 4px 4px 0 rgba(15, 13, 10, 0.4);
 }
 
 .v3-app /* ── EYEBROW / SECTION LABELS ── */
@@ -110,7 +111,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: var(--coral);
+  color: var(--coral-text);
   margin-bottom: 0.75rem;
 }
 .v3-app .section-title {
@@ -189,7 +190,7 @@
   transition: color 0.15s;
 }
 .v3-app .nav-links a:hover {
-  color: var(--coral);
+  color: var(--coral-text);
 }
 .v3-app .nav-new {
   position: relative;
@@ -291,7 +292,7 @@
   font-family: "Instrument Serif", serif;
   font-style: italic;
   font-weight: 400;
-  color: var(--coral);
+  color: var(--coral-text);
 }
 .v3-app .hero-desc {
   font-size: 1rem;
@@ -637,7 +638,7 @@
 .v3-app .badge-hot {
   background: var(--coral);
   color: #fff;
-  border-color: var(--coral);
+  border-color: var(--coral-text);
 }
 .v3-app .badge-new {
   background: var(--mint);
@@ -954,7 +955,7 @@
 .v3-app .dir-tab:hover {
   background: var(--coral);
   color: #fff;
-  border-color: var(--coral);
+  border-color: var(--coral-text);
 }
 .v3-app .dir-grid {
   display: grid;
@@ -981,7 +982,7 @@
   box-shadow: var(--shadow);
 }
 .v3-app .dir-card.featured {
-  border-color: var(--coral);
+  border-color: var(--coral-text);
 }
 .v3-app .dir-logo {
   width: 38px;
@@ -1008,7 +1009,7 @@
   gap: 0.4rem;
 }
 .v3-app .dir-name .star {
-  color: var(--coral);
+  color: var(--coral-text);
   font-size: 0.7rem;
 }
 .v3-app .dir-desc {
@@ -1271,7 +1272,7 @@
 .v3-app .svc-price {
   font-size: 0.85rem;
   font-weight: 900;
-  color: var(--coral);
+  color: var(--coral-text);
 }
 
 .v3-app /* ── VENDOR BOX ── */
@@ -1594,7 +1595,7 @@
 }
 .v3-app .cta-section p {
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--ink);
   font-weight: 600;
   margin-bottom: 2rem;
   position: relative;
@@ -1636,7 +1637,7 @@
   padding-top: 0.8rem;
 }
 .v3-app .footer-brand .sister a {
-  color: var(--coral);
+  color: var(--coral-text);
   font-weight: 800;
 }
 .v3-app .footer-badges-row {
@@ -1677,7 +1678,7 @@
   transition: color 0.15s;
 }
 .v3-app .footer-col a:hover {
-  color: var(--coral);
+  color: var(--coral-text);
 }
 .v3-app .footer-bottom {
   border-top: 2px solid var(--ink);
@@ -1713,7 +1714,7 @@
 .v3-app .social-btn:hover {
   background: var(--coral);
   color: #fff;
-  border-color: var(--coral);
+  border-color: var(--coral-text);
 }
 
 .v3-app /* ── ANIMATIONS ── */
