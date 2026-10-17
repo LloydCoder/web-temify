@@ -1775,8 +1775,8 @@ export default function HomePage() {
             Web-Temify <span className="logo-dot"></span>
           </Link>
           <p>
-            Premium templates, scripts, Web3 kits, and dev tools for builders
-            for builders worldwide. No code, no stress.
+            A planned global marketplace for templates, scripts, Web3 kits, and
+            developer tools. Releases appear after review.
           </p>
           <div className="footer-badges-row">
             <span className="f-badge">🇳🇬 Nigeria</span>
