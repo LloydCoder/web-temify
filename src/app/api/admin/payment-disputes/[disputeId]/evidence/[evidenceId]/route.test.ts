@@ -99,6 +99,7 @@ describe("Phase 5K audited dispute evidence access", () => {
     expect(mocks.createSignedUrl).toHaveBeenCalledWith(
       `${disputeId}/${evidenceId}/${digest}`,
       60,
+      { download: true },
     );
     expect(response.headers.get("cache-control")).toBe("no-store");
   });
