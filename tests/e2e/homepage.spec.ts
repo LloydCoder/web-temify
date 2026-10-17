@@ -241,9 +241,7 @@ test("header and hero respond correctly across desktop and mobile layouts", asyn
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
   await expect(links).toBeHidden();
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "Explore previews" }),
-  ).toBeVisible();
+  await expect(page.locator(".hero-cta .btn-fill")).toHaveText("Explore previews");
   await expect(heroVisual).toBeHidden();
   await expect(hero).toHaveCSS("grid-template-columns", /^\d+px$/);
 
