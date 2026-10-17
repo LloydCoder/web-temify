@@ -48,6 +48,15 @@ jobs:
           echo "FORMAT_START:tests/e2e/moderation-appeals.spec.ts"
           pnpm exec prettier tests/e2e/moderation-appeals.spec.ts
           echo "FORMAT_END:tests/e2e/moderation-appeals.spec.ts"
+      - name: Print Prettier output for native V3 integration files
+        if: always()
+        shell: bash
+        run: |
+          for file in src/app/globals.css src/components/v3-homepage-interactions.tsx src/components/v3-homepage.tsx tests/e2e/homepage.spec.ts; do
+            echo "FORMAT_START:$file"
+            pnpm exec prettier "$file"
+            echo "FORMAT_END:$file"
+          done
       - name: Formatting check
         run: pnpm format:check
       - name: Install Supabase CLI
