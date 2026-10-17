@@ -1991,3 +1991,10 @@
 .v3-app .ai-builder-status {
   text-align: center;
 }
+
+.v3-app a.cat-card,
+.v3-app a.web3-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
