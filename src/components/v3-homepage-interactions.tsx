@@ -30,7 +30,7 @@ export default function V3HomepageInteractions() {
   }, []);
 
   useEffect(() => {
-    const root = document.querySelector(".v3-native-home");
+    const root = document.querySelector<HTMLElement>(".v3-native-home");
     if (!root) return;
 
     const input = root.querySelector<HTMLInputElement>(".ai-input");
