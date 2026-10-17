@@ -25,11 +25,10 @@ export default function HomePage() {
           <div className="hero-left">
             <div className="hero-badge">Marketplace Preview</div>
             <h1>
-              Your website,
+              Your next website,<br />
+              <span className="serif">starts</span>
               <br />
-              <span className="serif">ready in</span>
-              <br />
-              minutes.
+              here.
             </h1>
             <p className="hero-desc">
               Explore the Web-Temify marketplace concept: templates, launch
@@ -180,7 +179,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("Fintech & Banking")}`}
               className="cat-card cc-1"
-              aria-label="Browse verified releases: Fintech & Banking"
+              aria-label="Search the catalogue for: Fintech & Banking"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🏦</span>
@@ -193,7 +192,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("Web3 & Blockchain")}`}
               className="cat-card cc-2"
-              aria-label="Browse verified releases: Web3 & Blockchain"
+              aria-label="Search the catalogue for: Web3 & Blockchain"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">⛓️</span>
@@ -206,7 +205,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("Logistics & Courier")}`}
               className="cat-card cc-3"
-              aria-label="Browse verified releases: Logistics & Courier"
+              aria-label="Search the catalogue for: Logistics & Courier"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🚚</span>
@@ -219,7 +218,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("SaaS & Startups")}`}
               className="cat-card cc-4"
-              aria-label="Browse verified releases: SaaS & Startups"
+              aria-label="Search the catalogue for: SaaS & Startups"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🚀</span>
@@ -232,7 +231,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("Agency & Portfolio")}`}
               className="cat-card cc-5"
-              aria-label="Browse verified releases: Agency & Portfolio"
+              aria-label="Search the catalogue for: Agency & Portfolio"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🎨</span>
@@ -245,7 +244,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("E-commerce")}`}
               className="cat-card cc-6"
-              aria-label="Browse verified releases: E-commerce"
+              aria-label="Search the catalogue for: E-commerce"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🛒</span>
@@ -258,7 +257,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("Real Estate")}`}
               className="cat-card cc-7"
-              aria-label="Browse verified releases: Real Estate"
+              aria-label="Search the catalogue for: Real Estate"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🏘️</span>
@@ -271,7 +270,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("Scripts & Tools")}`}
               className="cat-card cc-8"
-              aria-label="Browse verified releases: Scripts & Tools"
+              aria-label="Search the catalogue for: Scripts & Tools"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">⚡</span>
@@ -287,7 +286,7 @@ export default function HomePage() {
         <section className="section-alt" id="featured">
           <div className="section-head reveal">
             <div>
-              <p className="eyebrow">Featured Products</p>
+              <p className="eyebrow">Product Concepts</p>
               <h2 className="section-title">
                 Template & script concepts
                 <br />
@@ -301,7 +300,7 @@ export default function HomePage() {
           <div className="templates-grid reveal">
             <div className="tpl-card">
               <div className="tpl-preview" style={{ background: "#fff5f0" }}>
-                <span className="tpl-badge badge-hot">🔥 Hot</span>🏦
+                <span className="tpl-badge badge-hot">Preview Concept</span>🏦
               </div>
               <div className="tpl-body">
                 <div className="tpl-name">NeoBank Pro Template</div>
@@ -331,7 +330,7 @@ export default function HomePage() {
             </div>
             <div className="tpl-card">
               <div className="tpl-preview" style={{ background: "#fff8e1" }}>
-                <span className="tpl-badge badge-new">✨ New</span>🚚
+                <span className="tpl-badge badge-new">Concept Preview</span>🚚
               </div>
               <div className="tpl-body">
                 <div className="tpl-name">Courier & Logistics Pro</div>
@@ -346,7 +345,7 @@ export default function HomePage() {
             </div>
             <div className="tpl-card">
               <div className="tpl-preview" style={{ background: "#f5f0ff" }}>
-                <span className="tpl-badge badge-hot">🔥 Hot</span>💱
+                <span className="tpl-badge badge-hot">Preview Concept</span>💱
               </div>
               <div className="tpl-body">
                 <div className="tpl-name">P2P Trading Script</div>
@@ -361,7 +360,7 @@ export default function HomePage() {
             </div>
             <div className="tpl-card">
               <div className="tpl-preview" style={{ background: "#f0fff8" }}>
-                <span className="tpl-badge badge-new">✨ New</span>🏘️
+                <span className="tpl-badge badge-new">Concept Preview</span>🏘️
               </div>
               <div className="tpl-body">
                 <div className="tpl-name">Real Estate Listings Pro</div>
@@ -397,9 +396,9 @@ export default function HomePage() {
             <div>
               <p className="eyebrow">Launch Kits</p>
               <h2 className="section-title">
-                Complete systems,
+                Planned launch kits,
                 <br />
-                <span className="serif">not just templates</span>
+                <span className="serif">for future builds</span>
               </h2>
               <p
                 style={{
@@ -418,17 +417,16 @@ export default function HomePage() {
           <div className="kits-grid reveal">
             <div className="kit-card dark">
               <div className="kit-watermark">🚀</div>
-              <div className="kit-tag">⚡ Most Popular</div>
-              <div className="kit-name">SaaS Starter Kit</div>
+              <div className="kit-tag">✦ Preview Concept</div>
+              <div className="kit-name">SaaS Starter Kit Concept</div>
               <div className="kit-desc">
-                Launch a SaaS product in a weekend — auth, billing, dashboard,
-                onboarding, and landing page, all included.
+                Illustrative concept for authentication, billing, dashboard, onboarding, and landing-page components. Not available for purchase yet.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Landing Page</span>
                 <span className="kit-item">Auth System</span>
                 <span className="kit-item">Dashboard UI</span>
-                <span className="kit-item">Stripe Billing</span>
+                <span className="kit-item">Payment Adapter Plan</span>
                 <span className="kit-item">Admin Panel</span>
               </div>
               <div className="kit-footer">
@@ -448,7 +446,7 @@ export default function HomePage() {
             <div className="kit-card">
               <div className="kit-watermark">⛓️</div>
               <div className="kit-tag">🔥 Web3</div>
-              <div className="kit-name">Web3 DApp Starter Kit</div>
+              <div className="kit-name">Web3 DApp Kit Concept</div>
               <div className="kit-desc">
                 Wallet connect, smart contract UI, token dashboard, and NFT
                 components — launch your dApp without starting from scratch.
@@ -472,16 +470,15 @@ export default function HomePage() {
             <div className="kit-card">
               <div className="kit-watermark">🏦</div>
               <div className="kit-tag">💰 Fintech</div>
-              <div className="kit-name">Fintech Launch Kit</div>
+              <div className="kit-name">Fintech Launch Kit Concept</div>
               <div className="kit-desc">
-                Banking UI, loan calculator, KYC flow, Paystack integration, and
-                compliance pages. Africa-ready from day one.
+                Illustrative fintech-kit concept covering banking, loan-calculator, KYC, and compliance screens. Provider integrations and regulatory fit are not verified.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Banking Template</span>
                 <span className="kit-item">Loan Calculator</span>
                 <span className="kit-item">KYC Flow</span>
-                <span className="kit-item">Paystack Ready</span>
+                <span className="kit-item">Provider integration concept</span>
                 <span className="kit-item">Admin Dashboard</span>
               </div>
               <div className="kit-footer">
@@ -590,7 +587,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("Wallet Auth UI")}`}
               className="web3-card"
-              aria-label="Browse verified releases: Wallet Auth UI"
+              aria-label="Search the catalogue for: Wallet Auth UI"
             >
               <span className="web3-icon">👛</span>
               <div className="web3-name">Wallet Auth UI</div>
@@ -602,31 +599,29 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("NFT Galleries")}`}
               className="web3-card"
-              aria-label="Browse verified releases: NFT Galleries"
+              aria-label="Search the catalogue for: NFT Galleries"
             >
               <span className="web3-icon">🖼️</span>
               <div className="web3-name">NFT Galleries</div>
               <div className="web3-desc">
-                Collection displays, mint pages, and auction interfaces built
-                and tested
+                Illustrative NFT-gallery concept for collection displays, mint pages, and auction interfaces. Not available to download yet.
               </div>
             </Link>
             <Link
               href={`/catalog?q=${encodeURIComponent("DeFi Dashboards")}`}
               className="web3-card"
-              aria-label="Browse verified releases: DeFi Dashboards"
+              aria-label="Search the catalogue for: DeFi Dashboards"
             >
               <span className="web3-icon">📊</span>
               <div className="web3-name">DeFi Dashboards</div>
               <div className="web3-desc">
-                Staking, liquidity pools, and yield farming — complete UI kits
-                ready to download
+                Illustrative dashboard concepts for staking, liquidity pools, and yield farming. Not available to download yet.
               </div>
             </Link>
             <Link
               href={`/catalog?q=${encodeURIComponent("DAO Governance")}`}
               className="web3-card"
-              aria-label="Browse verified releases: DAO Governance"
+              aria-label="Search the catalogue for: DAO Governance"
             >
               <span className="web3-icon">🏛️</span>
               <div className="web3-name">DAO Governance</div>
@@ -702,8 +697,7 @@ export default function HomePage() {
                   Vercel <span className="star">★ Featured</span>
                 </div>
                 <div className="dir-desc">
-                  Deploy web projects instantly — the fastest frontend cloud
-                  platform available
+                  Frontend deployment platform with preview and production workflows.
                 </div>
                 <div className="dir-pills">
                   <span className="dir-pill">Hosting</span>
@@ -813,7 +807,7 @@ export default function HomePage() {
             <div className="step">
               <div className="step-num">01</div>
               <span className="step-icon">🔍</span>
-              <h3>Find Your Template</h3>
+              <h3>Explore template concepts</h3>
               <p>
                 Browse template, script, and Web3 concepts. Verified releases
                 and purchasing will appear here when ready; catalogue filters
@@ -823,7 +817,7 @@ export default function HomePage() {
             <div className="step">
               <div className="step-num">02</div>
               <span className="step-icon">⚡</span>
-              <h3>Download & Deploy</h3>
+              <h3>Release delivery planned</h3>
               <p>
                 Secure downloads and setup guides are planned for released
                 products. Payment providers will be announced after integration
@@ -855,30 +849,27 @@ export default function HomePage() {
               <div className="feat-item">
                 <div className="feat-icon">⚡</div>
                 <div className="feat-text">
-                  <h4>Lightning Fast Load Times</h4>
+                  <h4>Performance review planned</h4>
                   <p>
-                    Every template is performance-optimised. Performance targets
-                    will be published with tested releases.
+                    Performance checks and targets will be published only after each release is tested.
                   </p>
                 </div>
               </div>
               <div className="feat-item">
                 <div className="feat-icon">📱</div>
                 <div className="feat-text">
-                  <h4>Mobile-First by Default</h4>
+                  <h4>Responsive review planned</h4>
                   <p>
-                    Perfect on phones, tablets, and desktops — no extra work
-                    required from you.
+                    Responsive behaviour will be checked across supported viewports before release.
                   </p>
                 </div>
               </div>
               <div className="feat-item">
                 <div className="feat-icon">🔍</div>
                 <div className="feat-text">
-                  <h4>SEO Built In</h4>
+                  <h4>SEO review planned</h4>
                   <p>
-                    Meta tags, sitemaps, and structured data — all handled so
-                    Google can find your site.
+                    Metadata, sitemap coverage, and structured data will be reviewed per release; no SEO outcome is guaranteed.
                   </p>
                 </div>
               </div>
@@ -1027,8 +1018,7 @@ export default function HomePage() {
                   maxWidth: "400px",
                 }}
               >
-                Our engineering team builds custom products for founders and
-                businesses across Africa.
+                Tinlance offers scoped custom engineering for businesses worldwide. Web-Temify marketplace-linked service requests are not live yet.
               </p>
             </div>
             <a
@@ -1063,8 +1053,7 @@ export default function HomePage() {
               <span className="svc-icon">🚀</span>
               <div className="svc-name">SaaS MVP Build</div>
               <div className="svc-desc">
-                Full-stack SaaS with auth, billing, and dashboards —
-                production-ready in weeks.
+                Scoped full-stack SaaS engineering covering authentication, billing, and dashboards. Timelines and acceptance criteria are agreed per engagement.
               </div>
               <div className="svc-price">Scope-based quote</div>
             </div>
@@ -1184,7 +1173,7 @@ export default function HomePage() {
                   fontWeight: "700",
                 }}
               >
-                Free to join · No monthly fees
+                Seller onboarding planned · Fees and payout terms pending
               </div>
             </div>
           </div>
@@ -1369,7 +1358,7 @@ export default function HomePage() {
             </div>
             <div className="price-card featured">
               <div className="price-top">
-                <div className="price-label">Pro ⭐ Most Popular</div>
+                <div className="price-label">Pro concept</div>
                 <div className="price-amount">Preview</div>
                 <div className="price-period">Not available yet</div>
               </div>
@@ -1498,7 +1487,7 @@ export default function HomePage() {
                 className="section-title"
                 style={{ fontSize: "clamp(1.4rem, 2.5vw, 2rem)" }}
               >
-                New templates every week.
+                Verified releases, announced here.
                 <br />
                 <span className="serif">Dev tips. Tool discoveries.</span>
               </h2>
@@ -1510,7 +1499,7 @@ export default function HomePage() {
                   fontWeight: "500",
                 }}
               >
-                Join developers. No spam — only the good stuff.
+                Marketplace updates and tool discoveries will be announced when signup opens.
               </p>
             </div>
             <div>
@@ -1519,6 +1508,8 @@ export default function HomePage() {
                   type="email"
                   className="nl-input"
                   placeholder="your@email.com"
+                  aria-label="Email newsletter signup (coming soon)"
+                  disabled
                 />
                 <button className="btn btn-fill" type="button" disabled>
                   Signup coming soon
@@ -1531,7 +1522,7 @@ export default function HomePage() {
                   marginTop: "0.6rem",
                 }}
               >
-                By subscribing you agree to our Privacy Policy (coming soon).
+                Signup is not live yet. This disabled form does not collect email addresses.
               </p>
             </div>
           </div>
@@ -1753,7 +1744,7 @@ export default function HomePage() {
               Tinlance Limited ↗
             </a>
             <br />
-            Need a custom-built product? That&apos;s their lane.
+            Tinlance offers scoped custom engineering separately; Web-Temify marketplace-linked service requests are not live yet.
           </div>
         </div>
         <div className="footer-col">
@@ -1772,10 +1763,10 @@ export default function HomePage() {
               <Link href="/catalog">Web3 Hub</Link>
             </li>
             <li>
-              <Link href="/catalog">Free Templates</Link>
+              <Link href="/catalog">Planned free releases</Link>
             </li>
             <li>
-              <Link href="/catalog">New Arrivals</Link>
+              <Link href="/catalog">Latest concepts</Link>
             </li>
           </ul>
         </div>
