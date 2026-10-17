@@ -341,3 +341,13 @@ test("mobile navigation keeps visual and keyboard focus order aligned", async ({
   expect(ctaBox).not.toBeNull();
   expect(ctaBox!.y).toBeGreaterThan(lastLinkBox!.y + lastLinkBox!.height);
 });
+
+test("static V3 reference is excluded from search indexing", async ({ page }) => {
+  const response = await page.request.get("/web-temify-v3.html");
+  expect(response.ok()).toBe(true);
+  const html = await response.text();
+  expect(html).toContain('<meta name="robots" content="noindex,follow" />');
+  expect(html).not.toContain("Ready-to-sell storefronts");
+  expect(html).not.toContain("Paystack Ready");
+  expect(html).toContain("Marketplace updates and tool discoveries");
+});
