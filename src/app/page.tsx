@@ -1845,7 +1845,7 @@ export default function HomePage() {
               href="https://tinlance.com"
               target="_blank"
               rel="noreferrer"
-              style={{ color: "var(--coral)", fontWeight: "800" }}
+              style={{ color: "var(--coral-text)", fontWeight: "800" }}
             >
               Tinlance Limited ↗
             </a>
