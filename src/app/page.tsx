@@ -704,8 +704,7 @@ export default function HomePage() {
                   Vercel <span className="star">★ Featured</span>
                 </div>
                 <div className="dir-desc">
-                  Deploy web projects with preview deployments and
-                frontend hosting
+                  Deploy web projects with previews and frontend hosting.
                 </div>
                 <div className="dir-pills">
                   <span className="dir-pill">Hosting</span>
