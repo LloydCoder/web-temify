@@ -1755,82 +1755,75 @@
   transform: none;
 }
 
-.v3-app /* ── RESPONSIVE ── */
-      @media (max-width: 1024px) {
-  nav {
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .v3-app nav {
     padding: 1rem 1.5rem;
   }
-  .nav-links {
+  .v3-app .nav-links {
     display: none;
   }
-  section {
+  .v3-app section {
     padding: 3.5rem 1.5rem;
   }
-  .hero {
-    grid-template-columns: 1fr;
-    padding: 6rem 1.5rem 3rem;
+  .v3-app .hero {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: auto;
+    padding: 7rem 1.5rem 3rem;
   }
-  .hero-right {
+  .v3-app .hero-left {
+    min-width: 0;
+    max-width: 760px;
+  }
+  .v3-app .hero-right {
     display: none;
   }
-  .cat-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .v3-app .cat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .web3-grid,
-  .gamify-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .v3-app .web3-grid,
+  .v3-app .gamify-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .web3-card:nth-child(2),
-  .gamify-card:nth-child(2) {
+  .v3-app .web3-card:nth-child(2),
+  .v3-app .gamify-card:nth-child(2) {
     border-right: none;
   }
-  .web3-card:nth-child(3),
-  .gamify-card:nth-child(3) {
+  .v3-app .web3-card:nth-child(3),
+  .v3-app .gamify-card:nth-child(3) {
     border-top: 2px solid var(--ink);
   }
-  .templates-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .v3-app .templates-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .kits-grid {
-    grid-template-columns: 1fr;
+  .v3-app .kits-grid,
+  .v3-app .features-layout,
+  .v3-app .steps,
+  .v3-app .vendor-box,
+  .v3-app .testi-grid,
+  .v3-app .nl-box {
+    grid-template-columns: minmax(0, 1fr);
   }
-  .features-layout {
-    grid-template-columns: 1fr;
-  }
-  .feature-visual {
+  .v3-app .feature-visual {
     display: none;
   }
-  .steps {
-    grid-template-columns: 1fr;
-  }
-  .step {
+  .v3-app .step {
     border-right: none;
     border-bottom: 2px solid rgba(255, 255, 255, 0.12);
   }
-  .step:last-child {
+  .v3-app .step:last-child {
     border-bottom: none;
   }
-  .services-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .v3-app .services-grid,
+  .v3-app .dir-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .vendor-box {
-    grid-template-columns: 1fr;
-  }
-  .testi-grid {
-    grid-template-columns: 1fr;
-  }
-  .pricing-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .v3-app .pricing-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     max-width: 600px;
   }
-  .nl-box {
-    grid-template-columns: 1fr;
-  }
-  .dir-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  footer {
-    grid-template-columns: 1fr 1fr;
+  .v3-app footer {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.5rem;
   }
 }
