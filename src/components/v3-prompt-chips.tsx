@@ -1,5 +1,9 @@
 "use client";
 
+type V3PromptChipsProps = {
+  onSelect: (description: string) => void;
+};
+
 const prompts = [
   "Logistics company",
   "NFT marketplace",
@@ -9,14 +13,7 @@ const prompts = [
   "Real estate agency",
 ];
 
-export default function V3PromptChips() {
-  const fillAiPrompt = (prompt: string) => {
-    const input = document.querySelector<HTMLInputElement>(".v3-app .ai-input");
-    if (!input) return;
-    input.value = `${prompt} website`;
-    input.focus();
-  };
-
+export default function V3PromptChips({ onSelect }: V3PromptChipsProps) {
   return (
     <div className="ai-chips">
       {prompts.map((prompt) => (
@@ -25,7 +22,7 @@ export default function V3PromptChips() {
           className="ai-chip"
           type="button"
           aria-label={`Use ${prompt} prompt`}
-          onClick={() => fillAiPrompt(prompt)}
+          onClick={() => onSelect(`${prompt} website`)}
         >
           {prompt}
         </button>
