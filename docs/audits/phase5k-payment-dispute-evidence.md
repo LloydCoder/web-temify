@@ -30,6 +30,6 @@
 - [x] Exact-head Security/dependency governance passes (run 39006812933 on the exact PR head).
 - [x] Review the migration/RPC grants, storage path/digest invariants, request bounds, same-origin/admin authorization, scanner freshness and failure paths.
 - [x] Verify the Vercel preview for exact PR head `5169c54e790cc398321da1c562a20d819956f811`: homepage and `/web-temify-v3.html` returned HTTP 200; unauthenticated evidence access returned 404 with `Cache-Control: no-store`.
-- [ ] Verify production deployment and configure required production environment variables; Vercel's environment list is empty, and the latest production deployment is `ERROR`.
+- [ ] Verify production deployment and configure required production environment variables. PR #87 recorded an empty Vercel environment list and an `ERROR` production deployment at that time; re-check current deployment/environment state before release.
 
 **Gate decision:** MERGED and CI-verified for private evidence custody and scanning only. Phase 5 remains incomplete until provider integration, evidence submission, payout enforcement, reviewed accounting policy, worker secrets and delivery, legal/retention approval, named operational ownership, incident response, and repository protection are evidenced.
