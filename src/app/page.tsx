@@ -110,6 +110,9 @@ export default function HomePage() {
           <li>
             <a href="#pricing">Pricing</a>
           </li>
+          <li>
+            <a href="#ecosystem">Platform</a>
+          </li>
         </ul>
         <button
           className="mobile-menu-toggle"
@@ -1738,6 +1741,29 @@ export default function HomePage() {
           </div>
         </section>
       </main>
+
+        <section className="ecosystem-section" id="ecosystem" aria-labelledby="ecosystem-title">
+          <div className="ecosystem-inner">
+            <div className="ecosystem-heading">
+              <p className="section-eyebrow">THE WEB-TEMIFY ECOSYSTEM</p>
+              <h2 id="ecosystem-title">One platform. <span className="serif">More ways to build.</span></h2>
+              <p>Explore the nine connected areas of Web-Temify. Each destination is explicit about what is available today and what remains in development.</p>
+            </div>
+            <div className="ecosystem-grid">
+              <article className="ecosystem-card ecosystem-card-live"><span className="ecosystem-number">01</span><p className="ecosystem-status">Existing route · verified catalogue rules</p><h3>Template &amp; Script Marketplace</h3><p>Browse the catalogue. Only products meeting the existing publication and release checks should be presented as purchasable.</p><Link className="btn btn-fill" href="/catalog">Browse catalogue →</Link></article>
+              <article className="ecosystem-card"><span className="ecosystem-number">02</span><p className="ecosystem-status">Planned · not operational</p><h3>Web Hosting &amp; Deployment</h3><p>Hosting plans, deployment automation, domains, SSL and site operations are planned; provisioning and billing are not available here.</p><Link className="ecosystem-link" href="/hosting">Explore hosting roadmap →</Link></article>
+              <article className="ecosystem-card"><span className="ecosystem-number">03</span><p className="ecosystem-status">Planned · generation disabled</p><h3>AI Site Builder</h3><p>Prompt-to-site creation is a roadmap capability. This page does not generate or deploy a website.</p><Link className="ecosystem-link" href="/ai-site-builder">Explore AI Site Builder →</Link></article>
+              <article className="ecosystem-card"><span className="ecosystem-number">04</span><p className="ecosystem-status">Preview · submissions not live</p><h3>Tech Directory Hub</h3><p>Explore selected external tools in the homepage preview. Listing submissions, paid placements and a managed directory are not enabled.</p><Link className="ecosystem-link" href="/directory">Explore directory status →</Link></article>
+              <article className="ecosystem-card"><span className="ecosystem-number">05</span><p className="ecosystem-status">Planned · transactions disabled</p><h3>Verified Automation Marketplace</h3><p>Automation discovery, verification, installation and managed updates are planned, not available as a live marketplace.</p><Link className="ecosystem-link" href="/automations">Explore automation roadmap →</Link></article>
+              <article className="ecosystem-card"><span className="ecosystem-number">06</span><p className="ecosystem-status">Planned · supplier onboarding closed</p><h3>Specialist Supplier Directory</h3><p>A verified supplier directory is planned. Supplier profiles, verification and marketplace enquiries are not yet operational.</p><Link className="ecosystem-link" href="/specialists">Explore supplier roadmap →</Link></article>
+              <article className="ecosystem-card"><span className="ecosystem-number">07</span><p className="ecosystem-status">Planned · milestone payments disabled</p><h3>Outcome-Based AI Implementation</h3><p>Scoped delivery, acceptance criteria and milestone-based engagement are planned. No marketplace contract or payment can be initiated here.</p><Link className="ecosystem-link" href="/implementation">Explore implementation roadmap →</Link></article>
+              <article className="ecosystem-card"><span className="ecosystem-number">08</span><p className="ecosystem-status">Shared foundation · not a storefront</p><h3>Shared Enterprise Platform</h3><p>Identity, policy, approvals, auditability, secure delivery and operational controls underpin the ecosystem. Their presence does not mean every product feature is enabled.</p><Link className="ecosystem-link" href="/platform">Understand the platform layer →</Link></article>
+              <article className="ecosystem-card"><span className="ecosystem-number">09</span><p className="ecosystem-status">Planned · monetization not enabled</p><h3>Tech Hub &amp; Advertising Engine</h3><p>Editorial content, SEO resources, affiliate disclosures, sponsored placements and newsletter sponsorships require dedicated publishing and commercial workflows.</p><Link className="ecosystem-link" href="/tech-hub">Explore Tech Hub roadmap →</Link></article>
+            </div>
+            <p className="ecosystem-disclaimer">Availability is feature-specific. Planned cards are roadmap disclosures, not promises of launch dates. Payment processing, seller payouts and live money movement remain disabled until the required technical, legal, security and operational gates are verified.</p>
+          </div>
+        </section>
+
       <footer>
         <div className="footer-brand">
           <Link href="/" className="logo">
