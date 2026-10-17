@@ -120,8 +120,9 @@ export async function GET(request: Request, context: RouteContext) {
   }
 
   const { data: signed, error: signedUrlError } =
-    await adminContext.admin.storage.from("payment-dispute-evidence")
-    .createSignedUrl(evidence.storage_path, SIGNED_URL_TTL_SECONDS);
+    await adminContext.admin.storage
+      .from("payment-dispute-evidence")
+      .createSignedUrl(evidence.storage_path, SIGNED_URL_TTL_SECONDS);
 
   if (signedUrlError || typeof signed?.signedUrl !== "string") {
     return response({ error: "evidence_storage_unavailable", requestId }, 503);
