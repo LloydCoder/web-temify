@@ -27,7 +27,7 @@ Exit criteria:
 - [x] No secrets or local env files are present in the tracked tree.
 - [x] Formatting check (`pnpm format:check`), high/critical dependency audit with verified local-patch exception handling, license policy scan, and full-history secret scanning pass on the exact candidate head. Evidence: PR #21 head `5e505bb7bdf926c1a3f34b9b4b23217ba2bc9ebc`; Foundation CI run 38472660193 and Security/dependency governance run 38472660132 passed.
 - [x] The patched Next.js/React dependency graph has no unresolved high/critical advisories in the CI audit.
-- [ ] CI results are visible on PR; required checks are not yet enforced by repository rules (repository settings gate).
+- [ ] CI results are visible on PR; required checks are not yet confirmed enforced by repository rules. A classic branch-protection configuration was attempted on 2026-10-17 with the four exact CI/security checks, but GitHub required sudo-mode reauthentication and the save could not be verified. Keep this gate open until the active rule is confirmed in repository settings/API.
 - [x] Playwright validates semantic landmarks and horizontal overflow at 320px and 1440px; full WCAG 2.2 AA audit remains a launch gate.
 - [x] Unbuilt payment, AI, vendor, and agent capabilities are not shown as live.
 - [x] Legacy/current architecture conflicts are reconciled for the audited repository snapshot; new files must enter the reconciliation register before use.
@@ -405,9 +405,9 @@ The state machine trusts the previously persisted signature-verification asserti
 
 Forensic record: `docs/audits/phase5j-payment-dispute-deadline-alerts.md`. This worker sends notifications only; it does not submit provider evidence, change dispute state, issue refunds, post journal entries, or move funds. Phase 5 overall remains incomplete; track remaining release blockers in [Issue #84](https://github.com/LloydCoder/web-temify/issues/84).
 
-### Phase 5K — Private payment-dispute evidence upload and scanning (implementation candidate)
+### Phase 5K — Private payment-dispute evidence upload and scanning (merged; code and exact-head CI passed)
 
-**Status: IN PROGRESS.** This slice adds private evidence custody and digest-bound malware-scan attestations. It does not submit evidence to a provider, verify provider origin, or complete Phase 5.
+**Status: PASS for implementation and CI scope only.** PR [#87](https://github.com/LloydCoder/web-temify/pull/87) merged as `6c4d32eb4cc114bdd11510e10122f6e281e27d95`. Foundation CI [run 39006812908](https://github.com/LloydCoder/web-temify/actions/runs/39006812908) and Security/dependency governance [run 39006812933](https://github.com/LloydCoder/web-temify/actions/runs/39006812933) passed on exact PR head `89f5fb6fbd21afe7a98fb7a7887031b14ff9f694`. This is private evidence custody and digest-bound malware-scan attestation only; it does not submit evidence to a provider, verify provider origin, or complete Phase 5.
 
 - [x] Add a private 5 MiB Supabase Storage bucket with an explicit content-type allowlist.
 - [x] Add an admin-only, same-origin, bounded upload route for disputes in open or needs-evidence state, including PDF/PNG/JPEG signature checks and UTF-8 text validation.
@@ -417,8 +417,8 @@ Forensic record: `docs/audits/phase5j-payment-dispute-deadline-alerts.md`. This 
 - [x] Add route tests and pgTAP coverage for authorization, privacy/grants, digest validation, scanner failure, and signed-URL access gates.
 - [x] Reuse the existing fail-closed ClamAV client; unavailable scans remain pending and mismatched scan digests are rejected.
 - [x] Leave retention unset until an approved legal retention policy exists; do not claim automated deletion.
-- [ ] Pass exact-head Foundation CI, including empty-database migration reset, schema lint, pgTAP/RLS, route tests, E2E, typecheck, lint, formatting and production build.
-- [ ] Pass exact-head Security/dependency governance and review the migration, route authorization, storage path constraints and scan freshness/failure behavior.
+- [x] Pass exact-head Foundation CI, including empty-database migration reset, schema lint, pgTAP/RLS, route tests, E2E, typecheck, lint, formatting and production build (run 39006812908 on `89f5fb6fbd21afe7a98fb7a7887031b14ff9f694`).
+- [x] Pass exact-head Security/dependency governance and review the migration, route authorization, storage path constraints and scan freshness/failure behavior (run 39006812933 on the same SHA).
 - [ ] Verify configured production scanner endpoint/token and clean, infected, stale-signature and unavailable-scanner smoke tests.
 - [x] Verify the exact PR preview: homepage and `/web-temify-v3.html` return HTTP 200, and unauthenticated evidence access returns 404 with no-store headers.
 - [ ] Configure production environment variables and verify a production deployment; the Vercel environment list is empty and the latest production deployment is `ERROR`.
