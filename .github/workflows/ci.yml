@@ -41,15 +41,13 @@ jobs:
         run: pnpm typecheck
       - name: Lint
         run: pnpm lint
-      - name: Temporary formatter output for native V3 files
+      - name: Print Prettier output for moderation appeal E2E test
         if: always()
         shell: bash
         run: |
-          for file in src/app/page.tsx src/app/v3-home.css src/app/layout.tsx src/components/v3-navigation.tsx src/components/v3-directory-controls.tsx src/components/v3-prompt-chips.tsx src/components/v3-homepage-interactions.tsx tests/e2e/homepage.spec.ts; do
-            echo "FORMAT_START:$file"
-            pnpm exec prettier "$file"
-            echo "FORMAT_END:$file"
-          done
+          echo "FORMAT_START:tests/e2e/moderation-appeals.spec.ts"
+          pnpm exec prettier tests/e2e/moderation-appeals.spec.ts
+          echo "FORMAT_END:tests/e2e/moderation-appeals.spec.ts"
       - name: Formatting check
         run: pnpm format:check
       - name: Install Supabase CLI
