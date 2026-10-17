@@ -24,6 +24,8 @@
 
 ## Verification
 
+- [x] Add route tests for upload authorization, same-origin checks, terminal-dispute denial, digest mismatch, scanner unavailability/infection, upload cleanup, audited access, signed-URL expiry, and storage failure.
+- [x] Add pgTAP assertions for private bucket configuration, RLS, direct-table denial, service-only RPC grants, malformed digests, and admin-role enforcement.
 - [ ] Exact-head Foundation CI passes, including migration reset, schema lint, pgTAP/RLS, route tests, E2E, typecheck, lint, format, and production build.
 - [ ] Exact-head Security/dependency governance passes.
 - [ ] Review the migration/RPC grants, storage path/digest invariants, request bounds, same-origin/admin authorization, scanner freshness and failure paths.
