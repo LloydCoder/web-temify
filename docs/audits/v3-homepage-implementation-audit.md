@@ -8,7 +8,7 @@
 
 - Canonical design reference: `docs/web-temify-v3.html`, reconciled with the legacy visual reference and extended with the nine-area ecosystem section, status disclosures, and destination links.
 - Legacy public runtime copy: `public/web-temify-v3.html`; it is not embedded by the homepage and is being kept aligned with truthful preview messaging.
-- Native homepage entry point: `src/app/page.tsx`, with V3 markup rendered as React/JSX rather than an iframe.
+- Native homepage entry point: `src/app/page.tsx`, a Server Component that renders V3 markup as React/JSX rather than an iframe. Responsive navigation, directory filtering, prompt suggestions, and reveal effects are isolated into small client components.
 - Scoped V3 stylesheet: `src/app/v3-home.css`; selectors are scoped under `.v3-app` to avoid leaking into catalogue, account, checkout, and admin routes.
 - Shared application metadata: `src/app/layout.tsx`.
 - Destination route template: `src/app/ecosystem-destination.tsx` and `src/app/ecosystem-destination.css`.
