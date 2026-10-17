@@ -21,7 +21,7 @@ export default function V3Navigation() {
   }, [mobileMenuOpen]);
 
   return (
-    <nav>
+    <nav aria-label="Primary navigation">
       <Link href="/" className="logo">
         Web-Temify <span className="logo-dot"></span>
       </Link>
@@ -59,7 +59,7 @@ export default function V3Navigation() {
         ref={toggleRef}
         className="mobile-menu-toggle"
         type="button"
-        aria-label="Toggle navigation"
+        aria-label={mobileMenuOpen ? "Close navigation" : "Open navigation"}
         aria-controls="primary-navigation"
         aria-expanded={mobileMenuOpen}
         onClick={() => setMobileMenuOpen((open) => !open)}
