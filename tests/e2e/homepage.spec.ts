@@ -160,22 +160,20 @@ test("directory tabs filter the visible external tool cards", async ({
     .toBe(allCount);
 });
 
-test(
-  "No-Code and Freelancer Resources directory filters return matching tools",
-  async ({ page }) => {
-    await page.goto("/");
-    const cards = page.locator(".dir-card");
-    const visibleCardCount = () =>
-      cards.evaluateAll(
-        (items) => items.filter((item) => !item.hasAttribute("hidden")).length,
-      );
-
-    for (const label of ["No-Code", "Freelancer Resources"]) {
-      await page.getByRole("button", { name: label }).click();
-      await expect.poll(visibleCardCount).toBeGreaterThan(0);
-    }
-  },
-);
+test("No-Code and Freelancer Resources directory filters return matching tools", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const cards = page.locator(".dir-card");
+  const visibleCardCount = () =>
+    cards.evaluateAll(
+      (items) => items.filter((item) => !item.hasAttribute("hidden")).length,
+    );
+  for (const label of ["No-Code", "Freelancer Resources"]) {
+    await page.getByRole("button", { name: label }).click();
+    await expect.poll(visibleCardCount).toBeGreaterThan(0);
+  }
+});
 
 test("native AI prompt buttons populate the planned builder input without implying generation is live", async ({
   page,
