@@ -1,8 +1,8 @@
 # Phase 5K forensic audit — private payment-dispute evidence
 
-**Disposition:** Implementation candidate. Exact-head Foundation CI, Security/dependency governance, and review are required before merge. This slice does not complete Phase 5 or authorize provider evidence submission or live financial actions.
+**Disposition:** MERGED in PR [#87](https://github.com/LloydCoder/web-temify/pull/87), merge commit `6c4d32eb4cc114bdd11510e10122f6e281e27d95`. Exact-head Foundation CI [run 39006812908](https://github.com/LloydCoder/web-temify/actions/runs/39006812908) and Security/dependency governance [run 39006812933](https://github.com/LloydCoder/web-temify/actions/runs/39006812933) passed on implementation head `89f5fb6fbd21afe7a98fb7a7887031b14ff9f694`. This slice does not complete Phase 5 or authorize provider evidence submission or live financial actions.
 
-## Implemented in this candidate
+## Implemented in the merged change
 
 - A private payment-dispute-evidence Supabase Storage bucket with a 5 MiB limit and an explicit content-type allowlist.
 - Admin-only, same-origin, bounded upload at POST /api/admin/payment-disputes/:disputeId/evidence, with PDF/PNG/JPEG signatures checked and text/plain required to be valid UTF-8 without NUL bytes.
@@ -26,10 +26,10 @@
 
 - [x] Add route tests for upload authorization, same-origin checks, terminal-dispute denial, digest mismatch, scanner unavailability/infection, upload cleanup, audited access, signed-URL expiry, and storage failure.
 - [x] Add pgTAP assertions for private bucket configuration, RLS, direct-table denial, service-only RPC grants, malformed digests, and admin-role enforcement.
-- [ ] Exact-head Foundation CI passes, including migration reset, schema lint, pgTAP/RLS, route tests, E2E, typecheck, lint, format, and production build.
-- [ ] Exact-head Security/dependency governance passes.
+- [x] Exact-head Foundation CI passes, including migration reset, schema lint, pgTAP/RLS, route tests, E2E, typecheck, lint, format, and production build (run 39006812908 on the exact PR head).
+- [x] Exact-head Security/dependency governance passes (run 39006812933 on the exact PR head).
 - [x] Review the migration/RPC grants, storage path/digest invariants, request bounds, same-origin/admin authorization, scanner freshness and failure paths.
 - [x] Verify the Vercel preview for exact PR head `5169c54e790cc398321da1c562a20d819956f811`: homepage and `/web-temify-v3.html` returned HTTP 200; unauthenticated evidence access returned 404 with `Cache-Control: no-store`.
-- [ ] Verify production deployment and configure required production environment variables; Vercel's environment list is empty, and the latest production deployment is `ERROR`.
+- [ ] Verify production deployment and configure required production environment variables. PR #87 recorded an empty Vercel environment list and an `ERROR` production deployment at that time; re-check current deployment/environment state before release.
 
-**Gate decision:** This is a private evidence-custody and scanning slice only. Phase 5 remains incomplete until provider integration, evidence submission, payout enforcement, reviewed accounting policy, worker secrets and delivery, legal/retention approval, named operational ownership, incident response, and repository protection are evidenced.
+**Gate decision:** MERGED and CI-verified for private evidence custody and scanning only. Phase 5 remains incomplete until provider integration, evidence submission, payout enforcement, reviewed accounting policy, worker secrets and delivery, legal/retention approval, named operational ownership, incident response, and repository protection are evidenced.
