@@ -1,6 +1,6 @@
 # Phase 5I forensic audit — verified payment-dispute state machine
 
-**Disposition:** Candidate implementation only; CI and provider integration pending. This is not a Phase 5 exit pass.
+**Disposition:** PASS for the database state-machine and exact-head CI scope only. PR [#81](https://github.com/LloydCoder/web-temify/pull/81) merged as `3005da1a7c0f64b2b02af2c58dc3e85781894e19`. This is not a Phase 5 exit pass or production provider approval.
 
 ## Implemented boundary
 
@@ -21,12 +21,12 @@
 
 ## Required verification
 
-- [ ] Empty-database migration reset and schema lint.
+- [x] Empty-database migration reset and schema lint passed in Foundation CI on exact PR head `4cfc60a05d9c28b1c201937bba9700e1a19991f9` ([run 38979078356](https://github.com/LloydCoder/web-temify/actions/runs/38979078356)).
 - [x] Forensic hardening: reject verified but unclaimed webhook inbox events; tests explicitly cover the `received`-state rejection.
-- [ ] pgTAP/RLS test suite.
-- [ ] Typecheck, lint, formatting, E2E, concurrency test and production build.
-- [ ] Security/dependency governance on the exact PR head.
+- [x] pgTAP/RLS test suite passed in Foundation CI on the exact PR head.
+- [x] Typecheck, lint, formatting, E2E, true two-session settlement concurrency test, and production build passed in Foundation CI on the exact PR head.
+- [x] Security/dependency governance passed on the exact PR head ([run 38979078315](https://github.com/LloydCoder/web-temify/actions/runs/38979078315)).
 - [ ] Provider-specific signature fixtures and sandbox integration tests.
 - [ ] Production evidence retention, deadline monitoring, policy and staffing approval.
 
-**Gate decision:** This PR can pass only as a database workflow implementation. Phase 5 overall remains incomplete until provider integration and operational gates pass.
+**Gate decision:** Phase 5I passes for the private database state-machine and CI scope. Provider-specific webhook signature verification/mapping, evidence submission, deadline monitoring, payout enforcement, policy approval, and operational ownership remain open. Phase 5 overall remains incomplete.

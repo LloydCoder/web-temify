@@ -371,20 +371,39 @@ Approved manual adjustments remain requests only; no journal entries or provider
 
 The UI's evidence digest field is a reference only; it does not upload or validate an evidence object. This candidate does not post manual adjustments to the journal, run a provider chargeback workflow, or move money. Phase 5 remains incomplete.
 
-### Phase 5I — Verified payment-dispute state machine (implementation candidate; CI pending)
+### Phase 5I — Verified payment-dispute state machine (merged; database and CI gates passed)
+
+**Status: PASS for the database state-machine and exact-head CI scope only.** PR [#81](https://github.com/LloydCoder/web-temify/pull/81) merged as `3005da1a7c0f64b2b02af2c58dc3e85781894e19`. Foundation CI [run 38979078356](https://github.com/LloydCoder/web-temify/actions/runs/38979078356) and Security/dependency governance [run 38979078315](https://github.com/LloydCoder/web-temify/actions/runs/38979078315) passed on exact PR head `4cfc60a05d9c28b1c201937bba9700e1a19991f9`.
 
 - [x] Add private dispute records linked to order, payment attempt, and a signature-verified webhook event.
 - [x] Require matching provider, webhook event type, order, payment attempt, amount and currency before applying a transition.
 - [x] Add idempotent event replay protection, immutable event history, private RLS/grants, and audit evidence.
 - [x] Add state transitions for opened, evidence-needed, evidence-submitted, won, lost, and closed outcomes.
 - [x] Add pgTAP coverage for authorization, mismatched/missing verified events, replay conflicts, financial bounds, state transitions, terminal outcomes, and immutable history.
-- [ ] Pass Foundation CI and Security/dependency governance on the exact PR head and merge commit.
+- [x] Pass Foundation CI and Security/dependency governance on the exact PR head.
 - [ ] Map each enabled provider's signed webhook payloads to normalized dispute actions and add provider-specific signature fixtures.
-- [ ] Add provider evidence upload/submission, deadline monitoring/alerts, and tested integration against the selected provider sandbox.
-- [ ] Integrate dispute outcomes with refund/journal policy and payout holds only after separate accounting review.
+- [ ] Add provider evidence upload/submission and verify the workflow against the selected provider sandbox.
+- [x] Add a durable deadline-alert outbox and scheduled worker in Phase 5J; exact-head CI and merge remain pending for that implementation.
+- [ ] Integrate dispute outcomes with reviewed refund/journal policy and payout holds.
 - [ ] Approve dispute handling policy, evidence retention, escalation owner, and incident response.
 
-This candidate adds the database state machine only. It does not enable a live provider adapter; the current payment webhook route is sandbox-only. Phase 5 remains incomplete.
+The state machine trusts the previously persisted signature-verification assertion; it does not verify a real provider signature. The current payment webhook route remains sandbox-only. Phase 5 overall remains incomplete.
+
+### Phase 5J — Payment-dispute deadline alerting (implementation candidate; CI pending)
+
+**Status: IN PROGRESS.** Candidate branch `phase5/payment-dispute-deadline-alerts`. This is a bounded operational notification mechanism, not provider evidence submission or a Phase 5 exit pass.
+
+- [x] Add a private alert outbox and idempotent scan for open/evidence-needed disputes with evidence deadlines within 48 hours.
+- [x] Add service-only claim/finish RPCs with batch limits, leases, request ownership, bounded retries/backoff, and audit evidence for failed delivery.
+- [x] Add a token-protected Resend worker that sends minimal deadline alerts to a configured operations mailbox.
+- [x] Add a 15-minute GitHub Actions schedule with manual dispatch for controlled testing.
+- [x] Add database and route tests for privacy/grants, idempotency, lease ownership, retry behavior, authorization, configuration failures, provider failure, and completion persistence failures.
+- [ ] Pass Foundation CI and Security/dependency governance on the exact candidate head; inspect and fix any failures before merge.
+- [ ] Configure the worker token, Supabase credentials, Resend key, sender identity and operations mailbox; perform a controlled production delivery test.
+- [ ] Verify schedule execution and add an independent alert path for failed schedules/blocked jobs.
+- [ ] Name a staffed escalation owner and backup and approve dispute evidence-retention policy.
+
+Forensic record: `docs/audits/phase5j-payment-dispute-deadline-alerts.md`. This worker sends notifications only; it does not submit provider evidence, change dispute state, issue refunds, post journal entries, or move funds.
 
 ## Phase 6 — Seller system and product factory
 
