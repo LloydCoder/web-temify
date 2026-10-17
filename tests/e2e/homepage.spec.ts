@@ -210,7 +210,15 @@ test("robots and sitemap use the configured canonical origin", async ({
   expect(robotsResponse.ok()).toBe(true);
   const robots = await robotsResponse.text();
   expect(robots).toContain(`Sitemap: ${origin}/sitemap.xml`);
-  for (const path of ["/admin", "/account", "/checkout", "/api", "/internal", "/creator", "/seller"]) {
+  for (const path of [
+    "/admin",
+    "/account",
+    "/checkout",
+    "/api",
+    "/internal",
+    "/creator",
+    "/seller",
+  ]) {
     expect(robots).toContain(`Disallow: ${path}`);
   }
 });
