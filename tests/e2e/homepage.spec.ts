@@ -17,8 +17,14 @@ test("homepage renders the V3 experience as native Next.js content", async ({
     page.getByText(/no products are available for purchase/i),
   ).toBeVisible();
   await expect(page.locator("iframe")).toHaveCount(0);
-  await expect(page.locator(".cat-card").first()).toHaveAttribute("href", /\/catalog\?q=/);
-  await expect(page.locator(".web3-card").first()).toHaveAttribute("href", /\/catalog\?q=/);
+  await expect(page.locator(".cat-card").first()).toHaveAttribute(
+    "href",
+    /\/catalog\?q=/,
+  );
+  await expect(page.locator(".web3-card").first()).toHaveAttribute(
+    "href",
+    /\/catalog\?q=/,
+  );
   await expect(page.locator('a[href="#"]')).toHaveCount(0);
   await expect(page.locator(".ai-input-row button")).toBeDisabled();
   await expect(page.getByText(/AI generation is not live yet/i)).toBeVisible();
@@ -37,7 +43,9 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   ]) {
     await expect(ecosystem.locator(`a[href="${href}"]`)).toHaveCount(1);
   }
-  await expect(ecosystem.getByText(/planned cards are roadmap disclosures/i)).toBeVisible();
+  await expect(
+    ecosystem.getByText(/planned cards are roadmap disclosures/i),
+  ).toBeVisible();
   const unresolvedAnchorTargets = await page
     .locator('a[href^="#"]')
     .evaluateAll((anchors) =>
