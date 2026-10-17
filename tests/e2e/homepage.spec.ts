@@ -186,3 +186,20 @@ test("native AI prompt buttons populate the planned builder input without implyi
   await expect(input).toHaveValue("Logistics company website");
   await expect(page.locator(".ai-input-row button")).toBeDisabled();
 });
+
+test("robots and sitemap use the configured canonical origin", async ({ page }) => {
+  await page.goto("/");
+  const origin = new URL(page.url()).origin;
+  const sitemapResponse = await page.request.get(new URL("/sitemap.xml", origin).toString());
+  expect(sitemapResponse.ok()).toBe(true);
+  const sitemap = await sitemapResponse.text();
+  const sitemapOrigins = [
+    ...sitemap.matchAll(/<loc>(https?:\\/\\/[^/]+)\\//g),
+  ].map((match) => match[1]);
+  expect(sitemapOrigins.length).toBeGreaterThan(0);
+  expect([...new Set(sitemapOrigins)]).toEqual([origin]);
+
+  const robotsResponse = await page.request.get(new URL("/robots.txt", origin).toString());
+  expect(robotsResponse.ok()).toBe(true);
+  await expect(robotsResponse.text()).resolves.toContain(`Sitemap: ${origin}/sitemap.xml`);
+});
