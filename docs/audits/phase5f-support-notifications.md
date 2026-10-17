@@ -1,6 +1,6 @@
-# Phase 5F — support notification outbox (implementation candidate)
+# Phase 5F — support notification outbox
 
-**Status: CODE AND SECURITY CI PASS; MERGE AND OPERATIONAL VERIFICATION PENDING.** Foundation CI run [38968331694](https://github.com/LloydCoder/web-temify/actions/runs/38968331694) and Security/dependency governance run [38968331727](https://github.com/LloydCoder/web-temify/actions/runs/38968331727) passed on implementation head `74d671314a3f71094ccb382628a293e34ba1a0fd`. The Vercel preview was not verified because the account reached its daily deployment/API limit. This record is not a Phase 5 exit pass or proof that production email delivery is configured.
+**Status: MERGED; implementation and exact-head CI passed; operational delivery remains unverified.** PR [#77](https://github.com/LloydCoder/web-temify/pull/77) merged as `04e4cb86841bba5e51fae3746649d4583351243f`. Foundation CI [passed](https://github.com/LloydCoder/web-temify/actions/runs/38968988453) and Security/dependency governance [passed](https://github.com/LloydCoder/web-temify/actions/runs/38968988465) on exact PR head `4d35488bd93780adf7bc22b4b9455ca968e57bb7`. The Vercel preview status failed because of the team's deployment/build rate limit, not a test failure. The scheduled delivery workflow later failed before dispatch because `SUPPORT_NOTIFICATION_WORKER_TOKEN` was absent ([run 39000635593](https://github.com/LloydCoder/web-temify/actions/runs/39000635593)). This is not a Phase 5 exit pass or proof that production email delivery is configured.
 
 ## Delivered in this candidate
 
@@ -23,8 +23,8 @@ No secrets are committed. The worker fails closed if required configuration is a
 
 ## Verification still required
 
-- [ ] Exact-head Foundation CI and Security/dependency governance pass.
-- [ ] Review the migration, SQL tests, route authorization, retry semantics, and notification privacy.
+- [x] Exact-head Foundation CI and Security/dependency governance passed on PR #77.
+- [x] Review the migration, SQL tests, route authorization, retry semantics, and notification privacy.
 - [ ] Exercise clean delivery, provider rejection, network timeout, missing requester email, lease expiry, duplicate invocation, exhausted retries, and completion-RPC failure.
 - [ ] Configure production secrets and verify the sender domain and operations mailbox.
 - [ ] Verify actual scheduled invocations, alerting for retryable/blocked jobs, and a human escalation owner/rota.

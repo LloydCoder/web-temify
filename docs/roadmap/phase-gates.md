@@ -325,7 +325,7 @@ Forensic record: `docs/audits/phase5e2-takedown-appeals.md`. Keep all financial/
 
 ### Phase 5F — Durable support notification outbox (merged; code gates passed, operational verification pending)
 
-**Status: MERGED in PR [#77](https://github.com/LloydCoder/web-temify/pull/77).** Foundation CI and Security/dependency governance passed on the reviewed PR head. Vercel preview was not verified because the account hit its daily deployment/API limit. Foundation CI run [38968331694](https://github.com/LloydCoder/web-temify/actions/runs/38968331694) and Security/dependency governance run [38968331727](https://github.com/LloydCoder/web-temify/actions/runs/38968331727) passed. Vercel preview is not verified because the account hit its daily deployment/API limit; this is not an overall Phase 5 exit pass.
+**Status: MERGED in PR [#77](https://github.com/LloydCoder/web-temify/pull/77).** Foundation CI and Security/dependency governance passed on the reviewed PR head. Vercel preview was not verified because the account hit its daily deployment/API limit. Foundation CI [run 38968988453](https://github.com/LloydCoder/web-temify/actions/runs/38968988453) and Security/dependency governance [run 38968988465](https://github.com/LloydCoder/web-temify/actions/runs/38968988465) passed on exact PR head `4d35488bd93780adf7bc22b4b9455ca968e57bb7`. Vercel preview was not verified because of the team's build-rate limit. The scheduled support notification workflow subsequently failed before dispatch because `SUPPORT_NOTIFICATION_WORKER_TOKEN` was absent ([run 39000635593](https://github.com/LloydCoder/web-temify/actions/runs/39000635593)); production email delivery remains unverified. This is not an overall Phase 5 exit pass.
 
 - [x] Add a private transactional outbox for support-case events with separate requester and operations recipients.
 - [x] Keep notification payloads privacy-minimal: case reference, event, and status only; do not copy descriptions, private notes, payment details, credentials, or user-supplied recipient addresses.
@@ -383,27 +383,27 @@ The UI's evidence digest field is a reference only; it does not upload or valida
 - [x] Pass Foundation CI and Security/dependency governance on the exact PR head.
 - [ ] Map each enabled provider's signed webhook payloads to normalized dispute actions and add provider-specific signature fixtures.
 - [ ] Add provider evidence upload/submission and verify the workflow against the selected provider sandbox.
-- [x] Add a durable deadline-alert outbox and scheduled worker in Phase 5J; exact-head CI and merge remain pending for that implementation.
+- [x] Add a durable deadline-alert outbox and scheduled worker in Phase 5J; the implementation is merged and its exact-head CI passed.
 - [ ] Integrate dispute outcomes with reviewed refund/journal policy and payout holds.
 - [ ] Approve dispute handling policy, evidence retention, escalation owner, and incident response.
 
 The state machine trusts the previously persisted signature-verification assertion; it does not verify a real provider signature. The current payment webhook route remains sandbox-only. Phase 5 overall remains incomplete.
 
-### Phase 5J — Payment-dispute deadline alerting (implementation candidate; CI pending)
+### Phase 5J — Payment-dispute deadline alerting (merged; implementation and CI passed)
 
-**Status: IN PROGRESS.** Candidate branch `phase5/payment-dispute-deadline-alerts`. This is a bounded operational notification mechanism, not provider evidence submission or a Phase 5 exit pass.
+**Status: PASS for implementation and exact-head CI only.** PR [#83](https://github.com/LloydCoder/web-temify/pull/83) merged as `409e9c8bb26394ea4ed79c9a96689770fb7d2166`. Foundation CI [passed](https://github.com/LloydCoder/web-temify/actions/runs/39004237814), Security/dependency governance [passed](https://github.com/LloydCoder/web-temify/actions/runs/39004237833), and the Vercel preview status succeeded on exact PR head `b1be90a4db364ef321cc39f32dfcd537e78aecab`.
 
 - [x] Add a private alert outbox and idempotent scan for open/evidence-needed disputes with evidence deadlines within 48 hours.
 - [x] Add service-only claim/finish RPCs with batch limits, leases, request ownership, bounded retries/backoff, and audit evidence for failed delivery.
 - [x] Add a token-protected Resend worker that sends minimal deadline alerts to a configured operations mailbox.
 - [x] Add a 15-minute GitHub Actions schedule with manual dispatch for controlled testing.
 - [x] Add database and route tests for privacy/grants, idempotency, lease ownership, retry behavior, authorization, configuration failures, provider failure, and completion persistence failures.
-- [ ] Pass Foundation CI and Security/dependency governance on the exact candidate head; inspect and fix any failures before merge.
+- [x] Pass Foundation CI and Security/dependency governance on the exact candidate head.
 - [ ] Configure the worker token, Supabase credentials, Resend key, sender identity and operations mailbox; perform a controlled production delivery test.
 - [ ] Verify schedule execution and add an independent alert path for failed schedules/blocked jobs.
 - [ ] Name a staffed escalation owner and backup and approve dispute evidence-retention policy.
 
-Forensic record: `docs/audits/phase5j-payment-dispute-deadline-alerts.md`. This worker sends notifications only; it does not submit provider evidence, change dispute state, issue refunds, post journal entries, or move funds.
+Forensic record: `docs/audits/phase5j-payment-dispute-deadline-alerts.md`. This worker sends notifications only; it does not submit provider evidence, change dispute state, issue refunds, post journal entries, or move funds. Phase 5 overall remains incomplete; track remaining release blockers in [Issue #84](https://github.com/LloydCoder/web-temify/issues/84).
 
 ## Phase 6 — Seller system and product factory
 

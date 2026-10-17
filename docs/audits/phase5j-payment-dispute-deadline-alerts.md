@@ -1,6 +1,6 @@
 # Phase 5J forensic audit — payment-dispute deadline alerting
 
-**Disposition:** Implementation candidate. Exact-head Foundation CI, security/dependency governance, and review are required before merge. This is not a Phase 5 exit pass or proof that production alert delivery is configured.
+**Disposition:** PASS for the implementation and CI scope only. PR [#83](https://github.com/LloydCoder/web-temify/pull/83) merged as `409e9c8bb26394ea4ed79c9a96689770fb7d2166`. Exact-head Foundation CI [passed](https://github.com/LloydCoder/web-temify/actions/runs/39004237814) and Security/dependency governance [passed](https://github.com/LloydCoder/web-temify/actions/runs/39004237833) on `b1be90a4db364ef321cc39f32dfcd537e78aecab`; the Vercel preview status also passed. This is not a Phase 5 exit pass or proof that production alert delivery is configured.
 
 ## Delivered in this candidate
 
@@ -21,12 +21,12 @@
 - Email delivery is at-least-once. If Resend accepts a message but persistence of the completion fails, the job may retry and duplicate the notification.
 - Blocked jobs are durable records, but this workflow does not independently page an operator if the email provider, scheduler, application, or Supabase is unavailable.
 
-## Required verification before merge
+## Verified implementation checks
 
-- [ ] Exact-head Foundation CI passes, including empty-database migration reset, schema lint, pgTAP/RLS, E2E, typecheck, lint, format, and production build.
-- [ ] Exact-head security/dependency governance passes.
-- [ ] SQL function signatures, grants, retries, and audit writes are reviewed against the actual migration chain.
-- [ ] Route tests pass without external network calls.
+- [x] Exact-head Foundation CI passed, including empty-database migration reset, schema lint, pgTAP/RLS, E2E, typecheck, lint, format, settlement concurrency test, and production build.
+- [x] Exact-head security/dependency governance passed.
+- [x] SQL function signatures, grants, retries, and audit writes were reviewed against the actual migration chain.
+- [x] Route tests passed without external network calls.
 
 ## Operational gates still required after merge
 
@@ -37,4 +37,4 @@
 - [ ] Integrate provider-specific signature verification, event mapping, evidence upload/submission, and provider sandbox fixtures before enabling any provider.
 - [ ] Keep payout execution, journal adjustment posting, and all live money movement disabled until their independent accounting/provider/legal gates pass.
 
-**Gate decision:** This candidate adds a durable notification mechanism for dispute deadlines. It does not complete Phase 5 overall or establish production operational readiness.
+**Gate decision:** The deadline-alert implementation is merged and its exact-head code/CI gates passed. Production delivery, independent outage alerting, provider-specific dispute handling, evidence submission, policy approval, and staffed escalation remain open. Phase 5 overall remains incomplete.
