@@ -168,6 +168,18 @@ export async function POST(request: Request, context: RouteContext) {
   let scanStatus: "pending" | "clean" | "infected" | "error" = "pending";
 
   if (
+    (scan.status === "clean" ||
+      scan.status === "infected" ||
+      scan.status === "error") &&
+    scan.sha256 !== sourceSha256
+  ) {
+    return response(
+      { error: "evidence_scan_digest_mismatch", requestId, scanStatus: "pending" },
+      503,
+    );
+  }
+
+  if (
     scan.status === "clean" ||
     scan.status === "infected" ||
     scan.status === "error"
