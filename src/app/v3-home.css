@@ -70,7 +70,7 @@
 .v3-app .btn-fill {
   background: var(--coral);
   color: var(--ink);
-  border-color: var(--coral-text);
+  border-color: var(--coral);
 }
 .v3-app .btn-fill:hover {
   border-color: var(--ink);
@@ -638,7 +638,7 @@
 .v3-app .badge-hot {
   background: var(--coral);
   color: #fff;
-  border-color: var(--coral-text);
+  border-color: var(--coral);
 }
 .v3-app .badge-new {
   background: var(--mint);
@@ -955,7 +955,7 @@
 .v3-app .dir-tab:hover {
   background: var(--coral);
   color: #fff;
-  border-color: var(--coral-text);
+  border-color: var(--coral);
 }
 .v3-app .dir-grid {
   display: grid;
@@ -982,7 +982,7 @@
   box-shadow: var(--shadow);
 }
 .v3-app .dir-card.featured {
-  border-color: var(--coral-text);
+  border-color: var(--coral);
 }
 .v3-app .dir-logo {
   width: 38px;
@@ -1714,7 +1714,7 @@
 .v3-app .social-btn:hover {
   background: var(--coral);
   color: #fff;
-  border-color: var(--coral-text);
+  border-color: var(--coral);
 }
 
 .v3-app /* ── ANIMATIONS ── */
