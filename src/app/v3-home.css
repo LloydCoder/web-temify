@@ -2006,3 +2006,30 @@
   color: var(--muted);
   font-weight: 700;
 }
+
+
+/* Ecosystem overview: all nine platform areas, with explicit capability status. */
+.v3-app .ecosystem-section {
+  background: var(--bg);
+  color: var(--ink);
+  border-top: 2px solid var(--ink);
+  padding: clamp(4rem, 8vw, 7rem) clamp(1.25rem, 5vw, 4rem);
+}
+.v3-app .ecosystem-inner { width: min(1240px, 100%); margin-inline: auto; }
+.v3-app .ecosystem-heading { max-width: 760px; margin: 0 auto 3rem; text-align: center; }
+.v3-app .ecosystem-heading .section-eyebrow { font: 700 .75rem/1.4 "DM Mono", monospace; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 1rem; }
+.v3-app .ecosystem-heading h2 { font-size: clamp(2.3rem, 5vw, 4.5rem); line-height: .98; letter-spacing: -.045em; margin-bottom: 1rem; }
+.v3-app .ecosystem-heading > p:last-child { max-width: 650px; margin: 0 auto; color: var(--muted); line-height: 1.7; }
+.v3-app .ecosystem-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.v3-app .ecosystem-card { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; border: 2px solid var(--ink); background: var(--surface); padding: clamp(1.2rem, 2.2vw, 1.8rem); box-shadow: 4px 4px 0 var(--ink); }
+.v3-app .ecosystem-card-live { background: #fff; }
+.v3-app .ecosystem-number { display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem; background: var(--yellow); border: 2px solid var(--ink); font: 700 .8rem "DM Mono", monospace; margin-bottom: 1.15rem; }
+.v3-app .ecosystem-status { color: var(--muted); font: 700 .68rem/1.5 "DM Mono", monospace; text-transform: uppercase; letter-spacing: .035em; margin-bottom: .7rem; }
+.v3-app .ecosystem-card h3 { font-size: clamp(1.2rem, 1.7vw, 1.55rem); line-height: 1.1; margin: 0 0 .75rem; }
+.v3-app .ecosystem-card > p:not(.ecosystem-status) { color: var(--muted); font-size: .94rem; line-height: 1.65; margin-bottom: 1.2rem; }
+.v3-app .ecosystem-card .btn, .v3-app .ecosystem-card .ecosystem-link { margin-top: auto; }
+.v3-app .ecosystem-link { display: inline-block; font-weight: 800; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; padding-block: .55rem; }
+.v3-app .ecosystem-disclaimer { max-width: 920px; margin: 2rem auto 0; padding: 1rem 1.2rem; border: 2px dashed var(--ink); color: var(--muted); font-size: .85rem; line-height: 1.65; }
+@media (max-width: 900px) { .v3-app .ecosystem-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .v3-app .ecosystem-grid { grid-template-columns: 1fr; } .v3-app .ecosystem-heading { text-align: left; } }
+@media (prefers-reduced-motion: reduce) { .v3-app .ecosystem-card { scroll-behavior: auto; } }
