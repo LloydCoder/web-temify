@@ -10,7 +10,7 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: /your website, ready in minutes/i,
+      name: /your next website, starts here/i,
     }),
   ).toBeVisible();
   await expect(
@@ -27,6 +27,12 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   );
   await expect(page.locator('a[href="#"]')).toHaveCount(0);
   await expect(page.locator(".ai-input-row button")).toBeDisabled();
+  await expect(page.getByPlaceholder("your@email.com")).toBeDisabled();
+  await expect(page.getByText(/signup is not live yet\. This disabled form does not collect email addresses/i)).toBeVisible();
+  await expect(page.getByText(/launch a SaaS product in a weekend/i)).toHaveCount(0);
+  await expect(page.getByText(/every template is performance-optimised/i)).toHaveCount(0);
+  await expect(page.getByText(/new templates every week/i)).toHaveCount(0);
+  await expect(page.getByText(/most popular/i)).toHaveCount(0);
   await expect(page.getByText(/AI generation is not live yet/i)).toBeVisible();
   const ecosystem = page.locator("#ecosystem");
   await expect(ecosystem.getByRole("article")).toHaveCount(9);
