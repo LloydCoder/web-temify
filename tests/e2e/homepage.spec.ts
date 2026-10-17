@@ -10,7 +10,7 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: /your next website, starts here/i,
+      name: /your next website starts here/i,
     }),
   ).toBeVisible();
   await expect(
