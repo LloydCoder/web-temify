@@ -1538,7 +1538,8 @@ export default function HomePage() {
                   marginTop: "0.6rem",
                 }}
               >
-                Newsletter signup and the privacy policy are not live yet. No email is collected.
+                {"Newsletter signup and the privacy policy are not live yet. " +
+                  "No email is collected."}
               </p>
             </div>
           </div>
