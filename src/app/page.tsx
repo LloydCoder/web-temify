@@ -1,139 +1,17 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
 import "./v3-home.css";
-
-const directoryFilters: Record<string, string[]> = {
-  "All Tools": [],
-  "AI & ML": ["ai", "ml", "coding", "assistant"],
-  "Web3 & Blockchain": ["web3", "blockchain", "crypto", "nft", "wallet"],
-  "Hosting & Infra": ["hosting", "infra", "cloud", "deploy"],
-  "Design Tools": ["design", "creative", "ui", "ux"],
-  "No-Code": ["no"],
-  "Dev Tools": ["dev", "coding", "developer", "api", "git"],
-  "Freelancer Resources": ["freelancer", "resources", "client", "invoice"],
-};
+import V3Navigation from "@/components/v3-navigation";
+import V3DirectoryControls from "@/components/v3-directory-controls";
+import V3PromptChips from "@/components/v3-prompt-chips";
+import V3HomepageInteractions from "@/components/v3-homepage-interactions";
 
 export default function HomePage() {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeDirectory, setActiveDirectory] = useState("All Tools");
-
-  const fillAiPrompt = (prompt: string) => {
-    const input = rootRef.current?.querySelector<HTMLInputElement>(".ai-input");
-    if (!input) return;
-    input.value = `${prompt} website`;
-    input.focus();
-  };
-
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const revealItems = root.querySelectorAll<HTMLElement>(".reveal");
-    if (
-      "IntersectionObserver" in window &&
-      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry, index) => {
-            if (!entry.isIntersecting) return;
-            const target = entry.target as HTMLElement;
-            target.style.transitionDelay = `${Math.min(index, 8) * 35}ms`;
-            target.classList.add("visible");
-            observer.unobserve(target);
-          });
-        },
-        { threshold: 0.08 },
-      );
-      revealItems.forEach((item) => observer.observe(item));
-      return () => observer.disconnect();
-    }
-    revealItems.forEach((item) => item.classList.add("visible"));
-  }, []);
-
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const allowed = directoryFilters[activeDirectory] ?? [];
-    const cards = Array.from(root.querySelectorAll<HTMLElement>(".dir-card"));
-    let visibleCount = 0;
-    cards.forEach((card) => {
-      const tags = (card.dataset.directory ?? "").toLowerCase().split(/\s+/);
-      card.hidden =
-        allowed.length > 0 &&
-        !allowed.some((filter) => tags.some((tag) => tag.includes(filter)));
-      if (!card.hidden) visibleCount += 1;
-    });
-    const emptyState = root.querySelector<HTMLElement>(".dir-empty-state");
-    if (emptyState) emptyState.hidden = visibleCount > 0;
-  }, [activeDirectory]);
-
   return (
-    <div className="v3-app" ref={rootRef}>
+    <div className="v3-app">
       <a className="skip-link" href="#main-content">
         Skip to main content
       </a>
-      <nav>
-        <Link href="/" className="logo">
-          Web-Temify <span className="logo-dot"></span>
-        </Link>
-        <ul
-          className={`nav-links${mobileMenuOpen ? " is-open" : ""}`}
-          id="primary-navigation"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          <li>
-            <a href="#templates">Templates</a>
-          </li>
-          <li>
-            <a href="#templates">Scripts</a>
-          </li>
-          <li className="nav-new">
-            <a href="#kits">Launch Kits</a>
-          </li>
-          <li>
-            <a href="#web3">Web3</a>
-          </li>
-          <li>
-            <a href="#directory">Directory</a>
-          </li>
-          <li>
-            <a href="#services">Services</a>
-          </li>
-          <li>
-            <a href="#pricing">Pricing</a>
-          </li>
-          <li>
-            <a href="#ecosystem">Platform</a>
-          </li>
-        </ul>
-        <button
-          className="mobile-menu-toggle"
-          type="button"
-          aria-label="Toggle navigation"
-          aria-controls="primary-navigation"
-          aria-expanded={mobileMenuOpen}
-          onClick={() => setMobileMenuOpen((open) => !open)}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
-        <div className="nav-actions">
-          <span
-            className="btn btn-ghost"
-            aria-disabled="true"
-            title="Account access is not live yet"
-          >
-            Account access soon
-          </span>
-          <a href="#templates" className="btn btn-fill">
-            Browse Templates →
-          </a>
-        </div>
-      </nav>
+      <V3Navigation />
       <main
         id="main-content"
         className="v3-main"
@@ -647,56 +525,7 @@ export default function HomePage() {
             >
               AI generation is not live yet.
             </p>
-            <div className="ai-chips">
-              <button
-                className="ai-chip"
-                type="button"
-                aria-label="Use Logistics company prompt"
-                onClick={() => fillAiPrompt("Logistics company")}
-              >
-                Logistics company
-              </button>
-              <button
-                className="ai-chip"
-                type="button"
-                aria-label="Use NFT marketplace prompt"
-                onClick={() => fillAiPrompt("NFT marketplace")}
-              >
-                NFT marketplace
-              </button>
-              <button
-                className="ai-chip"
-                type="button"
-                aria-label="Use Loan app Nigeria prompt"
-                onClick={() => fillAiPrompt("Loan app Nigeria")}
-              >
-                Loan app Nigeria
-              </button>
-              <button
-                className="ai-chip"
-                type="button"
-                aria-label="Use SaaS dashboard prompt"
-                onClick={() => fillAiPrompt("SaaS dashboard")}
-              >
-                SaaS dashboard
-              </button>
-              <button
-                className="ai-chip"
-                type="button"
-                aria-label="Use Crypto exchange prompt"
-                onClick={() => fillAiPrompt("Crypto exchange")}
-              >
-                Crypto exchange
-              </button>
-              <button
-                className="ai-chip"
-                type="button"
-                aria-label="Use Real estate agency prompt"
-                onClick={() => fillAiPrompt("Real estate agency")}
-              >
-                Real estate agency
-              </button>
-            </div>
+            <V3PromptChips />
           </div>
         </section>
 
@@ -787,64 +616,7 @@ export default function HomePage() {
               Browse catalogue →
             </Link>
           </div>
-          <div className="dir-tabs reveal" role="group" aria-label="Filter external tools">
-            <button
-              className={`dir-tab${activeDirectory === "All Tools" ? " active" : ""}`}
-              type="button"
-              aria-pressed={activeDirectory === "All Tools"} onClick={() => setActiveDirectory("All Tools")}
-            >
-              All Tools
-            </button>
-            <button
-              className={`dir-tab${activeDirectory === "AI & ML" ? " active" : ""}`}
-              type="button"
-              aria-pressed={activeDirectory === "AI & ML"} onClick={() => setActiveDirectory("AI & ML")}
-            >
-              AI & ML
-            </button>
-            <button
-              className={`dir-tab${activeDirectory === "Web3 & Blockchain" ? " active" : ""}`}
-              type="button"
-              aria-pressed={activeDirectory === "Web3 & Blockchain"} onClick={() => setActiveDirectory("Web3 & Blockchain")}
-            >
-              Web3 & Blockchain
-            </button>
-            <button
-              className={`dir-tab${activeDirectory === "Hosting & Infra" ? " active" : ""}`}
-              type="button"
-              aria-pressed={activeDirectory === "Hosting & Infra"} onClick={() => setActiveDirectory("Hosting & Infra")}
-            >
-              Hosting & Infra
-            </button>
-            <button
-              className={`dir-tab${activeDirectory === "Design Tools" ? " active" : ""}`}
-              type="button"
-              aria-pressed={activeDirectory === "Design Tools"} onClick={() => setActiveDirectory("Design Tools")}
-            >
-              Design Tools
-            </button>
-            <button
-              className={`dir-tab${activeDirectory === "No-Code" ? " active" : ""}`}
-              type="button"
-              aria-pressed={activeDirectory === "No-Code"} onClick={() => setActiveDirectory("No-Code")}
-            >
-              No-Code
-            </button>
-            <button
-              className={`dir-tab${activeDirectory === "Dev Tools" ? " active" : ""}`}
-              type="button"
-              aria-pressed={activeDirectory === "Dev Tools"} onClick={() => setActiveDirectory("Dev Tools")}
-            >
-              Dev Tools
-            </button>
-            <button
-              className={`dir-tab${activeDirectory === "Freelancer Resources" ? " active" : ""}`}
-              type="button"
-              aria-pressed={activeDirectory === "Freelancer Resources"} onClick={() => setActiveDirectory("Freelancer Resources")}
-            >
-              Freelancer Resources
-            </button>
-          </div>
+          <V3DirectoryControls />
           <div className="dir-grid reveal">
             <a
               className="dir-card featured"
@@ -1977,6 +1749,7 @@ export default function HomePage() {
           </span>
         </div>
       </div>
+      <V3HomepageInteractions />
     </div>
   );
 }
