@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 export default function V3HomepageInteractions() {
   useEffect(() => {
-    const root = document.querySelector(".v3-native-home");
+    const root = document.querySelector<HTMLElement>(".v3-native-home");
     if (!root) return;
 
     const revealItems = root.querySelectorAll<HTMLElement>(".reveal");
@@ -131,6 +131,7 @@ export default function V3HomepageInteractions() {
         const text = ` ${card.textContent?.toLowerCase() ?? ""} `;
         const visible = terms.length === 0 || terms.some((term) => text.includes(term));
         card.hidden = !visible;
+        card.style.display = visible ? "" : "none";
         if (visible) visibleCount += 1;
       });
       if (emptyState) emptyState.hidden = visibleCount > 0;
