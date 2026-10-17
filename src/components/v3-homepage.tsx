@@ -1,5 +1,3 @@
-"use server";
-
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import V3HomepageInteractions from "./v3-homepage-interactions";
