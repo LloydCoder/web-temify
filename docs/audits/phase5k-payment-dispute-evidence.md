@@ -5,12 +5,12 @@
 ## Implemented in this candidate
 
 - A private payment-dispute-evidence Supabase Storage bucket with a 5 MiB limit and an explicit content-type allowlist.
-- Admin-only, same-origin, bounded upload at POST /api/admin/payment-disputes/:disputeId/evidence.
+- Admin-only, same-origin, bounded upload at POST /api/admin/payment-disputes/:disputeId/evidence, with PDF/PNG/JPEG signatures checked and text/plain required to be valid UTF-8 without NUL bytes.
 - Database-owned checks that the dispute exists and is still open or needs evidence; terminal disputes reject new uploads.
 - Server-computed SHA-256 and a storage path bound to dispute ID, evidence ID, and digest.
 - Immutable evidence metadata and immutable scanner attestations, with service-role-only RPCs, RLS enabled, no direct client table grants, and transactional audit events.
 - Reuse of the existing private ClamAV scanner client, including digest agreement, HTTPS requirements in production, bounded timeout, scanner version, and signature freshness checks.
-- Audited admin access that asks a database RPC to verify the evidence/dispute pair and latest clean, digest-matched, fresh scan before issuing a 60-second signed URL with no-store response headers.
+- Audited admin access that asks a database RPC to verify the evidence/dispute pair and latest clean, digest-matched, fresh scan before issuing a 60-second signed URL with no-store response headers; signed URLs force attachment download.
 - Fail-closed behavior: scanner unavailable or not configured leaves evidence pending; infected evidence returns a rejected verdict; a digest mismatch or failed scan-attestation persistence returns an error and never reports clean.
 - No default retention deadline. retention_until stays null until the approved legal retention policy is recorded.
 
