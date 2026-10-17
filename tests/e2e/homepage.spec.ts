@@ -303,9 +303,6 @@ test("hero preview cards remain visible on tablet and mobile", async ({
         document.documentElement.scrollWidth >
         document.documentElement.clientWidth,
     );
-    expect(
-      overflow,
-      `horizontal overflow at ${viewport.width}px`,
-    ).toBe(false);
+    expect(overflow, `horizontal overflow at ${viewport.width}px`).toBe(false);
   }
 });
