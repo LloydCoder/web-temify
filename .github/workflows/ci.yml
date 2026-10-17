@@ -41,13 +41,15 @@ jobs:
         run: pnpm typecheck
       - name: Lint
         run: pnpm lint
-      - name: Print Prettier output for moderation appeal E2E test
+      - name: Print Prettier output for changed V3 frontend files
         if: always()
         shell: bash
         run: |
-          echo "FORMAT_START:tests/e2e/moderation-appeals.spec.ts"
-          pnpm exec prettier tests/e2e/moderation-appeals.spec.ts
-          echo "FORMAT_END:tests/e2e/moderation-appeals.spec.ts"
+          for file in src/app/page.tsx src/app/v3-home.css tests/e2e/homepage.spec.ts src/app/ecosystem-destination.tsx src/app/ecosystem-destination.css tests/e2e/ecosystem-routes.spec.ts src/app/hosting/page.tsx src/app/ai-site-builder/page.tsx src/app/directory/page.tsx src/app/automations/page.tsx src/app/specialists/page.tsx src/app/implementation/page.tsx src/app/platform/page.tsx src/app/tech-hub/page.tsx src/app/sitemap.ts src/app/robots.ts src/app/layout.tsx README.md docs/audits/v3-homepage-implementation-audit.md docs/web-temify-v3.html; do
+            echo "FORMAT_START:$file"
+            pnpm exec prettier "$file"
+            echo "FORMAT_END:$file"
+          done
       - name: Formatting check
         run: pnpm format:check
       - name: Install Supabase CLI
