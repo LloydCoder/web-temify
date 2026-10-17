@@ -48,12 +48,12 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   await expect(
     page.getByText("Payment adapter concept", { exact: true }),
   ).toBeVisible();
-  await expect(
-    page.getByText("Paystack Ready", { exact: true }),
-  ).toHaveCount(0);
-  await expect(
-    page.getByText("Stripe Billing", { exact: true }),
-  ).toHaveCount(0);
+  await expect(page.getByText("Paystack Ready", { exact: true })).toHaveCount(
+    0,
+  );
+  await expect(page.getByText("Stripe Billing", { exact: true })).toHaveCount(
+    0,
+  );
   const ecosystem = page.locator("#ecosystem");
   await expect(ecosystem.getByRole("article")).toHaveCount(9);
   for (const href of [
@@ -252,7 +252,9 @@ test("header and hero respond correctly across desktop and mobile layouts", asyn
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
   await expect(links).toBeHidden();
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.locator(".hero-cta .btn-fill")).toHaveText("Explore previews");
+  await expect(page.locator(".hero-cta .btn-fill")).toHaveText(
+    "Explore previews",
+  );
   await expect(heroVisual).toBeHidden();
   await expect(hero).toHaveCSS("grid-template-columns", /^\d+px$/);
 
