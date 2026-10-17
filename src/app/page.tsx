@@ -70,7 +70,6 @@ export default function HomePage() {
     });
   }, [activeDirectory]);
 
-
   return (
     <div className="v3-app" ref={rootRef}>
       <a className="skip-link" href="#main-content">
@@ -646,12 +645,54 @@ export default function HomePage() {
               AI generation is not live yet.
             </p>
             <div className="ai-chips">
-              <button className="ai-chip" type="button" aria-label="Use Logistics company prompt" onClick={() => fillAiPrompt("Logistics company")}>Logistics company</button>
-              <button className="ai-chip" type="button" aria-label="Use NFT marketplace prompt" onClick={() => fillAiPrompt("NFT marketplace")}>NFT marketplace</button>
-              <button className="ai-chip" type="button" aria-label="Use Loan app Nigeria prompt" onClick={() => fillAiPrompt("Loan app Nigeria")}>Loan app Nigeria</button>
-              <button className="ai-chip" type="button" aria-label="Use SaaS dashboard prompt" onClick={() => fillAiPrompt("SaaS dashboard")}>SaaS dashboard</button>
-              <button className="ai-chip" type="button" aria-label="Use Crypto exchange prompt" onClick={() => fillAiPrompt("Crypto exchange")}>Crypto exchange</button>
-              <button className="ai-chip" type="button" aria-label="Use Real estate agency prompt" onClick={() => fillAiPrompt("Real estate agency")}>Real estate agency</button>
+              <button
+                className="ai-chip"
+                type="button"
+                aria-label="Use Logistics company prompt"
+                onClick={() => fillAiPrompt("Logistics company")}
+              >
+                Logistics company
+              </button>
+              <button
+                className="ai-chip"
+                type="button"
+                aria-label="Use NFT marketplace prompt"
+                onClick={() => fillAiPrompt("NFT marketplace")}
+              >
+                NFT marketplace
+              </button>
+              <button
+                className="ai-chip"
+                type="button"
+                aria-label="Use Loan app Nigeria prompt"
+                onClick={() => fillAiPrompt("Loan app Nigeria")}
+              >
+                Loan app Nigeria
+              </button>
+              <button
+                className="ai-chip"
+                type="button"
+                aria-label="Use SaaS dashboard prompt"
+                onClick={() => fillAiPrompt("SaaS dashboard")}
+              >
+                SaaS dashboard
+              </button>
+              <button
+                className="ai-chip"
+                type="button"
+                aria-label="Use Crypto exchange prompt"
+                onClick={() => fillAiPrompt("Crypto exchange")}
+              >
+                Crypto exchange
+              </button>
+              <button
+                className="ai-chip"
+                type="button"
+                aria-label="Use Real estate agency prompt"
+                onClick={() => fillAiPrompt("Real estate agency")}
+              >
+                Real estate agency
+              </button>
             </div>
           </div>
         </section>
@@ -901,7 +942,8 @@ export default function HomePage() {
               <div className="dir-info">
                 <div className="dir-name">Paystack</div>
                 <div className="dir-desc">
-                  Payment infrastructure for businesses, including cards, bank transfers, USSD, and mobile money.
+                  Payment infrastructure for businesses, including cards, bank
+                  transfers, USSD, and mobile money.
                 </div>
                 <div className="dir-pills">
                   <span className="dir-pill">Payments</span>
@@ -957,7 +999,9 @@ export default function HomePage() {
               <span className="step-icon">⚡</span>
               <h3>Download & Deploy</h3>
               <p>
-                Secure downloads and setup guides are planned for released products. Payment providers will be announced after integration and checkout testing.
+                Secure downloads and setup guides are planned for released
+                products. Payment providers will be announced after integration
+                and checkout testing.
               </p>
             </div>
             <div className="step">
@@ -965,7 +1009,9 @@ export default function HomePage() {
               <span className="step-icon">🛠️</span>
               <h3>Need Customisation?</h3>
               <p>
-                Custom implementation services are offered separately by Tinlance. Marketplace-linked service requests are planned, not live.
+                Custom implementation services are offered separately by
+                Tinlance. Marketplace-linked service requests are planned, not
+                live.
               </p>
             </div>
           </div>
