@@ -16,7 +16,9 @@ function readV3Document() {
 
   const withoutScripts = body.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
   const nav = withoutScripts.match(/<nav\b[^>]*>[\s\S]*?<\/nav>/i)?.[0];
-  const content = nav ? withoutScripts.replace(nav, "") : withoutScripts;
+  const withoutNav = nav ? withoutScripts.replace(nav, "") : withoutScripts;
+  const footer = withoutNav.match(/<footer\b[^>]*>[\s\S]*?<\/footer>/i)?.[0];
+  const content = footer ? withoutNav.replace(footer, "") : withoutNav;
 
   return {
     stylesheet: `
@@ -49,6 +51,7 @@ function readV3Document() {
     `,
     nav: nav ?? "",
     content,
+    footer: footer ?? "",
   };
 }
 
@@ -68,6 +71,7 @@ export default function V3Homepage() {
         aria-label="Web-Temify marketplace preview"
         dangerouslySetInnerHTML={{ __html: v3.content }}
       />
+      {v3.footer ? <footer dangerouslySetInnerHTML={{ __html: v3.footer }} /> : null}
       <V3HomepageInteractions />
     </>
   );
