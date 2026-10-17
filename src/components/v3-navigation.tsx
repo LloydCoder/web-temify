@@ -47,7 +47,7 @@ export default function V3Navigation() {
           Accounts not live yet
         </span>
         <a href="#templates" className="btn btn-fill">
-          Explore previews →
+          Browse previews →
         </a>
       </div>
       <ul
