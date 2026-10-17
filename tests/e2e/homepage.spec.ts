@@ -17,6 +17,10 @@ test("homepage renders the V3 experience as native Next.js content", async ({
     page.getByText(/no products are available for purchase/i),
   ).toBeVisible();
   await expect(page.locator("iframe")).toHaveCount(0);
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute(
+    "href",
+    /icon\.svg/,
+  );
   await expect(page.locator(".cat-card").first()).toHaveAttribute(
     "href",
     /\/catalog\?q=/,
