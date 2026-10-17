@@ -11,45 +11,45 @@ select ok(has_function_privilege('service_role', 'public.enqueue_payment_dispute
 select ok(has_function_privilege('service_role', 'public.claim_payment_dispute_alert_jobs(integer,uuid)', 'EXECUTE'), 'worker can claim deadline alerts');
 select ok(has_function_privilege('service_role', 'public.finish_payment_dispute_alert_job(uuid,uuid,boolean,text)', 'EXECUTE'), 'worker can finish deadline alerts');
 
-select lives_ok(
-  $sql$
-    insert into auth.users (
-      id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
-      created_at, updated_at, raw_app_meta_data, raw_user_meta_data
-    ) values (
-      '91000000-0000-4000-8000-000000000291',
-      '00000000-0000-0000-0000-000000000000',
-      'authenticated', 'authenticated', 'dispute-alert-customer@example.test', '',
-      now(), now(), now(), '{}'::jsonb, '{}'::jsonb
-    );
+insert into auth.users (
+  id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
+  created_at, updated_at, raw_app_meta_data, raw_user_meta_data
+) values (
+  '91000000-0000-4000-8000-000000000291',
+  '00000000-0000-0000-0000-000000000000',
+  'authenticated', 'authenticated', 'dispute-alert-customer@example.test', '',
+  now(), now(), now(), '{}'::jsonb, '{}'::jsonb
+);
 
-    insert into public.orders (
-      id, customer_id, status, currency, subtotal_minor, tax_minor, idempotency_key
-    ) values (
-      'a1000000-0000-4000-8000-000000000291',
-      '91000000-0000-4000-8000-000000000291',
-      'pending_payment', 'USD', 10000, 0, 'phase5j-alert-order-key-0291'
-    );
+insert into public.orders (
+  id, customer_id, status, currency, subtotal_minor, tax_minor, idempotency_key
+) values (
+  'a1000000-0000-4000-8000-000000000291',
+  '91000000-0000-4000-8000-000000000291',
+  'pending_payment', 'USD', 10000, 0, 'phase5j-alert-order-key-0291'
+);
 
-    insert into public.payment_attempts (
-      id, order_id, provider, status, amount_minor, currency, idempotency_key, provider_reference
-    ) values (
-      'b1000000-0000-4000-8000-000000000291',
-      'a1000000-0000-4000-8000-000000000291',
-      'sandbox', 'created', 10000, 'USD', 'phase5j-alert-payment-key-0291', null
-    );
+insert into public.payment_attempts (
+  id, order_id, provider, status, amount_minor, currency, idempotency_key, provider_reference
+) values (
+  'b1000000-0000-4000-8000-000000000291',
+  'a1000000-0000-4000-8000-000000000291',
+  'sandbox', 'created', 10000, 'USD', 'phase5j-alert-payment-key-0291', null
+);
 
-    insert into public.payment_disputes (
-      id, provider, provider_dispute_id, order_id, payment_attempt_id,
-      amount_minor, currency, status, evidence_due_at
-    ) values (
-      'd1000000-0000-4000-8000-000000000291',
-      'sandbox', 'phase5j-dispute-0291',
-      'a1000000-0000-4000-8000-000000000291',
-      'b1000000-0000-4000-8000-000000000291',
-      2500, 'USD', 'open', now() + interval '24 hours'
-    );
-  $sql$,
+insert into public.payment_disputes (
+  id, provider, provider_dispute_id, order_id, payment_attempt_id,
+  amount_minor, currency, status, evidence_due_at
+) values (
+  'd1000000-0000-4000-8000-000000000291',
+  'sandbox', 'phase5j-dispute-0291',
+  'a1000000-0000-4000-8000-000000000291',
+  'b1000000-0000-4000-8000-000000000291',
+  2500, 'USD', 'open', now() + interval '24 hours'
+);
+
+select ok(
+  exists(select 1 from public.payment_disputes where id = 'd1000000-0000-4000-8000-000000000291'),
   'open dispute fixture with a near deadline can be created'
 );
 
