@@ -66,7 +66,10 @@ export async function POST(request: Request, context: RouteContext) {
     ?.trim()
     .toLowerCase();
   if (!contentType || !ALLOWED_CONTENT_TYPES.has(contentType)) {
-    return response({ error: "unsupported_evidence_content_type", requestId }, 415);
+    return response(
+      { error: "unsupported_evidence_content_type", requestId },
+      415,
+    );
   }
 
   const body = await readBoundedRequestBytes(request, MAX_EVIDENCE_BYTES);
@@ -99,7 +102,10 @@ export async function POST(request: Request, context: RouteContext) {
     return response({ error: "dispute_not_found", requestId }, 404);
   }
   if (dispute.status !== "open" && dispute.status !== "needs_evidence") {
-    return response({ error: "dispute_not_accepting_evidence", requestId }, 409);
+    return response(
+      { error: "dispute_not_accepting_evidence", requestId },
+      409,
+    );
   }
 
   const sourceSha256 = createHash("sha256").update(body.bytes).digest("hex");
@@ -174,7 +180,11 @@ export async function POST(request: Request, context: RouteContext) {
     scan.sha256 !== sourceSha256
   ) {
     return response(
-      { error: "evidence_scan_digest_mismatch", requestId, scanStatus: "pending" },
+      {
+        error: "evidence_scan_digest_mismatch",
+        requestId,
+        scanStatus: "pending",
+      },
       503,
     );
   }
@@ -199,7 +209,11 @@ export async function POST(request: Request, context: RouteContext) {
 
     if (scanRecordError) {
       return response(
-        { error: "evidence_scan_record_failed", requestId, scanStatus: "pending" },
+        {
+          error: "evidence_scan_record_failed",
+          requestId,
+          scanStatus: "pending",
+        },
         503,
       );
     }
