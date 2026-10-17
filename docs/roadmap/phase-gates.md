@@ -420,6 +420,8 @@ Forensic record: `docs/audits/phase5j-payment-dispute-deadline-alerts.md`. This 
 - [ ] Pass exact-head Foundation CI, including empty-database migration reset, schema lint, pgTAP/RLS, route tests, E2E, typecheck, lint, formatting and production build.
 - [ ] Pass exact-head Security/dependency governance and review the migration, route authorization, storage path constraints and scan freshness/failure behavior.
 - [ ] Verify configured production scanner endpoint/token and clean, infected, stale-signature and unavailable-scanner smoke tests.
+- [x] Verify the exact PR preview: homepage and `/web-temify-v3.html` return HTTP 200, and unauthenticated evidence access returns 404 with no-store headers.
+- [ ] Configure production environment variables and verify a production deployment; the Vercel environment list is empty and the latest production deployment is `ERROR`.
 - [ ] Add provider-specific signature verification, signed sandbox fixtures, and a provider submission adapter for the provider(s) explicitly selected for launch.
 - [ ] Implement reviewed evidence retention/deletion, private evidence access controls, payout-gate enforcement, reviewed journal treatment, and operational/legal approvals.
 
