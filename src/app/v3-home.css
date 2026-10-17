@@ -348,7 +348,7 @@
 .v3-app .trust-text {
   font-size: 0.78rem;
   font-weight: 700;
-  color: var(--muted);
+  color: #6b6559;
   line-height: 1.4;
 }
 .v3-app .trust-text strong {
@@ -427,7 +427,7 @@
 }
 .v3-app .card-body p {
   font-size: 0.72rem;
-  color: var(--muted);
+  color: #6b6559;
   font-weight: 500;
   line-height: 1.5;
 }
@@ -1064,7 +1064,7 @@
   font-size: 4rem;
   font-weight: 900;
   line-height: 1;
-  color: rgba(255, 255, 255, 0.1);
+  color: rgba(15, 13, 10, 0.16);
   margin-bottom: 1rem;
   letter-spacing: -0.04em;
   transition: color 0.25s;
