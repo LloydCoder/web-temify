@@ -1886,28 +1886,132 @@
           flex-direction: column;
         }
       }
-    
-      /* Nine-area platform overview, styled to the approved V3 identity. */
-      .ecosystem-section { background: var(--bg); color: var(--ink); border-top: 2px solid var(--ink); padding: clamp(4rem, 8vw, 7rem) clamp(1.25rem, 5vw, 4rem); }
-      .ecosystem-inner { width: min(1240px, 100%); margin-inline: auto; }
-      .ecosystem-heading { max-width: 760px; margin: 0 auto 3rem; text-align: center; }
-      .ecosystem-eyebrow { font: 700 .75rem/1.4 "DM Mono", monospace; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 1rem; }
-      .ecosystem-heading h2 { font-size: clamp(2.3rem, 5vw, 4.5rem); line-height: .98; letter-spacing: -.045em; margin-bottom: 1rem; }
-      .ecosystem-heading > p:last-child { max-width: 650px; margin: 0 auto; color: var(--muted); line-height: 1.7; }
-      .ecosystem-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
-      .ecosystem-card { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; border: 2px solid var(--ink); background: var(--surface); padding: clamp(1.2rem, 2.2vw, 1.8rem); box-shadow: 4px 4px 0 var(--ink); }
-      .ecosystem-card-live { background: #fff; }
-      .ecosystem-number { display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem; background: var(--yellow); border: 2px solid var(--ink); font: 700 .8rem "DM Mono", monospace; margin-bottom: 1.15rem; }
-      .ecosystem-status { color: var(--muted); font: 700 .68rem/1.5 "DM Mono", monospace; text-transform: uppercase; letter-spacing: .035em; margin-bottom: .7rem; }
-      .ecosystem-card h3 { font-size: clamp(1.2rem, 1.7vw, 1.55rem); line-height: 1.1; margin: 0 0 .75rem; }
-      .ecosystem-card > p:not(.ecosystem-status) { color: var(--muted); font-size: .94rem; line-height: 1.65; margin-bottom: 1.2rem; }
-      .ecosystem-card .btn, .ecosystem-card .ecosystem-link { margin-top: auto; }
-      .ecosystem-link { display: inline-block; font-weight: 800; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; padding-block: .55rem; }
-      .ecosystem-disclaimer { max-width: 920px; margin: 2rem auto 0; padding: 1rem 1.2rem; border: 2px dashed var(--ink); color: var(--muted); font-size: .85rem; line-height: 1.65; }
-      @media (max-width: 900px) { .ecosystem-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-      @media (max-width: 600px) { .ecosystem-grid { grid-template-columns: 1fr; } .ecosystem-heading { text-align: left; } }
-      @media (prefers-reduced-motion: reduce) { .ecosystem-card { scroll-behavior: auto; } }
 
+      /* Nine-area platform overview, styled to the approved V3 identity. */
+      .ecosystem-section {
+        background: var(--bg);
+        color: var(--ink);
+        border-top: 2px solid var(--ink);
+        padding: clamp(4rem, 8vw, 7rem) clamp(1.25rem, 5vw, 4rem);
+      }
+      .ecosystem-inner {
+        width: min(1240px, 100%);
+        margin-inline: auto;
+      }
+      .ecosystem-heading {
+        max-width: 760px;
+        margin: 0 auto 3rem;
+        text-align: center;
+      }
+      .ecosystem-eyebrow {
+        font:
+          700 0.75rem/1.4 "DM Mono",
+          monospace;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+      }
+      .ecosystem-heading h2 {
+        font-size: clamp(2.3rem, 5vw, 4.5rem);
+        line-height: 0.98;
+        letter-spacing: -0.045em;
+        margin-bottom: 1rem;
+      }
+      .ecosystem-heading > p:last-child {
+        max-width: 650px;
+        margin: 0 auto;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+      .ecosystem-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.25rem;
+      }
+      .ecosystem-card {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        border: 2px solid var(--ink);
+        background: var(--surface);
+        padding: clamp(1.2rem, 2.2vw, 1.8rem);
+        box-shadow: 4px 4px 0 var(--ink);
+      }
+      .ecosystem-card-live {
+        background: #fff;
+      }
+      .ecosystem-number {
+        display: inline-grid;
+        place-items: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        background: var(--yellow);
+        border: 2px solid var(--ink);
+        font:
+          700 0.8rem "DM Mono",
+          monospace;
+        margin-bottom: 1.15rem;
+      }
+      .ecosystem-status {
+        color: var(--muted);
+        font:
+          700 0.68rem/1.5 "DM Mono",
+          monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.035em;
+        margin-bottom: 0.7rem;
+      }
+      .ecosystem-card h3 {
+        font-size: clamp(1.2rem, 1.7vw, 1.55rem);
+        line-height: 1.1;
+        margin: 0 0 0.75rem;
+      }
+      .ecosystem-card > p:not(.ecosystem-status) {
+        color: var(--muted);
+        font-size: 0.94rem;
+        line-height: 1.65;
+        margin-bottom: 1.2rem;
+      }
+      .ecosystem-card .btn,
+      .ecosystem-card .ecosystem-link {
+        margin-top: auto;
+      }
+      .ecosystem-link {
+        display: inline-block;
+        font-weight: 800;
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
+        padding-block: 0.55rem;
+      }
+      .ecosystem-disclaimer {
+        max-width: 920px;
+        margin: 2rem auto 0;
+        padding: 1rem 1.2rem;
+        border: 2px dashed var(--ink);
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.65;
+      }
+      @media (max-width: 900px) {
+        .ecosystem-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 600px) {
+        .ecosystem-grid {
+          grid-template-columns: 1fr;
+        }
+        .ecosystem-heading {
+          text-align: left;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .ecosystem-card {
+          scroll-behavior: auto;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1925,7 +2029,12 @@
         <li><a href="#ecosystem">Platform</a></li>
       </ul>
       <div class="nav-actions">
-        <span class="btn btn-ghost" aria-disabled="true" title="Account access is not live yet">Account access soon</span>
+        <span
+          class="btn btn-ghost"
+          aria-disabled="true"
+          title="Account access is not live yet"
+          >Account access soon</span
+        >
         <a href="#templates" class="btn btn-fill">Browse Templates →</a>
       </div>
     </nav>
@@ -1942,9 +2051,9 @@
           Your website,<br /><span class="serif">ready in</span><br />minutes.
         </h1>
         <p class="hero-desc">
-          Explore the Web-Temify marketplace concept: templates, launch kits, scripts,
-          and tools for builders. The catalogue, seller features, and checkout
-          are not live yet; no products are available for purchase.
+          Explore the Web-Temify marketplace concept: templates, launch kits,
+          scripts, and tools for builders. The catalogue, seller features, and
+          checkout are not live yet; no products are available for purchase.
         </p>
         <div class="hero-cta">
           <a href="#templates" class="btn btn-fill btn-big">Browse Templates</a>
@@ -1971,7 +2080,10 @@
           </div>
           <div class="card-body cb-1">
             <h4>🏦 NeoBank Pro</h4>
-            <p>Illustrative fintech template concept. Not currently available for purchase.</p>
+            <p>
+              Illustrative fintech template concept. Not currently available for
+              purchase.
+            </p>
             <div style="margin-top: 0.8rem">
               <div
                 class="mock-bar"
@@ -2018,7 +2130,10 @@
           </div>
           <div class="card-body cb-3">
             <h4>💱 P2P Script</h4>
-            <p>Illustrative P2P trading UI concept; no trading or escrow service is offered.</p>
+            <p>
+              Illustrative P2P trading UI concept; no trading or escrow service
+              is offered.
+            </p>
             <div style="margin-top: 0.8rem">
               <div class="mock-block" style="background: #c084fc44"></div>
               <div
@@ -2064,7 +2179,8 @@
       </div>
       <div class="cat-grid reveal">
         <div class="cat-card cc-1">
-          <span class="cat-count">Preview</span><span class="cat-emoji">🏦</span>
+          <span class="cat-count">Preview</span
+          ><span class="cat-emoji">🏦</span>
           <h3>Fintech & Banking</h3>
           <p>
             Banking UIs, loan platforms, and payment system templates for the
@@ -2072,7 +2188,8 @@
           </p>
         </div>
         <div class="cat-card cc-2">
-          <span class="cat-count">Preview</span><span class="cat-emoji">⛓️</span>
+          <span class="cat-count">Preview</span
+          ><span class="cat-emoji">⛓️</span>
           <h3>Web3 & Blockchain</h3>
           <p>
             NFT marketplaces, DeFi dashboards, DAO governance, and wallet UI
@@ -2080,7 +2197,8 @@
           </p>
         </div>
         <div class="cat-card cc-3">
-          <span class="cat-count">Preview</span><span class="cat-emoji">🚚</span>
+          <span class="cat-count">Preview</span
+          ><span class="cat-emoji">🚚</span>
           <h3>Logistics & Courier</h3>
           <p>
             Delivery company sites with rate calculators, tracking UI, and fleet
@@ -2088,7 +2206,8 @@
           </p>
         </div>
         <div class="cat-card cc-4">
-          <span class="cat-count">Preview</span><span class="cat-emoji">🚀</span>
+          <span class="cat-count">Preview</span
+          ><span class="cat-emoji">🚀</span>
           <h3>SaaS & Startups</h3>
           <p>
             Modern landing pages, app showcases, and product-led growth
@@ -2096,7 +2215,8 @@
           </p>
         </div>
         <div class="cat-card cc-5">
-          <span class="cat-count">Preview</span><span class="cat-emoji">🎨</span>
+          <span class="cat-count">Preview</span
+          ><span class="cat-emoji">🎨</span>
           <h3>Agency & Portfolio</h3>
           <p>
             Bold, conversion-focused designs for creative agencies and
@@ -2104,7 +2224,8 @@
           </p>
         </div>
         <div class="cat-card cc-6">
-          <span class="cat-count">Preview</span><span class="cat-emoji">🛒</span>
+          <span class="cat-count">Preview</span
+          ><span class="cat-emoji">🛒</span>
           <h3>E-commerce</h3>
           <p>
             Ready-to-sell storefronts for digital products, subscriptions, and
@@ -2112,14 +2233,16 @@
           </p>
         </div>
         <div class="cat-card cc-7">
-          <span class="cat-count">Preview</span><span class="cat-emoji">🏘️</span>
+          <span class="cat-count">Preview</span
+          ><span class="cat-emoji">🏘️</span>
           <h3>Real Estate</h3>
           <p>
             Property listing, agent profiles, and developer portfolio templates.
           </p>
         </div>
         <div class="cat-card cc-8">
-          <span class="cat-count">Preview</span><span class="cat-emoji">⚡</span>
+          <span class="cat-count">Preview</span
+          ><span class="cat-emoji">⚡</span>
           <h3>Scripts & Tools</h3>
           <p>
             Full-stack functional scripts — P2P trading, loan management,
@@ -2149,7 +2272,8 @@
             <div class="tpl-name">NeoBank Pro Template</div>
             <div class="tpl-type">HTML5 + React · 12 pages</div>
             <div class="tpl-footer">
-              <span class="tpl-price">Preview</span><span class="tpl-stats">Preview only · Not available</span>
+              <span class="tpl-price">Preview</span
+              ><span class="tpl-stats">Preview only · Not available</span>
             </div>
           </div>
         </div>
@@ -2161,7 +2285,8 @@
             <div class="tpl-name">NFT Marketplace UI Kit</div>
             <div class="tpl-type">Next.js 15 · 18 pages</div>
             <div class="tpl-footer">
-              <span class="tpl-price">Preview</span><span class="tpl-stats">Preview only · Not available</span>
+              <span class="tpl-price">Preview</span
+              ><span class="tpl-stats">Preview only · Not available</span>
             </div>
           </div>
         </div>
@@ -2173,7 +2298,8 @@
             <div class="tpl-name">Courier & Logistics Pro</div>
             <div class="tpl-type">WordPress · Elementor · 10 pages</div>
             <div class="tpl-footer">
-              <span class="tpl-price">Preview</span><span class="tpl-stats">Preview only · Not available</span>
+              <span class="tpl-price">Preview</span
+              ><span class="tpl-stats">Preview only · Not available</span>
             </div>
           </div>
         </div>
@@ -2185,7 +2311,8 @@
             <div class="tpl-name">P2P Trading Script</div>
             <div class="tpl-type">PHP + Laravel · Full script</div>
             <div class="tpl-footer">
-              <span class="tpl-price">Preview</span><span class="tpl-stats">Preview only · Not available</span>
+              <span class="tpl-price">Preview</span
+              ><span class="tpl-stats">Preview only · Not available</span>
             </div>
           </div>
         </div>
@@ -2197,7 +2324,8 @@
             <div class="tpl-name">Real Estate Listings Pro</div>
             <div class="tpl-type">Next.js + Supabase · 14 pages</div>
             <div class="tpl-footer">
-              <span class="tpl-price">Preview</span><span class="tpl-stats">Preview only · Not available</span>
+              <span class="tpl-price">Preview</span
+              ><span class="tpl-stats">Preview only · Not available</span>
             </div>
           </div>
         </div>
@@ -2209,7 +2337,8 @@
             <div class="tpl-name">Loan Management System</div>
             <div class="tpl-type">PHP + MySQL · Full script</div>
             <div class="tpl-footer">
-              <span class="tpl-price">Preview</span><span class="tpl-stats">Preview only · Not available</span>
+              <span class="tpl-price">Preview</span
+              ><span class="tpl-stats">Preview only · Not available</span>
             </div>
           </div>
         </div>
@@ -2256,7 +2385,9 @@
           </div>
           <div class="kit-footer">
             <div>
-              <span class="kit-price" style="color: var(--yellow)">Preview</span>
+              <span class="kit-price" style="color: var(--yellow)"
+                >Preview</span
+              >
             </div>
             <a href="/catalog" class="btn btn-yellow">Browse catalogue →</a>
           </div>
@@ -2341,7 +2472,8 @@
           Plan your next website<br /><span class="serif">with confidence</span>
         </h2>
         <p class="ai-sub">
-          The AI Site Builder is planned, but generation is not available yet. Explore the concept with the prompt suggestions below.
+          The AI Site Builder is planned, but generation is not available yet.
+          Explore the concept with the prompt suggestions below.
         </p>
         <div class="ai-input-row">
           <input
@@ -2349,7 +2481,17 @@
             class="ai-input"
             placeholder="e.g. A fintech app for Nigerian SMEs..."
           />
-          <button class="btn btn-yellow" type="button" disabled aria-describedby="ai-builder-status">Coming soon</button><p id="ai-builder-status" class="ai-builder-status" role="status">AI generation is not live yet.</p>
+          <button
+            class="btn btn-yellow"
+            type="button"
+            disabled
+            aria-describedby="ai-builder-status"
+          >
+            Coming soon
+          </button>
+          <p id="ai-builder-status" class="ai-builder-status" role="status">
+            AI generation is not live yet.
+          </p>
         </div>
         <div class="ai-chips">
           <span class="ai-chip">Logistics company</span>
@@ -2437,7 +2579,8 @@
               max-width: 400px;
             "
           >
-            Explore selected external tools. Directory submissions and featured listings are not available yet.
+            Explore selected external tools. Directory submissions and featured
+            listings are not available yet.
           </p>
         </div>
         <a href="/catalog" class="btn btn-ghost">Browse catalogue →</a>
@@ -2453,7 +2596,12 @@
         <button class="dir-tab">Freelancer Resources</button>
       </div>
       <div class="dir-grid reveal">
-        <a class="dir-card featured" href="https://claude.ai/" target="_blank" rel="noreferrer">
+        <a
+          class="dir-card featured"
+          href="https://claude.ai/"
+          target="_blank"
+          rel="noreferrer"
+        >
           <div class="dir-logo">🤖</div>
           <div class="dir-info">
             <div class="dir-name">
@@ -2470,7 +2618,12 @@
             </div>
           </div>
         </a>
-        <a class="dir-card featured" href="https://vercel.com/" target="_blank" rel="noreferrer">
+        <a
+          class="dir-card featured"
+          href="https://vercel.com/"
+          target="_blank"
+          rel="noreferrer"
+        >
           <div class="dir-logo">▲</div>
           <div class="dir-info">
             <div class="dir-name">
@@ -2487,7 +2640,12 @@
             </div>
           </div>
         </a>
-        <a class="dir-card" href="https://supabase.com/" target="_blank" rel="noreferrer">
+        <a
+          class="dir-card"
+          href="https://supabase.com/"
+          target="_blank"
+          rel="noreferrer"
+        >
           <div class="dir-logo">🔷</div>
           <div class="dir-info">
             <div class="dir-name">Supabase</div>
@@ -2502,7 +2660,12 @@
             </div>
           </div>
         </a>
-        <a class="dir-card" href="https://hardhat.org/" target="_blank" rel="noreferrer">
+        <a
+          class="dir-card"
+          href="https://hardhat.org/"
+          target="_blank"
+          rel="noreferrer"
+        >
           <div class="dir-logo">🔥</div>
           <div class="dir-info">
             <div class="dir-name">Hardhat</div>
@@ -2517,12 +2680,18 @@
             </div>
           </div>
         </a>
-        <a class="dir-card" href="https://paystack.com/" target="_blank" rel="noreferrer">
+        <a
+          class="dir-card"
+          href="https://paystack.com/"
+          target="_blank"
+          rel="noreferrer"
+        >
           <div class="dir-logo">💳</div>
           <div class="dir-info">
             <div class="dir-name">Paystack</div>
             <div class="dir-desc">
-              Payment infrastructure for businesses, including cards, bank transfers, USSD, and mobile money
+              Payment infrastructure for businesses, including cards, bank
+              transfers, USSD, and mobile money
             </div>
             <div class="dir-pills">
               <span class="dir-pill">Payments</span
@@ -2531,7 +2700,12 @@
             </div>
           </div>
         </a>
-        <a class="dir-card" href="https://figma.com/" target="_blank" rel="noreferrer">
+        <a
+          class="dir-card"
+          href="https://figma.com/"
+          target="_blank"
+          rel="noreferrer"
+        >
           <div class="dir-logo">🎨</div>
           <div class="dir-info">
             <div class="dir-name">Figma</div>
@@ -2561,8 +2735,9 @@
           <span class="step-icon">🔍</span>
           <h3>Find Your Template</h3>
           <p>
-            Browse template, script, and Web3 concepts. Verified releases and purchasing
-            will appear here when ready; catalogue filters and checkout are not live yet.
+            Browse template, script, and Web3 concepts. Verified releases and
+            purchasing will appear here when ready; catalogue filters and
+            checkout are not live yet.
           </p>
         </div>
         <div class="step">
@@ -2570,7 +2745,9 @@
           <span class="step-icon">⚡</span>
           <h3>Download & Deploy</h3>
           <p>
-            Secure downloads and setup guides are planned for released products. Payment providers will be announced after integration and checkout testing.
+            Secure downloads and setup guides are planned for released products.
+            Payment providers will be announced after integration and checkout
+            testing.
           </p>
         </div>
         <div class="step">
@@ -2578,7 +2755,8 @@
           <span class="step-icon">🛠️</span>
           <h3>Need Customisation?</h3>
           <p>
-            Custom implementation services are offered separately by Tinlance. Marketplace-linked service requests are planned, not live.
+            Custom implementation services are offered separately by Tinlance.
+            Marketplace-linked service requests are planned, not live.
           </p>
         </div>
       </div>
@@ -2597,7 +2775,8 @@
             <div class="feat-text">
               <h4>Lightning Fast Load Times</h4>
               <p>
-                Every template is performance-optimised. Performance targets will be published with tested releases.
+                Every template is performance-optimised. Performance targets
+                will be published with tested releases.
               </p>
             </div>
           </div>
@@ -2626,7 +2805,8 @@
             <div class="feat-text">
               <h4>Secure delivery planned</h4>
               <p>
-                Private, verified downloads and artifact scanning are planned; delivery is not live.
+                Private, verified downloads and artifact scanning are planned;
+                delivery is not live.
               </p>
             </div>
           </div>
@@ -2635,7 +2815,8 @@
             <div class="feat-text">
               <h4>Payments planned</h4>
               <p>
-                Payment-provider selection and onboarding are pending. Checkout is disabled.
+                Payment-provider selection and onboarding are pending. Checkout
+                is disabled.
               </p>
             </div>
           </div>
@@ -2757,7 +2938,13 @@
             businesses across Africa.
           </p>
         </div>
-        <a href="https://tinlance.com" target="_blank" rel="noreferrer" class="btn btn-fill">Request a Service ↗</a>
+        <a
+          href="https://tinlance.com"
+          target="_blank"
+          rel="noreferrer"
+          class="btn btn-fill"
+          >Request a Service ↗</a
+        >
       </div>
       <div class="services-grid reveal">
         <div class="svc-card">
@@ -2838,7 +3025,8 @@
               opacity: 0.7;
             "
           >
-            Seller onboarding is planned. Seller earnings, payments, delivery, and support workflows are not live.
+            Seller onboarding is planned. Seller earnings, payments, delivery,
+            and support workflows are not live.
           </p>
           <div class="vendor-steps-list">
             <div class="vstep">
@@ -2850,10 +3038,12 @@
               screenshots and demo link
             </div>
             <div class="vstep">
-              <span class="vstep-num">3</span> Seller review timelines will be published before onboarding opens
+              <span class="vstep-num">3</span> Seller review timelines will be
+              published before onboarding opens
             </div>
             <div class="vstep">
-              <span class="vstep-num">4</span> Payout providers and supported jurisdictions are not confirmed; payouts are disabled
+              <span class="vstep-num">4</span> Payout providers and supported
+              jurisdictions are not confirmed; payouts are disabled
             </div>
           </div>
         </div>
@@ -2888,7 +3078,9 @@
               Seller terms pending
             </div>
           </div>
-          <span class="btn btn-dark btn-big" aria-disabled="true">Seller onboarding not live</span>
+          <span class="btn btn-dark btn-big" aria-disabled="true"
+            >Seller onboarding not live</span
+          >
           <div style="font-size: 0.75rem; opacity: 0.55; font-weight: 700">
             Free to join · No monthly fees
           </div>
@@ -2950,7 +3142,8 @@
         <div class="testi-card tc-1">
           <div class="testi-stars">PREVIEW</div>
           <p class="testi-quote">
-            "Illustrative concept only. Verified customer reviews will be published after real transactions and consent."
+            "Illustrative concept only. Verified customer reviews will be
+            published after real transactions and consent."
           </p>
           <div class="testi-author">
             <div class="testi-avatar" style="background: #ffd6c0">👨🏾</div>
@@ -2963,7 +3156,8 @@
         <div class="testi-card tc-2">
           <div class="testi-stars">PREVIEW</div>
           <p class="testi-quote">
-            "Automation listings will disclose supported systems, required permissions, tests, and rollback guidance before publication."
+            "Automation listings will disclose supported systems, required
+            permissions, tests, and rollback guidance before publication."
           </p>
           <div class="testi-author">
             <div class="testi-avatar" style="background: #c8f0e0">👩🏾</div>
@@ -2976,7 +3170,9 @@
         <div class="testi-card tc-3">
           <div class="testi-stars">PREVIEW</div>
           <p class="testi-quote">
-            "Supplier and implementation listings will use evidence-backed profiles and explicit scope. No escrow or outcome guarantees are implied."
+            "Supplier and implementation listings will use evidence-backed
+            profiles and explicit scope. No escrow or outcome guarantees are
+            implied."
           </p>
           <div class="testi-author">
             <div class="testi-avatar" style="background: #fef9c3">👨🏾</div>
@@ -3009,7 +3205,8 @@
         "
         class="reveal"
       >
-        Pricing below is illustrative only. Plans, subscriptions, and checkout are not available yet.
+        Pricing below is illustrative only. Plans, subscriptions, and checkout
+        are not available yet.
       </p>
       <div class="pricing-grid reveal">
         <div class="price-card">
@@ -3044,7 +3241,10 @@
             <span
               class="btn btn-ghost"
               style="width: 100%; text-align: center"
-               aria-disabled="true" title="Plans are not live yet">Not available yet</span>
+              aria-disabled="true"
+              title="Plans are not live yet"
+              >Not available yet</span
+            >
           </div>
         </div>
         <div class="price-card featured">
@@ -3079,7 +3279,10 @@
             <span
               class="btn btn-yellow"
               style="width: 100%; text-align: center; border-color: transparent"
-               aria-disabled="true" title="Plans are not live yet">Not available yet</span>
+              aria-disabled="true"
+              title="Plans are not live yet"
+              >Not available yet</span
+            >
           </div>
         </div>
         <div class="price-card">
@@ -3114,7 +3317,10 @@
             <span
               class="btn btn-fill"
               style="width: 100%; text-align: center"
-               aria-disabled="true" title="Plans are not live yet">Not available yet</span>
+              aria-disabled="true"
+              title="Plans are not live yet"
+              >Not available yet</span
+            >
           </div>
         </div>
         <div class="price-card">
@@ -3149,7 +3355,10 @@
             <span
               class="btn btn-ghost"
               style="width: 100%; text-align: center"
-               aria-disabled="true" title="Plans are not live yet">Not available yet</span>
+              aria-disabled="true"
+              title="Plans are not live yet"
+              >Not available yet</span
+            >
           </div>
         </div>
       </div>
@@ -3176,19 +3385,20 @@
               font-weight: 500;
             "
           >
-            Join  developers. No spam — only the good stuff.
+            Join developers. No spam — only the good stuff.
           </p>
         </div>
         <div>
           <div class="nl-form">
             <input type="email" class="nl-input" placeholder="your@email.com" />
-            <button class="btn btn-fill" type="button" disabled>Signup coming soon</button>
+            <button class="btn btn-fill" type="button" disabled>
+              Signup coming soon
+            </button>
           </div>
           <p
             style="font-size: 0.72rem; color: var(--muted); margin-top: 0.6rem"
           >
-            By subscribing you agree to our
-            Privacy Policy (coming soon).
+            By subscribing you agree to our Privacy Policy (coming soon).
           </p>
         </div>
       </div>
@@ -3200,7 +3410,10 @@
       <h2>
         Ready to build<br />your <span class="serif">dream product?</span>
       </h2>
-      <p>Marketplace updates and tool discoveries. Newsletter signup is not live yet.</p>
+      <p>
+        Marketplace updates and tool discoveries. Newsletter signup is not live
+        yet.
+      </p>
       <div class="cta-buttons">
         <a href="#templates" class="btn btn-white btn-big"
           >Browse Templates →</a
@@ -3209,27 +3422,146 @@
       </div>
     </section>
 
-
     <!-- ═══ WEB-TEMIFY ECOSYSTEM: NINE AGREED AREAS ═══ -->
-    <section class="ecosystem-section" id="ecosystem" aria-labelledby="ecosystem-title">
+    <section
+      class="ecosystem-section"
+      id="ecosystem"
+      aria-labelledby="ecosystem-title"
+    >
       <div class="ecosystem-inner">
         <div class="ecosystem-heading">
           <p class="ecosystem-eyebrow">THE WEB-TEMIFY ECOSYSTEM</p>
-          <h2 id="ecosystem-title">One platform. <span class="serif">More ways to build.</span></h2>
-          <p>Explore the nine connected areas of Web-Temify. Each destination states what is available today and what remains in development.</p>
+          <h2 id="ecosystem-title">
+            One platform. <span class="serif">More ways to build.</span>
+          </h2>
+          <p>
+            Explore the nine connected areas of Web-Temify. Each destination
+            states what is available today and what remains in development.
+          </p>
         </div>
         <div class="ecosystem-grid">
-          <article class="ecosystem-card ecosystem-card-live"><span class="ecosystem-number">01</span><p class="ecosystem-status">Existing route · verified catalogue rules</p><h3>Template &amp; Script Marketplace</h3><p>Browse the catalogue. Only products meeting existing publication and release checks should be presented as purchasable.</p><a class="btn btn-fill" href="/catalog">Browse catalogue →</a></article>
-          <article class="ecosystem-card"><span class="ecosystem-number">02</span><p class="ecosystem-status">Planned · provisioning not operational</p><h3>Web Hosting &amp; Deployment</h3><p>Hosting plans, deployments, domains, SSL and site operations are planned; provisioning and billing are not available here.</p><a class="ecosystem-link" href="/hosting">Explore hosting roadmap →</a></article>
-          <article class="ecosystem-card"><span class="ecosystem-number">03</span><p class="ecosystem-status">Planned · generation disabled</p><h3>AI Site Builder</h3><p>Prompt-to-site creation is planned. This page does not generate or deploy a website.</p><a class="ecosystem-link" href="/ai-site-builder">Explore AI Site Builder →</a></article>
-          <article class="ecosystem-card"><span class="ecosystem-number">04</span><p class="ecosystem-status">Preview · submissions not live</p><h3>Tech Directory Hub</h3><p>Explore selected external tools in the homepage preview. Managed listings, submissions and paid placements are not enabled.</p><a class="ecosystem-link" href="/directory">Explore directory status →</a></article>
-          <article class="ecosystem-card"><span class="ecosystem-number">05</span><p class="ecosystem-status">Planned · transactions disabled</p><h3>Verified Automation Marketplace</h3><p>Automation discovery, verification, installation and updates are planned, not available as a live marketplace.</p><a class="ecosystem-link" href="/automations">Explore automation roadmap →</a></article>
-          <article class="ecosystem-card"><span class="ecosystem-number">06</span><p class="ecosystem-status">Planned · onboarding not available</p><h3>Specialist Supplier Directory</h3><p>Verified supplier profiles, onboarding and marketplace enquiries are not yet operational.</p><a class="ecosystem-link" href="/specialists">Explore supplier roadmap →</a></article>
-          <article class="ecosystem-card"><span class="ecosystem-number">07</span><p class="ecosystem-status">Planned · milestone payments disabled</p><h3>Outcome-Based AI Implementation</h3><p>Scoped delivery, acceptance criteria and milestone-based engagements are planned. No marketplace contract or payment can be initiated here.</p><a class="ecosystem-link" href="/implementation">Explore implementation roadmap →</a></article>
-          <article class="ecosystem-card"><span class="ecosystem-number">08</span><p class="ecosystem-status">Shared foundation · not a storefront</p><h3>Shared Enterprise Platform</h3><p>Identity, policy, approvals, auditability and operational controls underpin the ecosystem. Their presence does not mean every feature is enabled.</p><a class="ecosystem-link" href="/platform">Understand the platform layer →</a></article>
-          <article class="ecosystem-card"><span class="ecosystem-number">09</span><p class="ecosystem-status">Planned · monetization not enabled</p><h3>Tech Hub &amp; Advertising Engine</h3><p>Editorial content, SEO, affiliate disclosures, sponsored placements and newsletter sponsorships require dedicated workflows.</p><a class="ecosystem-link" href="/tech-hub">Explore Tech Hub roadmap →</a></article>
+          <article class="ecosystem-card ecosystem-card-live">
+            <span class="ecosystem-number">01</span>
+            <p class="ecosystem-status">
+              Existing route · verified catalogue rules
+            </p>
+            <h3>Template &amp; Script Marketplace</h3>
+            <p>
+              Browse the catalogue. Only products meeting existing publication
+              and release checks should be presented as purchasable.
+            </p>
+            <a class="btn btn-fill" href="/catalog">Browse catalogue →</a>
+          </article>
+          <article class="ecosystem-card">
+            <span class="ecosystem-number">02</span>
+            <p class="ecosystem-status">
+              Planned · provisioning not operational
+            </p>
+            <h3>Web Hosting &amp; Deployment</h3>
+            <p>
+              Hosting plans, deployments, domains, SSL and site operations are
+              planned; provisioning and billing are not available here.
+            </p>
+            <a class="ecosystem-link" href="/hosting"
+              >Explore hosting roadmap →</a
+            >
+          </article>
+          <article class="ecosystem-card">
+            <span class="ecosystem-number">03</span>
+            <p class="ecosystem-status">Planned · generation disabled</p>
+            <h3>AI Site Builder</h3>
+            <p>
+              Prompt-to-site creation is planned. This page does not generate or
+              deploy a website.
+            </p>
+            <a class="ecosystem-link" href="/ai-site-builder"
+              >Explore AI Site Builder →</a
+            >
+          </article>
+          <article class="ecosystem-card">
+            <span class="ecosystem-number">04</span>
+            <p class="ecosystem-status">Preview · submissions not live</p>
+            <h3>Tech Directory Hub</h3>
+            <p>
+              Explore selected external tools in the homepage preview. Managed
+              listings, submissions and paid placements are not enabled.
+            </p>
+            <a class="ecosystem-link" href="/directory"
+              >Explore directory status →</a
+            >
+          </article>
+          <article class="ecosystem-card">
+            <span class="ecosystem-number">05</span>
+            <p class="ecosystem-status">Planned · transactions disabled</p>
+            <h3>Verified Automation Marketplace</h3>
+            <p>
+              Automation discovery, verification, installation and updates are
+              planned, not available as a live marketplace.
+            </p>
+            <a class="ecosystem-link" href="/automations"
+              >Explore automation roadmap →</a
+            >
+          </article>
+          <article class="ecosystem-card">
+            <span class="ecosystem-number">06</span>
+            <p class="ecosystem-status">Planned · onboarding not available</p>
+            <h3>Specialist Supplier Directory</h3>
+            <p>
+              Verified supplier profiles, onboarding and marketplace enquiries
+              are not yet operational.
+            </p>
+            <a class="ecosystem-link" href="/specialists"
+              >Explore supplier roadmap →</a
+            >
+          </article>
+          <article class="ecosystem-card">
+            <span class="ecosystem-number">07</span>
+            <p class="ecosystem-status">
+              Planned · milestone payments disabled
+            </p>
+            <h3>Outcome-Based AI Implementation</h3>
+            <p>
+              Scoped delivery, acceptance criteria and milestone-based
+              engagements are planned. No marketplace contract or payment can be
+              initiated here.
+            </p>
+            <a class="ecosystem-link" href="/implementation"
+              >Explore implementation roadmap →</a
+            >
+          </article>
+          <article class="ecosystem-card">
+            <span class="ecosystem-number">08</span>
+            <p class="ecosystem-status">Shared foundation · not a storefront</p>
+            <h3>Shared Enterprise Platform</h3>
+            <p>
+              Identity, policy, approvals, auditability and operational controls
+              underpin the ecosystem. Their presence does not mean every feature
+              is enabled.
+            </p>
+            <a class="ecosystem-link" href="/platform"
+              >Understand the platform layer →</a
+            >
+          </article>
+          <article class="ecosystem-card">
+            <span class="ecosystem-number">09</span>
+            <p class="ecosystem-status">Planned · monetization not enabled</p>
+            <h3>Tech Hub &amp; Advertising Engine</h3>
+            <p>
+              Editorial content, SEO, affiliate disclosures, sponsored
+              placements and newsletter sponsorships require dedicated
+              workflows.
+            </p>
+            <a class="ecosystem-link" href="/tech-hub"
+              >Explore Tech Hub roadmap →</a
+            >
+          </article>
         </div>
-        <p class="ecosystem-disclaimer">Availability is feature-specific. Planned cards are roadmap disclosures, not promises of launch dates. Payment processing, seller payouts and live money movement remain disabled until the required technical, legal, security and operational gates are verified.</p>
+        <p class="ecosystem-disclaimer">
+          Availability is feature-specific. Planned cards are roadmap
+          disclosures, not promises of launch dates. Payment processing, seller
+          payouts and live money movement remain disabled until the required
+          technical, legal, security and operational gates are verified.
+        </p>
       </div>
     </section>
 
@@ -3257,7 +3589,13 @@
           "
         >
           A sister company of
-          <a href="https://tinlance.com" target="_blank" rel="noreferrer" style="color: var(--coral); font-weight: 800">Tinlance Limited ↗</a><br />Need a custom-built product? That's their lane.
+          <a
+            href="https://tinlance.com"
+            target="_blank"
+            rel="noreferrer"
+            style="color: var(--coral); font-weight: 800"
+            >Tinlance Limited ↗</a
+          ><br />Need a custom-built product? That's their lane.
         </div>
       </div>
       <div class="footer-col">
@@ -3279,39 +3617,103 @@
           <li><a href="/catalog">Web3 Tools</a></li>
           <li><a href="/catalog">Hosting</a></li>
           <li><a href="/catalog">Design Tools</a></li>
-          <li><span aria-disabled="true" title="This destination is not live yet">Submit a Tool (coming soon)</span></li>
+          <li>
+            <span aria-disabled="true" title="This destination is not live yet"
+              >Submit a Tool (coming soon)</span
+            >
+          </li>
         </ul>
       </div>
       <div class="footer-col">
         <h5>Platform</h5>
         <ul>
           <li><a href="#pricing">Pricing</a></li>
-          <li><span aria-disabled="true" title="This destination is not live yet">Become a Vendor (coming soon)</span></li>
+          <li>
+            <span aria-disabled="true" title="This destination is not live yet"
+              >Become a Vendor (coming soon)</span
+            >
+          </li>
           <li><a href="#services">Services</a></li>
-          <li><span aria-disabled="true" title="This destination is not live yet">Affiliates (coming soon)</span></li>
-          <li><span aria-disabled="true" title="This destination is not live yet">API Docs (coming soon)</span></li>
-          <li><span aria-disabled="true" title="This destination is not live yet">Blog (coming soon)</span></li>
+          <li>
+            <span aria-disabled="true" title="This destination is not live yet"
+              >Affiliates (coming soon)</span
+            >
+          </li>
+          <li>
+            <span aria-disabled="true" title="This destination is not live yet"
+              >API Docs (coming soon)</span
+            >
+          </li>
+          <li>
+            <span aria-disabled="true" title="This destination is not live yet"
+              >Blog (coming soon)</span
+            >
+          </li>
         </ul>
       </div>
       <div class="footer-col">
         <h5>Company</h5>
         <ul>
-          <li><span aria-disabled="true" title="This destination is not live yet">Our Story (coming soon)</span></li>
-          <li><span aria-disabled="true" title="This destination is not live yet">Roadmap (coming soon)</span></li>
-          <li><span aria-disabled="true" title="This destination is not live yet">Changelog (coming soon)</span></li>
-          <li><span aria-disabled="true" title="This destination is not live yet">Press Kit (coming soon)</span></li>
-          <li><span aria-disabled="true" title="This destination is not live yet">Privacy (coming soon)</span></li>
-          <li><span aria-disabled="true" title="This destination is not live yet">Terms (coming soon)</span></li>
+          <li>
+            <span aria-disabled="true" title="This destination is not live yet"
+              >Our Story (coming soon)</span
+            >
+          </li>
+          <li>
+            <span aria-disabled="true" title="This destination is not live yet"
+              >Roadmap (coming soon)</span
+            >
+          </li>
+          <li>
+            <span aria-disabled="true" title="This destination is not live yet"
+              >Changelog (coming soon)</span
+            >
+          </li>
+          <li>
+            <span aria-disabled="true" title="This destination is not live yet"
+              >Press Kit (coming soon)</span
+            >
+          </li>
+          <li>
+            <span aria-disabled="true" title="This destination is not live yet"
+              >Privacy (coming soon)</span
+            >
+          </li>
+          <li>
+            <span aria-disabled="true" title="This destination is not live yet"
+              >Terms (coming soon)</span
+            >
+          </li>
         </ul>
       </div>
     </footer>
     <div class="footer-bottom">
       <span>© 2026 Web-Temify LTD. All rights reserved. RC: 7999659</span>
       <div class="footer-socials">
-        <span class="social-btn" aria-disabled="true" title="Social profile not configured">𝕏</span>
-        <span class="social-btn" aria-disabled="true" title="Social profile not configured">⌥</span>
-        <span class="social-btn" aria-disabled="true" title="Social profile not configured">📱</span>
-        <span class="social-btn" aria-disabled="true" title="Social profile not configured">in</span>
+        <span
+          class="social-btn"
+          aria-disabled="true"
+          title="Social profile not configured"
+          >𝕏</span
+        >
+        <span
+          class="social-btn"
+          aria-disabled="true"
+          title="Social profile not configured"
+          >⌥</span
+        >
+        <span
+          class="social-btn"
+          aria-disabled="true"
+          title="Social profile not configured"
+          >📱</span
+        >
+        <span
+          class="social-btn"
+          aria-disabled="true"
+          title="Social profile not configured"
+          >in</span
+        >
       </div>
     </div>
 
