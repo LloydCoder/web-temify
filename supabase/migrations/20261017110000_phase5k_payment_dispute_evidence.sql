@@ -27,17 +27,17 @@ create table public.payment_dispute_evidence (
   original_filename text not null check (char_length(original_filename) between 1 and 180),
   uploaded_by uuid not null references auth.users(id) on delete restrict,
   uploaded_at timestamptz not null default clock_timestamp(),
-  retention_until timestamptz not null default (clock_timestamp() + interval '365 days'),
+  retention_until timestamptz,
   constraint payment_dispute_evidence_path_matches_identity
     check (storage_path = dispute_id::text || '/' || id::text || '/' || source_sha256),
   constraint payment_dispute_evidence_retention_after_upload
-    check (retention_until >= uploaded_at)
+    check (retention_until is null or retention_until >= uploaded_at)
 );
 
 create index payment_dispute_evidence_dispute_idx
   on public.payment_dispute_evidence (dispute_id, uploaded_at desc, id desc);
 create index payment_dispute_evidence_retention_idx
-  on public.payment_dispute_evidence (retention_until);
+  on public.payment_dispute_evidence (retention_until) where retention_until is not null;
 
 alter table public.payment_dispute_evidence enable row level security;
 revoke all on public.payment_dispute_evidence from public, anon, authenticated, service_role;
@@ -116,7 +116,7 @@ begin
     )
     or p_byte_size is null or p_byte_size not between 1 and 5242880
     or p_original_filename is null or char_length(btrim(p_original_filename)) not between 1 and 180
-    or p_storage_path is distinct from p_dispute_id::text || '/' || p_id::text || '/' || p_source_sha256
+    or p_storage_path is distinct from (p_dispute_id::text || '/' || p_id::text || '/' || p_source_sha256)
   then
     raise exception using errcode = '23514', message = 'payment dispute evidence metadata failed validation';
   end if;
@@ -258,4 +258,4 @@ comment on table public.payment_dispute_evidence is
 comment on table public.payment_dispute_evidence_scan_results is
   'Append-only scanner attestations bound to the exact private evidence digest. A missing or stale scan is not clean.';
 comment on column public.payment_dispute_evidence.retention_until is
-  'Policy target only. Automated dispute-evidence deletion remains disabled until legal retention policy and a dedicated retention worker are approved.';
+  'Null until an approved legal retention policy is recorded. Automated dispute-evidence deletion is not implemented or enabled.';
