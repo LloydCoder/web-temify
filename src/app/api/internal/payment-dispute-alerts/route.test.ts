@@ -24,10 +24,13 @@ const job = {
 };
 
 function request(token = workerToken) {
-  return new Request("https://web-temify.test/api/internal/payment-dispute-alerts", {
+  return new Request(
+    "https://web-temify.test/api/internal/payment-dispute-alerts",
+    {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-  });
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
 }
 
 function configureWorker() {
@@ -58,12 +61,15 @@ describe("Phase 5J payment dispute deadline alert worker", () => {
     vi.unstubAllGlobals();
   });
 
-  it("rejects unauthorized callers before creating a privileged client", async () => {
+  it(
+    "rejects unauthorized callers before creating a privileged client",
+    async () => {
     const response = await POST(request("wrong-token"));
     expect(response.status).toBe(401);
     expect(mocks.createClient).not.toHaveBeenCalled();
-    expect(mocks.rpc).not.toHaveBeenCalled();
-  });
+      expect(mocks.rpc).not.toHaveBeenCalled();
+    },
+  );
 
   it("fails closed when the worker is missing configuration", async () => {
     vi.stubEnv("PAYMENT_DISPUTE_ALERT_WORKER_TOKEN", workerToken);
@@ -72,37 +78,60 @@ describe("Phase 5J payment dispute deadline alert worker", () => {
     expect(mocks.createClient).not.toHaveBeenCalled();
   });
 
-  it("sends only a minimal operations alert and records successful delivery", async () => {
+  it(
+    "sends only a minimal operations alert and records successful delivery",
+    async () => {
     configureWorker();
 
     const response = await POST(request());
     const body = await response.json();
     expect(response.status).toBe(200);
-    expect(body).toMatchObject({ claimed: 1, sent: 1, retryable: 0, blocked: 0, scanned: 1 });
-    expect(mocks.rpc).toHaveBeenNthCalledWith(1, "enqueue_payment_dispute_deadline_alerts", {
-      p_now: expect.any(String),
-    });
-    expect(mocks.rpc).toHaveBeenNthCalledWith(2, "claim_payment_dispute_alert_jobs", {
+      expect(body).toMatchObject({
+        claimed: 1,
+        sent: 1,
+        retryable: 0,
+        blocked: 0,
+        scanned: 1,
+      });
+      expect(mocks.rpc).toHaveBeenNthCalledWith(
+        1,
+        "enqueue_payment_dispute_deadline_alerts",
+        {
+          p_now: expect.any(String),
+        },
+      );
+      expect(mocks.rpc).toHaveBeenNthCalledWith(
+        2,
+        "claim_payment_dispute_alert_jobs",
+        {
       p_limit: 3,
-      p_request_id: expect.any(String),
-    });
-    expect(mocks.rpc).toHaveBeenNthCalledWith(3, "finish_payment_dispute_alert_job", {
+          p_request_id: expect.any(String),
+        },
+      );
+      expect(mocks.rpc).toHaveBeenNthCalledWith(
+        3,
+        "finish_payment_dispute_alert_job",
+        {
       p_job_id: job.job_id,
       p_request_id: expect.any(String),
       p_success: true,
-      p_error_code: null,
-    });
+          p_error_code: null,
+        },
+      );
 
-    const fetchMock = vi.mocked(fetch);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    const email = JSON.parse(String(fetchMock.mock.calls[0][1]?.body));
-    expect(email.to).toEqual(["operations@example.test"]);
-    expect(email.text).toContain(job.provider_dispute_id);
-    expect(email.text).not.toContain("customer@example.test");
-    expect(email.text).not.toContain("payment card");
-  });
+      const fetchMock = vi.mocked(fetch);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      const email = JSON.parse(String(fetchMock.mock.calls[0][1]?.body));
+      expect(email.to).toEqual(["operations@example.test"]);
+      expect(email.text).toContain(job.provider_dispute_id);
+      expect(email.text).not.toContain("customer@example.test");
+      expect(email.text).not.toContain("payment card");
+    },
+  );
 
-  it("records provider failure for bounded retry instead of marking sent", async () => {
+  it(
+    "records provider failure for bounded retry instead of marking sent",
+    async () => {
     configureWorker();
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false }));
 
@@ -114,21 +143,33 @@ describe("Phase 5J payment dispute deadline alert worker", () => {
     const response = await POST(request());
     const body = await response.json();
     expect(response.status).toBe(200);
-    expect(body).toMatchObject({ claimed: 1, sent: 0, retryable: 1, blocked: 0 });
-    expect(mocks.rpc).toHaveBeenLastCalledWith("finish_payment_dispute_alert_job", {
+      expect(body).toMatchObject({
+        claimed: 1,
+        sent: 0,
+        retryable: 1,
+        blocked: 0,
+      });
+      expect(mocks.rpc).toHaveBeenLastCalledWith(
+        "finish_payment_dispute_alert_job",
+        {
       p_job_id: job.job_id,
       p_request_id: expect.any(String),
       p_success: false,
-      p_error_code: "email_provider_rejected",
-    });
-  });
+          p_error_code: "email_provider_rejected",
+        },
+      );
+    },
+  );
 
   it("does not report success when durable job completion fails", async () => {
     configureWorker();
     mocks.rpc.mockReset();
     mocks.rpc.mockResolvedValueOnce({ data: 1, error: null });
     mocks.rpc.mockResolvedValueOnce({ data: [job], error: null });
-    mocks.rpc.mockResolvedValueOnce({ data: null, error: new Error("database unavailable") });
+    mocks.rpc.mockResolvedValueOnce({
+      data: null,
+      error: new Error("database unavailable"),
+    });
 
     const response = await POST(request());
     expect(response.status).toBe(503);
