@@ -165,17 +165,14 @@ test(
   async ({ page }) => {
     await page.goto("/");
     const cards = page.locator(".dir-card");
+    const visibleCardCount = () =>
+      cards.evaluateAll(
+        (items) => items.filter((item) => !item.hasAttribute("hidden")).length,
+      );
 
     for (const label of ["No-Code", "Freelancer Resources"]) {
       await page.getByRole("button", { name: label }).click();
-      await expect
-        .poll(() =>
-          cards.evaluateAll(
-            (items) =>
-              items.filter((item) => !item.hasAttribute("hidden")).length,
-          ),
-        )
-        .toBeGreaterThan(0);
+      await expect.poll(visibleCardCount).toBeGreaterThan(0);
     }
   },
 );
