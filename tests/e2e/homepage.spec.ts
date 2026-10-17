@@ -96,7 +96,7 @@ test("directory tabs filter the visible external tool cards", async ({
     .toBe(allCount);
 });
 
-test("AI prompt chips populate the planned builder input without implying generation is live", async ({
+test("native AI prompt buttons populate the planned builder input without implying generation is live", async ({
   page,
 }) => {
   await page.goto("/");
