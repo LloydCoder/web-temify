@@ -25,6 +25,8 @@ function readV3Document() {
       @import url("https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Instrument+Serif:ital@0;1&display=swap");
       ${stylesheet}
       .v3-native-nav { display: contents; }
+      .v3-skip-link { position: fixed; top: -5rem; left: 1rem; z-index: 1000; padding: .75rem 1rem; background: #ffd60a; color: #0f0d0a; border: 2px solid #0f0d0a; font-weight: 800; }
+      .v3-skip-link:focus { top: 1rem; }
       .v3-native-home :where(a, button, input, [tabindex]) { scroll-margin-top: 6rem; }
       .v3-native-home a:focus-visible,
       .v3-native-home button:focus-visible,
@@ -61,6 +63,7 @@ export default function V3Homepage() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: v3.stylesheet }} />
+      <a className="v3-skip-link" href="#main-content">Skip to content</a>
       <header
         className="v3-native-nav"
         dangerouslySetInnerHTML={{ __html: v3.nav }}
@@ -71,7 +74,7 @@ export default function V3Homepage() {
         aria-label="Web-Temify marketplace preview"
         dangerouslySetInnerHTML={{ __html: v3.content }}
       />
-      {v3.footer ? <footer dangerouslySetInnerHTML={{ __html: v3.footer }} /> : null}
+      {v3.footer ? <div dangerouslySetInnerHTML={{ __html: v3.footer }} /> : null}
       <V3HomepageInteractions />
     </>
   );
