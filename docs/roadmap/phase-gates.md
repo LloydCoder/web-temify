@@ -424,7 +424,7 @@ Forensic record: `docs/audits/phase5j-payment-dispute-deadline-alerts.md`. This 
 - [ ] Implement reviewed evidence retention/deletion, private evidence access controls, payout-gate enforcement, reviewed journal treatment, and operational/legal approvals.
 
 Forensic record: `docs/audits/phase5k-payment-dispute-evidence.md`. A clean scan proves only that the uploaded bytes match the digest and the scanner's verdict; it does not prove provider authenticity or submission. Phase 5 remains incomplete, and live provider processing, payouts, settlement posting and journal adjustments remain disabled.
- 
+
 ## Phase 6 — Seller system and product factory
 
 **Status: NOT COMPLETE.** This phase builds the trusted supply side and a repeatable, evidence-backed product release pipeline. The dedicated source monorepo is [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products); its inventory is planning input, not evidence that products have been built or released. Keep product source code, manifests, build/test contracts and immutable release evidence in that repository; keep commercial listing state and marketplace transactions in this repository.
