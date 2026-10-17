@@ -405,6 +405,24 @@ The state machine trusts the previously persisted signature-verification asserti
 
 Forensic record: `docs/audits/phase5j-payment-dispute-deadline-alerts.md`. This worker sends notifications only; it does not submit provider evidence, change dispute state, issue refunds, post journal entries, or move funds. Phase 5 overall remains incomplete; track remaining release blockers in [Issue #84](https://github.com/LloydCoder/web-temify/issues/84).
 
+### Phase 5K — Private payment-dispute evidence upload and scanning (implementation candidate)
+
+**Status: IN PROGRESS.** This slice adds private evidence custody and digest-bound malware-scan attestations. It does not submit evidence to a provider, verify provider origin, or complete Phase 5.
+
+- [x] Add a private 5 MiB Supabase Storage bucket with an explicit content-type allowlist.
+- [x] Add an admin-only, same-origin, bounded upload route for disputes in open or needs-evidence state.
+- [x] Compute SHA-256 server-side and bind the private storage path and immutable metadata to dispute ID, evidence ID, and digest.
+- [x] Add service-role-only RPCs for immutable evidence metadata and digest-bound scan attestations, with RLS, no direct client grants, and audit events.
+- [x] Reuse the existing fail-closed ClamAV client; unavailable scans remain pending and mismatched scan digests are rejected.
+- [x] Leave retention unset until an approved legal retention policy exists; do not claim automated deletion.
+- [ ] Pass exact-head Foundation CI, including empty-database migration reset, schema lint, pgTAP/RLS, route tests, E2E, typecheck, lint, formatting and production build.
+- [ ] Pass exact-head Security/dependency governance and review the migration, route authorization, storage path constraints and scan freshness/failure behavior.
+- [ ] Verify configured production scanner endpoint/token and clean, infected, stale-signature and unavailable-scanner smoke tests.
+- [ ] Add provider-specific signature verification, signed sandbox fixtures, and a provider submission adapter for the provider(s) explicitly selected for launch.
+- [ ] Implement reviewed evidence retention/deletion, private evidence access controls, payout-gate enforcement, reviewed journal treatment, and operational/legal approvals.
+
+Forensic record: `docs/audits/phase5k-payment-dispute-evidence.md`. A clean scan proves only that the uploaded bytes match the digest and the scanner's verdict; it does not prove provider authenticity or submission. Phase 5 remains incomplete, and live provider processing, payouts, settlement posting and journal adjustments remain disabled.
+ 
 ## Phase 6 — Seller system and product factory
 
 **Status: NOT COMPLETE.** This phase builds the trusted supply side and a repeatable, evidence-backed product release pipeline. The dedicated source monorepo is [LloydCoder/web-temify-products](https://github.com/LloydCoder/web-temify-products); its inventory is planning input, not evidence that products have been built or released. Keep product source code, manifests, build/test contracts and immutable release evidence in that repository; keep commercial listing state and marketplace transactions in this repository.
