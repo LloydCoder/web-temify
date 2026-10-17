@@ -45,9 +45,15 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   await expect(page.locator("#newsletter-status")).toContainText(
     /no email is collected/i,
   );
-  await expect(page.getByText("Payment adapter concept", { exact: true })).toBeVisible();
-  await expect(page.getByText("Paystack Ready", { exact: true })).toHaveCount(0);
-  await expect(page.getByText("Stripe Billing", { exact: true })).toHaveCount(0);
+  await expect(
+    page.getByText("Payment adapter concept", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Paystack Ready", { exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByText("Stripe Billing", { exact: true }),
+  ).toHaveCount(0);
   const ecosystem = page.locator("#ecosystem");
   await expect(ecosystem.getByRole("article")).toHaveCount(9);
   for (const href of [
