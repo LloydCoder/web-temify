@@ -325,5 +325,7 @@ test("mobile navigation keeps visual and keyboard focus order aligned", async ({
   const ctaBox = await previewCta.boundingBox();
   expect(lastLinkBox).not.toBeNull();
   expect(ctaBox).not.toBeNull();
-  expect(ctaBox!.y).toBeGreaterThan(lastLinkBox!.y + lastLinkBox!.height);
+  expect(ctaBox!.y).toBeGreaterThan(
+    lastLinkBox!.y + lastLinkBox!.height,
+  );
 });
