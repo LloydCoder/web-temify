@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/catalog" },
   title: "Product Catalogue",
   description:
     "Browse verified Web-Temify digital-product releases. Only published " +
