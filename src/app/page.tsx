@@ -30,11 +30,11 @@ export default function HomePage() {
           <div className="hero-left">
             <div className="hero-badge">Marketplace Preview</div>
             <h1>
-              Your website,
+              Your next website,
               <br />
-              <span className="serif">ready in</span>
+              <span className="serif">starts</span>
               <br />
-              minutes.
+              here.
             </h1>
             <p className="hero-desc">
               Explore the Web-Temify marketplace concept: templates, launch
@@ -51,16 +51,10 @@ export default function HomePage() {
               </a>
             </div>
             <div className="hero-trust">
-              <div className="trust-faces">
-                <div className="face f1">😊</div>
-                <div className="face f2">🙂</div>
-                <div className="face f3">😄</div>
-                <div className="face f4">🤩</div>
-              </div>
               <div className="trust-text">
-                <strong>Built for builders</strong>
+                <strong>Marketplace concept</strong>
                 <br />
-                marketplace preview
+                Preview only · no accounts or checkout yet
               </div>
             </div>
           </div>
