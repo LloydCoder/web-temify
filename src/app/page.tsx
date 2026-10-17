@@ -10,7 +10,7 @@ const directoryFilters: Record<string, string[]> = {
   "Web3 & Blockchain": ["web3", "blockchain", "crypto", "nft", "wallet"],
   "Hosting & Infra": ["hosting", "infra", "cloud", "deploy"],
   "Design Tools": ["design", "creative", "ui", "ux"],
-  "No-Code": ["no", "code", "nocode", "builder"],
+  "No-Code": ["no"],
   "Dev Tools": ["dev", "coding", "developer", "api", "git"],
   "Freelancer Resources": ["freelancer", "resources", "client", "invoice"],
 };
@@ -57,12 +57,17 @@ export default function HomePage() {
     const root = rootRef.current;
     if (!root) return;
     const allowed = directoryFilters[activeDirectory] ?? [];
-    root.querySelectorAll<HTMLElement>(".dir-card").forEach((card) => {
+    const cards = Array.from(root.querySelectorAll<HTMLElement>(".dir-card"));
+    let visibleCount = 0;
+    cards.forEach((card) => {
       const tags = (card.dataset.directory ?? "").toLowerCase().split(/\s+/);
       card.hidden =
         allowed.length > 0 &&
         !allowed.some((filter) => tags.some((tag) => tag.includes(filter)));
+      if (!card.hidden) visibleCount += 1;
     });
+    const emptyState = root.querySelector<HTMLElement>(".dir-empty-state");
+    if (emptyState) emptyState.hidden = visibleCount > 0;
     root.querySelectorAll<HTMLButtonElement>(".dir-tab").forEach((tab) => {
       const selected = tab.textContent?.trim() === activeDirectory;
       tab.classList.toggle("active", selected);
@@ -974,6 +979,7 @@ export default function HomePage() {
               </div>
             </a>
           </div>
+            <p className="dir-empty-state" role="status" hidden>No matching tools are included in this preview yet.</p>
         </section>
 
         <section className="section-dark" id="how">
