@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Page not found | Web-Temify",
+  title: { absolute: "Page not found | Web-Temify" },
   description: "The requested Web-Temify page could not be found.",
   robots: { index: false, follow: true },
 };
