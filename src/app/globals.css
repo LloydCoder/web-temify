@@ -1,13 +1,15 @@
+@import url("https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap");
 @import "tailwindcss";
 :root {
-  --background: #f7f2e8;
-  --foreground: #191919;
-  --card: #fffdf7;
-  --coral: #ff654f;
-  --yellow: #f4d44d;
-  --mint: #c6e8d3;
-  --muted: #6a665f;
-  --border: #24221f;
+  --background: #fffbf4;
+  --foreground: #0f0d0a;
+  --card: #fff8ed;
+  --coral: #ff5733;
+  --yellow: #ffd60a;
+  --mint: #00c48c;
+  --muted: #6b6559;
+  --border: #0f0d0a;
 }
 @theme inline {
   --color-background: var(--background);
@@ -16,7 +18,7 @@
   --color-coral: var(--coral);
   --color-sunshine: var(--yellow);
   --color-mint: var(--mint);
-  --font-sans: Arial, Helvetica, sans-serif;
+  --font-sans: "Cabinet Grotesk", sans-serif;
 }
 * {
   box-sizing: border-box;
@@ -28,7 +30,7 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Cabinet Grotesk", sans-serif;
 }
 a {
   color: inherit;
