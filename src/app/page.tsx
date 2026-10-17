@@ -611,14 +611,14 @@ export default function HomePage() {
         <a href="/catalog" className="btn btn-ghost">Browse catalogue →</a>
       </div>
       <div className="dir-tabs reveal">
-        <button className="dir-tab active">All Tools</button>
-        <button className="dir-tab">AI & ML</button>
-        <button className="dir-tab">Web3 & Blockchain</button>
-        <button className="dir-tab">Hosting & Infra</button>
-        <button className="dir-tab">Design Tools</button>
-        <button className="dir-tab">No-Code</button>
-        <button className="dir-tab">Dev Tools</button>
-        <button className="dir-tab">Freelancer Resources</button>
+        <button className="dir-tab active" type="button" onClick={() => setActiveDirectory("All Tools")}>All Tools</button>
+        <button className="dir-tab" type="button" onClick={() => setActiveDirectory("AI & ML")}>AI & ML</button>
+        <button className="dir-tab" type="button" onClick={() => setActiveDirectory("Web3 & Blockchain")}>Web3 & Blockchain</button>
+        <button className="dir-tab" type="button" onClick={() => setActiveDirectory("Hosting & Infra")}>Hosting & Infra</button>
+        <button className="dir-tab" type="button" onClick={() => setActiveDirectory("Design Tools")}>Design Tools</button>
+        <button className="dir-tab" type="button" onClick={() => setActiveDirectory("No-Code")}>No-Code</button>
+        <button className="dir-tab" type="button" onClick={() => setActiveDirectory("Dev Tools")}>Dev Tools</button>
+        <button className="dir-tab" type="button" onClick={() => setActiveDirectory("Freelancer Resources")}>Freelancer Resources</button>
       </div>
       <div className="dir-grid reveal">
         <a className="dir-card featured" href="https://claude.ai/" target="_blank" rel="noreferrer" data-directory="ai coding free tier">
