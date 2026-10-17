@@ -26,7 +26,6 @@ import { POST } from "./route";
 const disputeId = "a2000000-0000-4000-8000-000000000292";
 const userId = "a3000000-0000-4000-8000-000000000293";
 const evidenceBytes = Buffer.from("private dispute evidence fixture");
-const digest = "f".repeat(64);
 
 function request(
   overrides: {
