@@ -106,7 +106,7 @@ test("homepage has no horizontal overflow on mobile or desktop", async ({
 test("mobile navigation opens and closes accessibly", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  const toggle = page.getByRole("button", { name: /toggle navigation/i });
+  const toggle = page.getByRole("button", { name: /navigation/i });
   const navigation = page.locator("#primary-navigation");
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
   await toggle.click();
@@ -123,7 +123,7 @@ test("mobile navigation closes on Escape and restores focus to the toggle", asyn
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  const toggle = page.getByRole("button", { name: /toggle navigation/i });
+  const toggle = page.getByRole("button", { name: /navigation/i });
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-expanded", "true");
   await page.keyboard.press("Escape");
@@ -221,4 +221,32 @@ test("robots and sitemap use the configured canonical origin", async ({
   ]) {
     expect(robots).toContain(`Disallow: ${path}`);
   }
+});
+
+
+test("header and hero respond correctly across desktop and mobile layouts", async ({
+  page,
+}) => {
+  const navigation = page.getByRole("navigation", { name: "Primary navigation" });
+  const toggle = page.getByRole("button", { name: /navigation/i });
+  const links = page.locator("#primary-navigation");
+  const hero = page.locator(".hero");
+  const heroVisual = page.locator(".hero-right");
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await expect(navigation).toBeVisible();
+  await expect(toggle).toBeVisible();
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(links).toBeHidden();
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Browse Templates" })).toBeVisible();
+  await expect(heroVisual).toBeHidden();
+  await expect(hero).toHaveCSS("grid-template-columns", /minmax\(0px, 1fr\)|1fr/);
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(toggle).toBeHidden();
+  await expect(links).toBeVisible();
+  await expect(links.getByRole("link", { name: "Templates" })).toBeVisible();
+  await expect(heroVisual).toBeVisible();
 });
