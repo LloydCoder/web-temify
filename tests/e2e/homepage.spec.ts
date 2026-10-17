@@ -342,7 +342,9 @@ test("mobile navigation keeps visual and keyboard focus order aligned", async ({
   expect(ctaBox!.y).toBeGreaterThan(lastLinkBox!.y + lastLinkBox!.height);
 });
 
-test("static V3 reference is excluded from search indexing", async ({ page }) => {
+test("static V3 reference is excluded from search indexing", async ({
+  page,
+}) => {
   const response = await page.request.get("/web-temify-v3.html");
   expect(response.ok()).toBe(true);
   const html = await response.text();
