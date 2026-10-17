@@ -255,7 +255,7 @@ test("header and hero respond correctly across desktop and mobile layouts", asyn
   await expect(page.locator(".hero-cta .btn-fill")).toHaveText(
     "Explore previews",
   );
-  await expect(heroVisual).toBeHidden();
+  await expect(heroVisual).toBeVisible();
   await expect(hero).toHaveCSS("grid-template-columns", /^\d+px$/);
 
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -303,6 +303,9 @@ test("hero preview cards remain visible on tablet and mobile", async ({
         document.documentElement.scrollWidth >
         document.documentElement.clientWidth,
     );
-    expect(overflow, `horizontal overflow at ${viewport.width}px`).toBe(false);
+    expect(
+      overflow,
+      `horizontal overflow at ${viewport.width}px`,
+    ).toBe(false);
   }
 });
