@@ -156,8 +156,7 @@ export default function HomePage() {
             <span>✦</span> Web3 DApp Kits <span>✦</span> NFT Marketplace
             <span>✦</span> Courier Templates <span>✦</span> P2P Crypto Scripts
             <span>✦</span> Loan Management <span>✦</span> AI Page Generator
-            <span>✦</span> Tech Directory <span>✦</span> Paystack · Stripe ·
-            LemonSqueezy <span>✦</span>
+            <span>✦</span> Tech Directory <span>✦</span> Payment providers pending verification <span>✦</span>
           </div>
         </div>
 
@@ -1803,14 +1802,14 @@ export default function HomePage() {
               Tinlance Limited ↗
             </a>
             <br />
-            Need a custom-built product? That&apos;s their lane.
+            Tinlance offers scoped custom engineering separately; Web-Temify marketplace-linked service requests are not live yet.
           </div>
         </div>
         <div className="footer-col">
           <h5>Marketplace</h5>
           <ul>
             <li>
-              <Link href="/catalog">All Templates</Link>
+              <Link href="/catalog">Catalogue preview</Link>
             </li>
             <li>
               <Link href="/catalog">Scripts</Link>
