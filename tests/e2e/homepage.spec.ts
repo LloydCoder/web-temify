@@ -42,6 +42,30 @@ test("homepage exposes usable AI prompt chips without claiming the builder is li
   await expect(page.getByRole("status")).toContainText(/has not been submitted or processed/i);
 });
 
+test("tech directory tabs filter the preview and support keyboard navigation", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const cards = page.locator(".dir-card");
+  await expect(cards).toHaveCount(6);
+  await page.getByRole("tab", { name: "Web3 & Blockchain" }).click();
+  await expect(cards.filter({ hasText: "Hardhat" })).toBeVisible();
+  await expect(cards.filter({ hasText: "Claude by Anthropic" })).toBeHidden();
+  await expect(cards).toHaveCount(6);
+
+  const web3Tab = page.getByRole("tab", { name: "Web3 & Blockchain" });
+  await expect(web3Tab).toHaveAttribute("aria-selected", "true");
+  await web3Tab.focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("tab", { name: "Hosting & Infra" })).toBeFocused();
+  await expect(page.getByRole("tab", { name: "Hosting & Infra" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await expect(cards.filter({ hasText: "Vercel" })).toBeVisible();
+  await expect(cards.filter({ hasText: "Hardhat" })).toBeHidden();
+});
+
 test("homepage has no horizontal overflow at mobile and desktop viewport widths", async ({
   page,
 }) => {
