@@ -342,6 +342,18 @@ test("mobile navigation keeps visual and keyboard focus order aligned", async ({
   expect(ctaBox!.y).toBeGreaterThan(lastLinkBox!.y + lastLinkBox!.height);
 });
 
+test("unknown routes return a noindex 404 with specific metadata", async ({
+  page,
+}) => {
+  const response = await page.goto("/forensic-audit-route-that-does-not-exist");
+  expect(response?.status()).toBe(404);
+  await expect(page).toHaveTitle("Page not found | Web-Temify");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    "content",
+    "noindex, follow",
+  );
+});
+
 test("static V3 reference is excluded from search indexing", async ({
   page,
 }) => {
