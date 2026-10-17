@@ -10,7 +10,7 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: /your website, ready in minutes/i,
+      name: /your next website, starts here/i,
     }),
   ).toBeVisible();
   await expect(
@@ -242,7 +242,7 @@ test("header and hero respond correctly across desktop and mobile layouts", asyn
   await expect(links).toBeHidden();
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Browse Templates" }),
+    page.getByRole("link", { name: "Explore previews" }),
   ).toBeVisible();
   await expect(heroVisual).toBeHidden();
   await expect(hero).toHaveCSS("grid-template-columns", /^\d+px$/);
