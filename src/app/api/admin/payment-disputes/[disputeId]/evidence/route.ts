@@ -34,31 +34,6 @@ function safeFilename(value: string | null) {
   return cleaned || "dispute-evidence.bin";
 }
 
-function contentMatchesDeclaredType(contentType: string, bytes: Uint8Array) {
-  if (contentType === "application/octet-stream") return true;
-  if (contentType === "application/pdf") {
-    return Buffer.from(bytes.subarray(0, 5)).toString("ascii") === "%PDF-";
-  }
-  if (contentType === "image/png") {
-    return Buffer.from(bytes.subarray(0, 8)).equals(
-      Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
-    );
-  }
-  if (contentType === "image/jpeg") {
-    return bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
-  }
-  if (contentType === "text/plain") {
-    if (bytes.includes(0)) return false;
-    try {
-      new TextDecoder("utf-8", { fatal: true }).decode(bytes);
-      return true;
-    } catch {
-      return false;
-    }
-  }
-  return false;
-}
-
 type RouteContext = {
   params: Promise<{ disputeId: string }>;
 };
@@ -109,9 +84,6 @@ export async function POST(request: Request, context: RouteContext) {
   }
   if (body.bytes.byteLength === 0) {
     return response({ error: "empty_evidence_file", requestId }, 400);
-  }
-  if (!contentMatchesDeclaredType(contentType, body.bytes)) {
-    return response({ error: "evidence_content_type_mismatch", requestId }, 415);
   }
 
   const { data: dispute, error: disputeError } = await adminContext.admin
