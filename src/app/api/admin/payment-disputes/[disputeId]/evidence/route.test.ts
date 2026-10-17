@@ -213,6 +213,27 @@ describe("Phase 5K dispute evidence upload", () => {
     expect(mocks.rpc).toHaveBeenCalledTimes(1);
   });
 
+  it("rejects a scanner attestation for different bytes", async () => {
+    mocks.scanSettlementEvidence.mockResolvedValue({
+      status: "clean",
+      scannerName: "clamav",
+      scannerVersion: "1.5.4",
+      signatureUpdatedAt: "2026-10-17T00:00:00.000Z",
+      sha256: "0".repeat(64),
+    });
+
+    const response = await POST(request(), {
+      params: Promise.resolve({ disputeId }),
+    });
+
+    expect(response.status).toBe(503);
+    expect(await response.json()).toMatchObject({
+      error: "evidence_scan_digest_mismatch",
+      scanStatus: "pending",
+    });
+    expect(mocks.rpc).toHaveBeenCalledTimes(1);
+  });
+
   it("returns an infected verdict without enabling submission", async () => {
     mocks.scanSettlementEvidence.mockResolvedValue({
       status: "infected",
