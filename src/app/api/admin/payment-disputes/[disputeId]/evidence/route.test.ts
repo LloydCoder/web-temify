@@ -81,13 +81,13 @@ function configureAdmin(status = "needs_evidence") {
   mocks.storageUpload.mockResolvedValue({ error: null });
   mocks.storageRemove.mockResolvedValue({ error: null });
   mocks.rpc.mockResolvedValue({ error: null });
-  mocks.scanSettlementEvidence.mockResolvedValue({
+  mocks.scanSettlementEvidence.mockImplementation(async (_bytes, sha256) => ({
     status: "clean",
     scannerName: "clamav",
     scannerVersion: "1.5.4",
     signatureUpdatedAt: "2026-10-17T00:00:00.000Z",
-    sha256: digest,
-  });
+    sha256,
+  }));
 }
 
 describe("Phase 5K dispute evidence upload", () => {
@@ -235,13 +235,13 @@ describe("Phase 5K dispute evidence upload", () => {
   });
 
   it("returns an infected verdict without enabling submission", async () => {
-    mocks.scanSettlementEvidence.mockResolvedValue({
+    mocks.scanSettlementEvidence.mockImplementation(async (_bytes, sha256) => ({
       status: "infected",
       scannerName: "clamav",
       scannerVersion: "1.5.4",
       signatureUpdatedAt: "2026-10-17T00:00:00.000Z",
-      sha256: digest,
-    });
+      sha256,
+    }));
 
     const response = await POST(request(), {
       params: Promise.resolve({ disputeId }),
