@@ -293,9 +293,13 @@ test("hero preview cards remain visible on tablet and mobile", async ({
     await page.goto("/");
     await expect(page.locator(".hero")).toBeVisible();
     await expect(page.locator(".hero-right .preview-card")).toHaveCount(3);
-    await expect(page.locator(".hero-right .preview-card").first()).toBeVisible();
+    await expect(
+      page.locator(".hero-right .preview-card").first(),
+    ).toBeVisible();
     const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+      () =>
+        document.documentElement.scrollWidth >
+        document.documentElement.clientWidth,
     );
     expect(overflow, `horizontal overflow at ${viewport.width}px`).toBe(false);
   }
