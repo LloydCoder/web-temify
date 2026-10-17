@@ -260,6 +260,10 @@ test("header and hero respond correctly across desktop and mobile layouts", asyn
     "Explore previews",
   );
   await expect(heroVisual).toBeVisible();
+  await expect(heroVisual).toHaveCSS("grid-template-columns", /^\d+px$/);
+  await toggle.focus();
+  await page.keyboard.press("Tab");
+  await expect(page.locator(".nav-actions .btn-fill")).toBeFocused();
   await expect(hero).toHaveCSS("grid-template-columns", /^\d+px$/);
 
   await page.setViewportSize({ width: 1440, height: 900 });
