@@ -245,7 +245,7 @@ test("header and hero respond correctly across desktop and mobile layouts", asyn
     page.getByRole("link", { name: "Browse Templates" }),
   ).toBeVisible();
   await expect(heroVisual).toBeHidden();
-  await expect(hero).toHaveCSS("grid-template-columns", /minmax\(0px, 1fr\)|1fr/);
+  await expect(hero).toHaveCSS("grid-template-columns", /^\\d+px$/);
 
   await page.setViewportSize({ width: 1440, height: 900 });
   await expect(toggle).toBeHidden();
