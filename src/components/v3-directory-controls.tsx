@@ -39,7 +39,11 @@ export default function V3DirectoryControls() {
   }, [activeDirectory]);
 
   return (
-    <div className="dir-tabs reveal" role="group" aria-label="Filter external tools">
+    <div
+      className="dir-tabs reveal"
+      role="group"
+      aria-label="Filter external tools"
+    >
       {directoryLabels.map((label) => (
         <button
           key={label}
