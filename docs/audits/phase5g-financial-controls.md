@@ -1,6 +1,6 @@
 # Phase 5G — financial control requests and payout holds
 
-**Status: FOUNDATION CI AND SECURITY PASSED ON IMPLEMENTATION HEAD `8c096e0950e00c27eb0e1cf4b6cab1dbaa7cf784`; MERGE AND OPERATIONAL VERIFICATION PENDING.** Foundation CI [run 38971016846](https://github.com/LloydCoder/web-temify/actions/runs/38971016846) and Security/dependency governance [run 38971016857](https://github.com/LloydCoder/web-temify/actions/runs/38971016857) passed on the exact implementation head. This is a database workflow candidate, not an authorization to move money or enable payouts.
+**Status: MERGED; database/API/UI code and CI passed; operational and accounting gates remain open.** PR [#78](https://github.com/LloydCoder/web-temify/pull/78) merged as `aee85f43e64676666b509d70bb12c523f7a0b093`; Foundation CI [passed](https://github.com/LloydCoder/web-temify/actions/runs/38971016846) and Security/dependency governance [passed](https://github.com/LloydCoder/web-temify/actions/runs/38971016857) on its exact implementation head. PR [#79](https://github.com/LloydCoder/web-temify/pull/79) added the restricted financial-controls API/UI and merged as `da12595799edc7d003f0dc90bed5ec29c68eb80b`; Foundation CI [passed](https://github.com/LloydCoder/web-temify/actions/runs/38973476047) and Security/dependency governance [passed](https://github.com/LloydCoder/web-temify/actions/runs/38973476065) on exact head `0f65229c27252e78cc1bb72f3da05c4f65081028`. The Vercel preview was not verified because of the team's deployment/build rate limit. These controls are not authorization to move money or enable payouts.
 
 ## Delivered in this candidate
 
@@ -21,9 +21,9 @@ This migration does **not** post a financial journal batch, debit/credit a ledge
 - [x] Foundation CI: migration reset, schema lint, pgTAP/RLS, E2E, formatting, typecheck, lint, and production build passed on exact PR head `89633d471eb7003f579cf732544b1231c1c1fe11`.
 - [x] Security/dependency governance passed on the same exact PR head.
 - [ ] Adversarial tests for concurrent idempotent creates, duplicate approvers, rejection after one approval, repeated hold-release attempts, incorrect seller/order links, negative-balance drift, and audit rollback.
-- [ ] Add a restricted admin API/UI and operational evidence display before exposing these workflows to staff.
+- [x] Add the restricted financial-controls API/UI for request and approval workflows in PR #79. Private evidence-object storage/content verification and a complete operational evidence display remain open.
 - [ ] Keep live payout execution disabled until the payout service enforces active holds and checks available seller payable against the journal.
 - [ ] Implement the separate provider-authenticated chargeback/dispute lifecycle and evidence intake.
 - [ ] Approve financial adjustment policy, retention, approval thresholds, staffing, and incident response.
 
-**Phase 5 remains incomplete.** This candidate covers part of the maker-checker/payout-hold gate only.
+**Phase 5 remains incomplete.** The maker-checker request workflow and restricted UI are merged, but approved manual adjustments do not post journal entries, no payout service enforces active holds, private evidence storage/verification is absent, and provider-authenticated chargeback/dispute handling and operational/legal approvals remain open.
