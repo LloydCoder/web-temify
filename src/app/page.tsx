@@ -539,6 +539,8 @@ export default function HomePage() {
               <input
                 type="text"
                 className="ai-input"
+                aria-label="Describe the website you want to build (preview only)"
+                aria-describedby="ai-builder-status"
                 placeholder="e.g. A fintech app for Nigerian SMEs..."
               />
               <button
@@ -1518,20 +1520,25 @@ export default function HomePage() {
                 <input
                   type="email"
                   className="nl-input"
-                  placeholder="your@email.com"
+                  aria-label="Email address for future Web-Temify updates"
+                  aria-describedby="newsletter-status"
+                  placeholder="Newsletter signup coming soon"
+                  disabled
                 />
                 <button className="btn btn-fill" type="button" disabled>
                   Signup coming soon
                 </button>
               </div>
               <p
+                id="newsletter-status"
+                role="status"
                 style={{
                   fontSize: "0.72rem",
                   color: "var(--muted)",
                   marginTop: "0.6rem",
                 }}
               >
-                By subscribing you agree to our Privacy Policy (coming soon).
+                Newsletter signup and the privacy policy are not live yet. No email is collected.
               </p>
             </div>
           </div>
