@@ -125,6 +125,10 @@ test("mobile navigation opens and closes accessibly", async ({ page }) => {
   await expect(
     navigation.getByRole("link", { name: "Templates" }),
   ).toBeVisible();
+  await page.keyboard.press("Tab");
+  await expect(
+    navigation.getByRole("link", { name: "Templates" }),
+  ).toBeFocused();
   await navigation.getByRole("link", { name: "Templates" }).click();
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
 });
