@@ -1,44 +1,48 @@
 import { expect, test } from "@playwright/test";
 
-test("homepage serves the canonical V3 experience", async ({ page }) => {
+test("homepage renders the V3 marketplace preview as server-rendered page content", async ({
+  page,
+}) => {
   await page.goto("/");
-  await expect(page.getByRole("main")).toBeVisible();
 
-  const experience = page.frameLocator(
-    'iframe[title="Web-Temify V3 marketplace experience"]',
+  await expect(page.getByRole("main", { name: /marketplace preview/i })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: /your website, ready in minutes/i }),
+  ).toBeVisible();
+  await expect(page.getByText(/no products are available for purchase/i)).toBeVisible();
+  await expect(page.getByRole("link", { name: /browse catalogue/i }).first()).toHaveAttribute(
+    "href",
+    "/catalog",
   );
+  await expect(page.locator('iframe[title="Web-Temify V3 marketplace experience"]')).toHaveCount(0);
+  await expect(page.locator('a[href="#"]')).toHaveCount(0);
   await expect(
-    experience.getByRole("heading", {
-      name: /your website, ready in minutes/i,
-    }),
-  ).toBeVisible();
-  await expect(
-    experience.getByText(/no products are available for purchase/i),
-  ).toBeVisible();
-  await expect(
-    experience.getByRole("link", { name: /browse catalogue/i }).first(),
-  ).toBeVisible();
-  await expect(experience.locator('a[href="#"]')).toHaveCount(0);
-  await expect(
-    experience.getByText(
-      /2,400\+ businesses|1,200\+ curated tools|[0-9,]+ sales/i,
-    ),
+    page.getByText(/2,400\+ businesses|1,200\+ curated tools|[0-9,]+ sales/i),
   ).toHaveCount(0);
 
-  const frame = page.locator(
-    'iframe[title="Web-Temify V3 marketplace experience"]',
+  const unresolvedAnchorTargets = await page.locator("main a[href^=\"#\"]").evaluateAll(
+    (anchors) =>
+      anchors
+        .map((anchor) => anchor.getAttribute("href")?.slice(1) ?? "")
+        .filter((target) => target && !document.getElementById(target)),
   );
-  const unresolvedAnchorTargets = await frame.evaluate((element) => {
-    const document = (element as HTMLIFrameElement).contentDocument;
-    if (!document) return ["iframe document unavailable"];
-    return Array.from(document.querySelectorAll('a[href^="#"]'))
-      .map((anchor) => anchor.getAttribute("href")?.slice(1) ?? "")
-      .filter((target) => target && !document.getElementById(target));
-  });
   expect(unresolvedAnchorTargets).toEqual([]);
 });
 
-test("homepage has semantic landmarks and no horizontal overflow on mobile or desktop", async ({
+test("homepage exposes usable AI prompt chips without claiming the builder is live", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const input = page.locator(".ai-input");
+  await page.getByRole("button", { name: /use prompt: logistics company/i }).click();
+  await expect(input).toHaveValue("Logistics company website");
+
+  await page.getByRole("button", { name: /generate/i }).click();
+  await expect(page.getByRole("status")).toContainText(/planned but is not available yet/i);
+  await expect(page.getByRole("status")).toContainText(/has not been submitted or processed/i);
+});
+
+test("homepage has no horizontal overflow at mobile and desktop viewport widths", async ({
   page,
 }) => {
   for (const viewport of [
@@ -47,26 +51,12 @@ test("homepage has semantic landmarks and no horizontal overflow on mobile or de
   ]) {
     await page.setViewportSize(viewport);
     await page.goto("/");
-    await expect(page.getByRole("main")).toBeVisible();
+    await expect(page.getByRole("main", { name: /marketplace preview/i })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
-    const experience = page.frameLocator(
-      'iframe[title="Web-Temify V3 marketplace experience"]',
+    const hasHorizontalOverflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
     );
-    await expect(experience.getByRole("heading", { level: 1 })).toBeVisible();
-
-    const frame = page.locator(
-      'iframe[title="Web-Temify V3 marketplace experience"]',
-    );
-    const hasHorizontalOverflow = await frame.evaluate((element) => {
-      const document = (element as HTMLIFrameElement).contentDocument;
-      return document
-        ? document.documentElement.scrollWidth >
-            document.documentElement.clientWidth
-        : true;
-    });
-    expect(
-      hasHorizontalOverflow,
-      `horizontal overflow at ${viewport.width}px viewport`,
-    ).toBe(false);
+    expect(hasHorizontalOverflow, `horizontal overflow at ${viewport.width}px viewport`).toBe(false);
   }
 });
