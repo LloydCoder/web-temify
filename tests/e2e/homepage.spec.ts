@@ -146,8 +146,7 @@ test("directory tabs filter the visible external tool cards", async ({
   await expect
     .poll(() =>
       cards.evaluateAll(
-        (items) =>
-              items.filter((item) => !item.hasAttribute("hidden")).length,
+        (items) => items.filter((item) => !item.hasAttribute("hidden")).length,
       ),
     )
     .toBeLessThan(allCount);
@@ -172,7 +171,8 @@ test(
       await expect
         .poll(() =>
           cards.evaluateAll(
-            (items) => items.filter((item) => !item.hasAttribute("hidden")).length,
+            (items) =>
+              items.filter((item) => !item.hasAttribute("hidden")).length,
           ),
         )
         .toBeGreaterThan(0);
