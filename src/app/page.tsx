@@ -1507,7 +1507,6 @@ export default function HomePage() {
             </a>
           </div>
         </section>
-      </main>
 
         <section className="ecosystem-section" id="ecosystem" aria-labelledby="ecosystem-title">
           <div className="ecosystem-inner">
@@ -1530,6 +1529,7 @@ export default function HomePage() {
             <p className="ecosystem-disclaimer">Availability is feature-specific. Planned cards are roadmap disclosures, not promises of launch dates. Payment processing, seller payouts and live money movement remain disabled until the required technical, legal, security and operational gates are verified.</p>
           </div>
         </section>
+      </main>
 
       <footer>
         <div className="footer-brand">
