@@ -937,8 +937,7 @@ export default function HomePage() {
               <div className="dir-info">
                 <div className="dir-name">Paystack</div>
                 <div className="dir-desc">
-                  Africa&apos;s leading payment gateway — cards, bank transfers,
-                  USSD, mobile money
+                  Payment infrastructure for businesses, including cards, bank transfers, USSD, and mobile money.
                 </div>
                 <div className="dir-pills">
                   <span className="dir-pill">Payments</span>
@@ -994,9 +993,7 @@ export default function HomePage() {
               <span className="step-icon">⚡</span>
               <h3>Download & Deploy</h3>
               <p>
-                Instant secure download after purchase. Full source files and
-                setup guides. Pay via Paystack, Stripe, or LemonSqueezy — your
-                choice.
+                Secure downloads and setup guides are planned for released products. Payment providers will be announced after integration and checkout testing.
               </p>
             </div>
             <div className="step">
@@ -1004,8 +1001,7 @@ export default function HomePage() {
               <span className="step-icon">🛠️</span>
               <h3>Need Customisation?</h3>
               <p>
-                Our team at Tinlance builds custom implementations and full
-                products. Request a service directly from any template page.
+                Custom implementation services are offered separately by Tinlance. Marketplace-linked service requests are planned, not live.
               </p>
             </div>
           </div>
