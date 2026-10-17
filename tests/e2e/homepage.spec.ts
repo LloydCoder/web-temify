@@ -206,9 +206,11 @@ test("robots and sitemap use the configured canonical origin", async ({
   page,
 }) => {
   await page.goto("/");
-  const origin = new URL(page.url()).origin;
+  const requestOrigin = new URL(page.url()).origin;
+  const canonicalOrigin =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://web-temify.vercel.app";
   const sitemapResponse = await page.request.get(
-    new URL("/sitemap.xml", origin).toString(),
+    new URL("/sitemap.xml", requestOrigin).toString(),
   );
   expect(sitemapResponse.ok()).toBe(true);
   const sitemap = await sitemapResponse.text();
@@ -217,14 +219,14 @@ test("robots and sitemap use the configured canonical origin", async ({
     .slice(1)
     .map((entry) => new URL(entry.split("</loc>")[0]).origin);
   expect(sitemapOrigins.length).toBeGreaterThan(0);
-  expect([...new Set(sitemapOrigins)]).toEqual([origin]);
+  expect([...new Set(sitemapOrigins)]).toEqual([canonicalOrigin]);
 
   const robotsResponse = await page.request.get(
-    new URL("/robots.txt", origin).toString(),
+    new URL("/robots.txt", requestOrigin).toString(),
   );
   expect(robotsResponse.ok()).toBe(true);
   const robots = await robotsResponse.text();
-  expect(robots).toContain(`Sitemap: ${origin}/sitemap.xml`);
+  expect(robots).toContain(`Sitemap: ${canonicalOrigin}/sitemap.xml`);
   for (const path of [
     "/admin",
     "/account",
