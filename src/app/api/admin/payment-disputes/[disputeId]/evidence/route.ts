@@ -110,6 +110,9 @@ export async function POST(request: Request, context: RouteContext) {
   if (body.bytes.byteLength === 0) {
     return response({ error: "empty_evidence_file", requestId }, 400);
   }
+  if (!contentMatchesDeclaredType(contentType, body.bytes)) {
+    return response({ error: "evidence_content_type_mismatch", requestId }, 415);
+  }
 
   const { data: dispute, error: disputeError } = await adminContext.admin
     .from("payment_disputes")
