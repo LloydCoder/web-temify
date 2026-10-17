@@ -168,7 +168,7 @@ describe("Phase 5K dispute evidence upload", () => {
       scanStatus: "clean",
       providerSubmission: "not_submitted",
       sourceAuthenticity: "not_verified",
-      filename: "___chargeback.pdf",
+      filename: "_.._chargeback.pdf",
     });
     expect(body.sha256).toMatch(/^[a-f0-9]{64}$/);
     expect(mocks.storageUpload).toHaveBeenCalledWith(
