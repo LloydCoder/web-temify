@@ -142,7 +142,7 @@
   padding: 0.8rem 1.1rem;
   background: var(--ed-coral);
   border: 2px solid var(--ed-coral);
-  color: #fff !important;
+  color: var(--ed-ink) !important;
   font-weight: 900;
   text-decoration: none;
 }
