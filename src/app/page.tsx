@@ -185,7 +185,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("Fintech & Banking")}`}
               className="cat-card cc-1"
-              aria-label="Browse verified releases: Fintech & Banking"
+              aria-label="Fintech & Banking — browse the catalogue"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🏦</span>
@@ -198,7 +198,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("Web3 & Blockchain")}`}
               className="cat-card cc-2"
-              aria-label="Browse verified releases: Web3 & Blockchain"
+              aria-label="Web3 & Blockchain — browse the catalogue"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">⛓️</span>
@@ -211,7 +211,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("Logistics & Courier")}`}
               className="cat-card cc-3"
-              aria-label="Browse verified releases: Logistics & Courier"
+              aria-label="Logistics & Courier — browse the catalogue"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🚚</span>
@@ -224,7 +224,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("SaaS & Startups")}`}
               className="cat-card cc-4"
-              aria-label="Browse verified releases: SaaS & Startups"
+              aria-label="SaaS & Startups — browse the catalogue"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🚀</span>
@@ -237,7 +237,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("Agency & Portfolio")}`}
               className="cat-card cc-5"
-              aria-label="Browse verified releases: Agency & Portfolio"
+              aria-label="Agency & Portfolio — browse the catalogue"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🎨</span>
@@ -250,7 +250,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("E-commerce")}`}
               className="cat-card cc-6"
-              aria-label="Browse verified releases: E-commerce"
+              aria-label="E-commerce — browse the catalogue"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🛒</span>
@@ -263,7 +263,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("Real Estate")}`}
               className="cat-card cc-7"
-              aria-label="Browse verified releases: Real Estate"
+              aria-label="Real Estate — browse the catalogue"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🏘️</span>
@@ -276,7 +276,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("Scripts & Tools")}`}
               className="cat-card cc-8"
-              aria-label="Browse verified releases: Scripts & Tools"
+              aria-label="Scripts & Tools — browse the catalogue"
             >
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">⚡</span>
@@ -598,7 +598,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("Wallet Auth UI")}`}
               className="web3-card"
-              aria-label="Browse verified releases: Wallet Auth UI"
+              aria-label="Wallet Auth UI — browse the catalogue"
             >
               <span className="web3-icon">👛</span>
               <div className="web3-name">Wallet Auth UI</div>
@@ -610,7 +610,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("NFT Galleries")}`}
               className="web3-card"
-              aria-label="Browse verified releases: NFT Galleries"
+              aria-label="NFT Galleries — browse the catalogue"
             >
               <span className="web3-icon">🖼️</span>
               <div className="web3-name">NFT Galleries</div>
@@ -622,7 +622,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("DeFi Dashboards")}`}
               className="web3-card"
-              aria-label="Browse verified releases: DeFi Dashboards"
+              aria-label="DeFi Dashboards — browse the catalogue"
             >
               <span className="web3-icon">📊</span>
               <div className="web3-name">DeFi Dashboards</div>
@@ -634,7 +634,7 @@ export default function HomePage() {
             <Link
               href={`/catalog?q=${encodeURIComponent("DAO Governance")}`}
               className="web3-card"
-              aria-label="Browse verified releases: DAO Governance"
+              aria-label="DAO Governance — browse the catalogue"
             >
               <span className="web3-icon">🏛️</span>
               <div className="web3-name">DAO Governance</div>
@@ -994,7 +994,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="feature-visual reveal">
-              <div className="fv-header">
+              <div className="fv-header" style={{ backgroundColor: "#0f0d0a" }}>
                 <span className="dot dot-r"></span>
                 <span className="dot dot-y"></span>
                 <span className="dot dot-g"></span>
@@ -1845,7 +1845,7 @@ export default function HomePage() {
               href="https://tinlance.com"
               target="_blank"
               rel="noreferrer"
-              style={{ color: "var(--coral-text)", fontWeight: "800" }}
+              style={{ color: "#a83218", fontWeight: "800" }}
             >
               Tinlance Limited ↗
             </a>
