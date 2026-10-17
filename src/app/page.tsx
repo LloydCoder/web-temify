@@ -68,11 +68,6 @@ export default function HomePage() {
     });
     const emptyState = root.querySelector<HTMLElement>(".dir-empty-state");
     if (emptyState) emptyState.hidden = visibleCount > 0;
-    root.querySelectorAll<HTMLButtonElement>(".dir-tab").forEach((tab) => {
-      const selected = tab.textContent?.trim() === activeDirectory;
-      tab.classList.toggle("active", selected);
-      tab.setAttribute("aria-pressed", String(selected));
-    });
   }, [activeDirectory]);
 
   return (
@@ -792,60 +787,60 @@ export default function HomePage() {
               Browse catalogue →
             </Link>
           </div>
-          <div className="dir-tabs reveal">
+          <div className="dir-tabs reveal" role="group" aria-label="Filter external tools">
             <button
-              className="dir-tab active"
+              className={`dir-tab${activeDirectory === "All Tools" ? " active" : ""}`}
               type="button"
-              onClick={() => setActiveDirectory("All Tools")}
+              aria-pressed={activeDirectory === "All Tools"} onClick={() => setActiveDirectory("All Tools")}
             >
               All Tools
             </button>
             <button
-              className="dir-tab"
+              className={`dir-tab${activeDirectory === "AI & ML" ? " active" : ""}`}
               type="button"
-              onClick={() => setActiveDirectory("AI & ML")}
+              aria-pressed={activeDirectory === "AI & ML"} onClick={() => setActiveDirectory("AI & ML")}
             >
               AI & ML
             </button>
             <button
-              className="dir-tab"
+              className={`dir-tab${activeDirectory === "Web3 & Blockchain" ? " active" : ""}`}
               type="button"
-              onClick={() => setActiveDirectory("Web3 & Blockchain")}
+              aria-pressed={activeDirectory === "Web3 & Blockchain"} onClick={() => setActiveDirectory("Web3 & Blockchain")}
             >
               Web3 & Blockchain
             </button>
             <button
-              className="dir-tab"
+              className={`dir-tab${activeDirectory === "Hosting & Infra" ? " active" : ""}`}
               type="button"
-              onClick={() => setActiveDirectory("Hosting & Infra")}
+              aria-pressed={activeDirectory === "Hosting & Infra"} onClick={() => setActiveDirectory("Hosting & Infra")}
             >
               Hosting & Infra
             </button>
             <button
-              className="dir-tab"
+              className={`dir-tab${activeDirectory === "Design Tools" ? " active" : ""}`}
               type="button"
-              onClick={() => setActiveDirectory("Design Tools")}
+              aria-pressed={activeDirectory === "Design Tools"} onClick={() => setActiveDirectory("Design Tools")}
             >
               Design Tools
             </button>
             <button
-              className="dir-tab"
+              className={`dir-tab${activeDirectory === "No-Code" ? " active" : ""}`}
               type="button"
-              onClick={() => setActiveDirectory("No-Code")}
+              aria-pressed={activeDirectory === "No-Code"} onClick={() => setActiveDirectory("No-Code")}
             >
               No-Code
             </button>
             <button
-              className="dir-tab"
+              className={`dir-tab${activeDirectory === "Dev Tools" ? " active" : ""}`}
               type="button"
-              onClick={() => setActiveDirectory("Dev Tools")}
+              aria-pressed={activeDirectory === "Dev Tools"} onClick={() => setActiveDirectory("Dev Tools")}
             >
               Dev Tools
             </button>
             <button
-              className="dir-tab"
+              className={`dir-tab${activeDirectory === "Freelancer Resources" ? " active" : ""}`}
               type="button"
-              onClick={() => setActiveDirectory("Freelancer Resources")}
+              aria-pressed={activeDirectory === "Freelancer Resources"} onClick={() => setActiveDirectory("Freelancer Resources")}
             >
               Freelancer Resources
             </button>
