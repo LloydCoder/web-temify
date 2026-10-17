@@ -310,3 +310,20 @@ test("hero preview cards remain visible on tablet and mobile", async ({
     expect(overflow, `horizontal overflow at ${viewport.width}px`).toBe(false);
   }
 });
+
+test("mobile navigation keeps visual and keyboard focus order aligned", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Open navigation" }).click();
+  const lastNavLink = page.getByRole("link", { name: "Platform" });
+  const previewCta = page.getByRole("link", { name: "Browse previews" });
+  await expect(lastNavLink).toBeVisible();
+  await expect(previewCta).toBeVisible();
+  const lastLinkBox = await lastNavLink.boundingBox();
+  const ctaBox = await previewCta.boundingBox();
+  expect(lastLinkBox).not.toBeNull();
+  expect(ctaBox).not.toBeNull();
+  expect(ctaBox!.y).toBeGreaterThan(lastLinkBox!.y + lastLinkBox!.height);
+});
