@@ -7,15 +7,15 @@ function readV3Document() {
     join(process.cwd(), "public", "web-temify-v3.html"),
     "utf8",
   );
-  const stylesheet = document.match(/<style[^>]*>([\\s\\S]*?)<\\/style>/i)?.[1];
-  const body = document.match(/<body[^>]*>([\\s\\S]*?)<\\/body>/i)?.[1];
+  const stylesheet = document.match(/<style[^>]*>([\s\S]*?)<\/style>/i)?.[1];
+  const body = document.match(/<body[^>]*>([\s\S]*?)<\/body>/i)?.[1];
 
   if (!stylesheet || !body) {
     throw new Error("The V3 homepage reference is missing its stylesheet or body.");
   }
 
-  const withoutScripts = body.replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, "");
-  const nav = withoutScripts.match(/<nav\\b[^>]*>[\\s\\S]*?<\\/nav>/i)?.[0];
+  const withoutScripts = body.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+  const nav = withoutScripts.match(/<nav\b[^>]*>[\s\S]*?<\/nav>/i)?.[0];
   const content = nav ? withoutScripts.replace(nav, "") : withoutScripts;
 
   return {
