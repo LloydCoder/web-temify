@@ -186,8 +186,8 @@ export default function HomePage() {
               <span className="cat-emoji">🏦</span>
               <h3>Fintech & Banking</h3>
               <p>
-                Banking UIs, loan platforms, and payment-system concepts for global
-                and regional markets.
+                Banking UIs, loan platforms, and payment-system concepts
+                for global and regional markets.
               </p>
             </Link>
             <Link
@@ -410,8 +410,8 @@ export default function HomePage() {
                   maxWidth: "400px",
                 }}
               >
-                Planned launch kits will bundle the pieces a project needs. These
-                cards are illustrative previews, not released products.
+                Planned launch kits will bundle a project's core pieces.
+                These cards are previews, not released products.
               </p>
             </div>
           </div>
@@ -421,8 +421,9 @@ export default function HomePage() {
               <div className="kit-tag">SaaS concept preview</div>
               <div className="kit-name">SaaS Starter Kit</div>
               <div className="kit-desc">
-                Concept preview: a future SaaS starter bundle may include auth,
-                billing, a dashboard, onboarding, and a landing page. Not available yet.
+                Concept preview: a SaaS starter bundle may include auth,
+                billing, a dashboard, onboarding, and a landing page.
+                Not available for purchase yet.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Landing Page</span>
@@ -450,8 +451,8 @@ export default function HomePage() {
               <div className="kit-tag">🔥 Web3</div>
               <div className="kit-name">Web3 DApp Starter Kit</div>
               <div className="kit-desc">
-                Planned bundle concept: wallet connection, smart-contract UI, token dashboard,
-                and NFT components. Not available for purchase yet.
+                Planned bundle: wallet connection and smart-contract UI,
+                token dashboard, and NFT components. Not available yet.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Wallet Connect</span>
@@ -474,8 +475,8 @@ export default function HomePage() {
               <div className="kit-tag">💰 Fintech</div>
               <div className="kit-name">Fintech Launch Kit</div>
               <div className="kit-desc">
-                Region-aware fintech UI, loan calculator, KYC flow, and payment integration
-                concepts. Providers and jurisdictions require validation per market.
+                Region-aware fintech UI, loan calculator, and KYC flow.
+                Validate payment providers and jurisdictions for each market.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Banking Template</span>
@@ -498,8 +499,8 @@ export default function HomePage() {
               <div className="kit-tag">🏢 Agency</div>
               <div className="kit-name">Agency Starter Kit</div>
               <div className="kit-desc">
-                Planned agency bundle concept: portfolio, services pages, case studies,
-                contact forms, and lead capture. Not available for purchase yet.
+                Planned agency bundle: portfolio, services pages, case
+                studies, contact forms, and lead capture. Not available yet.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Portfolio Pages</span>
@@ -941,8 +942,8 @@ export default function HomePage() {
                 <div className="feat-text">
                   <h4>Lightning Fast Load Times</h4>
                   <p>
-                    Released templates will be performance-tested against targets published
-                    with each verified release.
+                    Released templates will be tested against published
+                    performance targets before they are marked verified.
                   </p>
                 </div>
               </div>
@@ -951,8 +952,8 @@ export default function HomePage() {
                 <div className="feat-text">
                   <h4>Mobile-First by Default</h4>
                   <p>
-                    Responsive behavior will be tested across phones, tablets, and desktops
-                    before a release is marked verified.
+                    Responsive behavior will be tested across phones, tablets,
+                    and desktops before a release is marked verified.
                   </p>
                 </div>
               </div>
@@ -961,8 +962,8 @@ export default function HomePage() {
                 <div className="feat-text">
                   <h4>SEO Built In</h4>
                   <p>
-                    SEO requirements, including metadata and structured data, will be
-                    documented and tested for verified releases.
+                    SEO requirements, including metadata and structured data,
+                    will be documented and tested for verified releases.
                   </p>
                 </div>
               </div>
@@ -1111,8 +1112,8 @@ export default function HomePage() {
                   maxWidth: "400px",
                 }}
               >
-                Tinlance delivers custom engineering for founders and businesses across
-                global markets, with region-specific implementation where needed.
+                Tinlance delivers custom engineering worldwide, with
+                region-specific implementation where needed.
               </p>
             </div>
             <a
