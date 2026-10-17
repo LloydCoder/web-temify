@@ -296,7 +296,7 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="cat-grid reveal">
-            <Link href="/catalog" className="cat-card cc-1" aria-label="Browse verified releases: Fintech & Banking">
+            <Link href={`/catalog?q=${encodeURIComponent("Fintech & Banking")}`} className="cat-card cc-1" aria-label="Browse verified releases: Fintech & Banking">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🏦</span>
               <h3>Fintech & Banking</h3>
@@ -305,7 +305,7 @@ export default function HomePage() {
                 the African market.
               </p>
             </Link>
-            <Link href="/catalog" className="cat-card cc-2" aria-label="Browse verified releases: Web3 & Blockchain">
+            <Link href={`/catalog?q=${encodeURIComponent("Web3 & Blockchain")}`} className="cat-card cc-2" aria-label="Browse verified releases: Web3 & Blockchain">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">⛓️</span>
               <h3>Web3 & Blockchain</h3>
@@ -314,7 +314,7 @@ export default function HomePage() {
                 kits.
               </p>
             </Link>
-            <Link href="/catalog" className="cat-card cc-3" aria-label="Browse verified releases: Logistics & Courier">
+            <Link href={`/catalog?q=${encodeURIComponent("Logistics & Courier")}`} className="cat-card cc-3" aria-label="Browse verified releases: Logistics & Courier">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🚚</span>
               <h3>Logistics & Courier</h3>
@@ -323,7 +323,7 @@ export default function HomePage() {
                 fleet management.
               </p>
             </Link>
-            <Link href="/catalog" className="cat-card cc-4" aria-label="Browse verified releases: SaaS & Startups">
+            <Link href={`/catalog?q=${encodeURIComponent("SaaS & Startups")}`} className="cat-card cc-4" aria-label="Browse verified releases: SaaS & Startups">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🚀</span>
               <h3>SaaS & Startups</h3>
@@ -332,7 +332,7 @@ export default function HomePage() {
                 templates.
               </p>
             </Link>
-            <Link href="/catalog" className="cat-card cc-5" aria-label="Browse verified releases: Agency & Portfolio">
+            <Link href={`/catalog?q=${encodeURIComponent("Agency & Portfolio")}`} className="cat-card cc-5" aria-label="Browse verified releases: Agency & Portfolio">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🎨</span>
               <h3>Agency & Portfolio</h3>
@@ -341,7 +341,7 @@ export default function HomePage() {
                 freelancers.
               </p>
             </Link>
-            <Link href="/catalog" className="cat-card cc-6" aria-label="Browse verified releases: E-commerce">
+            <Link href={`/catalog?q=${encodeURIComponent("E-commerce")}`} className="cat-card cc-6" aria-label="Browse verified releases: E-commerce">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🛒</span>
               <h3>E-commerce</h3>
@@ -350,7 +350,7 @@ export default function HomePage() {
                 and physical goods.
               </p>
             </Link>
-            <Link href="/catalog" className="cat-card cc-7" aria-label="Browse verified releases: Real Estate">
+            <Link href={`/catalog?q=${encodeURIComponent("Real Estate")}`} className="cat-card cc-7" aria-label="Browse verified releases: Real Estate">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">🏘️</span>
               <h3>Real Estate</h3>
@@ -359,7 +359,7 @@ export default function HomePage() {
                 templates.
               </p>
             </Link>
-            <Link href="/catalog" className="cat-card cc-8" aria-label="Browse verified releases: Scripts & Tools">
+            <Link href={`/catalog?q=${encodeURIComponent("Scripts & Tools")}`} className="cat-card cc-8" aria-label="Browse verified releases: Scripts & Tools">
               <span className="cat-count">Preview</span>
               <span className="cat-emoji">⚡</span>
               <h3>Scripts & Tools</h3>
@@ -723,7 +723,7 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="web3-grid reveal">
-            <Link href="/catalog" className="web3-card" aria-label="Browse verified releases: Wallet Auth UI">
+            <Link href={`/catalog?q=${encodeURIComponent("Wallet Auth UI")}`} className="web3-card" aria-label="Browse verified releases: Wallet Auth UI">
               <span className="web3-icon">👛</span>
               <div className="web3-name">Wallet Auth UI</div>
               <div className="web3-desc">
@@ -731,7 +731,7 @@ export default function HomePage() {
                 for any project
               </div>
             </Link>
-            <Link href="/catalog" className="web3-card" aria-label="Browse verified releases: NFT Galleries">
+            <Link href={`/catalog?q=${encodeURIComponent("NFT Galleries")}`} className="web3-card" aria-label="Browse verified releases: NFT Galleries">
               <span className="web3-icon">🖼️</span>
               <div className="web3-name">NFT Galleries</div>
               <div className="web3-desc">
@@ -739,7 +739,7 @@ export default function HomePage() {
                 and tested
               </div>
             </Link>
-            <Link href="/catalog" className="web3-card" aria-label="Browse verified releases: DeFi Dashboards">
+            <Link href={`/catalog?q=${encodeURIComponent("DeFi Dashboards")}`} className="web3-card" aria-label="Browse verified releases: DeFi Dashboards">
               <span className="web3-icon">📊</span>
               <div className="web3-name">DeFi Dashboards</div>
               <div className="web3-desc">
@@ -747,7 +747,7 @@ export default function HomePage() {
                 ready to download
               </div>
             </Link>
-            <Link href="/catalog" className="web3-card" aria-label="Browse verified releases: DAO Governance">
+            <Link href={`/catalog?q=${encodeURIComponent("DAO Governance")}`} className="web3-card" aria-label="Browse verified releases: DAO Governance">
               <span className="web3-icon">🏛️</span>
               <div className="web3-name">DAO Governance</div>
               <div className="web3-desc">
