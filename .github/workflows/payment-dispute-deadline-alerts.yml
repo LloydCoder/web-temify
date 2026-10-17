@@ -1,0 +1,40 @@
+name: Payment dispute deadline alerts
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: payment-dispute-deadline-alerts
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    name: Dispatch dispute deadline alerts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate worker token
+        env:
+          PAYMENT_DISPUTE_ALERT_WORKER_TOKEN: ${{ secrets.PAYMENT_DISPUTE_ALERT_WORKER_TOKEN }}
+        run: |
+          if [ -z "$PAYMENT_DISPUTE_ALERT_WORKER_TOKEN" ] || [ "${#PAYMENT_DISPUTE_ALERT_WORKER_TOKEN}" -lt 32 ]; then
+            echo "::error::PAYMENT_DISPUTE_ALERT_WORKER_TOKEN must be configured as a repository secret and contain at least 32 characters."
+            exit 1
+          fi
+      - name: Dispatch worker
+        env:
+          PAYMENT_DISPUTE_ALERT_WORKER_TOKEN: ${{ secrets.PAYMENT_DISPUTE_ALERT_WORKER_TOKEN }}
+          WORKER_URL: https://web-temify.vercel.app/api/internal/payment-dispute-alerts
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            --max-time 60 --retry 2 --retry-delay 2 \
+            -X POST \
+            -H "Authorization: Bearer ${PAYMENT_DISPUTE_ALERT_WORKER_TOKEN}" \
+            -H "Accept: application/json" \
+            "${WORKER_URL}"
