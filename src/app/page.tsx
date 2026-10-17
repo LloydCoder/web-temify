@@ -186,8 +186,8 @@ export default function HomePage() {
               <span className="cat-emoji">🏦</span>
               <h3>Fintech & Banking</h3>
               <p>
-                Banking UIs, loan platforms, and payment system templates for
-                the African market.
+                Banking UIs, loan platforms, and payment-system concepts for global
+                and regional markets.
               </p>
             </Link>
             <Link
@@ -277,7 +277,7 @@ export default function HomePage() {
               <span className="cat-emoji">⚡</span>
               <h3>Scripts & Tools</h3>
               <p>
-                Full-stack functional scripts — P2P trading, loan management,
+                Planned script categories include P2P trading, loan management,
                 banking, POS, and more.
               </p>
             </Link>
@@ -289,9 +289,9 @@ export default function HomePage() {
             <div>
               <p className="eyebrow">Featured Products</p>
               <h2 className="section-title">
-                Template & script concepts
+                Template & script previews
                 <br />
-                <span className="serif">& scripts</span>
+                <span className="serif">for your next build</span>
               </h2>
             </div>
             <Link href="/catalog" className="btn btn-ghost">
@@ -410,8 +410,8 @@ export default function HomePage() {
                   maxWidth: "400px",
                 }}
               >
-                Everything bundled, tested, and ready to deploy — not just a
-                single file.
+                Planned launch kits will bundle the pieces a project needs. These
+                cards are illustrative previews, not released products.
               </p>
             </div>
           </div>
@@ -421,8 +421,8 @@ export default function HomePage() {
               <div className="kit-tag">⚡ Most Popular</div>
               <div className="kit-name">SaaS Starter Kit</div>
               <div className="kit-desc">
-                Launch a SaaS product in a weekend — auth, billing, dashboard,
-                onboarding, and landing page, all included.
+                Concept preview: a future SaaS starter bundle may include auth,
+                billing, a dashboard, onboarding, and a landing page. Not available yet.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Landing Page</span>
@@ -437,7 +437,7 @@ export default function HomePage() {
                     className="kit-price"
                     style={{ color: "var(--yellow)" }}
                   >
-                    Preview
+                    Preview · Not available
                   </span>
                 </div>
                 <Link href="/catalog" className="btn btn-yellow">
@@ -450,8 +450,8 @@ export default function HomePage() {
               <div className="kit-tag">🔥 Web3</div>
               <div className="kit-name">Web3 DApp Starter Kit</div>
               <div className="kit-desc">
-                Wallet connect, smart contract UI, token dashboard, and NFT
-                components — launch your dApp without starting from scratch.
+                Planned bundle concept: wallet connection, smart-contract UI, token dashboard,
+                and NFT components. Not available for purchase yet.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Wallet Connect</span>
@@ -462,7 +462,7 @@ export default function HomePage() {
               </div>
               <div className="kit-footer">
                 <div>
-                  <span className="kit-price">Preview</span>
+                  <span className="kit-price">Preview · Not available</span>
                 </div>
                 <Link href="/catalog" className="btn btn-fill">
                   Browse catalogue →
@@ -474,8 +474,8 @@ export default function HomePage() {
               <div className="kit-tag">💰 Fintech</div>
               <div className="kit-name">Fintech Launch Kit</div>
               <div className="kit-desc">
-                Banking UI, loan calculator, KYC flow, Paystack integration, and
-                compliance pages. Africa-ready from day one.
+                Region-aware fintech UI, loan calculator, KYC flow, and payment integration
+                concepts. Providers and jurisdictions require validation per market.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Banking Template</span>
@@ -486,7 +486,7 @@ export default function HomePage() {
               </div>
               <div className="kit-footer">
                 <div>
-                  <span className="kit-price">Preview</span>
+                  <span className="kit-price">Preview · Not available</span>
                 </div>
                 <Link href="/catalog" className="btn btn-fill">
                   Browse catalogue →
@@ -498,8 +498,8 @@ export default function HomePage() {
               <div className="kit-tag">🏢 Agency</div>
               <div className="kit-name">Agency Starter Kit</div>
               <div className="kit-desc">
-                Portfolio, services pages, case studies, contact forms, and lead
-                capture — everything an agency needs to launch.
+                Planned agency bundle concept: portfolio, services pages, case studies,
+                contact forms, and lead capture. Not available for purchase yet.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Portfolio Pages</span>
@@ -510,7 +510,7 @@ export default function HomePage() {
               </div>
               <div className="kit-footer">
                 <div>
-                  <span className="kit-price">Preview</span>
+                  <span className="kit-price">Preview · Not available</span>
                 </div>
                 <Link href="/catalog" className="btn btn-fill">
                   Browse catalogue →
@@ -798,6 +798,90 @@ export default function HomePage() {
                 </div>
               </div>
             </a>
+            <a
+              className="dir-card"
+              href="https://webflow.com/"
+              target="_blank"
+              rel="noreferrer"
+              data-directory="no-code visual website builder"
+            >
+              <div className="dir-logo">◈</div>
+              <div className="dir-info">
+                <div className="dir-name">Webflow</div>
+                <div className="dir-desc">
+                  Visual website design and publishing platform for building
+                  responsive websites.
+                </div>
+                <div className="dir-pills">
+                  <span className="dir-pill">No-code</span>
+                  <span className="dir-pill">Visual design</span>
+                  <span className="dir-pill">Websites</span>
+                </div>
+              </div>
+            </a>
+            <a
+              className="dir-card"
+              href="https://bubble.io/"
+              target="_blank"
+              rel="noreferrer"
+              data-directory="no-code visual app builder"
+            >
+              <div className="dir-logo">🫧</div>
+              <div className="dir-info">
+                <div className="dir-name">Bubble</div>
+                <div className="dir-desc">
+                  Visual no-code platform for building interactive web
+                  applications.
+                </div>
+                <div className="dir-pills">
+                  <span className="dir-pill">No-code</span>
+                  <span className="dir-pill">App builder</span>
+                  <span className="dir-pill">Visual</span>
+                </div>
+              </div>
+            </a>
+            <a
+              className="dir-card"
+              href="https://contra.com/"
+              target="_blank"
+              rel="noreferrer"
+              data-directory="freelancer resources client portfolio projects"
+            >
+              <div className="dir-logo">✳</div>
+              <div className="dir-info">
+                <div className="dir-name">Contra</div>
+                <div className="dir-desc">
+                  Independent-work platform for freelancer portfolios and
+                  client project discovery.
+                </div>
+                <div className="dir-pills">
+                  <span className="dir-pill">Freelancers</span>
+                  <span className="dir-pill">Portfolio</span>
+                  <span className="dir-pill">Clients</span>
+                </div>
+              </div>
+            </a>
+            <a
+              className="dir-card"
+              href="https://www.waveapps.com/"
+              target="_blank"
+              rel="noreferrer"
+              data-directory="freelancer resources invoice invoicing billing"
+            >
+              <div className="dir-logo">🌊</div>
+              <div className="dir-info">
+                <div className="dir-name">Wave</div>
+                <div className="dir-desc">
+                  Invoicing and small-business accounting tools that can help
+                  independent professionals manage client billing.
+                </div>
+                <div className="dir-pills">
+                  <span className="dir-pill">Invoicing</span>
+                  <span className="dir-pill">Billing</span>
+                  <span className="dir-pill">Freelancers</span>
+                </div>
+              </div>
+            </a>
           </div>
           <p className="dir-empty-state" role="status" hidden>
             No matching tools are included in this preview yet.
@@ -859,8 +943,8 @@ export default function HomePage() {
                 <div className="feat-text">
                   <h4>Lightning Fast Load Times</h4>
                   <p>
-                    Every template is performance-optimised. Performance targets
-                    will be published with tested releases.
+                    Released templates will be performance-tested against targets published
+                    with each verified release.
                   </p>
                 </div>
               </div>
@@ -869,8 +953,8 @@ export default function HomePage() {
                 <div className="feat-text">
                   <h4>Mobile-First by Default</h4>
                   <p>
-                    Perfect on phones, tablets, and desktops — no extra work
-                    required from you.
+                    Responsive behavior will be tested across phones, tablets, and desktops
+                    before a release is marked verified.
                   </p>
                 </div>
               </div>
@@ -879,8 +963,8 @@ export default function HomePage() {
                 <div className="feat-text">
                   <h4>SEO Built In</h4>
                   <p>
-                    Meta tags, sitemaps, and structured data — all handled so
-                    Google can find your site.
+                    SEO requirements, including metadata and structured data, will be
+                    documented and tested for verified releases.
                   </p>
                 </div>
               </div>
@@ -1029,8 +1113,8 @@ export default function HomePage() {
                   maxWidth: "400px",
                 }}
               >
-                Our engineering team builds custom products for founders and
-                businesses across Africa.
+                Tinlance delivers custom engineering for founders and businesses across
+                global markets, with region-specific implementation where needed.
               </p>
             </div>
             <a
