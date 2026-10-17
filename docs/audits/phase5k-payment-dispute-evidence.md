@@ -17,7 +17,7 @@
 ## Security and correctness limits
 
 - A digest proves byte identity, not source authenticity or provider acceptance.
-- This route does not download evidence back to a user, submit it to a provider, change dispute state, issue refunds, post journals, or move funds.
+- The upload endpoint does not submit evidence to a provider, change dispute state, issue refunds, post journals, or move funds. The separate access endpoint returns a 60-second signed URL only after the database verifies admin authorization and a current clean scan.
 - Provider-specific signature verification/event mapping and signed sandbox fixtures remain required for the selected provider.
 - Automated dispute-evidence retention/deletion is not implemented; legal policy and an independently tested worker are required before retention can be operationally claimed.
 - Production ClamAV endpoint/token configuration and clean/infected/stale smoke tests remain external deployment gates.
