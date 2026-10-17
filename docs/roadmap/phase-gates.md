@@ -414,6 +414,7 @@ Forensic record: `docs/audits/phase5j-payment-dispute-deadline-alerts.md`. This 
 - [x] Compute SHA-256 server-side and bind the private storage path and immutable metadata to dispute ID, evidence ID, and digest.
 - [x] Add service-role-only RPCs for immutable evidence metadata and digest-bound scan attestations, with RLS, no direct client grants, and audit events.
 - [x] Add audited admin access that returns a 60-second private-storage URL only after the database confirms the latest clean, digest-matched, fresh scan.
+- [x] Add route tests and pgTAP coverage for authorization, privacy/grants, digest validation, scanner failure, and signed-URL access gates.
 - [x] Reuse the existing fail-closed ClamAV client; unavailable scans remain pending and mismatched scan digests are rejected.
 - [x] Leave retention unset until an approved legal retention policy exists; do not claim automated deletion.
 - [ ] Pass exact-head Foundation CI, including empty-database migration reset, schema lint, pgTAP/RLS, route tests, E2E, typecheck, lint, formatting and production build.
