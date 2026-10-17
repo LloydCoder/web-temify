@@ -22,6 +22,22 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   await expect(page.locator('a[href="#"]')).toHaveCount(0);
   await expect(page.locator(".ai-input-row button")).toBeDisabled();
   await expect(page.getByText(/AI generation is not live yet/i)).toBeVisible();
+  const ecosystem = page.locator("#ecosystem");
+  await expect(ecosystem.getByRole("article")).toHaveCount(9);
+  for (const href of [
+    "/catalog",
+    "/hosting",
+    "/ai-site-builder",
+    "/directory",
+    "/automations",
+    "/specialists",
+    "/implementation",
+    "/platform",
+    "/tech-hub",
+  ]) {
+    await expect(ecosystem.locator(`a[href="${href}"]`)).toHaveCount(1);
+  }
+  await expect(ecosystem.getByText(/planned cards are roadmap disclosures/i)).toBeVisible();
   const unresolvedAnchorTargets = await page
     .locator('a[href^="#"]')
     .evaluateAll((anchors) =>
