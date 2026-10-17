@@ -237,8 +237,7 @@ export default function HomePage() {
               <span className="cat-emoji">🎨</span>
               <h3>Agency & Portfolio</h3>
               <p>
-                Bold, conversion-focused designs for creative agencies and
-                freelancers.
+                Concepts for agency and freelancer portfolios; conversion outcomes are not guaranteed.
               </p>
             </Link>
             <Link
@@ -250,8 +249,7 @@ export default function HomePage() {
               <span className="cat-emoji">🛒</span>
               <h3>E-commerce</h3>
               <p>
-                Ready-to-sell storefronts for digital products, subscriptions,
-                and physical goods.
+                Planned storefront concepts for digital products, subscriptions, and physical goods.
               </p>
             </Link>
             <Link
@@ -409,8 +407,7 @@ export default function HomePage() {
                   maxWidth: "400px",
                 }}
               >
-                Everything bundled, tested, and ready to deploy — not just a
-                single file.
+                Launch kits are planned to group related components and setup notes. Release checks and availability will be documented per item.
               </p>
             </div>
           </div>
@@ -448,8 +445,7 @@ export default function HomePage() {
               <div className="kit-tag">🔥 Web3</div>
               <div className="kit-name">Web3 DApp Kit Concept</div>
               <div className="kit-desc">
-                Wallet connect, smart contract UI, token dashboard, and NFT
-                components — launch your dApp without starting from scratch.
+                Illustrative Web3-kit concept for wallet, smart-contract, token-dashboard, and NFT screens. Not available for purchase yet.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Wallet Connect</span>
@@ -495,8 +491,7 @@ export default function HomePage() {
               <div className="kit-tag">🏢 Agency</div>
               <div className="kit-name">Agency Starter Kit</div>
               <div className="kit-desc">
-                Portfolio, services pages, case studies, contact forms, and lead
-                capture — everything an agency needs to launch.
+                Illustrative agency-kit concept for portfolio, services, case-study, contact, and lead-capture pages. Not available for purchase yet.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Portfolio Pages</span>
@@ -592,8 +587,7 @@ export default function HomePage() {
               <span className="web3-icon">👛</span>
               <div className="web3-name">Wallet Auth UI</div>
               <div className="web3-desc">
-                MetaMask, WalletConnect, Coinbase — ready-made connection flows
-                for any project
+                Illustrative wallet-connection UI concept; provider support is unverified and no download is available.
               </div>
             </Link>
             <Link
@@ -1716,8 +1710,7 @@ export default function HomePage() {
             Web-Temify <span className="logo-dot"></span>
           </Link>
           <p>
-            Premium templates, scripts, Web3 kits, and dev tools for builders
-            across Africa and beyond. No code, no stress.
+            A planned global marketplace for templates, scripts, Web3 kits, and developer tools. Releases will appear after review.
           </p>
           <div className="footer-badges-row">
             <span className="f-badge">🇳🇬 Nigeria</span>
