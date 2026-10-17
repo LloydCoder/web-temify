@@ -471,7 +471,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #fff;
+  color: var(--ink);
 }
 .v3-app .strip-inner span {
   color: var(--ink);
