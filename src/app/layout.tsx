@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Web-Temify — Marketplace Preview",
+  title: {
+    default: "Web-Temify — Templates, Tools & the Web Product Ecosystem",
+    template: "%s | Web-Temify",
+  },
   description:
-    "Explore the Web-Temify marketplace preview. Verified product releases will appear after publication and rights review; purchases and checkout are not live yet.",
+    "Explore verified digital-product releases and the Web-Temify ecosystem roadmap for hosting, AI site building, automation, specialist suppliers, and implementation services. Planned capabilities are clearly identified.",
 };
 
 export default function RootLayout({
