@@ -28,6 +28,19 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   await expect(page.locator('a[href="#"]')).toHaveCount(0);
   await expect(page.locator(".ai-input-row button")).toBeDisabled();
   await expect(page.getByText(/AI generation is not live yet/i)).toBeVisible();
+  await expect(
+    page.getByRole("textbox", {
+      name: /describe the website you want to build/i,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("textbox", {
+      name: /email address for future web-temify updates/i,
+    }),
+  ).toBeDisabled();
+  await expect(page.locator("#newsletter-status")).toContainText(
+    /no email is collected/i,
+  );
   const ecosystem = page.locator("#ecosystem");
   await expect(ecosystem.getByRole("article")).toHaveCount(9);
   for (const href of [
