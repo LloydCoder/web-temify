@@ -45,7 +45,7 @@ jobs:
         if: always()
         shell: bash
         run: |
-          for file in src/app/page.tsx src/app/v3-home.css tests/e2e/homepage.spec.ts src/app/ecosystem-destination.tsx src/app/ecosystem-destination.css tests/e2e/ecosystem-routes.spec.ts src/app/hosting/page.tsx src/app/ai-site-builder/page.tsx src/app/directory/page.tsx src/app/automations/page.tsx src/app/specialists/page.tsx src/app/implementation/page.tsx src/app/platform/page.tsx src/app/tech-hub/page.tsx src/app/sitemap.ts src/app/robots.ts src/app/layout.tsx README.md docs/audits/v3-homepage-implementation-audit.md docs/web-temify-v3.html; do
+          for file in src/app/page.tsx src/app/v3-home.css tests/e2e/homepage.spec.ts src/app/ecosystem-destination.tsx src/app/ecosystem-destination.css tests/e2e/ecosystem-routes.spec.ts src/app/hosting/page.tsx src/app/ai-site-builder/page.tsx src/app/directory/page.tsx src/app/automations/page.tsx src/app/specialists/page.tsx src/app/implementation/page.tsx src/app/platform/page.tsx src/app/tech-hub/page.tsx src/app/sitemap.ts src/app/robots.ts src/app/layout.tsx src/components/v3-navigation.tsx src/components/v3-directory-controls.tsx src/components/v3-prompt-chips.tsx src/components/v3-homepage-interactions.tsx README.md docs/audits/v3-homepage-implementation-audit.md docs/web-temify-v3.html; do
             echo "FORMAT_START:$file"
             pnpm exec prettier "$file"
             echo "FORMAT_END:$file"
