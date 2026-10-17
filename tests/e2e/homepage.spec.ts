@@ -223,11 +223,12 @@ test("robots and sitemap use the configured canonical origin", async ({
   }
 });
 
-
 test("header and hero respond correctly across desktop and mobile layouts", async ({
   page,
 }) => {
-  const navigation = page.getByRole("navigation", { name: "Primary navigation" });
+  const navigation = page.getByRole("navigation", {
+    name: "Primary navigation",
+  });
   const toggle = page.getByRole("button", { name: /navigation/i });
   const links = page.locator("#primary-navigation");
   const hero = page.locator(".hero");
@@ -240,7 +241,9 @@ test("header and hero respond correctly across desktop and mobile layouts", asyn
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
   await expect(links).toBeHidden();
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Browse Templates" })).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Browse Templates" }),
+  ).toBeVisible();
   await expect(heroVisual).toBeHidden();
   await expect(hero).toHaveCSS("grid-template-columns", /minmax\(0px, 1fr\)|1fr/);
 
