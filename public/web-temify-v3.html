@@ -1886,6 +1886,28 @@
           flex-direction: column;
         }
       }
+    
+      /* Nine-area platform overview, styled to the approved V3 identity. */
+      .ecosystem-section { background: var(--bg); color: var(--ink); border-top: 2px solid var(--ink); padding: clamp(4rem, 8vw, 7rem) clamp(1.25rem, 5vw, 4rem); }
+      .ecosystem-inner { width: min(1240px, 100%); margin-inline: auto; }
+      .ecosystem-heading { max-width: 760px; margin: 0 auto 3rem; text-align: center; }
+      .ecosystem-eyebrow { font: 700 .75rem/1.4 "DM Mono", monospace; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 1rem; }
+      .ecosystem-heading h2 { font-size: clamp(2.3rem, 5vw, 4.5rem); line-height: .98; letter-spacing: -.045em; margin-bottom: 1rem; }
+      .ecosystem-heading > p:last-child { max-width: 650px; margin: 0 auto; color: var(--muted); line-height: 1.7; }
+      .ecosystem-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+      .ecosystem-card { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; border: 2px solid var(--ink); background: var(--surface); padding: clamp(1.2rem, 2.2vw, 1.8rem); box-shadow: 4px 4px 0 var(--ink); }
+      .ecosystem-card-live { background: #fff; }
+      .ecosystem-number { display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem; background: var(--yellow); border: 2px solid var(--ink); font: 700 .8rem "DM Mono", monospace; margin-bottom: 1.15rem; }
+      .ecosystem-status { color: var(--muted); font: 700 .68rem/1.5 "DM Mono", monospace; text-transform: uppercase; letter-spacing: .035em; margin-bottom: .7rem; }
+      .ecosystem-card h3 { font-size: clamp(1.2rem, 1.7vw, 1.55rem); line-height: 1.1; margin: 0 0 .75rem; }
+      .ecosystem-card > p:not(.ecosystem-status) { color: var(--muted); font-size: .94rem; line-height: 1.65; margin-bottom: 1.2rem; }
+      .ecosystem-card .btn, .ecosystem-card .ecosystem-link { margin-top: auto; }
+      .ecosystem-link { display: inline-block; font-weight: 800; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; padding-block: .55rem; }
+      .ecosystem-disclaimer { max-width: 920px; margin: 2rem auto 0; padding: 1rem 1.2rem; border: 2px dashed var(--ink); color: var(--muted); font-size: .85rem; line-height: 1.65; }
+      @media (max-width: 900px) { .ecosystem-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (max-width: 600px) { .ecosystem-grid { grid-template-columns: 1fr; } .ecosystem-heading { text-align: left; } }
+      @media (prefers-reduced-motion: reduce) { .ecosystem-card { scroll-behavior: auto; } }
+
     </style>
   </head>
   <body>
@@ -1900,6 +1922,7 @@
         <li><a href="#directory">Directory</a></li>
         <li><a href="#services">Services</a></li>
         <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#ecosystem">Platform</a></li>
       </ul>
       <div class="nav-actions">
         <span class="btn btn-ghost" aria-disabled="true" title="Account access is not live yet">Account access soon</span>
@@ -3183,6 +3206,30 @@
           >Browse Templates →</a
         >
         <a href="#services" class="btn btn-outline-white btn-big">Talk to us</a>
+      </div>
+    </section>
+
+
+    <!-- ═══ WEB-TEMIFY ECOSYSTEM: NINE AGREED AREAS ═══ -->
+    <section class="ecosystem-section" id="ecosystem" aria-labelledby="ecosystem-title">
+      <div class="ecosystem-inner">
+        <div class="ecosystem-heading">
+          <p class="ecosystem-eyebrow">THE WEB-TEMIFY ECOSYSTEM</p>
+          <h2 id="ecosystem-title">One platform. <span class="serif">More ways to build.</span></h2>
+          <p>Explore the nine connected areas of Web-Temify. Each destination states what is available today and what remains in development.</p>
+        </div>
+        <div class="ecosystem-grid">
+          <article class="ecosystem-card ecosystem-card-live"><span class="ecosystem-number">01</span><p class="ecosystem-status">Existing route · verified catalogue rules</p><h3>Template &amp; Script Marketplace</h3><p>Browse the catalogue. Only products meeting existing publication and release checks should be presented as purchasable.</p><a class="btn btn-fill" href="/catalog">Browse catalogue →</a></article>
+          <article class="ecosystem-card"><span class="ecosystem-number">02</span><p class="ecosystem-status">Planned · provisioning not operational</p><h3>Web Hosting &amp; Deployment</h3><p>Hosting plans, deployments, domains, SSL and site operations are planned; provisioning and billing are not available here.</p><a class="ecosystem-link" href="/hosting">Explore hosting roadmap →</a></article>
+          <article class="ecosystem-card"><span class="ecosystem-number">03</span><p class="ecosystem-status">Planned · generation disabled</p><h3>AI Site Builder</h3><p>Prompt-to-site creation is planned. This page does not generate or deploy a website.</p><a class="ecosystem-link" href="/ai-site-builder">Explore AI Site Builder →</a></article>
+          <article class="ecosystem-card"><span class="ecosystem-number">04</span><p class="ecosystem-status">Preview · submissions not live</p><h3>Tech Directory Hub</h3><p>Explore selected external tools in the homepage preview. Managed listings, submissions and paid placements are not enabled.</p><a class="ecosystem-link" href="/directory">Explore directory status →</a></article>
+          <article class="ecosystem-card"><span class="ecosystem-number">05</span><p class="ecosystem-status">Planned · transactions disabled</p><h3>Verified Automation Marketplace</h3><p>Automation discovery, verification, installation and updates are planned, not available as a live marketplace.</p><a class="ecosystem-link" href="/automations">Explore automation roadmap →</a></article>
+          <article class="ecosystem-card"><span class="ecosystem-number">06</span><p class="ecosystem-status">Planned · onboarding not available</p><h3>Specialist Supplier Directory</h3><p>Verified supplier profiles, onboarding and marketplace enquiries are not yet operational.</p><a class="ecosystem-link" href="/specialists">Explore supplier roadmap →</a></article>
+          <article class="ecosystem-card"><span class="ecosystem-number">07</span><p class="ecosystem-status">Planned · milestone payments disabled</p><h3>Outcome-Based AI Implementation</h3><p>Scoped delivery, acceptance criteria and milestone-based engagements are planned. No marketplace contract or payment can be initiated here.</p><a class="ecosystem-link" href="/implementation">Explore implementation roadmap →</a></article>
+          <article class="ecosystem-card"><span class="ecosystem-number">08</span><p class="ecosystem-status">Shared foundation · not a storefront</p><h3>Shared Enterprise Platform</h3><p>Identity, policy, approvals, auditability and operational controls underpin the ecosystem. Their presence does not mean every feature is enabled.</p><a class="ecosystem-link" href="/platform">Understand the platform layer →</a></article>
+          <article class="ecosystem-card"><span class="ecosystem-number">09</span><p class="ecosystem-status">Planned · monetization not enabled</p><h3>Tech Hub &amp; Advertising Engine</h3><p>Editorial content, SEO, affiliate disclosures, sponsored placements and newsletter sponsorships require dedicated workflows.</p><a class="ecosystem-link" href="/tech-hub">Explore Tech Hub roadmap →</a></article>
+        </div>
+        <p class="ecosystem-disclaimer">Availability is feature-specific. Planned cards are roadmap disclosures, not promises of launch dates. Payment processing, seller payouts and live money movement remain disabled until the required technical, legal, security and operational gates are verified.</p>
       </div>
     </section>
 
