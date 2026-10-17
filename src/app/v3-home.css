@@ -1888,3 +1888,9 @@
   .v3-app *, .v3-app *::before, .v3-app *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .v3-app .reveal { opacity: 1; transform: none; }
 }
+@media (max-width: 640px) {
+  .v3-app .nav-actions .btn-ghost { display: none; }
+  .v3-app .nav-actions .btn-fill { padding: .55rem .7rem; font-size: .7rem; white-space: nowrap; }
+  .v3-app nav { gap: .5rem; padding: .8rem 1rem; }
+  .v3-app .logo { font-size: 1.15rem; }
+}
