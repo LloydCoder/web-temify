@@ -199,7 +199,7 @@ begin
     or p_scanner_version is null or char_length(btrim(p_scanner_version)) not between 1 and 80
     or p_signature_updated_at is null
     or p_signature_updated_at > scan_time + interval '5 minutes'
-    or p_signature_updated_at < scan_time - interval '7 days'
+    or p_signature_updated_at < scan_time - interval '48 hours'
   then
     raise exception using errcode = '23514', message = 'payment dispute evidence scan metadata failed validation';
   end if;
