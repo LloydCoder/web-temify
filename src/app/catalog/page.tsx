@@ -5,7 +5,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export const metadata: Metadata = {
   title: "Product Catalogue",
   description:
-    "Browse verified Web-Temify digital-product releases. Only published products with reviewed rights and release evidence are listed.",
+    "Browse verified Web-Temify digital-product releases. Only published " +
+    "products with reviewed rights and release evidence are listed.",
 };
 
 export const dynamic = "force-dynamic";
