@@ -175,6 +175,7 @@ test(
         ),
       )
       .toBeGreaterThan(0);
+    }
   },
 );
 
