@@ -149,7 +149,7 @@ test("financial control API denies unauthenticated queue and mutation access", a
 
   const create = await page.request.post("/api/admin/financial-controls", {
     headers: { "Content-Type": "application/json" },
-    data: {
+    data: JSON.stringify({
       requestType: "manual_adjustment",
       sellerId: "a2000000-0000-4000-8000-000000000002",
       amountMinor: "2500",
@@ -157,7 +157,7 @@ test("financial control API denies unauthenticated queue and mutation access", a
       evidenceSha256: "a".repeat(64),
       reason: "Unauthenticated request must not be created.",
       idempotencyKey: "phase5g-unauthenticated-test-0001",
-    },
+    }),
   });
   expect(create.status()).toBe(404);
   await expect(create.json()).resolves.toEqual({ error: "not_found" });
