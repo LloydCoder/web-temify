@@ -352,6 +352,7 @@ test("unknown routes return a noindex 404 with specific metadata", async ({
     "content",
     "noindex",
   );
+  await expect(page.locator('meta[name="robots"]')).toHaveCount(1);
 });
 
 test("static V3 reference is excluded from search indexing", async ({
