@@ -313,7 +313,8 @@ begin
   select * into scan_row
   from public.payment_dispute_evidence_scan_results
   where evidence_id = p_evidence_id
-  order by scanned_at desc, id desc
+  order by public.payment_dispute_evidence_scan_results.scanned_at desc,
+    public.payment_dispute_evidence_scan_results.id desc
   limit 1;
 
   if scan_row.id is null
