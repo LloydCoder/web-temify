@@ -69,6 +69,14 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   expect(unresolvedAnchorTargets).toEqual([]);
 });
 
+test("catalogue uses a page-specific SEO title", async ({ page }) => {
+  await page.goto("/catalog");
+  await expect(page).toHaveTitle(/Product Catalogue \| Web-Temify/);
+  await expect(
+    page.getByRole("heading", { name: "Product catalogue" }),
+  ).toBeVisible();
+});
+
 test("homepage has no horizontal overflow on mobile or desktop", async ({
   page,
 }) => {
