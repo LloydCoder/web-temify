@@ -8,9 +8,6 @@ export const metadata: Metadata = {
   },
   description:
     "Explore verified digital-product releases and the Web-Temify ecosystem roadmap for hosting, AI site building, automation, specialist suppliers, and implementation services. Planned capabilities are clearly identified.",
-  icons: {
-    icon: "/icon.svg",
-  },
 };
 
 export default function RootLayout({
