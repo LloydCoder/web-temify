@@ -34,7 +34,7 @@ test("homepage renders the V3 experience as native Next.js content", async ({
   await expect(page.getByText(/AI generation is not live yet/i)).toBeVisible();
   await expect(
     page.getByRole("textbox", {
-      name: /describe the website you want to build/i,
+      name: /website description/i,
     }),
   ).toBeVisible();
   await expect(
@@ -146,7 +146,8 @@ test("directory tabs filter the visible external tool cards", async ({
   await expect
     .poll(() =>
       cards.evaluateAll(
-        (items) => items.filter((item) => !item.hasAttribute("hidden")).length,
+        (items) =>
+              items.filter((item) => !item.hasAttribute("hidden")).length,
       ),
     )
     .toBeLessThan(allCount);
