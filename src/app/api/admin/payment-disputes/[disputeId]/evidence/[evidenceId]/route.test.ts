@@ -72,7 +72,9 @@ describe("Phase 5K audited dispute evidence access", () => {
     expect(mocks.createSignedUrl).not.toHaveBeenCalled();
   });
 
-  it("issues a 60-second URL only after the audited clean-scan RPC succeeds", async () => {
+  it(
+    "issues a 60-second URL only after the audited clean-scan RPC succeeds",
+    async () => {
     const response = await GET(request(), {
       params: Promise.resolve({ disputeId, evidenceId }),
     });
@@ -103,7 +105,9 @@ describe("Phase 5K audited dispute evidence access", () => {
     expect(response.headers.get("cache-control")).toBe("no-store");
   });
 
-  it("does not issue a URL when the evidence is missing or the scan is not clean/current", async () => {
+  it(
+    "does not issue a URL when the evidence is missing or the scan is not clean/current",
+    async () => {
     mocks.rpc.mockResolvedValueOnce({
       data: null,
       error: { code: "55000" },
@@ -117,7 +121,9 @@ describe("Phase 5K audited dispute evidence access", () => {
     expect(mocks.createSignedUrl).not.toHaveBeenCalled();
   });
 
-  it("fails closed when returned metadata does not bind the path to the digest", async () => {
+  it(
+    "fails closed when returned metadata does not bind the path to the digest",
+    async () => {
     mocks.rpc.mockResolvedValueOnce({
       data: [
         {
