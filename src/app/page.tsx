@@ -186,8 +186,8 @@ export default function HomePage() {
               <span className="cat-emoji">🏦</span>
               <h3>Fintech & Banking</h3>
               <p>
-                Banking UIs, loan platforms, and payment-system concepts
-                for global and regional markets.
+                Banking UIs, loan platforms, and payment-system concepts for
+                global and regional markets.
               </p>
             </Link>
             <Link
@@ -422,8 +422,8 @@ export default function HomePage() {
               <div className="kit-name">SaaS Starter Kit</div>
               <div className="kit-desc">
                 Concept preview: a SaaS starter bundle may include auth,
-                billing, a dashboard, onboarding, and a landing page.
-                Not available for purchase yet.
+                billing, a dashboard, onboarding, and a landing page. Not
+                available for purchase yet.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Landing Page</span>
@@ -451,8 +451,8 @@ export default function HomePage() {
               <div className="kit-tag">🔥 Web3</div>
               <div className="kit-name">Web3 DApp Starter Kit</div>
               <div className="kit-desc">
-                Planned bundle: wallet connection and smart-contract UI,
-                token dashboard, and NFT components. Not available yet.
+                Planned bundle: wallet connection and smart-contract UI, token
+                dashboard, and NFT components. Not available yet.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Wallet Connect</span>
@@ -475,8 +475,8 @@ export default function HomePage() {
               <div className="kit-tag">💰 Fintech</div>
               <div className="kit-name">Fintech Launch Kit</div>
               <div className="kit-desc">
-                Region-aware fintech UI, loan calculator, and KYC flow.
-                Validate payment providers and jurisdictions for each market.
+                Region-aware fintech UI, loan calculator, and KYC flow. Validate
+                payment providers and jurisdictions for each market.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Banking Template</span>
@@ -499,8 +499,8 @@ export default function HomePage() {
               <div className="kit-tag">🏢 Agency</div>
               <div className="kit-name">Agency Starter Kit</div>
               <div className="kit-desc">
-                Planned agency bundle: portfolio, services pages, case
-                studies, contact forms, and lead capture. Not available yet.
+                Planned agency bundle: portfolio, services pages, case studies,
+                contact forms, and lead capture. Not available yet.
               </div>
               <div className="kit-items">
                 <span className="kit-item">Portfolio Pages</span>
@@ -850,8 +850,8 @@ export default function HomePage() {
               <div className="dir-info">
                 <div className="dir-name">Contra</div>
                 <div className="dir-desc">
-                  Independent-work platform for freelancer portfolios and
-                  client project discovery.
+                  Independent-work platform for freelancer portfolios and client
+                  project discovery.
                 </div>
                 <div className="dir-pills">
                   <span className="dir-pill">Freelancers</span>
@@ -1148,8 +1148,8 @@ export default function HomePage() {
               <span className="svc-icon">🚀</span>
               <div className="svc-name">SaaS MVP Build</div>
               <div className="svc-desc">
-                Full-stack SaaS with authentication, billing, and
-                dashboards, scoped to your launch requirements.
+                Full-stack SaaS with authentication, billing, and dashboards,
+                scoped to your launch requirements.
               </div>
               <div className="svc-price">Scope-based quote</div>
             </div>
@@ -1157,8 +1157,8 @@ export default function HomePage() {
               <span className="svc-icon">🏦</span>
               <div className="svc-name">Fintech Solutions</div>
               <div className="svc-desc">
-                Payment systems, loan platforms, and payment integrations
-                for global and regional markets, subject to provider and
+                Payment systems, loan platforms, and payment integrations for
+                global and regional markets, subject to provider and
                 jurisdiction support.
               </div>
               <div className="svc-price">Scope-based quote</div>
