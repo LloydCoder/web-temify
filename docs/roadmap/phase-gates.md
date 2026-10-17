@@ -389,21 +389,21 @@ The UI's evidence digest field is a reference only; it does not upload or valida
 
 The state machine trusts the previously persisted signature-verification assertion; it does not verify a real provider signature. The current payment webhook route remains sandbox-only. Phase 5 overall remains incomplete.
 
-### Phase 5J — Payment-dispute deadline alerting (implementation candidate; CI pending)
+### Phase 5J — Payment-dispute deadline alerting (merged; implementation and CI passed)
 
-**Status: IN PROGRESS.** Candidate branch `phase5/payment-dispute-deadline-alerts`. This is a bounded operational notification mechanism, not provider evidence submission or a Phase 5 exit pass.
+**Status: PASS for implementation and exact-head CI only.** PR [#83](https://github.com/LloydCoder/web-temify/pull/83) merged as `409e9c8bb26394ea4ed79c9a96689770fb7d2166`. Foundation CI [passed](https://github.com/LloydCoder/web-temify/actions/runs/39004237814), Security/dependency governance [passed](https://github.com/LloydCoder/web-temify/actions/runs/39004237833), and the Vercel preview status succeeded on exact PR head `b1be90a4db364ef321cc39f32dfcd537e78aecab`.
 
 - [x] Add a private alert outbox and idempotent scan for open/evidence-needed disputes with evidence deadlines within 48 hours.
 - [x] Add service-only claim/finish RPCs with batch limits, leases, request ownership, bounded retries/backoff, and audit evidence for failed delivery.
 - [x] Add a token-protected Resend worker that sends minimal deadline alerts to a configured operations mailbox.
 - [x] Add a 15-minute GitHub Actions schedule with manual dispatch for controlled testing.
 - [x] Add database and route tests for privacy/grants, idempotency, lease ownership, retry behavior, authorization, configuration failures, provider failure, and completion persistence failures.
-- [ ] Pass Foundation CI and Security/dependency governance on the exact candidate head; inspect and fix any failures before merge.
+- [x] Pass Foundation CI and Security/dependency governance on the exact candidate head.
 - [ ] Configure the worker token, Supabase credentials, Resend key, sender identity and operations mailbox; perform a controlled production delivery test.
 - [ ] Verify schedule execution and add an independent alert path for failed schedules/blocked jobs.
 - [ ] Name a staffed escalation owner and backup and approve dispute evidence-retention policy.
 
-Forensic record: `docs/audits/phase5j-payment-dispute-deadline-alerts.md`. This worker sends notifications only; it does not submit provider evidence, change dispute state, issue refunds, post journal entries, or move funds.
+Forensic record: `docs/audits/phase5j-payment-dispute-deadline-alerts.md`. This worker sends notifications only; it does not submit provider evidence, change dispute state, issue refunds, post journal entries, or move funds. Phase 5 overall remains incomplete; track remaining release blockers in [Issue #84](https://github.com/LloydCoder/web-temify/issues/84).
 
 ## Phase 6 — Seller system and product factory
 
