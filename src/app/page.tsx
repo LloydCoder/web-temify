@@ -1,9 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import "./v3-home.css";
 import V3Navigation from "@/components/v3-navigation";
 import V3DirectoryControls from "@/components/v3-directory-controls";
 import V3PromptChips from "@/components/v3-prompt-chips";
 import V3HomepageInteractions from "@/components/v3-homepage-interactions";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function HomePage() {
   return (
