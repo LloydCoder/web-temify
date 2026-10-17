@@ -3,7 +3,8 @@ import EcosystemDestination from "../ecosystem-destination";
 
 export const metadata: Metadata = {
   title: "Shared Enterprise Platform",
-  description: "Learn about the cross-cutting platform foundation and feature-specific readiness gates.",
+  description:
+    "Learn about the cross-cutting platform foundation and feature-specific readiness gates.",
 };
 
 export default function PlatformPage() {
