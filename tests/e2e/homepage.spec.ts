@@ -10,6 +10,15 @@ test("homepage renders the V3 marketplace preview as server-rendered page conten
     page.getByRole("heading", { level: 1, name: /your website, ready in minutes/i }),
   ).toBeVisible();
   await expect(page.getByText(/no products are available for purchase/i)).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: /AI Site Builder coming soon/i }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/Payment providers will be announced after integration and checkout testing/i),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/instant secure download after purchase|Pay via Paystack, Stripe, or LemonSqueezy/i),
+  ).toHaveCount(0);
   await expect(page.getByRole("link", { name: /browse catalogue/i }).first()).toHaveAttribute(
     "href",
     "/catalog",
