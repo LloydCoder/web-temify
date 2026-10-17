@@ -74,10 +74,10 @@ export default function V3Navigation() {
           aria-disabled="true"
           title="Account access is not live yet"
         >
-          Account access soon
+          Accounts not live yet
         </span>
         <a href="#templates" className="btn btn-fill">
-          Browse Templates →
+          Explore previews →
         </a>
       </div>
     </nav>
