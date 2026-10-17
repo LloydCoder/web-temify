@@ -7,7 +7,7 @@ test("homepage renders the V3 experience as native Next.js content", async ({ pa
   await expect(page.getByText(/no products are available for purchase/i)).toBeVisible();
   await expect(page.locator("iframe")).toHaveCount(0);
   await expect(page.locator('a[href="#"]')).toHaveCount(0);
-  await expect(page.getByRole("button", { name: /coming soon/i })).toBeDisabled();
+  await expect(page.locator(".ai-input-row button")).toBeDisabled();
   await expect(page.getByText(/AI generation is not live yet/i)).toBeVisible();
   const unresolvedAnchorTargets = await page.locator('a[href^="#"]').evaluateAll((anchors) =>
     anchors.map((anchor) => anchor.getAttribute("href")?.slice(1) ?? "")
@@ -59,5 +59,5 @@ test("AI prompt chips populate the planned builder input without implying genera
   const input = page.locator(".ai-input");
   await page.getByRole("button", { name: /use logistics company prompt/i }).click();
   await expect(input).toHaveValue("Logistics company website");
-  await expect(page.getByRole("button", { name: /coming soon/i })).toBeDisabled();
+  await expect(page.locator(".ai-input-row button")).toBeDisabled();
 });
