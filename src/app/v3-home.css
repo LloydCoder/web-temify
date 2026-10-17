@@ -2219,3 +2219,11 @@
     display: none;
   }
 }
+@media (max-width: 640px) {
+  /* Keep tab order and visual reading order aligned while the menu is open. */
+  .v3-app .nav-links.is-open ~ .nav-actions {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-content: flex-start;
+  }
+}
