@@ -93,6 +93,20 @@ test("mobile navigation opens and closes accessibly", async ({ page }) => {
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
 });
 
+
+test("mobile navigation closes on Escape and restores focus to the toggle", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const toggle = page.getByRole("button", { name: /toggle navigation/i });
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  await page.keyboard.press("Escape");
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(toggle).toBeFocused();
+});
+
 test("directory tabs filter the visible external tool cards", async ({
   page,
 }) => {
