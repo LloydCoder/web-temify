@@ -135,6 +135,20 @@ describe("Phase 5K dispute evidence upload", () => {
     expect(mocks.storageUpload).not.toHaveBeenCalled();
   });
 
+  it("rejects a content type that does not match the uploaded bytes", async () => {
+    mocks.readBoundedRequestBytes.mockResolvedValue({
+      ok: true,
+      bytes: Buffer.from("<html>not a PDF</html>"),
+    });
+
+    const response = await POST(request(), {
+      params: Promise.resolve({ disputeId }),
+    });
+
+    expect(response.status).toBe(415);
+    expect(mocks.storageUpload).not.toHaveBeenCalled();
+  });
+
   it("rejects evidence for a terminal dispute", async () => {
     configureAdmin("closed");
 
