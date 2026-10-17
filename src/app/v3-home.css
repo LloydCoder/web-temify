@@ -462,6 +462,7 @@
   padding: 0.75rem 0;
 }
 .v3-app .strip-inner {
+  color: var(--ink);
   display: flex;
   gap: 2.5rem;
   white-space: nowrap;
