@@ -178,6 +178,7 @@
   }
 }
 .v3-app .nav-links {
+  order: 1;
   display: flex;
   list-style: none;
   gap: 2rem;
@@ -210,6 +211,7 @@
   letter-spacing: 0.06em;
 }
 .v3-app .nav-actions {
+  order: 2;
   display: flex;
   gap: 0.75rem;
   align-items: center;
@@ -1896,6 +1898,7 @@
   top: 1rem;
 }
 .v3-app .mobile-menu-toggle {
+  order: 3;
   display: none;
   align-items: center;
   justify-content: center;
@@ -1932,15 +1935,18 @@
 }
 @media (max-width: 1024px) {
   .v3-app .mobile-menu-toggle {
+    order: 1;
     display: inline-flex;
   }
   .v3-app nav {
     flex-wrap: wrap;
   }
   .v3-app .nav-actions {
+    order: 2;
     margin-left: auto;
   }
   .v3-app .nav-links.is-open {
+    order: 3;
     display: flex;
     flex-direction: column;
     order: 4;
