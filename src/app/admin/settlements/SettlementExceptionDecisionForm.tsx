@@ -4,9 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 type Decision =
-  | "reimport_required"
-  | "manual_review_required"
-  | "accepted_with_evidence";
+  "reimport_required" | "manual_review_required" | "accepted_with_evidence";
 
 export function SettlementExceptionDecisionForm({
   runId,
