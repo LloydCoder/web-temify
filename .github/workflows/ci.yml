@@ -48,6 +48,12 @@ jobs:
           echo "FORMAT_START:tests/e2e/moderation-appeals.spec.ts"
           pnpm exec prettier tests/e2e/moderation-appeals.spec.ts
           echo "FORMAT_END:tests/e2e/moderation-appeals.spec.ts"
+          echo "FORMAT_START:src/app/admin/settlements/SettlementExceptionDecisionForm.tsx"
+          pnpm exec prettier src/app/admin/settlements/SettlementExceptionDecisionForm.tsx
+          echo "FORMAT_END:src/app/admin/settlements/SettlementExceptionDecisionForm.tsx"
+          echo "FORMAT_START:src/server/commerce/webhook.ts"
+          pnpm exec prettier src/server/commerce/webhook.ts
+          echo "FORMAT_END:src/server/commerce/webhook.ts"
       - name: Formatting check
         run: pnpm format:check
       - name: Install Supabase CLI
