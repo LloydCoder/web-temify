@@ -25,9 +25,7 @@ export type SandboxPaymentEvent = z.infer<typeof SandboxPaymentEventSchema>;
 type AdminClient = ReturnType<typeof createSupabaseAdminClient>;
 
 export type WebhookIngestResult =
-  | { kind: "processed" }
-  | { kind: "conflict" }
-  | { kind: "retry" };
+  { kind: "processed" } | { kind: "conflict" } | { kind: "retry" };
 
 export async function ingestVerifiedSandboxEvent(
   admin: AdminClient,
