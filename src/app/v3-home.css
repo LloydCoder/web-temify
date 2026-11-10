@@ -1724,8 +1724,8 @@
   border-color: var(--coral);
 }
 
-.v3-app /* ── ANIMATIONS ── */
-      @keyframes slideDown {
+/* ── ANIMATIONS ── */
+@keyframes slideDown {
   from {
     opacity: 0;
     transform: translateY(-12px);
